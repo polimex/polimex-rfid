@@ -10,6 +10,28 @@ from .phase import PhaseImporter
 _logger = logging.getLogger(__name__)
 
 
+#: The vending profile of a person: the money, the limits and the permissions.
+#: Every name exists on the target model - asserted by a test. The previous
+#: list named seven that exist in NEITHER version ('..._auto_refill_amount',
+#: '..._limit_type', '..._pin', '..._negbal' among them) and left out five that
+#: do, so everybody arrived with a balance and none of the rules that govern
+#: spending it. Computed ones are deliberately absent: the current balance and
+#: today's spend are worked out from these.
+EMPLOYEE_VENDING_FIELDS = [
+    'hr_rfid_vending_in_attendance', 'hr_rfid_vending_limit',
+    'hr_rfid_vending_balance', 'hr_rfid_vending_auto_refill',
+    'hr_rfid_vending_refill_amount', 'hr_rfid_vending_refill_type',
+    'hr_rfid_vending_refill_max', 'hr_rfid_vending_negative_balance',
+    'hr_rfid_vending_daily_limit', 'hr_rfid_vending_recharge_balance',
+]
+
+#: What a refill RUN is: when it happened and how much money it moved. The
+#: total is REQUIRED on the record, and the step used to ask for 'amount' and
+#: 'period' - names in neither version - so every run was refused by the
+#: database and every balance entry pointing at one lost its link.
+AUTO_REFILL_OPTIONAL_FIELDS = ['auto_refill_total', 'create_date']
+
+
 class VendingImporter(PhaseImporter):
     """Phase 6a: Vending data.
 
@@ -46,15 +68,27 @@ class VendingImporter(PhaseImporter):
         if 'product_id' not in vrow_fields:
             return
 
-        # Get products used in vending rows
+        # Products used in vending rows - AND the ones only the sales
+        # mention. A row says what a machine offers TODAY; an event says what
+        # was actually sold, including from a slot since re-stocked. Taking
+        # only the rows left 2 907 of the cloud's 31 118 sales pointing at a
+        # product that never arrived, so the vending report cannot say what
+        # was bought.
         vending_rows = self.b._search_read(
             'hr.rfid.ctrl.vending.row', [],
             ['product_id'],
         )
-        product_ids = list(set(
-            self.b._m2o_id(r['product_id']) for r in vending_rows
-            if r.get('product_id')
-        ))
+        referenced = [r.get('product_id') for r in vending_rows]
+        event_fields = self.b._get_source_fields('hr.rfid.vending.event')
+        if 'item_sold_id' in event_fields:
+            referenced += [
+                r.get('item_sold_id') for r in self.b._search_read(
+                    'hr.rfid.vending.event',
+                    self.b._scoped_domain('reader_id.controller_id.webstack_id')
+                    + [('item_sold_id', '!=', False)],
+                    ['item_sold_id'])]
+        product_ids = list({self.b._m2o_id(value)
+                            for value in referenced if value})
         if not product_ids:
             return
 
@@ -213,8 +247,14 @@ class VendingImporter(PhaseImporter):
         # UndefinedColumn that kills the whole step.
         target_fields = self.b._target_columns(model)
 
+        # What a refill RUN is: when it happened and how much money it put on
+        # people's balances. The total is required on the record, and it was
+        # never read at all - the step asked for 'amount' and 'period', which
+        # exist in neither version - so all 3 546 runs of the cloud were
+        # refused by the database ("null value in column auto_refill_total")
+        # and every balance entry that pointed at one lost the link.
         fields_to_read = ['name', 'company_id']
-        for f in ['amount', 'period']:
+        for f in AUTO_REFILL_OPTIONAL_FIELDS:
             if f in source_fields_info:
                 fields_to_read.append(f)
 
@@ -232,10 +272,15 @@ class VendingImporter(PhaseImporter):
                 'name': rec.get('name', ''),
                 'company_id': target_company_id,
             }
-            if 'amount' in rec and rec.get('amount') is not None and 'amount' in target_fields:
-                vals['amount'] = rec.get('amount', 0.0)
-            if rec.get('period') and 'period' in target_fields:
-                vals['period'] = rec['period']
+            for f in AUTO_REFILL_OPTIONAL_FIELDS:
+                if f in fields_to_read and f in target_fields \
+                        and rec.get(f) not in (None, False):
+                    vals[f] = rec[f]
+            if 'auto_refill_total' in target_fields:
+                # Required on the record: a run that says nothing about how
+                # much it moved is refused outright, and with it goes the
+                # link from every balance entry it produced.
+                vals.setdefault('auto_refill_total', 0.0)
             data_list = [{
                 'xml_id': self.b._xml_id(prefix, rec['id']),
                 'values': vals,
@@ -272,6 +317,7 @@ class VendingImporter(PhaseImporter):
                   'transaction_price', 'item_sold', 'item_sold_id']:
             if f in source_fields_info:
                 fields_to_read.append(f)
+        cursor_key = 'vending:%s' % model
         source_records = self.b._read_all(
             # Scope on reader_id, NOT door_id: the source leaves door_id NULL on
             # every vending event (32046/32046), and a dotted domain compiles to
@@ -279,7 +325,7 @@ class VendingImporter(PhaseImporter):
             # whole vending history while reporting "this client has none".
             # reader_id is required=True on the model and NOT NULL in the target.
             model, self.b._scoped_domain('reader_id.controller_id.webstack_id') + domain,
-            fields_to_read, batch_size=2000,
+            fields_to_read, cursor_key, batch_size=2000,
         )
         imported = 0
         already = 0
@@ -337,6 +383,7 @@ class VendingImporter(PhaseImporter):
                         table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert vending events: %s", e, exc_info=True)
+                self.b.rewind_cursors(cursor_key)
                 self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
@@ -344,9 +391,10 @@ class VendingImporter(PhaseImporter):
                 ))
                 return
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, already, skipped,
-            duration=time.time() - start, rejected_count=rejected,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, already,
+            skipped, duration=time.time() - start,
+            rejected_count=rejected,
         ))
 
     def _import_balance_history(self):
@@ -372,9 +420,10 @@ class VendingImporter(PhaseImporter):
             if f in source_fields_info:
                 fields_to_read.append(f)
 
+        cursor_key = 'vending:%s' % model
         source_records = self.b._read_all(
             model, self.b._scoped_domain('employee_id'), fields_to_read,
-            batch_size=5000)
+            cursor_key, batch_size=5000)
         imported = 0
         already = 0
         rejected = 0
@@ -422,6 +471,7 @@ class VendingImporter(PhaseImporter):
                         table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert balance history: %s", e, exc_info=True)
+                self.b.rewind_cursors(cursor_key)
                 self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
@@ -429,9 +479,10 @@ class VendingImporter(PhaseImporter):
                 ))
                 return
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, already, skipped,
-            duration=time.time() - start, rejected_count=rejected,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, already,
+            skipped, duration=time.time() - start,
+            rejected_count=rejected,
         ))
 
     def _update_employee_vending_fields(self):
@@ -446,14 +497,7 @@ class VendingImporter(PhaseImporter):
         co_domain = self.b._company_domain()
         label = 'hr.employee (vending fields)'
 
-        vending_fields = [
-            'hr_rfid_vending_in_attendance', 'hr_rfid_vending_limit',
-            'hr_rfid_vending_balance', 'hr_rfid_vending_auto_refill',
-            'hr_rfid_vending_auto_refill_amount', 'hr_rfid_vending_refill_amount',
-            'hr_rfid_vending_auto_refill_action', 'hr_rfid_vending_limit_type',
-            'hr_rfid_vending_limit_amount', 'hr_rfid_vending_limit_period',
-            'hr_rfid_vending_pin', 'hr_rfid_vending_negbal',
-        ]
+        vending_fields = EMPLOYEE_VENDING_FIELDS
 
         # Check which fields exist in source
         source_fields_info = self.b._get_source_fields('hr.employee')
@@ -488,15 +532,14 @@ class VendingImporter(PhaseImporter):
                 if f == 'id':
                     continue
                 if rec.get(f) is not False and rec[f] is not None:
-                    # Handle M2O auto_refill
-                    if f == 'hr_rfid_vending_auto_refill' and rec[f]:
-                        ar_target = self.b._map_m2o(
-                            'hr.rfid.vending.auto.refill', rec[f]
-                        )
-                        if ar_target:
-                            vals[f] = ar_target
-                    else:
-                        vals[f] = rec[f]
+                    # Everything here is a plain value. "Gets topped up
+                    # automatically" is a yes/no box on the person, not a link
+                    # to a refill run - read as a link, the answer "yes" was
+                    # looked up as record number True, found nothing, and the
+                    # box was left unticked for 1 401 people while the
+                    # protocol filled up with "Auto Refill Events No True has
+                    # no match here".
+                    vals[f] = rec[f]
 
             if not vals:
                 continue

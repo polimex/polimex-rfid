@@ -122,8 +122,9 @@ class CameraImporter(PhaseImporter):
         wanted = [f for f in self.CONFIG_FIELDS + self.IDENTITY_FIELDS
                   if f in source_fields and f in target_fields]
         fields_to_read = ['company_id'] + wanted
+        cursor_key = 'cameras:%s' % model
         source_records = self.b._read_all(
-            model, self.b._company_domain(), fields_to_read)
+            model, self.b._company_domain(), fields_to_read, cursor_key)
 
         imported = linked = skipped = retargeted = 0
         local_ip = get_local_ip()
@@ -187,10 +188,11 @@ class CameraImporter(PhaseImporter):
 
         wanted = [f for f in ('name', 'number', 'reader_type', 'mode', 'active')
                   if f in source_fields and f in target_fields]
+        cursor_key = 'cameras:readers:%s' % model
         source_records = self.b._read_all(
             model,
             [('camera_id', '!=', False)] + self.b._scoped_domain('camera_id'),
-            ['camera_id'] + wanted,
+            ['camera_id'] + wanted, cursor_key,
         )
 
         imported = linked = skipped = 0
@@ -249,10 +251,11 @@ class CameraImporter(PhaseImporter):
 
         wanted = [f for f in ('name', 'number', 'card_type', 'active')
                   if f in source_fields and f in target_fields]
+        cursor_key = 'cameras:doors:%s' % model
         source_records = self.b._read_all(
             model,
             [('camera_id', '!=', False)] + self.b._scoped_domain('camera_id'),
-            ['camera_id', 'reader_ids'] + wanted,
+            ['camera_id', 'reader_ids'] + wanted, cursor_key,
         )
 
         imported = linked = skipped = lost_card_type = 0
@@ -342,7 +345,8 @@ class CameraImporter(PhaseImporter):
         source_lists = {}
         if 'reader_ids' in self.b._get_source_fields(model):
             for rec in self.b._read_all(model, self.b._company_domain(),
-                                        ['reader_ids']):
+                                        ['reader_ids'],
+                                        'cameras:reader_lists:%s' % model):
                 source_lists[rec['id']] = rec.get('reader_ids') or []
 
         Reader = self.env['hr.rfid.reader'].sudo().with_context(active_test=False)
@@ -374,9 +378,10 @@ class CameraImporter(PhaseImporter):
         """Which plate sits in which bucket on which camera."""
         start = time.time()
         model = 'cctv.camera.rfid.rel'
+        cursor_key = 'cameras:%s' % model
         source_records = self.b._read_all(
             model, self.b._scoped_domain('camera_id'),
-            ['camera_id', 'card_id', 'list_category'],
+            ['camera_id', 'card_id', 'list_category'], cursor_key,
         )
 
         imported = linked = skipped = 0

@@ -32,30 +32,48 @@ class PeopleImporter(PhaseImporter):
         self._import_employees()
         return self.results
 
+    def _contacts_this_tenant_uses(self, co_domain):
+        """Ids of the contacts this tenant's cards and access groups refer to."""
+        ids = set()
+        for rec in self.b._search_read('hr.rfid.card', co_domain, ['contact_id']):
+            if rec.get('contact_id'):
+                ids.add(self.b._m2o_id(rec['contact_id']))
+        rel = 'hr.rfid.access.group.contact.rel'
+        if self.b._has_model(rel):
+            for rec in self.b._search_read(
+                    rel, self.b._scoped_domain('access_group_id'), ['contact_id']):
+                if rec.get('contact_id'):
+                    ids.add(self.b._m2o_id(rec['contact_id']))
+        ids.discard(False)
+        return sorted(ids)
+
     def _import_partners(self):
         """Step 5: res.partner - scope depends on user choice."""
         start = time.time()
         model = 'res.partner'
         co_domain = self.b._company_domain()
 
+        # Contacts that this tenant's access control actually USES: whoever
+        # holds one of its cards, and whoever is a member of one of its access
+        # groups. Their own company field is usually EMPTY - a contact in Odoo
+        # is shared, not owned - so a scope built on company alone leaves them
+        # behind. Measured moving an Odoo 14 tenant: all 11 card-holding
+        # contacts had no company, so none of them arrived, their 23 group
+        # memberships were dropped, and the card step then broke on the first
+        # unresolvable owner and cost the tenant every one of its 400 cards.
+        used_ids = self._contacts_this_tenant_uses(co_domain)
+
         if self.b.options.get('import_all_partners'):
-            domain = co_domain
+            domain = list(co_domain)
+            if used_ids:
+                domain = ['|'] + domain + [('id', 'in', used_ids)]
         else:
-            # Only partners with RFID cards
-            card_partner_ids = self.b._search_read(
-                'hr.rfid.card', co_domain,
-                ['contact_id']
-            )
-            partner_ids = list(set(
-                self.b._m2o_id(r['contact_id']) for r in card_partner_ids
-                if r.get('contact_id')
-            ))
-            if not partner_ids:
+            if not used_ids:
                 self.results.append(self.b._make_result(
                     model, 0, 0, duration=time.time() - start,
                 ))
                 return
-            domain = [('id', 'in', partner_ids)]
+            domain = [('id', 'in', used_ids)]
 
         source_fields_info = self.b._get_source_fields(model)
         target_fields = set(self.env[model]._fields.keys())
@@ -71,7 +89,9 @@ class PeopleImporter(PhaseImporter):
         if self.b.options.get('import_images') and 'image_1920' in source_fields_info:
             fields_to_read.append('image_1920')
 
-        source_records = self.b._read_all(model, domain, fields_to_read)
+        cursor_key = 'people:%s' % model
+        source_records = self.b._read_all(model, domain, fields_to_read,
+                                          cursor_key)
         imported = 0
         linked = 0
         prefix = model.replace('.', '_')
@@ -113,8 +133,15 @@ class PeopleImporter(PhaseImporter):
                         val = 'other'
                     vals[f] = val
 
-            if target_company_id:
-                vals['company_id'] = target_company_id
+            # Written even when there is none: a contact in Odoo is usually
+            # shared and carries NO company, and left out of the values the
+            # field falls to this system's default company - so a contact
+            # belonging to nobody arrived belonging to whichever company the
+            # transfer was started from. Measured on the Odoo 14 tenant: its
+            # 11 card-holding contacts all landed in "My Company", and the
+            # final check then reported 19 of the tenant's cards as held by a
+            # person of another company - correctly, because they were.
+            vals['company_id'] = target_company_id or False
 
             # Държавата е справочник на самата платформа - съпоставя се по
             # СТАБИЛЕН ISO код през external ID-то на base (`base.bg`), не по
@@ -139,28 +166,43 @@ class PeopleImporter(PhaseImporter):
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        # Pass 2: parent_id (each write in its own savepoint to skip cycles)
-        for rec in source_records:
-            if not rec.get('parent_id'):
-                continue
-            target_id = self.b._get_target_id(model, rec['id'])
-            parent_target = self.b._map_m2o(model, rec['parent_id'])
-            if target_id and parent_target:
-                try:
-                    with self.env.cr.savepoint():
-                        self.env[model].browse(target_id).with_context(
-                            **IMPORT_CONTEXT
-                        ).write({'parent_id': parent_target})
-                except Exception as e:
-                    _logger.warning(
-                        "Cannot set parent_id on partner %s → %s: %s",
-                        target_id, parent_target, e,
-                    )
+        # Pass 2: parent_id - over the WHOLE scope, and only once the reading
+        # has reached the end of it. A contact's parent is often a contact
+        # with a higher id, so on a source read in slices it lands in a later
+        # pass than its child; done per slice, every such link would be
+        # dropped for good. Reading id + parent_id again is cheap next to
+        # losing the company a person belongs to.
+        if self.b.read_is_finished(cursor_key):
+            self._link_partner_parents(model, domain)
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, linked,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, linked,
             duration=time.time() - start,
         ))
+
+    def _link_partner_parents(self, model, domain):
+        """Attach every imported contact to its parent contact."""
+        pairs = self.b._search_read(model, domain, ['parent_id'])
+        for rec in pairs:
+            if not rec.get('parent_id'):
+                continue
+            target_id = self.b._get_target_id(model, rec['id']) \
+                or self.b._resolve_from_imd(model, rec['id'])
+            parent_target = self.b._map_m2o(model, rec['parent_id'])
+            if not (target_id and parent_target):
+                continue
+            # Each write on its own so a cycle in the source cannot take the
+            # rest of the links with it.
+            try:
+                with self.env.cr.savepoint():
+                    self.env[model].browse(target_id).with_context(
+                        **IMPORT_CONTEXT
+                    ).write({'parent_id': parent_target})
+            except Exception as e:
+                _logger.warning(
+                    "Cannot set parent_id on partner %s → %s: %s",
+                    target_id, parent_target, e,
+                )
 
     def _resolve_country(self, source_country):
         """ID на държавата в целта, по ISO код от external ID-то на източника.
@@ -368,7 +410,9 @@ class PeopleImporter(PhaseImporter):
         if self.b.options.get('import_images') and 'image_1920' in source_fields_info:
             fields_to_read.append('image_1920')
 
-        source_records = self.b._read_all(model, domain, fields_to_read)
+        cursor_key = 'people:%s' % model
+        source_records = self.b._read_all(model, domain, fields_to_read,
+                                          cursor_key)
         imported = 0
         linked = 0
         skipped = 0
@@ -445,7 +489,7 @@ class PeopleImporter(PhaseImporter):
                 self.b._set_target_id(model, rec['id'], created.id)
                 imported += 1
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, linked, skipped,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))

@@ -530,7 +530,6 @@ class TestSecondRunChangesNothing(TransactionCase):
         expected = [
             "hr.department",
             "hr.employee.category",
-            "hr.rfid.time.schedule",
             "hr.rfid.webstack",
             "hr.rfid.ctrl",
             "hr.rfid.door",
@@ -552,6 +551,23 @@ class TestSecondRunChangesNothing(TransactionCase):
             missing,
             "the transfer produced nothing of these kinds, so the re-run "
             "checks would be measuring an empty target: %s" % ", ".join(missing),
+        )
+        # A time schedule is a SLOT in the controller, and this system makes
+        # its own sixteen for every company that exists. The one sitting in
+        # the slot is adopted, so no new record appears - two records for slot
+        # 1 would leave it to chance which of them a door permission means.
+        self.assertNotIn(
+            "hr.rfid.time.schedule", appeared,
+            "a second set of schedules was created beside the company's own - "
+            "32 records for 16 hardware slots, and no way to tell which one a "
+            "permission points at",
+        )
+        slots = self.env['hr.rfid.time.schedule'].sudo().with_context(
+            active_test=False).search_count([('company_id', '=', self.company.id)])
+        self.assertEqual(
+            slots, 16,
+            "the company should hold exactly the sixteen slots the hardware "
+            "has, and holds %s" % slots,
         )
         # The card type ships with the modules on both sides: it is matched to
         # the one already here, never copied.

@@ -78,7 +78,7 @@ class _FakeSource(BaseImporter):
         self.domains[model] = domain
         return [dict(rec) for rec in self._data.get(model, [])]
 
-    def _read_all(self, model, domain, fields, batch_size=1000, cursor_key=None):
+    def _read_all(self, model, domain, fields, cursor_key, batch_size=1000):
         return self._search_read(model, domain, fields)
 
     # -- capture the bulk contract without touching the DB -------------
@@ -94,9 +94,13 @@ class _FakeSource(BaseImporter):
         self.orm_calls.append((model_name, [dict(d['values']) for d in data_list]))
         return super()._load_records(model_name, data_list)
 
-    def _try_load_records(self, model_name, data_list):
+    def _try_load_records(self, model_name, data_list, note=True):
+        # Подписът следи истинския (`note` управлява дали отказът се брои в
+        # протокола). Двойник, който изостава от подписа, гърми с TypeError в
+        # чужд тест - и то само по пътя, който подава довода; същият клас
+        # разминаване вече счупи двойниците при задължителния курсор.
         self.orm_calls.append((model_name, [dict(d['values']) for d in data_list]))
-        return super()._try_load_records(model_name, data_list)
+        return super()._try_load_records(model_name, data_list, note=note)
 
     def vals_for(self, model):
         """Every values dict this run tried to write for `model`."""

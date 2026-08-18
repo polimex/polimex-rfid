@@ -508,7 +508,9 @@ class AccessImporter(PhaseImporter):
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 
-        source_records = self.b._read_all(model, co_domain, fields_to_read)
+        cursor_key = 'access:%s' % model
+        source_records = self.b._read_all(model, co_domain, fields_to_read,
+                                          cursor_key)
         imported = 0
         linked = 0
         skipped = 0
@@ -545,21 +547,34 @@ class AccessImporter(PhaseImporter):
             if card_type_target:
                 vals['card_type'] = card_type_target
 
-            # Owner: employee or contact (not both)
+            # Owner: employee or contact (not both). An owner that cannot be
+            # found costs THIS card and says why - it must not cost the other
+            #399. Measured moving an Odoo 14 tenant: one contact could not be
+            # resolved, the step raised on it, and not a single card of the
+            # whole tenant arrived.
+            owner_missing = ''
             if rec.get('employee_id'):
-                emp_target = self.b._require_target_id(
-                    'hr.employee', rec['employee_id'],
-                    context_msg=f"Card #{rec['id']} ({rec['number']})",
-                )
+                emp_target = self.b._map_m2o('hr.employee', rec['employee_id'])
                 if emp_target:
                     vals['employee_id'] = emp_target
+                else:
+                    owner_missing = self.env._(
+                        "card %(number)s belongs to a person who did not come "
+                        "across", number=rec.get('number') or rec['id'])
             elif rec.get('contact_id'):
-                contact_target = self.b._require_target_id(
-                    'res.partner', rec['contact_id'],
-                    context_msg=f"Card #{rec['id']} ({rec['number']})",
-                )
+                contact_target = self.b._map_m2o('res.partner', rec['contact_id'])
                 if contact_target:
                     vals['contact_id'] = contact_target
+                else:
+                    owner_missing = self.env._(
+                        "card %(number)s belongs to a contact who did not come "
+                        "across", number=rec.get('number') or rec['id'])
+            if owner_missing:
+                # A card with no owner opens doors for nobody and can be handed
+                # to somebody else here by accident - it is left behind, named.
+                self.b.note_skip_reason(owner_missing)
+                skipped += 1
+                continue
 
             # Date fields
             if rec.get('activate_on'):
@@ -593,8 +608,8 @@ class AccessImporter(PhaseImporter):
             else:
                 skipped += 1
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, linked, skipped,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, linked, skipped,
             duration=time.time() - start,
         ))
 

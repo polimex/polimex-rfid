@@ -50,6 +50,15 @@ class PhaseImporter:
     NAME = ''
     #: Modules that must be installed on the SOURCE for this phase to mean anything.
     REQUIRES_SOURCE = ()
+    #: Modules to ASK the source about without gating the phase on them.
+    #: For a phase that carries more than one kind of data, each with its own
+    #: switch: the switch is only true when the source is known to keep that
+    #: kind, and "known" comes from this probe. Measured on the 27-tenant
+    #: cloud: the daily working-time roll-ups live in hr_attendance_late,
+    #: which no phase named, so the source was never asked, the switch stayed
+    #: off by itself and 152 469 rows were left behind - with nothing in the
+    #: protocol to say so, because a switch that is off leaves no line.
+    PROBE_SOURCE = ()
     #: Models (or (model, field) pairs) this system needs in order to receive the data.
     REQUIRES_TARGET = ()
     #: Key in the options dict; the phase runs only when it is set.
@@ -86,10 +95,17 @@ class PhaseImporter:
         """
         for step in steps:
             name = step.__name__.lstrip('_').replace('_', ' ')
+            # Where its reading had got to and what it had counted, before it
+            # ran. A step that fails has its ROWS undone by the savepoint; its
+            # cursor and its totals must go back with them, or the next pass
+            # starts after records that never landed and the protocol keeps
+            # counting them as transferred.
+            progress = self.b.progress_snapshot()
             try:
                 with self.env.cr.savepoint():
                     step()
             except Exception as exc:
+                self.b.restore_progress(progress)
                 _logger.warning("Step %s could not be completed: %s",
                                 name, exc, exc_info=True)
                 self.results.append(self.b._make_result(
@@ -146,7 +162,8 @@ def phase_plan(env, options, source_modules):
 
 def source_probe_modules():
     """Every module the source is asked about, derived from the phases."""
-    return sorted({m for cls in registry() for m in cls.REQUIRES_SOURCE})
+    return sorted({m for cls in registry()
+                   for m in tuple(cls.REQUIRES_SOURCE) + tuple(cls.PROBE_SOURCE)})
 
 
 def total_weight():
@@ -181,6 +198,7 @@ def build_registry():
     from .attendance_importer import AttendanceImporter
     from .service_importer import ServiceImporter
     from .consistency_importer import ConsistencyImporter
+    from .reconcile_importer import ReconcileImporter
     return [
         CoreImporter,
         PeopleImporter,
@@ -197,6 +215,10 @@ def build_registry():
         ServiceImporter,
         IoTableImporter,
         ConsistencyImporter,
+        # LAST, and it has to be: it asks the other system for its numbers and
+        # compares them with what arrived, so it is only meaningful once every
+        # other phase has had its turn.
+        ReconcileImporter,
     ]
 
 

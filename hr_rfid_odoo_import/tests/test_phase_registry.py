@@ -99,10 +99,28 @@ class TestPhaseRegistry(TransactionCase):
 
         Държан отделно, той изостава при всяко добавяне на фаза - точно така
         камерите изобщо не бяха потърсени.
+
+        Пита се и за модул, който само ЗАХРАНВА отметка, без да е условие за
+        фазата: неговата отметка може да е вдигната само ако знаем, че
+        източникът води такива данни. На облака с 27 фирми точно това
+        премълча 152 469 дневни обобщения - никоя фаза не назоваваше
+        hr_attendance_late, източникът не беше питан, отметката остана
+        свалена сама и в протокола нямаше и ред за това.
         """
         probed = set(source_probe_modules())
-        declared = {m for cls in registry() for m in cls.REQUIRES_SOURCE}
+        declared = {m for cls in registry()
+                    for m in tuple(cls.REQUIRES_SOURCE) + tuple(cls.PROBE_SOURCE)}
         self.assertEqual(probed, declared)
+
+    def test_every_option_gated_module_is_asked_about(self):
+        """Отметка, зависеща от модул на източника, е питана за него."""
+        probed = set(source_probe_modules())
+        self.assertIn(
+            'hr_attendance_late', probed,
+            'Дневните обобщения имат собствена отметка, а модулът, който ги '
+            'води, не се пита - отметката не може да се вдигне и данните '
+            'остават, без някой да разбере',
+        )
 
     def test_plan_needs_no_network(self):
         """Планът се смята без връзка към източника и без запис в базата."""

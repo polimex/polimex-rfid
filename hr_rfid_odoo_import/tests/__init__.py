@@ -17,3 +17,11 @@ from . import test_adoption_of_auto_hardware
 from . import test_leaves_phase
 from . import test_source_refuses_a_field
 from . import test_tours
+from . import test_big_tenant_finishes
+from . import test_older_source_missing_models
+from . import test_field_names_are_real
+from . import test_protocol_tells_the_truth
+from . import test_multi_company_isolation
+from . import test_older_source_shapes
+from . import test_reconcile_with_the_source
+from . import test_every_read_can_be_resumed

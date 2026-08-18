@@ -786,6 +786,11 @@ class HrRfidOdooImportWiz(models.TransientModel):
             )
 
             company_ids = [l.source_id for l in selected]
+            # Counted the way the transfer READS - archived records included.
+            # Counted plainly, this page promised 6 395 cards and 5 984 people
+            # where the transfer went on to bring 8 505 and 6 176: the numbers
+            # the operator compares the protocol against were the wrong ones.
+            counter = self._conflict_probe_importer(company_ids)
             co_domain = [('company_id', 'in', company_ids)] if len(company_ids) > 1 \
                 else [('company_id', '=', company_ids[0])]
 
@@ -807,10 +812,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
 
             for model, domain, label in count_models:
                 try:
-                    count = models_proxy.execute_kw(
-                        self.source_db, self.source_uid, self.source_password,
-                        model, 'search_count', [domain]
-                    )
+                    count = counter._search_count(model, domain)
                     preview_lines.append('%s: %s' % (label, count))
                 except Exception:
                     preview_lines.append(self.env._('%(kind)s: could not be counted', kind=label))
@@ -834,10 +836,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
                     if self.event_date_from:
                         ev_domain.append(('event_time', '>=', str(self.event_date_from)))
                     try:
-                        count = models_proxy.execute_kw(
-                            self.source_db, self.source_uid, self.source_password,
-                            model, 'search_count', [ev_domain]
-                        )
+                        count = counter._search_count(model, ev_domain)
                         preview_lines.append('%s: %s' % (label, count))
                     except Exception:
                         preview_lines.append(self.env._('%(kind)s: could not be counted', kind=label))
@@ -1267,6 +1266,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
         # после гръмнаха една по една с ForeignKeyViolation. По-опасният случай
         # е тих: освободеният id може да бъде преизползван от друг запис.
         id_map_snapshot = {m: dict(v) for m, v in phase_importer.b.id_map.items()}
+        progress_snapshot = phase_importer.b.progress_snapshot()
 
         try:
             with self.env.cr.savepoint():
@@ -1307,6 +1307,7 @@ class HrRfidOdooImportWiz(models.TransientModel):
             # изтрити записи.
             phase_importer.b.id_map.clear()
             phase_importer.b.id_map.update(id_map_snapshot)
+            phase_importer.b.restore_progress(progress_snapshot)
             self.env['hr.rfid.odoo.import.log'].create({
                 'phase': phase_id,
                 'model': phase_name,

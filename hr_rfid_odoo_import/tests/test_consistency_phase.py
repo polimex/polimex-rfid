@@ -44,9 +44,28 @@ class TestConsistencyPhase(TransactionCase):
             'company_id': self.company.id,
         })
 
-    def test_the_check_is_the_last_phase(self):
-        """Валидаторът гледа ЦЯЛОТО - значи върви след всичко останало."""
-        self.assertEqual(registry()[-1].NAME, 'Consistency check')
+    def test_the_checks_come_after_all_the_data(self):
+        """Проверка преди данните не значи нищо - значи вървят последни.
+
+        Накрая има ДВЕ проверки и редът им е смислов: първо тази, която гледа
+        дали пренесеното се държи (вериги, собственици, фирми), после сверката
+        с другата система, която пита нея за числата ѝ. Сверката е последна,
+        защото сравнява с ВСИЧКО, което е дошло - включително онова, което
+        предната проверка може да е оплакала.
+        """
+        order = [cls.NAME for cls in registry()]
+        self.assertEqual(
+            order[-2:],
+            ['Consistency check', 'Reconciliation with the other system'],
+            'Двете заключителни проверки не са последни или са разменени: %s'
+            % order[-3:],
+        )
+        data_phases = order[:-2]
+        self.assertNotIn(
+            'Consistency check', data_phases,
+            'Валидаторът върви преди фаза с данни - тогава той гледа половин '
+            'цел и мълчи за другата половина',
+        )
 
     def test_a_clean_target_reports_every_check_green(self):
         rows = self._rows()

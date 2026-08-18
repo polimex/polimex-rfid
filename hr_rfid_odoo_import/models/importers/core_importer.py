@@ -10,6 +10,25 @@ from .phase import PhaseImporter
 _logger = logging.getLogger(__name__)
 
 
+#: What a controller carries besides its name and address, asked for only when
+#: BOTH sides have it. Every name here exists on the target model - asserted by
+#: a test, because a name that exists in neither version is dropped by the
+#: intersection WITHOUT A WORD. Two did: 'readers_count' and
+#: 'time_schedules_count' (the real names are 'readers' and 'time_schedules'),
+#: and since the output timings are validated against those capacities, all ten
+#: of a live cloud's were refused with "Time Schedule number 2 not in range
+#: from 1 to 0". 'inputs'/'outputs' are here for the same reason: the device
+#: reports them on first contact, so a migrated controller has none until its
+#: hardware is back on the network.
+CTRL_OPTIONAL_FIELDS = [
+    'serial_number', 'hw_version', 'sw_version', 'mode', 'external_db',
+    'max_cards_count', 'max_events_count', 'readers', 'time_schedules',
+    'io_table_lines', 'alarm_lines', 'temperature', 'humidity',
+    'system_voltage', 'input_voltage', 'emergency_group_id',
+    'inputs', 'outputs', 'inputs_mask', 'cash_contained', 'alarm_lines_setup',
+]
+
+
 class CoreImporter(PhaseImporter):
     """Phase 1 + Phase 3: Foundation + Hardware.
 
@@ -286,10 +305,30 @@ class CoreImporter(PhaseImporter):
             if not target_company_id:
                 continue
 
-            # Identity comes ONLY from the source id, through its external
-            # ID. The text is a second check on the record already found, not
-            # a key to search by.
-            existing = self.b.find_by_external_id(model, rec['id'], rec.get('name'))
+            # A schedule is a SLOT in the controller: sixteen of them, numbered,
+            # and this system makes its own set for every company the moment
+            # the company exists. Creating ours beside them gives each tenant
+            # two records for slot 1 - measured on the 27-tenant cloud, 32 per
+            # company where the hardware has 16 - and from then on it is a
+            # guess which of the two a door permission points at. So the one
+            # already sitting in that slot is ADOPTED, exactly as the
+            # controllers and doors the automation builds are.
+            if not self.b._resolve_from_imd(model, rec['id']):
+                twin = self.env[model].sudo().with_context(
+                    active_test=False).search([
+                        ('company_id', '=', target_company_id),
+                        ('number', '=', rec.get('number')),
+                    ], limit=1)
+                if twin and not self.b.adopt_existing(model, rec['id'], twin):
+                    continue
+
+            # Identity comes ONLY from the source id, through its external ID.
+            # No name is offered for the second check here on purpose: the slot
+            # this transfer adopts carries the name THIS system gave it (in its
+            # own language), so a differing name is expected rather than
+            # suspicious - and the cross-check would otherwise warn about all
+            # 432 of them on every run.
+            existing = self.b.find_by_external_id(model, rec['id'])
             if existing:
                 # Update ts_data and name from source for linked records
                 update_vals = {}
@@ -504,12 +543,7 @@ class CoreImporter(PhaseImporter):
         # Required fields (must exist in all RFID versions)
         fields_to_read = ['name', 'ctrl_id', 'webstack_id']
         # Optional fields - only read if they exist in BOTH source and target
-        for f in ['serial_number', 'hw_version', 'sw_version', 'mode',
-                  'external_db', 'max_cards_count', 'max_events_count',
-                  'readers_count', 'time_schedules_count', 'io_table_lines',
-                  'alarm_lines', 'is_relay_ctrl', 'temperature', 'humidity',
-                  'system_voltage', 'input_voltage', 'emergency_group_id',
-                  'inputs_mask', 'cash_contained', 'alarm_lines_setup', 'active']:
+        for f in CTRL_OPTIONAL_FIELDS:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
 

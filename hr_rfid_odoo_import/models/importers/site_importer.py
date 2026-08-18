@@ -105,7 +105,7 @@ class SiteImporter(PhaseImporter):
         wanted = [f for f in self.SITE_FIELDS
                   if f in source_fields and f in target_fields]
 
-        source_records = self.b._read_all(
+        source_records = self.b._search_read(
             model, self.b._company_domain(),
             ['company_id', 'parent_id', 'make_access_group'] + wanted,
         )
@@ -172,7 +172,7 @@ class SiteImporter(PhaseImporter):
             records = self.b._read_all(
                 model,
                 [('site_id', '!=', False)] + self.b._scoped_domain('site_id'),
-                ['site_id'])
+                ['site_id'], 'sites:equipment:%s' % model)
             total += len(records)
             for rec in records:
                 # _map_m2o, not the in-memory map alone: a later pass builds a
@@ -215,7 +215,7 @@ class SiteImporter(PhaseImporter):
 
         records = self.b._read_all(
             model, [('site_ids', '!=', False)] + self.b._company_domain(),
-            ['site_ids'])
+            ['site_ids'], 'sites:contacts:%s' % model)
         updated = 0
         for rec in records:
             target_id = self.b._get_target_id(model, rec['id'])
@@ -257,7 +257,7 @@ class SiteGroupImporter(PhaseImporter):
     def run(self, wizard):
         start = time.time()
         model = 'hr.rfid.site'
-        source_records = self.b._read_all(
+        source_records = self.b._search_read(
             model, self.b._company_domain(), ['make_access_group'])
         wanted = [r for r in source_records if r.get('make_access_group')]
 

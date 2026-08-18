@@ -30,19 +30,27 @@ class _PagedSource(_FakeSource):
     преди времето му да изтече.
     """
 
-    def _read_all(self, model, domain, fields, batch_size=1000,
-                  cursor_key=None):
+    #: Колко записа минават през един пас. По-малко от източника в теста,
+    #: за да са нужни НЯКОЛКО паса - формата, заради която курсорът съществува.
+    PAGE = 1000
+
+    def _read_all(self, model, domain, fields, cursor_key, batch_size=1000):
         self.domains[model] = domain
-        if cursor_key and self.read_cursors.get(cursor_key) == self.CURSOR_FINISHED:
+        if self.read_cursors.get(cursor_key) == self.CURSOR_FINISHED:
             return []
-        last = self.read_cursors.get(cursor_key, 0) if cursor_key else 0
+        last = self.read_cursors.get(cursor_key, 0)
         rows = [dict(r) for r in self._data.get(model, []) if r['id'] > last]
-        if cursor_key:
-            if rows:
-                self.read_cursors[cursor_key] = rows[-1]['id']
-            else:
+        # One page per call - exactly what one pass manages before its time
+        # runs out. The page is capped so a step reading a big model needs
+        # several passes, which is the shape the cursor exists for.
+        page, rest = rows[:self.PAGE], rows[self.PAGE:]
+        if page:
+            self.read_cursors[cursor_key] = page[-1]['id']
+            if not rest:
                 self.read_cursors[cursor_key] = self.CURSOR_FINISHED
-        return rows
+        else:
+            self.read_cursors[cursor_key] = self.CURSOR_FINISHED
+        return page
 
     def _search_count(self, model, domain):
         leaves = [leaf for leaf in domain

@@ -117,3 +117,25 @@ transfer recognise it, so the next transfer would bring it over a second time.
 To refresh that data, run the transfer again. Attendance recorded HERE is
 rebuilt as normal; the refusal names the people it concerns, so you can rebuild
 a period, or a set of people, that does not include them.
+
+**Does a big customer finish?** Yes, and that is what the passes are for: every
+long read remembers where it got to, so the next pass carries on instead of
+starting over. Measured on a 27-tenant cloud - 6 176 people, 289 847 access
+events, 280 046 vending entries, 200 004 temperature readings - the whole of it
+comes across, and each line of the protocol counts the WHOLE transfer rather
+than the slice of the last pass.
+
+**A step says the other system keeps no such thing.** Older versions really do
+keep less: Odoo 14 has no daily working-time roll-ups at all, for instance. The
+line says so and the transfer carries on; the attendances themselves still come
+across.
+
+**The final check names things that were already wrong.** It says which of them
+the other system has as well - those are carried over as they stand, not caused
+by the transfer. Anything it does NOT attribute to the other system appeared
+here and is worth looking at.
+
+**Why are there still sixteen time schedules and not thirty-two?** Because this
+system makes its own set for every company, and the transfer adopts the
+schedule sitting in each slot instead of creating a second one beside it. One
+record per slot is the only way a door permission can mean one thing.

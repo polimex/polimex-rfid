@@ -423,6 +423,10 @@ class HrRfidOdooImportRun(models.Model):
         # record. The synchronous path has guarded against this since a live
         # incident; the background one must too.
         id_map_snapshot = {m: dict(v) for m, v in phase.b.id_map.items()}
+        # Same reasoning for the reading position and the counts: the savepoint
+        # takes the rows back, and a cursor left past them would make the next
+        # pass skip exactly what never landed.
+        progress_snapshot = phase.b.progress_snapshot()
         try:
             with self.env.cr.savepoint():
                 results = phase.run(self)
@@ -434,6 +438,7 @@ class HrRfidOdooImportRun(models.Model):
             _logger.error("Transfer step %s failed: %s", cls.NAME, exc, exc_info=True)
             phase.b.id_map.clear()
             phase.b.id_map.update(id_map_snapshot)
+            phase.b.restore_progress(progress_snapshot)
             # The savepoint has already undone everything this phase wrote and
             # cleared the cache with it (_FlushingSavepoint.rollback,
             # odoo/sql_db.py:137-140). Nothing more may be undone here: a plain

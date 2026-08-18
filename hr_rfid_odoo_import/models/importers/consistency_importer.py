@@ -31,6 +31,42 @@ class ConsistencyImporter(PhaseImporter):
     OPTION = ''
     WEIGHT = 1
 
+    #: Checks whose finding can be a faithful copy of the other system rather
+    #: than something this transfer did. Keyed by check, valued by the count
+    #: of the SAME shape on the source: equal numbers mean the other system
+    #: has it too, and calling that an error makes a correct transfer read as
+    #: a broken one. Measured on the 27-tenant cloud: 3 controllers behind
+    #: archived modules and 46 readers with no door - identical on both sides,
+    #: reported here as two red lines that sent the operator hunting.
+    def _same_shape_on_the_source(self, name):
+        counters = {
+            'controllers_behind_archived_module':
+                self._source_controllers_behind_archived_module,
+            'readers_without_door': self._source_readers_without_door,
+        }
+        counter = counters.get(name)
+        if not counter:
+            return None
+        try:
+            return counter()
+        except Exception:                                      # noqa: BLE001
+            _logger.warning(
+                "Could not ask the other system about %s - the finding is "
+                "reported as it stands", name, exc_info=True)
+            return None
+
+    def _source_controllers_behind_archived_module(self):
+        archived = [rec['id'] for rec in self.b._search_read(
+            'hr.rfid.webstack', [('active', '=', False)], ['id'])]
+        if not archived:
+            return 0
+        return self.b._search_count(
+            'hr.rfid.ctrl', [('webstack_id', 'in', archived)])
+
+    def _source_readers_without_door(self):
+        readers = self.b._search_read('hr.rfid.reader', [], ['door_id'])
+        return sum(1 for rec in readers if not rec.get('door_id'))
+
     def run(self, wizard):
         checks = [
             (self.env._("Controllers hidden behind an archived module"),
@@ -69,11 +105,26 @@ class ConsistencyImporter(PhaseImporter):
                     error=self.env._("the check itself could not run: %(error)s",
                                      error=e)))
                 continue
+            status, note = 'done', ''
+            if offenders:
+                note = self._name_them(offenders)
+                inherited = self._same_shape_on_the_source(fn.__name__.lstrip('_'))
+                if inherited is not None and inherited >= len(offenders):
+                    # The other system has just as many. Worth saying - it is
+                    # a real weakness of the installation - but it is not
+                    # something this transfer did, and a red line here reads
+                    # as "the transfer broke it".
+                    status = 'partial'
+                    note = self.env._(
+                        "the other system has the same %(count)s - carried "
+                        "over as it stands, not caused here: %(who)s",
+                        count=inherited, who=note)
+                else:
+                    status = 'error'
             self.results.append(self.b._make_result(
                 title, len(offenders), 0, skipped_count=len(offenders),
                 duration=time.time() - start,
-                status='done' if not offenders else 'error',
-                error='' if not offenders else self._name_them(offenders),
+                status=status, error=note,
             ))
         return self.results
 

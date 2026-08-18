@@ -62,7 +62,7 @@ class _FakeSource(BaseImporter):
                      include_archived=True):
         return [dict(rec) for rec in self._data.get(model, [])]
 
-    def _read_all(self, model, domain, fields, batch_size=1000):
+    def _read_all(self, model, domain, fields, cursor_key, batch_size=1000):
         return self._search_read(model, domain, fields)
 
 

@@ -340,39 +340,55 @@ class BaseImporter:
     #: Marks a read that has reached the end of the source.
     CURSOR_FINISHED = -1
 
-    def _read_all(self, model, domain, fields, batch_size=1000, cursor_key=None):
+    def _read_all(self, model, domain, fields, cursor_key, batch_size=1000):
         """ID-based pagination for large datasets.
 
         Stops between pages when the caller's time is up, and REMEMBERS where
-        it stopped when given a ``cursor_key``. Without that memory the next
-        pass starts from the first page again: on a real customer with 44 756
-        events, each pass re-read the same opening pages, ran out of time in
-        the same place, and the transfer never advanced - measured, 29 passes
-        that moved nothing. Skipping already-imported rows is not enough,
-        because the cost is the reading, not the writing.
+        it stopped. Without that memory the next pass starts from the first
+        page again: on a real customer with 44 756 events, each pass re-read
+        the same opening pages, ran out of time in the same place, and the
+        transfer never advanced - measured, 29 passes that moved nothing.
+        Skipping already-imported rows is not enough, because the cost is the
+        reading, not the writing.
+
+        ``cursor_key`` IS REQUIRED, and that is the guard rather than a
+        convention: it was optional, the events were given one and eleven other
+        reads were not, and the mechanism read as fixed while half of it was
+        not. Measured on the 27-tenant cloud (6 176 employees, 200 004
+        temperature readings, 280 046 vending rows): the People step read the
+        same first 1 000 employees on every pass and the transfer sat at 1 001
+        of them for good. A step that cannot name its cursor cannot be
+        resumed, so it must not compile.
+
+        The key must be unique to the STEP, not just the model: two steps
+        reading the same model through different domains (the readers of a
+        controller and the readers of a camera) would otherwise share one
+        cursor and skip each other's rows.
 
         The cursor is kept by the caller (the run record) so it survives the
         process, and is set to CURSOR_FINISHED once the source is exhausted, so
         a completed read is not repeated at all.
         """
-        if cursor_key and self.read_cursors.get(cursor_key) == self.CURSOR_FINISHED:
+        if not cursor_key:
+            raise ValueError(
+                "_read_all(%s) needs a cursor key naming the step - without "
+                "one the read starts over on every pass" % model)
+        if self.read_cursors.get(cursor_key) == self.CURSOR_FINISHED:
             return []
 
         all_records = []
-        last_id = self.read_cursors.get(cursor_key, 0) if cursor_key else 0
+        last_id = self.read_cursors.get(cursor_key, 0)
         while True:
             batch_domain = [('id', '>', last_id)] + domain
             records = self._search_read(
                 model, batch_domain, fields, order='id asc', limit=batch_size
             )
             if not records:
-                if cursor_key:
-                    self.read_cursors[cursor_key] = self.CURSOR_FINISHED
+                self.read_cursors[cursor_key] = self.CURSOR_FINISHED
                 break
             all_records.extend(records)
             last_id = records[-1]['id']
-            if cursor_key:
-                self.read_cursors[cursor_key] = last_id
+            self.read_cursors[cursor_key] = last_id
             if self.time_is_up and self.time_is_up():
                 self.stopped_early = True
                 _logger.info(
@@ -393,6 +409,61 @@ class BaseImporter:
         for name, value in counts.items():
             totals[name] = int(totals.get(name, 0)) + int(value or 0)
         return totals
+
+    def read_is_finished(self, cursor_key):
+        """Whether that read has reached the end of the source.
+
+        The signal a step needs before doing work that only makes sense over
+        the WHOLE set - linking a contact to its parent contact, for instance,
+        where the parent may sit in a later slice than the child.
+        """
+        return self.read_cursors.get(cursor_key) == self.CURSOR_FINISHED
+
+    def accumulated_result(self, cursor_key, model, source_count,
+                           imported_count, linked_count=0, skipped_count=0,
+                           duration=0, status='done', error='',
+                           rejected_count=0):
+        """One protocol row for a RESUMABLE step - counting the whole transfer.
+
+        A pass counts only the slice it read itself. Reported as it stands,
+        the last pass of a finished step reads "0 of them came across" over a
+        step that moved every record it was given - which is exactly the line
+        an owner read on a live migration and had to ask about.
+
+        Same key as the cursor on purpose: the totals travel with the cursor,
+        so a step cannot advance its reading without advancing its count.
+        """
+        totals = self.accumulate(
+            cursor_key,
+            source=source_count, imported=imported_count,
+            linked=linked_count, skipped=skipped_count,
+            rejected=rejected_count,
+        )
+        return self._make_result(
+            model, totals['source'], totals['imported'], totals['linked'],
+            totals['skipped'], duration=duration, status=status, error=error,
+            rejected_count=totals['rejected'],
+        )
+
+    def progress_snapshot(self):
+        """Where every read got to and what every step has counted, copied.
+
+        Taken before a step runs and put back if the step's rows are undone.
+        The two must move together with the ROWS: a cursor that advanced over
+        rows a savepoint then threw away makes the next pass skip exactly the
+        records that never landed, and totals counted over the same rows would
+        report them as transferred for ever.
+        """
+        return (dict(self.read_cursors),
+                {k: dict(v) for k, v in self.step_totals.items()})
+
+    def restore_progress(self, snapshot):
+        """Put the reading position and the counts back where they were."""
+        cursors, totals = snapshot
+        self.read_cursors.clear()
+        self.read_cursors.update(cursors)
+        self.step_totals.clear()
+        self.step_totals.update(totals)
 
     def rewind_cursors(self, *cursor_keys):
         """Forget where the named reads got to, so they start over.

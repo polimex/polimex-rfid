@@ -175,5 +175,7 @@ class HrRfidOdooImportCompanyLine(models.TransientModel):
     target_company_id = fields.Many2one(
         'res.company',
         string='Target Company',
-        help="Existing res.company on this instance to merge the source data into. Leave empty to create a fresh company with the source name.",
+        help="Which company here receives this tenant's data. It must already "
+             "exist - create it first if it does not, or untick Import to "
+             "leave this tenant behind.",
     )

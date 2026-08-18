@@ -182,6 +182,53 @@ Authors
 Website: https://polimex.co
 
 
+## Transfer contract <a id='contract'></a>
+
+What a caller and a reviewer can rely on. Written by hand; the sections around
+it are generated from the code.
+
+**Every long read is resumable, and that is enforced.** `BaseImporter._read_all`
+takes a mandatory `cursor_key`, unique to the STEP (two steps reading the same
+model through different domains must not share one). The key remembers where
+the read got to, on the run record, so the next pass carries on; it is set to
+`CURSOR_FINISHED` when the source is exhausted, and a finished read is not
+repeated. A step that cannot name its cursor raises rather than silently
+restarting from the beginning on every pass - which is what stalled a 6 176
+person tenant at 1 001 people for good.
+
+**A step reports the RUN, not the pass.** `BaseImporter.accumulated_result`
+takes the same key as the cursor and adds this pass's slice to the running
+totals, so a finished step whose last pass legitimately read nothing still
+reports what the whole transfer moved.
+
+**Rows, cursors and totals move together.** `progress_snapshot()` /
+`restore_progress()` are taken around every step (`PhaseImporter.steps`) and
+every phase (`run._run_one_phase`, and the synchronous path in the wizard): when
+a savepoint takes the rows back, the reading position and the counts go back
+with them, so the next pass does not skip records that never landed.
+
+**A phase declares what it needs, and what it merely ASKS about.**
+`REQUIRES_SOURCE` gates the phase; `PROBE_SOURCE` only adds module names to the
+list the wizard asks the source about, for data that has its own switch. Both
+feed `source_probe_modules()`, so no list is kept by hand.
+
+**Field names are read from BOTH schemas, never assumed.** Each step intersects
+its candidates with the source's `fields_get` and the target's columns, so a
+name that exists in neither is dropped WITHOUT A WORD. Four such lists shipped
+with names that existed in neither version - the controller's capacities
+(`readers`, `time_schedules`), the daily roll-up's numbers, the vending profile
+of a person, and a refill run's total - and each one cost real data on a live
+cloud. When adding a field, check it against both sides.
+
+**What the automation here already made is ADOPTED, not duplicated.**
+Controllers, doors and readers by their device key; cameras by their chain; time
+schedules by (company, slot). Every one of those exists before a transfer runs,
+because this system creates them itself.
+
+**The final check separates inherited from introduced.** Phase 9 asks the source
+whether it has the same shape; equal numbers are reported as carried over
+rather than as a fault of the transfer.
+
 ## Installation & Configuration <a id='install'></a>
 
 Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.

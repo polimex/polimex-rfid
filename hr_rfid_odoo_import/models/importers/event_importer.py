@@ -536,7 +536,9 @@ class EventImporter(PhaseImporter):
 
         fields_to_read = ['th_id', 'temperature', 'humidity', source_time_field]
 
-        source_records = self.b._read_all(model, domain, fields_to_read, batch_size=5000)
+        cursor_key = 'events:%s' % model
+        source_records = self.b._read_all(model, domain, fields_to_read,
+                                          cursor_key, batch_size=5000)
         imported = 0
         already = 0
         rejected = 0
@@ -573,6 +575,7 @@ class EventImporter(PhaseImporter):
                         table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert TH logs: %s", e, exc_info=True)
+                self.b.rewind_cursors(cursor_key)
                 self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
@@ -580,7 +583,7 @@ class EventImporter(PhaseImporter):
                 ))
                 return
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, already, skipped,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))

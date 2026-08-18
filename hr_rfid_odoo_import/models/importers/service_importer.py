@@ -226,9 +226,10 @@ class ServiceImporter(PhaseImporter):
                 fields_to_read.append(f)
 
         # A sale belongs to the company that owns its service.
+        cursor_key = 'service:%s' % model
         source_records = self.b._read_all(
             model, self.b._scoped_domain('service_id'), fields_to_read,
-            batch_size=2000)
+            cursor_key, batch_size=2000)
         imported = 0
         already = 0
         rejected = 0
@@ -275,6 +276,7 @@ class ServiceImporter(PhaseImporter):
                         table, columns, rows, model, src_ids)
             except Exception as e:
                 _logger.error("Failed to insert service sales: %s", e, exc_info=True)
+                self.b.rewind_cursors(cursor_key)
                 self.results.append(self.b._make_result(
                     model, len(source_records), 0, 0, len(source_records),
                     duration=time.time() - start,
@@ -282,7 +284,7 @@ class ServiceImporter(PhaseImporter):
                 ))
                 return
 
-        self.results.append(self.b._make_result(
-            model, len(source_records), imported, already, skipped,
+        self.results.append(self.b.accumulated_result(
+            cursor_key, model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
