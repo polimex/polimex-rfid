@@ -22,29 +22,48 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
     def _get_service_sale_seq(self):
         return self.env['ir.sequence'].next_by_code('base.rfid.service')
 
-    def _calc_start(self):
-        def _calc_start(start_date=fields.Date.today()):
-            if self.fixed_time:
-                dt = datetime.combine(start_date,
-                                      float_to_time(service_id.time_interval_start))
-            else:
-                return fields.Datetime.now()
-            return pytz.timezone(self.env.user.tz).localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
+    def _site_tz(self):
+        """The clock the site runs on - the one the customer reads."""
+        return pytz.timezone(self.env.user.tz or self.env.company.partner_id.tz
+                             or 'UTC')
 
-        service_id = self.service_id
+    def _to_utc(self, naive_local):
+        return self._site_tz().localize(naive_local).astimezone(
+            pytz.UTC).replace(tzinfo=None)
+
+    def _local_date(self, moment=None):
+        """The date it is AT THE SITE right now (or at the given moment)."""
+        moment = moment or fields.Datetime.now()
+        return pytz.UTC.localize(moment).astimezone(self._site_tz()).date()
+
+    def _opens_on(self, local_day):
+        """When the service opens on that day of the site's calendar."""
+        return self._to_utc(datetime.combine(
+            local_day, float_to_time(self.service_id.time_interval_start)))
+
+    def _calc_start(self):
+        """When the visit being sold begins.
+
+        Two things here were wrong, and both put the period in the PAST:
+
+        * the day was a DEFAULT ARGUMENT - ``start_date=fields.Date.today()`` -
+          which Python evaluates ONCE, when the module is imported. A server
+          that had been up for a day or two therefore sold every visit against
+          the date it BOOTED on; the "+1 day" correction downstream covers one
+          day, so from the second day on the till simply refused the card with
+          "the period ends in the past". Nothing about the sale itself said
+          which day it was using, which is why it looked random.
+        * the day was taken in UTC, while opening hours are the SITE's. For a
+          third of the day in summer here the two are different dates.
+        """
+        if not self.fixed_time:
+            return fields.Datetime.now()
         extend_sale_id = self.extend_sale_id
-        if extend_sale_id:
-            if fields.Datetime.now() < extend_sale_id.start_date:
-                # "before"
-                return _calc_start(extend_sale_id.end_date.date())
-            elif extend_sale_id.start_date <= fields.Datetime.now() <= extend_sale_id.end_date:
-                # "in"
-                return _calc_start(extend_sale_id.end_date.date())
-            else:
-                # "after"
-                return _calc_start()
-        else:
-            return _calc_start()
+        if extend_sale_id and fields.Datetime.now() <= extend_sale_id.end_date:
+            # Extending a pass that is still running (or not started yet):
+            # the new period picks up on the day the old one ends.
+            return self._opens_on(self._local_date(extend_sale_id.end_date))
+        return self._opens_on(self._local_date())
 
     def _calc_end(self, start_date=None):
         service_id = self.service_id
@@ -52,15 +71,16 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         time_interval_number = service_id.time_interval_number
         time_interval_end = service_id.time_interval_end
 
+        start = self.start_date or start_date
         if self.fixed_time:
-            new_date = (self.start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
-            new_time = float_to_time(time_interval_end)
-            dt = datetime.combine(new_date.date(), new_time)
-            user_tz = pytz.timezone(self.env.user.tz)
-            dt = user_tz.localize(dt).astimezone(pytz.UTC).replace(tzinfo=None)
-            return dt
-        else:
-            return (self.start_date or start_date) + _intervalTypes[time_interval_type](time_interval_number)
+            # The last day of the pass, and the hour the site closes on it -
+            # both read on the SITE's calendar. Taken from the UTC date, a pass
+            # sold in the evening ended on the wrong day.
+            last_local_day = (self._local_date(start)
+                              + _intervalTypes[time_interval_type](time_interval_number))
+            return self._to_utc(datetime.combine(
+                last_local_day, float_to_time(time_interval_end)))
+        return start + _intervalTypes[time_interval_type](time_interval_number)
 
     extend_sale_id = fields.Many2one(
         comodel_name='rfid.service.sale',
