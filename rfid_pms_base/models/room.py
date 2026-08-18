@@ -7,20 +7,37 @@ class SchEncoderRoom(models.Model):
     _description = 'Rooms'
     _order = 'number'
 
-    name = fields.Char(required=True)
-    group = fields.Char(default='Ungrouped')
-    number = fields.Integer(string='Internal number', required=True)
-    company_id = fields.Many2one('res.company',
-                                 string='Company',
-                                 default=lambda self: self.env.company)
-    door_id = fields.Many2one('hr.rfid.door',
-                              string='Room door',
-                              required=True
-                              )
-    access_group_id = fields.Many2one('hr.rfid.access.group',
-                                      string='Guest Group',
-                                      required=True
-                                      )
+    name = fields.Char(
+        required=True,
+        help="Friendly label for the room shown to the receptionist (e.g. 'Suite 101' or 'Twin Sea View'). The internal number below is the technical identifier used by the controller.",
+    )
+    group = fields.Char(
+        default='Ungrouped',
+        help="Optional grouping label used to split the kanban into columns (e.g. floor or wing). Rooms with the same group appear side by side.",
+    )
+    number = fields.Integer(
+        string='Internal number',
+        required=True,
+        help="Numeric identifier the controller uses to address this room's door. Must be unique across the whole hotel; valid range 1-65535.",
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        default=lambda self: self.env.company,
+        help="Company that owns the room. Hotel data is isolated per company; users only see rooms of their allowed companies.",
+    )
+    door_id = fields.Many2one(
+        'hr.rfid.door',
+        string='Room door',
+        required=True,
+        help="The controller door wired to this room's lock. The DND, Clean and Card-present flags shown on the kanban card mirror this door's hotel-mode state.",
+    )
+    access_group_id = fields.Many2one(
+        'hr.rfid.access.group',
+        string='Guest Group',
+        required=True,
+        help="Access group the issued guest cards are added to. Defines which doors a card can open (typically the room + common areas) and on what schedule.",
+    )
     all_employee_ids = fields.Many2many(
         'hr.rfid.access.group.employee.rel',
         string='All employees',
@@ -34,30 +51,51 @@ class SchEncoderRoom(models.Model):
         help='All contacts that use this access group, including the ones from the inheritors',
         related='access_group_id.all_contact_ids',
     )
-    reservation = fields.Many2one('res.partner',
-                                  string='Reservation',
-                                  compute='_compute_reservation'
-                                  )
+    reservation = fields.Many2one(
+        'res.partner',
+        string='Reservation',
+        compute='_compute_reservation',
+        help="Parent partner that groups every guest card currently issued for this room. Empty when the room is free; populated automatically when the first card is encoded.",
+    )
 
     hb_dnd = fields.Boolean(
         string='DND button pressed',
         related='door_id.hb_dnd',
+        help="True when the guest pressed Do Not Disturb on the in-room console. Staff cards still open the door; cleaning carts visiting the room will see the DND flag on the kanban card.",
     )
     hb_clean = fields.Boolean(
         string='Clean button pressed',
         related='door_id.hb_clean',
+        help="True when the guest requested cleaning from the in-room console. Visible to housekeeping on the kanban so they know which rooms to prioritise.",
     )
     hb_card_present = fields.Boolean(
         string='Present card in reader',
         related='door_id.hb_card_present',
+        help="True while a card is inserted in the room's energy-saver reader. Used by the kanban to switch the guest icon between present / absent and to gate the Last Insert Card label.",
     )
 
     # log = fields.One2many(comodel_name='sch_encoder.encoder.log', inverse_name='room_id')
     # bms_log_ids = fields.One2many(comodel_name='sch_encoder.bms.log', inverse_name='room_id')
-    last_temperature = fields.Float(string='Temperature', compute='_compute_temperature')
-    last_humidity = fields.Float(string='Humidity', compute='_compute_temperature')
-    last_occupancy = fields.Char(string='Occupancy', compute='_compute_temperature')
-    last_insert_name = fields.Char(string='Last Insert Card', compute='_compute_last_insert_name')
+    last_temperature = fields.Float(
+        string='Temperature',
+        compute='_compute_temperature',
+        help="Room temperature reported by the BMS sensor. Currently a stub value until a BMS sensor module is connected.",
+    )
+    last_humidity = fields.Float(
+        string='Humidity',
+        compute='_compute_temperature',
+        help="Room humidity reported by the BMS sensor. Currently a stub value until a BMS sensor module is connected.",
+    )
+    last_occupancy = fields.Char(
+        string='Occupancy',
+        compute='_compute_temperature',
+        help="Occupancy state reported by the BMS sensor. Currently a stub value until a BMS sensor module is connected.",
+    )
+    last_insert_name = fields.Char(
+        string='Last Insert Card',
+        compute='_compute_last_insert_name',
+        help="Name of the employee or guest whose card was last inserted at the room's energy-saver reader. Shown only while a card is currently in the reader.",
+    )
 
     @api.depends('hb_card_present')
     def _compute_last_insert_name(self):
@@ -116,8 +154,9 @@ class SchEncoderRoom(models.Model):
 
     @api.constrains('number')
     def _check_number(self):
-        if 0 > self.number > 65535:
-            raise ValidationError(_('Room number have to be between 1 and 65535'))
+        for record in self:
+            if record.number < 1 or record.number > 65535:
+                raise ValidationError(_('Room number have to be between 1 and 65535'))
 
     _sql_constraints = [
         ('unique_room_number', 'unique(number)', _("Duplicate room number.")),

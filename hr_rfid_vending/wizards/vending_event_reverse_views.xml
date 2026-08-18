@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="vending_event_reverse_form" model="ir.ui.view">
+        <field name="name">hr.rfid.vending.event.reverse.form</field>
+        <field name="model">hr.rfid.vending.event.reverse</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="event_id"/>
+                    <field name="reason" placeholder="Reason for reversal..."/>
+                </group>
+                <footer>
+                    <button name="action_reverse" string="Reverse" type="object"
+                            class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

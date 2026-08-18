@@ -126,7 +126,7 @@
             <field name="name">hr.rfid.ctrl.alarm.group.kanban</field>
             <field name="model">hr.rfid.ctrl.alarm.group</field>
             <field name="arch" type="xml">
-                <kanban group_create="false"
+                <kanban sample="1" group_create="false"
                         group_edit="false"
                         quick_create="false"
                         default_group_by="parent_id">
@@ -218,6 +218,32 @@
 
         <record id="hr_rfid_ctrl_alarm_group_action" model="ir.actions.act_window">
             <field name="name">Alarm Line Groups</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first alarm group
+                </p>
+                <p>
+                    Alarm groups help you organize and manage multiple alarm sensors efficiently.
+                    Instead of controlling each sensor individually, you can:
+                </p>
+                <ul>
+                    <li><b>Arm/Disarm Multiple Alarms</b> - Control all sensors in a group with one click</li>
+                    <li><b>Organize by Area</b> - Group sensors by floor, building, or department</li>
+                    <li><b>Create Hierarchies</b> - Build parent-child relationships (e.g., Campus -> Building -> Floor)</li>
+                    <li><b>Monitor Status</b> - See if all alarms in a group are armed, disarmed, or mixed</li>
+                </ul>
+                <p>
+                    <b>Example Groups:</b>
+                </p>
+                <ul>
+                    <li>"First Floor Security" - All sensors on the first floor</li>
+                    <li>"Warehouse Perimeter" - All door and window sensors around the warehouse</li>
+                    <li>"After Hours Protection" - Motion detectors that should be armed at night</li>
+                </ul>
+                <p>
+                    Click <b>Create</b> to set up your first alarm group and start organizing your security system.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.ctrl.alarm.group</field>
             <field name="view_mode">hierarchy,kanban,tree,form,search</field>
             <field name="view_id" ref="hr_rfid_ctrl_alarm_group_hierarchy_view"/>

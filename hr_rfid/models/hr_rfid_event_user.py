@@ -59,6 +59,16 @@ class HrRfidUserEvent(models.Model):
         ondelete='cascade',
     )
 
+    department_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        related='employee_id.department_id',
+        store=True,
+        index=True,
+        help="Department of the employee at the time this event was recorded. "
+             "Stored copy lets us filter and group events by department directly.",
+    )
+
     contact_id = fields.Many2one(
         'res.partner',
         string='Contact',
@@ -106,6 +116,7 @@ class HrRfidUserEvent(models.Model):
         help='Response command',
         readonly=True,
         ondelete='set null',
+        index=True,
     )
 
     event_time = fields.Datetime(
@@ -132,20 +143,118 @@ class HrRfidUserEvent(models.Model):
 
     @api.autovacuum
     def _gc_user_events_life(self):
-        for c in self.env['res.company'].search([]):
-            if c.event_lifetime is None:
-                return False
-            lifetime = timedelta(days=int(c.event_lifetime))
-            today = fields.Date.today()
-            res = self.with_company(c).search([
-                ('event_time', '<', today - lifetime)
-            ], limit=1000)
-            res.unlink()
-            # self._cr.execute("""
-            #             DELETE FROM hr_rfid_event_user
-            #             WHERE event_time < NOW() - INTERVAL '%s days'
-            #         """, [c.event_lifetime])
-            _logger.info("GC'd %d old rfid user event entries", self._cr.rowcount)
+        """
+        Clean up old user event records per company based on event_lifetime.
+
+        Per-company batched raw SQL joining
+        event->reader->ctrl->webstack->company_id, with commit/rollback
+        isolation, following Odoo core GC patterns.
+        """
+        batch_size = 1000
+        max_batches_per_company = 20
+
+        companies = self.env['res.company'].search([])
+        total_deleted = 0
+
+        _logger.info(
+            "[USER EVENTS] Starting GC across %d companies",
+            len(companies)
+        )
+
+        for company in companies:
+            if company.event_lifetime is None:
+                _logger.debug(
+                    "[USER EVENTS] Company %s has no event_lifetime set, skipping",
+                    company.name
+                )
+                continue
+
+            try:
+                cutoff_date = fields.Datetime.now() - timedelta(days=int(company.event_lifetime))
+                company_deleted = 0
+                batch_num = 0
+
+                _logger.info(
+                    "[USER EVENTS] Company %s (ID: %d) - deleting events older than %s (%d days)",
+                    company.name,
+                    company.id,
+                    cutoff_date,
+                    company.event_lifetime
+                )
+
+                while batch_num < max_batches_per_company:
+                    batch_num += 1
+
+                    try:
+                        self._cr.execute("""
+                            DELETE FROM hr_rfid_event_user
+                            WHERE id IN (
+                                SELECT e.id
+                                FROM hr_rfid_event_user e
+                                INNER JOIN hr_rfid_reader r ON e.reader_id = r.id
+                                INNER JOIN hr_rfid_ctrl c ON r.controller_id = c.id
+                                INNER JOIN hr_rfid_webstack w ON c.webstack_id = w.id
+                                WHERE e.event_time < %s
+                                  AND w.company_id = %s
+                                ORDER BY e.id
+                                LIMIT %s
+                            )
+                        """, (cutoff_date, company.id, batch_size))
+
+                        deleted_count = self._cr.rowcount
+
+                        if deleted_count == 0:
+                            break
+
+                        self._cr.commit()
+
+                        company_deleted += deleted_count
+                        total_deleted += deleted_count
+
+                        _logger.info(
+                            "[USER EVENTS] Company %s batch %d: Deleted %d events (company total: %d)",
+                            company.name,
+                            batch_num,
+                            deleted_count,
+                            company_deleted
+                        )
+
+                        if deleted_count < batch_size:
+                            break
+
+                    except Exception as batch_error:
+                        _logger.error(
+                            "[USER EVENTS] Company %s batch %d error: %s",
+                            company.name,
+                            batch_num,
+                            str(batch_error),
+                            exc_info=True
+                        )
+                        self._cr.rollback()
+                        break
+
+                if company_deleted > 0:
+                    _logger.info(
+                        "[USER EVENTS] Company %s completed: %d events deleted in %d batches",
+                        company.name,
+                        company_deleted,
+                        batch_num
+                    )
+
+            except Exception as company_error:
+                _logger.error(
+                    "[USER EVENTS] Company %s fatal error: %s",
+                    company.name,
+                    str(company_error),
+                    exc_info=True
+                )
+                self._cr.rollback()
+
+        _logger.info(
+            "[USER EVENTS] GC completed: %d total events deleted across %d companies",
+            total_deleted,
+            len(companies)
+        )
 
         return True
 
@@ -310,10 +419,14 @@ class HrRfidUserEvent(models.Model):
         }
 
     @api.model
-    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None, domain=[], limit=1):
+    def last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None, domain=None, limit=1):
         """ Get last event for user
 
             """
+        # Mutable default arg: a shared [] accumulated domain leaves across calls
+        # and leaked filters between unrelated last_event() lookups. (backport 1a4ab5c)
+        if domain is None:
+            domain = []
         if door_ids is not None:
             domain.append(
                 ('door_id', 'in', door_ids.mapped('id'))

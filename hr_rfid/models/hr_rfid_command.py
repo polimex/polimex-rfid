@@ -212,21 +212,104 @@ class HrRfidCommands(models.Model):
 
     @api.autovacuum
     def _gc_clean_old_commands(self):
-        res = self.env['hr.rfid.command'].search([
-            ('create_date', '<', fields.Datetime.now() - timedelta(days=14))
-        ], limit=5000)
-        res.unlink()
-        # self._cr.execute("""
-        #             DELETE FROM hr_rfid_command
-        #             WHERE create_date < NOW() - INTERVAL '14 days'
-        #         """)
-        _logger.info("GC'd %d old rfid cmd entries", self._cr.rowcount)
+        """
+        Clean up old command records in batches to prevent timeout.
+
+        Follows Odoo core patterns (ir.autovacuum commit-per-cleanup,
+        ir.property raw SQL when ORM overhead not needed, standard batching).
+        Performance relies on the index on hr_rfid_event_user.command_id.
+        """
+        batch_size = 2000
+        max_batches = 50
+        retention_days = 14
+
+        cutoff_date = fields.Datetime.now() - timedelta(days=retention_days)
+
+        total_deleted = 0
+        batch_num = 0
+        consecutive_errors = 0
+        max_consecutive_errors = 3
+
+        _logger.info(
+            "Starting GC for hr.rfid.command records older than %s",
+            cutoff_date
+        )
+
+        try:
+            while batch_num < max_batches:
+                batch_num += 1
+
+                try:
+                    self._cr.execute("""
+                        DELETE FROM hr_rfid_command
+                        WHERE id IN (
+                            SELECT id FROM hr_rfid_command
+                            WHERE create_date < %s
+                            ORDER BY id
+                            LIMIT %s
+                        )
+                    """, (cutoff_date, batch_size))
+
+                    deleted_count = self._cr.rowcount
+
+                    if deleted_count == 0:
+                        _logger.info("Batch %d: No more old commands to delete", batch_num)
+                        break
+
+                    self._cr.commit()
+
+                    total_deleted += deleted_count
+                    consecutive_errors = 0
+
+                    _logger.info(
+                        "Batch %d: Deleted %d command records (total: %d)",
+                        batch_num,
+                        deleted_count,
+                        total_deleted
+                    )
+
+                    if deleted_count < batch_size:
+                        break
+
+                except Exception as batch_error:
+                    consecutive_errors += 1
+                    _logger.error(
+                        "Batch %d: Error deleting commands: %s",
+                        batch_num,
+                        str(batch_error),
+                        exc_info=True
+                    )
+                    self._cr.rollback()
+
+                    if consecutive_errors >= max_consecutive_errors:
+                        _logger.error(
+                            "Stopping GC after %d consecutive errors",
+                            consecutive_errors
+                        )
+                        break
+
+            _logger.info(
+                "GC completed: deleted %d command records in %d batches",
+                total_deleted,
+                batch_num
+            )
+
+        except Exception as e:
+            _logger.error(
+                "Fatal error in GC: %s (deleted %d records before error)",
+                str(e),
+                total_deleted,
+                exc_info=True
+            )
 
     def resend_action(self):
         for c in self.filtered(lambda cmd: cmd.status in ['Failure', 'Process']):
             c.write({
                 'status': 'Wait',
-                'retries': c.retries + 1,
+                # Reset retries on a manual resend instead of incrementing - an
+                # ever-growing counter never hit the (== 5) retry limit and caused
+                # an infinite retry loop that flooded the controller. (backport 1b62ae0)
+                'retries': 0,
                 'response': None,
                 'error': 0,
             })
@@ -665,6 +748,7 @@ class HrRfidCommands(models.Model):
         ctrl_mode = int(data[42:44], 16)
         external_db = (ctrl_mode & 0x20) > 0
         relay_time_factor = '1' if ctrl_mode & 0x40 else '0'
+        interlocking_mode = (ctrl_mode & 0x10) > 0
         dual_person_mode = (ctrl_mode & 0x08) > 0
         ctrl_mode = ctrl_mode & 0x07
 
@@ -832,7 +916,6 @@ class HrRfidCommands(models.Model):
                 create_reader('R3', 3, '0', last_door)
                 create_reader('R4', 4, '1', last_door)
             else:  # (ctrl_mode == 2 and readers_count == 2) or ctrl_mode == 4
-                # print('harware version', hw_ver)
                 last_door = create_door(gen_d_name(1, self.controller_id), 1)
                 if last_door:
                     last_door = last_door.id
@@ -887,6 +970,7 @@ class HrRfidCommands(models.Model):
             'mode': ctrl_mode,
             'external_db': external_db,
             'relay_time_factor': relay_time_factor,
+            'interlocking_mode': interlocking_mode,
             'dual_person_mode': dual_person_mode,
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,
@@ -894,12 +978,12 @@ class HrRfidCommands(models.Model):
         }
         if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None and ctrl_already_existed:
             # ctrl_dict['io_table'] = polimex.get_default_io_table(hw_ver, sw_ver, ctrl_mode)
-            self.controller_id.write(ctrl_dict)
+            self.controller_id.with_context({'from_controller': True}).write(ctrl_dict)
             new_io = polimex.get_default_io_table(int(hw_ver), ctrl_mode)
             if new_io:
                 self.controller_id.change_io_table(new_io)
         else:
-            self.controller_id.write(ctrl_dict)
+            self.controller_id.with_context({'from_controller': True}).write(ctrl_dict)
 
         cmd_env = self.env['hr.rfid.command'].sudo()
 
@@ -987,6 +1071,13 @@ class HrRfidCommands(models.Model):
 
             json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
                 dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100
+            )
+        cmd_json_len = len(json.dumps(json_cmd))
+        if cmd_json_len > 400:
+            _logger.warning(
+                'Command %s data exceeds WebSDK 400-byte limit (%d bytes), '
+                'controller %s may reject it',
+                command.cmd, cmd_json_len, command.controller_id.name,
             )
         command.request = json.dumps(json_cmd)
         return json_cmd

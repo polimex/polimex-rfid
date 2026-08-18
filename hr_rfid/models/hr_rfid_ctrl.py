@@ -269,7 +269,10 @@ class HrRfidController(models.Model):
 
     external_db = fields.Boolean(
         string='External DB',
-        help='If the controller uses the "ExternalDB" feature.',
+        help='External database mode. When on, the controller does not keep the '
+             'card list in its own memory - on every card it asks the server in '
+             'real time whether to allow or deny access. Use it for large '
+             'installations where access is managed centrally.',
         default=False,
         tracking=True
     )
@@ -285,6 +288,17 @@ class HrRfidController(models.Model):
         string='Dual Person Mode',
         default=False,
         tracking=True
+    )
+
+    interlocking_mode = fields.Boolean(
+        string='Interlocking Mode',
+        default=False,
+        tracking=True,
+        help='Interlocking (mantrap): only one of the controller\'s doors may be '
+             'open at a time - a second door stays locked until the first one is '
+             'closed. Available on iCON115 and iCON130 (firmware V7.44 or newer). '
+             'On legacy iCON50 firmware the same setting controlled the '
+             'now-removed Master Card mode.'
     )
 
     max_cards_count = fields.Integer(
@@ -597,8 +611,12 @@ class HrRfidController(models.Model):
             return 'no_alarm', 'unknown'
         try:
             state = int(self.alarm_line_states[(zone_number - 1) * 2:(zone_number - 1) * 2 + 2], 16)
-        except Exception as e:
-            print(self.name, zone_number, e)
+        except Exception:
+            _logger.warning(
+                "Could not parse alarm line state for %s zone %s",
+                self.name, zone_number, exc_info=True,
+            )
+            return 'no_alarm', 'unknown'
         res_state = 'disabled'
         if state & 1 == 1: res_state = 'short'
         if state & 2 == 2: res_state = 'normal'
@@ -616,7 +634,7 @@ class HrRfidController(models.Model):
         self.ensure_one()
         if not self.is_relay_ctrl() and self.io_table:
             if not (0 < line_number < self.io_table_lines + 1):
-                raise "Invalid IO Line number"
+                raise ValidationError(_('Invalid IO line number'))
             line = self.io_table[16 * (line_number - 1):16 * (line_number - 1) + 16]
             return [int(line[i * 2:i * 2 + 2], 16) for i in reversed(range(0, 8))]
         else:
@@ -625,7 +643,7 @@ class HrRfidController(models.Model):
     def _set_io_line(self, line_number: int, line: [int]):
         self.ensure_one()
         if not (0 < line_number < self.io_table_lines + 1):
-            raise "Invalid IO Line number"
+            raise ValidationError(_('Invalid IO line number'))
         self.change_io_table(''.join([f"{line[i]:02X}" for i in reversed(range(0, 8))]), line_number)
 
     def change_io_table(self, new_io_table, line=0, no_command=False):
@@ -725,6 +743,8 @@ class HrRfidController(models.Model):
 
             if old_ext_db != new_ext_db:
                 ctrl.write_controller_mode(new_ext_db=new_ext_db)
+            if not from_controller and 'interlocking_mode' in vals.keys():
+                ctrl.write_controller_mode()
             if (
                     'high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get(
                 'readed', False):
@@ -930,7 +950,12 @@ class HrRfidController(models.Model):
                 try:
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:
-                    pass  # the exception have to be logged before
+                    _logger.error('Direct execute failed for %s: %s', c.controller_id.name, e)
+                    if c.status == 'Process':
+                        c.status = 'Wait'
+                        c.retries += 1
+                    if c.retries >= 3:
+                        c.status = 'Failure'
 
         return commands
 
@@ -1198,13 +1223,17 @@ class HrRfidController(models.Model):
         else:
             return commands
 
-    def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None):
+    def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None, new_interlocking_mode: bool = None):
         if new_mode is None:
             new_mode = self.mode
         if new_ext_db is None:
             new_ext_db = self.external_db
+        if new_interlocking_mode is None:
+            new_interlocking_mode = self.interlocking_mode
 
-        cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_mode))
+        # contr_mode byte: bit5 external DB, bit4 interlocking (master card on
+        # legacy iCON50 fw), bits0-2 mode.
+        cmd_data = '%02X' % (int(new_ext_db) * 0x20 + int(new_interlocking_mode) * 0x10 + int(new_mode))
         cmd = self._base_command('D5', cmd_data)
         self.read_controller_information_cmd()
         return cmd

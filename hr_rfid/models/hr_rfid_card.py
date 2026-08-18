@@ -141,7 +141,7 @@ class HrRfidCard(models.Model):
         for c in self:
             if c.number and c.card_input_type:
                 c._check_len_number()
-                if c.card_input_type == 'w34s':
+                if c.card_input_type == 'w34s' and c.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'):
                     h4 = '{:08X}'.format(int(c.number))
                     # Split the 8-character hex string into two parts
                     part1, part2 = h4[:4], h4[4:]
@@ -216,10 +216,15 @@ class HrRfidCard(models.Model):
     def _compute_pin_code(self):
         for card in self:
             card.pin_code = card.get_owner().hr_rfid_pin_code
-    @api.depends('number', 'card_type')
+    @api.depends('internal_number', 'card_type')
     def _compute_barcode_number(self):
+        # Encode from internal_number, not from number: internal_number is the
+        # canonical 5+5 decimal form regardless of card_input_type, so w34_to_hex
+        # always returns the hex actually programmed onto the card. Using number
+        # directly mis-encodes w34s (single 10d) cards and the QR/badge no longer
+        # matched what the reader sends -> "Could not find the card". (backport 4745601)
         for c in self:
-            c.barcode_number = c.number and self.w34_to_hex(c.number).upper() or False
+            c.barcode_number = c.internal_number and self.w34_to_hex(c.internal_number).upper() or False
             c.is_barcode = c.card_type == self.env.ref('hr_rfid.hr_rfid_card_type_barcode')
 
     @api.constrains('employee_id', 'contact_id')
@@ -235,11 +240,9 @@ class HrRfidCard(models.Model):
     def _check_len_number(self):
         for card in self:
             if card.number:
-                if len(card.number) < 10:
-                    zeroes = 10 - len(card.number)
-                    card.number = (zeroes * '0') + card.number
-                elif len(card.number) > 10:
-                    raise exceptions.UserError(_('Card number must be exactly 10 digits'))
+                # Delegate length/padding to the card type so the Licence Plate
+                # type can opt out of zero-padding. (backport b18919c)
+                card.number = card.card_type.check_and_fix_card_numer(card.number)
 
     @api.constrains('number')
     def _check_number(self):
@@ -253,7 +256,7 @@ class HrRfidCard(models.Model):
             if len(card.number) > 10:
                 raise exceptions.ValidationError(_('Card number must be exactly 10 digits'))
 
-            if not card.number.isdigit():
+            if not card.number.isdigit() and card.card_type != self.env.ref('hr_rfid.hr_rfid_card_type_8'):
                 raise exceptions.ValidationError('Card number digits must be from 0 to 9')
 
 
@@ -463,6 +466,41 @@ class HrRfidCardType(models.Model):
         string='Doors',
         help='Doors that will open to this card type',
     )
+
+    def check_and_fix_card_numer(self, number):
+        # Length/padding + Licence-Plate normalization for a card number.
+        # Licence Plate (card_type_8) cards carry an alphanumeric plate, so they
+        # are normalized (Cyrillic -> Latin look-alikes, upper-cased, stripped)
+        # instead of zero-padded to 10 digits. (backport b18919c + a8637fa)
+        def normalize_plate(plate):
+            mapping = {
+                'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M',
+                'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T', 'Х': 'X',
+                'У': 'Y',
+                'а': 'A', 'в': 'B', 'е': 'E', 'к': 'K', 'м': 'M',
+                'н': 'H', 'о': 'O', 'р': 'P', 'с': 'C', 'т': 'T', 'х': 'X',
+                'у': 'Y',
+            }
+            result = []
+            for ch in plate:
+                if ch.isdigit():
+                    result.append(ch)
+                elif ch in mapping:
+                    result.append(mapping[ch])
+                elif 'A' <= ch <= 'Z' or 'a' <= ch <= 'z':
+                    result.append(ch.upper())
+            return ''.join(result)
+
+        self.ensure_one()
+        if self.id == self.env.ref('hr_rfid.hr_rfid_card_type_8').id:
+            return normalize_plate(number)
+        else:
+            if len(number) < 10:
+                zeroes = 10 - len(number)
+                return (zeroes * '0') + number
+            elif len(number) > 10:
+                raise exceptions.UserError(_('Card number must be exactly 10 digits'))
+            return number
 
     def unlink(self):
         default_card_type_id = self.env.ref('hr_rfid.hr_rfid_card_type_def').id

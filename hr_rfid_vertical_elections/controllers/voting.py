@@ -30,7 +30,9 @@ class VoteController(http.Controller):
     @http.route("/voting_display/<string:access_token>/get_existing_sessions", type="json", auth="public")
     def get_existing_sessions(self, access_token):
         display_sudo = self._fetch_display_from_access_token(access_token)
-        return request.env["voting.session"].sudo().with_context({'lang':'bg_BG'}).search_read(
+        # Use the active environment language; bg is installed as part of the
+        # localisation pack but its full code is "bg", not "bg_BG".
+        return request.env["voting.session"].sudo().search_read(
             [("display_id", "=", display_sudo.id), ("planned_date", "=", datetime.today())],
             ["name", "create_uid", "planned_date", "start_datetime", "end_datetime", "state",
              'voting_time', 'vote_results_time', 'vote_total', 'vote_yes', 'vote_no', 'vote_abstain', 'final_vote'],
@@ -39,13 +41,18 @@ class VoteController(http.Controller):
 
     @http.route("/voting_display/<string:access_token>/session/<int:session_id>/close", type="json", auth="public")
     def session_close(self, access_token, session_id, **kwargs):
-        fields_allowlist = {"state", "end_datetime"}
-        session_id =  self._fetch_sessions(session_id, access_token)
-        fields_dict = {field: kwargs[field] for field in fields_allowlist if kwargs.get(field)}
-        fields_dict["end_datetime"] = datetime.now()
-        result = session_id.write(fields_dict)
-        session_id.message_post(body="Session closed from display.")
-        return result
+        session = self._fetch_sessions(session_id, access_token)
+        # SECURITY: this is a public (token-only) endpoint, so it must never
+        # accept a client-supplied state - writing an arbitrary `state` here
+        # would let anyone holding the display token reopen or re-draft a
+        # finished vote (election-integrity / mass-assignment). The kiosk only
+        # ever closes the currently-open session; any other `state` passed in
+        # kwargs is intentionally ignored.
+        if session.state != 'open':
+            return True
+        session.write({"end_datetime": datetime.now(), "state": "closed"})
+        session.message_post(body="Session closed from display.")
+        return True
 
     # ------
     # TOOLS

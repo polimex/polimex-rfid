@@ -454,7 +454,7 @@ class HrRfidWebstack(models.Model):
                     _('Could not connect to the module. \n'
                       "Check if it is turned on or if it's on a different ip:\n") +
                     str(e))
-            except KeyError as __:
+            except KeyError:
                 raise exceptions.ValidationError(_('Information returned by the webstack at {} is invalid', host))
             except Exception as e:
                 raise exceptions.ValidationError(_('Unexpected communication error:\n') + str(e))
@@ -625,8 +625,8 @@ class HrRfidWebstack(models.Model):
                                                      + response.content.decode())
             _logger.info('Direct receiving %s' % str(result))
             return result
-        except requests.exceptions.ReadTimeout as __:
-            _logger.error(f'Timeout {str(__.args)}')
+        except requests.exceptions.ReadTimeout as e:
+            _logger.error('Timeout %s', e.args)
         # except json.decoder.JSONDecodeError as __:
         #     _logger.error(f'JSON decoder error {str(__.args)} in {}')
         except Exception as e:
@@ -646,11 +646,17 @@ class HrRfidWebstack(models.Model):
         If no "command_id" is provided, the method will execute the command by calling the "_execute_direct_cmd" method of the current model instance, passing the command as a parameter. The method will then return the response from the command execution.
         """
         if command_id:
-            # TODO Direct execution of stored commands
-            cmd_response = command_id.webstack_id._execute_direct_cmd({'cmd': command_id.send_command(200)['cmd']})
-            if cmd_response:
-                command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
-            else:
+            cmd_response = None
+            try:
+                cmd_response = command_id.webstack_id._execute_direct_cmd(
+                    {'cmd': command_id.send_command(200)['cmd']})
+                if cmd_response:
+                    command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
+                else:
+                    command_id.status = 'Wait'
+            except Exception as e:
+                _logger.error('Direct execute failed for command %s on %s: %s',
+                              command_id.cmd, command_id.controller_id.name, e)
                 command_id.status = 'Wait'
             return cmd_response
         else:
@@ -726,7 +732,7 @@ class HrRfidWebstack(models.Model):
         return self.get_ws_time(post_data).strftime('%Y-%m-%d %H:%M:%S')
 
     def _retry_command(self, status_code, cmd, event=None):
-        if cmd.retries == 5:
+        if cmd.retries >= 5:
             cmd.status = 'Failure'
             return self.check_for_unsent_cmd(status_code, event)
 
@@ -751,21 +757,18 @@ class HrRfidWebstack(models.Model):
         processing_comm = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Process'),
-        ])
+        ], order='id asc', limit=1)
 
-        if len(processing_comm) > 0:
-            processing_comm = processing_comm[-1]
+        if processing_comm:
             return self._retry_command(status_code, processing_comm, event)
 
         command_id = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Wait'),
-        ], order='id desc')
+        ], order='id asc', limit=1)
 
-        if len(command_id) == 0:
+        if not command_id:
             return {'status': status_code}
-
-        command_id = command_id[-1]
 
         if event is not None:
             event.command_id = command_id.id
@@ -862,7 +865,10 @@ class HrRfidWebstack(models.Model):
 
         if len(command) == 0:
             controller.report_sys_ev(_('Controller sent us a response to a command we never sent'))
-            return not direct_cmd and self.check_for_unsent_cmd(200)
+            # Orphan response (command we never sent): return status only, do not
+            # immediately send the next queued command - prevents response flooding.
+            # Next heartbeat naturally resumes command processing. (backport 58827cc)
+            return {'status': 200}
 
         # controller not response!
         if response['e'] != 0:

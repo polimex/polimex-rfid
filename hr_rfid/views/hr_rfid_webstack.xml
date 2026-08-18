@@ -78,6 +78,10 @@
                                 <field name="behind_nat" widget="boolean_toggle"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
+                            <p class="text-muted" colspan="2">
+                                <i class="fa fa-lightbulb-o" role="img"/>
+                                Tip: turn Behind NAT on when the module sits on a private LAN and Odoo cannot reach its IP directly - in that case the module dials out to Odoo. Leave it off and fill Last IP when Odoo can dial the module on the LAN.
+                            </p>
                             <group string="Status">
                                 <field name="last_ip"/>
                                 <field name="updated_at" readonly="1"/>

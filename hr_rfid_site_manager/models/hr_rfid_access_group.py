@@ -6,7 +6,13 @@ from odoo.exceptions import UserError
 class HrRFIDAccessGroup(models.Model):
     _inherit = 'hr.rfid.access.group'
 
-    site_id = fields.Many2one('hr.rfid.site', string='Site', ondelete='cascade')
+    site_id = fields.Many2one(
+        'hr.rfid.site',
+        string='Site',
+        ondelete='cascade',
+        help="Site that owns this access group. The group automatically includes all doors "
+             "from this site and its child sites. Deleted when the site is deleted."
+    )
 
     def update_door_list(self, door_ids, time_schedule=None, alarm_rights=False):
         for ag in self:

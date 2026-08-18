@@ -16,7 +16,7 @@
 
     # for the full list
     'category': 'Administration',
-    'version': '1.0',
+    'version': '1.1',
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly

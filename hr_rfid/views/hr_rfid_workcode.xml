@@ -3,6 +3,27 @@
     <data>
         <record id="hr_rfid_workcode_action" model="ir.actions.act_window">
             <field name="name">Workcodes</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first workcode
+                </p>
+                <p>
+                    Workcodes are 4-digit numerical codes that employees use at RFID terminals
+                    to track their time and attendance. Each workcode represents a specific action
+                    like starting work, taking a break, or leaving for the day.
+                </p>
+                <p>
+                    <b>Common workcode setup:</b><br/>
+                    • 0001 - Start Work (Clock In)<br/>
+                    • 0002 - Start Break (Lunch/Rest)<br/>
+                    • 0003 - End Break (Return from Break)<br/>
+                    • 0004 - End Work (Clock Out)<br/>
+                </p>
+                <p>
+                    Employees will enter these codes on RFID terminals along with their RFID card
+                    to record their attendance actions throughout the workday.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.workcode</field>
             <field name="view_mode">tree,form</field>
         </record>

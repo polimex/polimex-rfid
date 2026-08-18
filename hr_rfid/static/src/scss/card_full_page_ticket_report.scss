@@ -1,6 +1,6 @@
 .o_card_barcode_full_page_ticket_footer {
     .o_card_barcode_full_page_ticket_powered_by {
-        background-color: $o-brand-odoo;
+        background-color: $o-polimex-primary;
         font-size: .8rem;
         line-height: 1rem;
     }
@@ -10,7 +10,7 @@
 .o_card_barcode_full_page_ticket_container {
     z-index: 1;
     background-repeat: no-repeat;
-    background-image: url(/event/static/src/img/report_full_page_ticket_background.png);
+    background-image: url(/hr_rfid/static/src/img/report_full_page_ticket_background.png);
     padding: 40px 40px 0px 40px;
 
     .o_card_barcode_full_page_ticket_font_faded {
@@ -37,7 +37,7 @@
             box-shadow: -3px 3px 9px 0px rgba(0,0,0,0.51);
 
             .o_card_barcode_full_page_ticket_event_name {
-                color: $o-brand-odoo;
+                color: $o-polimex-primary;
             }
 
             .o_card_barcode_full_page_ticket_event_logo {

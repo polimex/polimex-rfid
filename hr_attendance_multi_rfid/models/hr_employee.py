@@ -29,7 +29,11 @@ class HrEmployee(models.Model):
             ('check_out', '=', False),
         ]
         if before_dt is not None:
-            domain.append(('check_in', '<', before_dt))
+            # '<=' not '<': controller clocks have 1-second resolution, so an
+            # entry and an exit on adjacent readers can carry the same timestamp;
+            # a strict '<' silently dropped such check-outs and left the
+            # attendance open forever (core allows check_out == check_in). (backport 27870ac)
+            domain.append(('check_in', '<=', before_dt))
         return self.env['hr.attendance'].search(domain, limit=1)
 
     def attendance_action_change_with_date(self, action_date, zone_id=None):

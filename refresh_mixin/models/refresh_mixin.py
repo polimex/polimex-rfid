@@ -16,10 +16,17 @@ class RefreshMixin(models.AbstractModel):
             return self.company_id
 
     def send_notice(self, operation):
-        # check if model have field company_id
+        # Resolve the company that owns these records. An empty result is
+        # expected control flow (a global record, or an event whose
+        # company-bearing relations are all empty) for which the realtime
+        # refresh is simply skipped - not an operator-actionable problem, so
+        # it is logged at debug (silent by default) rather than flooding the
+        # log with a WARNING on every such create/write. (backport 139e5c1)
         company_id = self.get_company_id()
         if not company_id:
-            _logger.warning('Model %s does not have company_id field', self._name)
+            _logger.debug(
+                'No company resolved for %s %s; skipping realtime refresh',
+                self._name, self.ids)
             return
         if not company_id.realtime_refresh:
             return # do not send notice if company is not in realtime mode

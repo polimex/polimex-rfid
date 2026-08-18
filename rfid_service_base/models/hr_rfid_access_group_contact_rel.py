@@ -6,7 +6,8 @@ class HrRfidAccessGroupContactRel(models.Model):
 
     rfid_service_sale_id = fields.One2many(
         comodel_name='rfid.service.sale',
-        inverse_name='access_group_contact_rel'
+        inverse_name='access_group_contact_rel',
+        help="Visitor service sales backed by this contact-to-access-group binding. Used to cascade state changes to all related sales when the underlying relation activates or expires.",
     )
 
     def _compute_state(self):

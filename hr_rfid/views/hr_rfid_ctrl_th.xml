@@ -85,6 +85,16 @@
 
         <record id="hr_rfid_ctrl_th_action" model="ir.actions.act_window">
             <field name="name">Temperature and Humidity</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No temperature and humidity sensors found
+                </p>
+                <p>
+                    This view displays temperature and humidity sensors connected to RFID controllers.
+                    You can monitor current readings and configure logging settings for each sensor.
+                    Sensors are automatically detected when connected to compatible RFID controllers.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.ctrl.th</field>
             <field name="view_mode">tree,form,search</field>
             <field name="context">{'active_test': False}</field>

@@ -1,7 +1,3 @@
-from email.policy import default
-
-from wheel.metadata import requires_to_requires_dist
-
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 
@@ -17,14 +13,16 @@ class VotingSession(models.Model):
     name = fields.Char(
         string='Name of the voting Session',
         required=True,
+        help="Public title of the session shown on the kiosk header and in audit reports (e.g. '2026 Annual General Meeting').",
     )
     description = fields.Text(
-        help='Description of the voting Session',
+        help="Optional long-form description of the session shown on the kiosk between voting items.",
     )
     company_id = fields.Many2one(
         comodel_name="res.company",
         string="Company",
         default=lambda self: self.env.company,
+        help="Company that owns the session. Sessions are isolated per company; users only see sessions of their allowed companies.",
     )
     planned_date = fields.Date(
         string='Planned Vote Date',
@@ -32,47 +30,59 @@ class VotingSession(models.Model):
         default=fields.Date.today,
         copy=False,
         tracking=True,
+        help="Calendar date the session is planned for. Used by filters and the calendar view; the actual start/end timestamps below are filled in when the session opens.",
     )
     start_datetime = fields.Datetime(
         copy=False,
         tracking=True,
+        help="Timestamp the session was actually opened. Set automatically when an admin clicks Open Session.",
     )
     end_datetime = fields.Datetime(
         copy=False,
         tracking=True,
+        help="Timestamp the session was closed. Set automatically when an admin clicks Close Session.",
     )
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('open', 'Open'),
-        ('closed', 'Closed'),
-        ('revoted', 're-Voted'),
-    ], default='draft', required=True, copy=False, tracking=True,)
+    state = fields.Selection(
+        [
+            ('draft', 'Draft'),
+            ('open', 'Open'),
+            ('closed', 'Closed'),
+            ('revoted', 're-Voted'),
+        ],
+        default='draft', required=True, copy=False, tracking=True,
+        help="Lifecycle of the session - Draft: not yet open, voters cannot cast ballots. Open: kiosk is accepting votes. Closed: results frozen. Re-Voted: this session was superseded by a new one (the kiosk shows the new one instead).",
+    )
     new_session_id = fields.Many2one(
         comodel_name='voting.session',
         string='New Session',
         readonly=True,
         copy=False,
+        help="If this session was re-voted, this is the replacement session that carries the new ballots. Set automatically by the Re-Vote button.",
     )
     old_session_id = fields.Many2one(
         comodel_name='voting.session',
         string='Old Session',
         readonly=True,
         copy=False,
+        help="If this session is itself a re-vote, this links back to the original session whose results were superseded.",
     )
     participant_group_id = fields.Many2one(
         comodel_name='voting.participants',
         string='Participant Group',
         required=True,
+        help="The participants list defining who can vote in this session. The same group can be reused across multiple sessions.",
     )
     item_ids = fields.Many2many(
         comodel_name='voting.item',
         string='Voting Items',
         required=True,
+        help="One or more questions presented to voters in this session. Items are shown sequentially on the kiosk; each voter casts one ballot per item.",
     )
     display_id = fields.Many2one(
         comodel_name='voting.display',
         string='Display',
         required=True,
+        help="The kiosk display that hosts this session. Only one session at a time may be Open for a given display - the framework enforces this on save.",
     )
     voting_time = fields.Integer(
         string='Voting Time',
@@ -89,28 +99,37 @@ class VotingSession(models.Model):
         comodel_name='voting.vote',
         inverse_name='voting_session_id',
         string='Votes',
+        help="Individual ballots cast in this session. Each row links a participant (or anonymous slot) to the voting item and their answer.",
     )
     vote_yes = fields.Integer(
         string='Yes',
         compute='_compute_votes',
+        help="Live count of Yes ballots in this session.",
     )
     vote_no = fields.Integer(
         string='No',
         compute='_compute_votes',
+        help="Live count of No ballots in this session.",
     )
     vote_abstain = fields.Integer(
         string='Abstain',
         compute='_compute_votes',
+        help="Live count of Abstain ballots in this session.",
     )
     vote_total = fields.Integer(
         string='All Votes',
         compute='_compute_votes',
+        help="Total number of ballots cast in this session (Yes + No + Abstain).",
     )
-    final_vote = fields.Selection([
-        ('yes', 'Yes'),
-        ('no', 'No'),
-        ('no_vote', 'No Vote'),
-    ], default='no_vote', copy=False, compute='_compute_votes')
+    final_vote = fields.Selection(
+        [
+            ('yes', 'Yes'),
+            ('no', 'No'),
+            ('no_vote', 'No Vote'),
+        ],
+        default='no_vote', copy=False, compute='_compute_votes',
+        help="Aggregate outcome computed from the running tally. Yes if Yes > No; No otherwise; No Vote if no ballots were cast.",
+    )
 
     def action_vote_result_send(self):
         """ Opens a wizard to compose an email, with relevant mail template loaded by default """

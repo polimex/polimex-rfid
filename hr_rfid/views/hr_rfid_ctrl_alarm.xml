@@ -104,7 +104,7 @@
             <field name="name">hr.rfid.ctrl.alarm.kanban</field>
             <field name="model">hr.rfid.ctrl.alarm</field>
             <field name="arch" type="xml">
-                <kanban disable_drag_drop_record="true">
+                <kanban sample="1" disable_drag_drop_record="true">
 <!--                        group_create="false"-->
 <!--                        group_edit="false"-->
 <!--                        quick_create="false"-->
@@ -250,6 +250,27 @@
 
         <record id="hr_rfid_ctrl_alarm_action" model="ir.actions.act_window">
             <field name="name">Alarm Lines</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No alarm lines configured yet
+                </p>
+                <p>
+                    Alarm lines are security sensors connected to your RFID controllers.
+                    They monitor for unauthorized access, motion, or door openings.
+                </p>
+                <p>
+                    Common alarm types include:
+                </p>
+                <ul>
+                    <li><b>Motion Detectors</b> - Detect movement in protected areas</li>
+                    <li><b>Door Contacts</b> - Monitor if doors are opened when armed</li>
+                    <li><b>Window Sensors</b> - Alert when windows are opened</li>
+                    <li><b>Glass Break Detectors</b> - Detect breaking glass</li>
+                </ul>
+                <p>
+                    Each alarm can be individually armed/disarmed and grouped for easier management.
+                </p>
+            </field>
             <field name="res_model">hr.rfid.ctrl.alarm</field>
             <field name="view_mode">kanban,tree,form,search</field>
             <field name="view_id" ref="hr_rfid_ctrl_alarm_view_kanban"/>

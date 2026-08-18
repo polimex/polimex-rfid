@@ -16,6 +16,7 @@
             <field name="arch" type="xml">
                 <form string="room_move_wiz_form">
                     <sheet>
+                        <p>Pick the destination room. Only rooms without an active reservation are offered. Existing guest cards stay valid; they will simply unlock the new room instead.</p>
                         <group string="Moving customers from one room to another">
                             <field name="room_from_id" readonly="1" options="{'no_create_edit': True, 'no_open': True}"/>
                             <field name="room_to_id" options="{'no_create_edit': True}"/>

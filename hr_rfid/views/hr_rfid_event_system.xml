@@ -18,6 +18,7 @@
             <field name="model">hr.rfid.event.sys.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add card" create="0" delete="0" edit="0">
+                    <p>Register the unknown card recorded by the system event. Assign it to an employee or contact, pick the card type, and set the validity window - once saved, the next swipe will be granted as expected.</p>
                     <group>
                         <field name="card_number"/>
                         <field name="employee_id"/>
@@ -38,6 +39,12 @@
         </record>
 
         <record id="hr_rfid_add_card_action" model="ir.actions.act_window">
+            <field name="help" type="html">
+                <p>
+                    Register an unknown card that was presented to the system.
+                    You can assign it to an employee or contact and set its access permissions.
+                </p>
+            </field>
             <field name="name">Add Card</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hr.rfid.event.sys.wiz</field>
@@ -48,6 +55,12 @@
         </record>
 
         <record id="hr_rfid_sys_ev_wiz_action" model="ir.actions.act_window">
+            <field name="help" type="html">
+                <p>
+                    Register an unknown card that was presented to the system.
+                    You can assign it to an employee or contact and set its access permissions.
+                </p>
+            </field>
             <field name="name">Add Card</field>
             <field name="res_model">hr.rfid.event.sys.wiz</field>
             <field name="view_mode">form</field>
@@ -62,14 +75,14 @@
                 <form create="0" delete="0" edit="0">
                     <sheet>
                         <field name="is_card_event" invisible="1"/>
-                        <div class="oe_button_box" name="button_box" modifiers="{}">
+                        <div class="oe_button_box" name="button_box">
                             <button string="Add Card" name="%(hr_rfid_sys_ev_wiz_action)d"
                                     id="hr_rfid_sys_ev_add_card_btn" type="action" class="oe_stat_button"
                                     icon="fa-plus-square"
                                     invisible="not is_card_event"/>
                         </div>
-                        <div class="oe_title" modifiers="{}">
-                            <h1 modifiers="{}">
+                        <div class="oe_title">
+                            <h1>
                                 <field name="event_action" readonly="1"/>
                             </h1>
                             <field name="name" readonly="1"/>

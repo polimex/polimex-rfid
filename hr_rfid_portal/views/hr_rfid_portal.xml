@@ -50,7 +50,7 @@
             <t t-call="portal.portal_layout">
                 <t t-if="not cards">
                     <div class="alert alert-warning" role="alert">
-                        There haven't Web Cards in your account.
+                        There are currently no web cards for your account.
                     </div>
                 </t>
                 <t t-if="cards" t-call="portal.portal_table">
@@ -121,7 +121,7 @@
                             </div>
                             <hr/>
                             <img alt="barcode"
-                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', card.barcode_number, 200, 200)"
+                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;mask=polimex_logo&amp;barLevel=M' % ('QR', card.barcode_number, 200, 200)"
 
                                  style="width:200px;height:200px"/>
                             <hr/>
@@ -132,7 +132,7 @@
                         <div class="d-flex justify-content-between card-footer">
                             <address class="mb-0" style="width:100%">
                                 <t t-if="company.phone">
-                                    <a target="_blank" t-attf-href="'tel:%s' % {{ company.phone }}"
+                                    <a target="_blank" t-attf-href="tel:{{ company.phone }}"
                                        style="text-decoration:none; color: #454748;"
                                        t-out="company.phone or ''">+1 650-123-4567
                                     </a>
@@ -141,14 +141,14 @@
                                     |
                                 </t>
                                 <t t-if="company.email">
-                                    <a target="_blank" t-attf-href="'mailto:%s' % {{ company.email }}"
+                                    <a target="_blank" t-attf-href="mailto:{{ company.email }}"
                                        style="text-decoration:none; color: #454748;"
                                        t-out="company.email or ''">info@yourcompany.com
                                     </a>
                                 </t>
                                 <t t-if="company.email and company.website">|</t>
                                 <t t-if="company.website">
-                                    <a t-attf-href="'%s' % {{ company.website }}" target="_blank"
+                                    <a t-attf-href="{{ company.website }}" target="_blank"
                                        style="text-decoration:none; color: #454748;"
                                        t-out="company.website or ''">http://www.example.com
                                     </a>
@@ -165,7 +165,7 @@
             <t t-call="portal.portal_layout">
                 <t t-if="not events">
                     <div class="alert alert-warning" role="alert">
-                        There haven't events generated from you.
+                        There are currently no events for your account.
                     </div>
                 </t>
                 <t t-if="events" t-call="portal.portal_table">

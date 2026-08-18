@@ -34,11 +34,17 @@
                     <page string="RFID Info"
                           groups="hr_rfid.hr_rfid_group_officer"
                           invisible="is_company or is_employee">
+                        <p class="text-muted">
+                            RFID access for this contact: PIN code, the cards they carry, and the access groups that decide which doors they can open.
+                        </p>
                         <group string="Settings" groups="hr_rfid.hr_rfid_view_rfid_pin_code_data">
                             <field name="hr_rfid_pin_code"/>
                         </group>
                         <notebook>
                             <page string="Cards">
+                                <p class="text-muted">
+                                    Cards issued to this contact. Use Generate to add a printable barcode card on the fly.
+                                </p>
                                 <field name="hr_rfid_card_ids" context="{'active_test': False,'default_contact_id': id}" edit="0">
                                     <tree string="Cards belonging this Contact" editable="bottom"
                                           decoration-success="active"
@@ -61,6 +67,9 @@
                             </page>
 
                             <page string="Access Groups">
+                                <p class="text-muted">
+                                    Access groups assigned to this contact. Each row can be time-limited (Activate on / Expiration) and visit-limited (Permitted Visits counts down on every successful swipe).
+                                </p>
                                 <field name="hr_rfid_access_group_ids" widget="one2many_list">
                                     <tree editable="bottom">
                                         <field name="access_group_id"/>
@@ -96,6 +105,7 @@
             <field name="model">res.partner.mass.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add/Remove Access Groups for Partners">
+                    <p>Bulk-edit access for the contacts selected in the list. Pick the access groups, optionally set an expiration, and choose whether existing assignments should be wiped first.</p>
                     <group>
                         <field name="acc_gr_ids"
                                widget="many2many_tags"
@@ -125,6 +135,12 @@
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
             <field name="context">{}</field>
+            <field name="help" type="html">
+                <p>
+                    Bulk add or remove RFID access groups for multiple contacts at once.
+                    You can set expiration dates and choose whether to replace existing access groups.
+                </p>
+            </field>
         </record>
 
     </data>

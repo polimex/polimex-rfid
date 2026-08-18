@@ -15,15 +15,22 @@
             <field name="model">hr.rfid.vending.balance.history</field>
             <field name="arch" type="xml">
                 <form create="0" delete="0" edit="0">
-                    <group>
-                        <field name="name"/>
-                        <field name="person_responsible"/>
-                        <field name="balance_change"/>
-                        <field name="balance_result"/>
-                        <field name="employee_id"/>
-                        <field name="vending_event_id"/>
-                        <field name="auto_refill_id"/>
-                    </group>
+                    <sheet>
+                        <group>
+                            <group string="Transaction">
+                                <field name="employee_id"/>
+                                <field name="balance_change"/>
+                                <field name="balance_result"/>
+                            </group>
+                            <group string="Details">
+                                <field name="person_responsible"/>
+                                <field name="vending_event_id"/>
+                                <field name="auto_refill_id"
+                                       invisible="not auto_refill_id"/>
+                                <field name="create_date"/>
+                            </group>
+                        </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -32,7 +39,7 @@
             <field name="name">hr.rfid.vending.balance.history.tree</field>
             <field name="model">hr.rfid.vending.balance.history</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0">
+                <tree sample="1" create="0" delete="0">
                     <field name="create_date"/>
                     <field name="employee_id"/>
                     <field name="balance_change"/>
@@ -51,9 +58,6 @@
                     <field name="person_responsible"/>
                     <field name="employee_id"/>
                     <field name="vending_event_id"/>
-<!--                        <field name="item_sold_id"/>-->
-<!--                    </field>-->
-
                     <filter name="auto_refill" string="Auto Refills" domain="[('auto_refill_id','!=',False)]"/>
                     <filter name="balance_decrease" string="Balance Decrease" domain="[('balance_change','&lt;',0)]"/>
                     <filter name="balance_increase" string="Balance Increases" domain="[('balance_change','&gt;',0)]"/>

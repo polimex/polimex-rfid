@@ -7,6 +7,7 @@
             <field name="model">hr.department.acc.grs</field>
             <field name="arch" type="xml">
                 <form string="Manage Access Groups">
+                    <p>Pick the access groups that should be available to employees in this department. Only groups listed here can later be assigned to individual employees.</p>
                     <group>
                         <field name="dep_id" invisible="1"/>
                         <field name="acc_grs"
@@ -33,6 +34,9 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="help" type="html">
+                <p>Manage RFID access groups for this department. Access groups assigned here will be available for employees in this department.</p>
+            </field>
         </record>
 
         <record id="hr_department_def_acc_gr_wiz" model="ir.ui.view">
@@ -40,6 +44,7 @@
             <field name="model">hr.department.def.acc.gr</field>
             <field name="arch" type="xml">
                 <form string="Change Default Access Group for Current Department">
+                    <p>Pick the access group that new employees in this department will receive automatically. Use Change and Apply to also assign it to employees who currently have none, or Change and Apply for Everyone to overwrite assignments across the whole department.</p>
                     <group>
                         <field name="dep_id" invisible="1"/>
                         <field name="def_acc_gr" domain="[('department_ids', 'in', [dep_id])]"/>
@@ -62,6 +67,7 @@
             <field name="model">hr.department.mass.wiz</field>
             <field name="arch" type="xml">
                 <form string="Add/Remove Access Groups from Employees">
+                    <p>Bulk-edit access for every employee in this department. Pick the groups, optionally set an expiration date, and exclude any individuals you want to skip. Then Add or Remove in one click.</p>
                     <group>
                         <field name="dep_id" invisible="1"/>
                         <field name="acc_gr_ids"
@@ -91,9 +97,9 @@
             <field name="inherit_id" ref="hr.view_department_form"/>
             <field name="arch" type="xml">
                 <field name="color" position="after">
-                    <label for="hr_rfid_default_access_group"/>
-                    <div class="o_row">
-                        <field name="hr_rfid_default_access_group" readonly="1" groups="hr_rfid.hr_rfid_group_officer"/>
+                    <label for="hr_rfid_default_access_group" groups="hr_rfid.hr_rfid_group_officer"/>
+                    <div class="o_row" groups="hr_rfid.hr_rfid_group_officer">
+                        <field name="hr_rfid_default_access_group" readonly="1"/>
                         <button name="%(hr_rfid_department_add_access_group_action)d" string="Set Default Access group"
                                 class="btn btn-link" groups="hr_rfid.hr_rfid_group_officer"
                                 type="action"
@@ -116,7 +122,7 @@
                     <field name="hr_rfid_default_access_group"/>
                 </field>
                 <xpath expr="//div[hasclass('o_kanban_card_header_title')]" position="inside">
-                    <div class="o_secondary"><field name="hr_rfid_default_access_group"/></div>
+                    <div class="o_secondary" groups="hr_rfid.hr_rfid_group_officer"><field name="hr_rfid_default_access_group"/></div>
                 </xpath>
 
             </field>
@@ -132,6 +138,9 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="help" type="html">
+                <p>Set the default RFID access group for new employees in this department. You can also apply this access group to existing employees.</p>
+            </field>
         </record>
 
         <record id="hr_rfid_department_mass_remove_access_group_action" model="ir.actions.act_window">
@@ -144,6 +153,9 @@
             <field name="binding_view_types">form</field>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4,ref('hr_rfid.hr_rfid_group_officer'))]"/>
+            <field name="help" type="html">
+                <p>Add or remove RFID access groups for all employees in this department at once. You can exclude specific employees and set expiration dates for temporary access.</p>
+            </field>
         </record>
 
     </data>

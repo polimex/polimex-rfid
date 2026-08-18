@@ -7,6 +7,7 @@
             <field name="model">hr.rfid.ctrl.vending.settings</field>
             <field name="arch" type="xml">
                 <form string="Vending Settings">
+                    <p>Map products to the controller's 4-per-row slot grid and tune two firmware parameters: how long the price stays on the LCD, and the scale factor used to encode prices into a single byte. Save writes the new I/O table to the controller.</p>
                     <div>
                         <h3>Vending settings:</h3>
                         <group>
@@ -39,7 +40,6 @@
         <record id="hr_rfid_ctrl_vending_prices_wiz_action" model="ir.actions.act_window">
             <field name="name">Change Vending Settings</field>
             <field name="res_model">hr.rfid.ctrl.vending.settings</field>
-            <!--      <field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="hr_rfid_ctrl_vending_prices_wiz"/>
             <field name="target">new</field>
@@ -72,10 +72,13 @@
                 </xpath>
                 <xpath expr="//page[@name='debug']" position="before">
                     <page string="Vending info" name='vending' invisible="hw_version!='16'">
+                        <p class="text-muted">
+                            Read-only firmware counters reported by the vending controller. The scale factor maps card-balance units to physical currency; cash contained is the running tally the controller has yet to deposit.
+                        </p>
                         <group>
-                            <field name="show_price_timeout" readonly="1" invisible="hw_version!='16'"/>
-                            <field name="scale_factor" readonly="1" invisible="hw_version!='16'"/>
-                            <field name="cash_contained" readonly="1" invisible="hw_version!='16'"/>
+                            <field name="show_price_timeout" readonly="1"/>
+                            <field name="scale_factor" readonly="1"/>
+                            <field name="cash_contained" readonly="1"/>
                         </group>
                     </page>
                 </xpath>

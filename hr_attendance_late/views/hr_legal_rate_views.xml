@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="hr_legal_rate_view_list" model="ir.ui.view">
+            <field name="name">hr.legal.rate.list</field>
+            <field name="model">hr.legal.rate</field>
+            <field name="arch" type="xml">
+                <tree string="Legal Rates" editable="bottom"
+                      default_group_by="code" sample="1">
+                    <field name="code"/>
+                    <field name="name" optional="show"/>
+                    <field name="date_from"/>
+                    <field name="value"/>
+                    <field name="currency_id" optional="hide"/>
+                    <field name="company_id" groups="base.group_multi_company"
+                           optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_legal_rate_view_form" model="ir.ui.view">
+            <field name="name">hr.legal.rate.form</field>
+            <field name="model">hr.legal.rate</field>
+            <field name="arch" type="xml">
+                <form string="Legal Rate">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="e.g. Overtime - rest day"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code" placeholder="e.g. overtime_weekend"/>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="value"/>
+                                <field name="currency_id"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <p class="text-muted">
+                            <i class="fa fa-lightbulb-o" role="img"/>
+                            Tip: when the law changes, add a NEW row with the new
+                            Valid From date - do not edit the old one. Past worked
+                            days keep their historical coefficient, and the new
+                            value applies only from its effective date onward.
+                            Leave Company empty for a national rate that applies
+                            everywhere.
+                        </p>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_legal_rate_view_search" model="ir.ui.view">
+            <field name="name">hr.legal.rate.search</field>
+            <field name="model">hr.legal.rate</field>
+            <field name="arch" type="xml">
+                <search string="Legal Rates">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <filter name="group_code" string="Code" context="{'group_by': 'code'}"/>
+                    <filter name="group_company" string="Company" context="{'group_by': 'company_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_legal_rate_action" model="ir.actions.act_window">
+            <field name="name">Legal Rates</field>
+            <field name="res_model">hr.legal.rate</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_group_code': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Define your first dated legal rate
+                </p>
+                <p>
+                    Legal rates are the statutory coefficients used when costing
+                    attendance - overtime multipliers (rest day, public holiday)
+                    and the night-shift supplement per hour.
+                </p>
+                <p>
+                    Each rate carries a <b>Valid From</b> date. When the law
+                    changes, add a new row with the new effective date; worked
+                    days before it keep the old coefficient. This is filled by
+                    the Bulgarian localisation module - edit only to override.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_hr_legal_rate"
+                  name="Legal Rates"
+                  parent="hr_attendance.menu_hr_attendance_settings"
+                  action="hr_legal_rate_action"
+                  sequence="50"
+                  groups="hr_attendance.group_hr_attendance_manager"/>
+    </data>
+</odoo>

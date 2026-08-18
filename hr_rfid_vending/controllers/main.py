@@ -22,11 +22,24 @@ class HrRfidVending(WebRfidController):
     def post_event(self, **post):
         post_data = self._decode_post(post)
 
+        # A raw/barcode device POST has no 'convertor'; this override otherwise
+        # shadows the base handler's raw-data path, so delegate to it.
+        if 'convertor' not in post_data:
+            return super().post_event(**post)
+
+        # SECURITY: validate the module key (constant-time) before processing
+        # any vending event. The base /hr/rfid/event handler authenticates the
+        # webstack, but this override short-circuits it for vending hardware;
+        # without this gate a forged event for a known serial could drive a
+        # vending grant (DB2) with no key.
+        webstack_id, auth_error = self._authenticate_webstack(post_data)
+        if auth_error is not None:
+            return auth_error
+
         cmd_env = request.env['hr.rfid.command'].sudo()
         ev_env = request.env['hr.rfid.vending.event'].sudo()
         sys_ev_env = request.env['hr.rfid.event.system'].sudo()
 
-        webstack_id = request.env['hr.rfid.webstack'].sudo().search([('serial', '=', str(post_data['convertor']))])
         status_code = 200
 
         item_missing_err_str = _('Item number %d missing from vending machine configuration')
@@ -97,7 +110,7 @@ class HrRfidVending(WebRfidController):
                 return ret_super()
 
             card_env = request.env['hr.rfid.card'].with_company(webstack_id.company_id).sudo()
-            _logger.debug('Start processing event %d on controller %s', event['event_n'], controller.name)
+            _logger.info('Vending event %d on %s, card=%s', event['event_n'], controller.name, event.get('card', '?'))
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
@@ -105,20 +118,24 @@ class HrRfidVending(WebRfidController):
                     [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
 
                 if len(card) == 0 or len(card.employee_id) == 0 or not card.active:
+                    _logger.info('Vending ev64 denied: card=%s not found/inactive/no employee', event['card'])
                     return ret_local_no_command(controller, None)
 
                 emp = card.employee_id
 
                 if emp.hr_rfid_vending_in_attendance is True \
                         and emp.attendance_state != 'checked_in':
+                    _logger.info('Vending ev64 denied: %s not checked in', emp.name)
                     return ret_local_no_command(controller, None)
 
                 date = controller.webstack_id.get_ws_time(event)
                 if date + datetime.timedelta(minutes=5) <= fields.Datetime.now():
+                    _logger.info('Vending ev64 denied: event too old (%s)', date)
                     ev = create_ev(controller, event, card, '64')
                     return ret_local_no_command(controller, ev)
 
                 if event['bos'] < event['tos']:
+                    _logger.info('Vending ev64 denied: bos(%d) < tos(%d)', event['bos'], event['tos'])
                     ev = create_ev(controller, event, card, '64')
                     return ret_local_no_command(controller, ev)
 
@@ -127,7 +144,9 @@ class HrRfidVending(WebRfidController):
 
                 ev = create_ev(controller, event, card, '64')
                 if balance <= 0:
+                    _logger.info('Vending ev64 denied: %s balance=%.2f', emp.name, balance)
                     return ret_local_no_command(controller, ev)
+                _logger.info('Vending ev64 granted: %s balance=%.2f, sending DB2', emp.name, balance)
                 cmd = cmd_env.create({
                     'webstack_id': webstack_id.id,
                     'controller_id': controller.id,
@@ -212,9 +231,12 @@ class HrRfidVending(WebRfidController):
                     controller.cash_contained += item_price
                     ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
 
+                _logger.info('Vending ev47 purchase: card=%s item=%s price=%.2f',
+                             event['card'], item_sold, purchase_money)
                 return ret_local_no_command(controller, ev)
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
+                _logger.info('Vending ev%d error from %s', event['event_n'], controller.name)
                 controller.report_sys_ev('Vending machine sent us an error', event)
                 return ret_local_no_command(controller)
             elif event['event_n'] == 50:
@@ -235,7 +257,7 @@ class HrRfidVending(WebRfidController):
 
         try:
             if 'event' in post_data:
-                _logger.debug('Vending: Received=' + str(post_data))
+                _logger.info('Received=%s', post_data)
                 ret = parse_event()
             else:
                 ret = ret_super()
@@ -243,18 +265,16 @@ class HrRfidVending(WebRfidController):
             return ret
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
-                psycopg2.DataError, ValueError) as __:
-            # commented DeferredException ^
-            # TODO Fix sys events!!!====================================================================================
+                psycopg2.DataError, ValueError) as e:
+            _logger.error('Vending exception from %s/%s: %s\n%s',
+                          webstack_id.name, webstack_id.company_id.name, str(e), traceback.format_exc())
             webstack_id.report_sys_ev(description=traceback.format_exc(),
                                       post_data=json.dumps(post_data))
-            _logger.debug('Vending: Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
-            ev_num = str(post_data['event']['event_n'])
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
+            _logger.error('Vending bad time from %s: %s', controller.name if controller else '?', t)
             controller.report_sys_ev(description=f'Controller sent us an invalid date or time: {t}',
                                      post_data=json.dumps(post_data))
-            _logger.debug('Caught a time error, returning status=200 and creating a system event')
             return {'status': 200}

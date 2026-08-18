@@ -8,6 +8,7 @@ from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request
+from odoo.tools import consteq
 from odoo.addons.hr_rfid.controllers import polimex
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import action_selection as system_action_selection
 
@@ -41,11 +42,12 @@ class WebRfidController(http.Controller):
         workcodes_env = request.env['hr.rfid.workcode'].sudo()
         ev_env = request.env['hr.rfid.event.user'].sudo()
 
-        # Find Controller
+        # Find Controller - (ctrl_id, webstack_id) is logically unique,
+        # so limit=1 lets PostgreSQL stop after the first match. (backport 090a3a2)
         controller_id = ctrl_env.search([
             ('ctrl_id', '=', post_data['event']['id']),
             ('webstack_id', '=', webstack.id),
-        ]).with_context(no_output=True)
+        ], limit=1).with_context(no_output=True)
         # Create new controller if needed
         if len(controller_id) == 0 and post_data['event']['id']:
             controller_id = controller_id.create({
@@ -180,7 +182,12 @@ class WebRfidController(http.Controller):
                     # lambda agr: event.door_id in agr.access_group_id.door_ids.mapped('door_id') and state)
                     # if ag_rel and ag_rel.visits_counting:
                     if ag_rel and reader_id and reader_id.reader_type == '0':
-                        ag_rel.visits_counter += 1
+                        # Handle multiple access group relations for the same door
+                        if len(ag_rel) > 1:
+                            _logger.warning('Multiple active access group relations (%s) found for contact %s and door %s. Incrementing visits for all relations.',
+                                          ag_rel.ids, event.contact_id.name, event.door_id.name)
+                        for rel in ag_rel:
+                            rel.visits_counter += 1
             elif is_card_event and not card_id:  # Card event with unknown card
                 sys_event_dict = {
                     'door_id': door and door.id or False,
@@ -303,9 +310,56 @@ class WebRfidController(http.Controller):
             )
 
             return controller_id.read_status().send_command(200)
-        # Reserved
+        # SOT Denied (firmware v7.13+): arm/disarm attempt refused by controller.
+        # Same semantics as event 33 (Zone Arm/Disarm Denied) - card event with
+        # direction derived from current zone state (line_id.armed).
+        # Falls back to a system event when no cardholder is known. (backport 3213db5)
         elif event_action in [32]:
-            raise Exception('Not Implemented(Reserved 32)')
+            if is_card_event and card_id:
+                line_id = controller_id.alarm_line_ids.filtered(
+                    lambda l: l.line_number == reader_num)
+                event_dict = {
+                    'ctrl_addr': controller_id.ctrl_id,
+                    'door_id': door and door.id or False,
+                    'reader_id': reader_id.id,
+                    'alarm_line_id': line_id.id,
+                    'card_id': card_id and card_id.id or None,
+                    'event_time': webstack.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': line_id.armed == 'arm' and '15' or '5',
+                    'more_json': json.dumps(post_data),
+                }
+
+                if reader_id.mode == '03' and not controller_id.is_vending_ctrl():  # Card and workcode
+                    wc = workcodes_env.search([
+                        ('workcode', '=', dt),
+                        ('company_id', '=', webstack.company_id.id)
+                    ])
+                    if len(wc) == 0:
+                        event_dict['workcode'] = dt
+                    else:
+                        event_dict['workcode_id'] = wc.id
+
+                ev_env.create(event_dict)
+                return webstack.check_for_unsent_cmd(200)
+            # No cardholder identified - record as system event so the
+            # controller still gets a 200 and stops retrying.
+            try:
+                reader_byte = int(post_data['event'].get('reader', 0))
+            except (TypeError, ValueError):
+                reader_byte = 0
+            msg = _('Arm denied') if reader_byte & 0x10 else _('Disarm denied')
+            sys_event_dict = {
+                'door_id': door and door.id or False,
+                'timestamp': webstack.get_ws_time_str(post_data=post_data['event']),
+                'event_action': str(event_action),
+                'error_description': msg,
+            }
+            controller_id.report_sys_ev(
+                description=msg,
+                post_data=post_data,
+                sys_ev_dict=sys_event_dict,
+            )
+            return webstack.check_for_unsent_cmd(200)
         # Zone Arm/Disarm Denied
         elif event_action in [33]:
             if is_card_event and card_id:
@@ -528,7 +582,7 @@ class WebRfidController(http.Controller):
         return cmd.send_command(200)
 
     @http.route(['/hr/rfid/barcode'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False)
+                save_session=False, sitemap=False)
     def post_barcode(self, **post):
         # request.session.should_save = False
         return
@@ -549,8 +603,58 @@ class WebRfidController(http.Controller):
         else:
             return post
 
+    def _authenticate_webstack(self, post_data):
+        """Find and authenticate the webstack behind a hardware POST.
+
+        Returns a ``(webstack, error_response)`` tuple. On success
+        ``error_response`` is ``None``. On failure the webstack may be empty
+        (or a record, kept for the system-event log) and ``error_response`` is
+        a ready ``{'status': 400}`` dict the caller must return.
+
+        Shared by the base ``/hr/rfid/event`` handler and the
+        ``hr_rfid_vending`` override so that BOTH validate the module key with
+        a constant-time compare before any event is processed.
+        """
+        webstack = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID).search([
+            '|', ('active', '=', True), ('active', '=', False),
+            ('serial', '=', str(post_data['convertor'])),
+        ])
+        if not webstack:
+            if request.env['ir.config_parameter'].sudo().get_param(
+                    'hr_rfid.save_new_webstacks') in ['true', 'True', '1']:
+                webstack = request.env['hr.rfid.webstack'].sudo().with_context(
+                    tz=request.env['res.users'].sudo().browse(2).tz).create({
+                        'name': f"Module {post_data['convertor']}",
+                        'serial': str(post_data['convertor']),
+                        'key': post_data['key'],
+                        'last_ip': _get_remote_ip_address(),
+                        'updated_at': fields.Datetime.now(),
+                        'available': 'a',
+                        'company_id': request.env['res.company'].sudo().search([])[0].id,
+                    })
+            else:
+                _logger.info('Unknown Module. Received=' + str(post_data))
+                return webstack, {'status': 400}
+
+        if not webstack.key:
+            webstack.key = post_data['key']
+            webstack.available = 'a'
+            webstack.message_post(body=_("The Module contacted us and activated."))
+        elif not consteq(webstack.key, str(post_data['key'])):
+            webstack.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
+            _logger.info(
+                f'Wrong Module key for {webstack.name}/{webstack.company_id.name}! Received=' + str(post_data))
+            return webstack, {'status': 400}
+
+        if not webstack.active:
+            webstack.write(_ws_db_update_dict())
+            webstack.report_sys_ev('Webstack is not active', post_data=post_data)
+            return webstack, {'status': 400}
+
+        return webstack, None
+
     @http.route(['/hr/rfid/event'], type='json', auth='none', methods=['POST'], cors='*', csrf=False,
-                save_session=False)
+                save_session=False, sitemap=False)
     def post_event(self, **post):
         """
         Process events from equipment
@@ -562,46 +666,11 @@ class WebRfidController(http.Controller):
         if 'convertor' not in post_data:
             return self._parse_raw_data(post_data)
 
-        webstack_id = request.env['hr.rfid.webstack'].with_user(SUPERUSER_ID).search([
-            '|', ('active', '=', True), ('active', '=', False),
-            ('serial', '=', str(post_data['convertor']))
-        ])
+        webstack_id = request.env['hr.rfid.webstack']
         try:
-            if not webstack_id:
-                if request.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_new_webstacks') in ['true', 'True',
-                                                                                                         '1']:
-                    new_webstack_dict = {
-                        'name': f"Module {post_data['convertor']}",
-                        'serial': str(post_data['convertor']),
-                        'key': post_data['key'],
-                        'last_ip': _get_remote_ip_address(),
-                        'updated_at': fields.Datetime.now(),
-                        'available': 'a',
-                        'company_id': request.env['res.company'].sudo().search([])[0].id,
-                    }
-                    webstack_id = request.env['hr.rfid.webstack'].sudo().with_context(
-                        tz=request.env['res.users'].sudo().browse(2).tz).create(new_webstack_dict)
-                else:
-                    _logger.info('Unknown Module. Received=' + str(post_data))
-                    return {'status': 400}
-
-            if not webstack_id.key:
-                webstack_id.key = post_data['key']
-                webstack_id.available = 'a'
-                webstack_id.message_post(
-                    body=_("The Module contacted us and activated.")
-                )
-
-            elif webstack_id.key != post_data['key']:
-                webstack_id.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
-                _logger.info(f'Wrong Module key for {webstack_id.name}/{webstack_id.company_id.name}! Received=' + str(
-                    post_data))
-                return {'status': 400}
-
-            if not webstack_id.active:
-                webstack_id.write(_ws_db_update_dict())
-                webstack_id.report_sys_ev('Webstack is not active', post_data=post_data)
-                return {'status': 400}
+            webstack_id, auth_error = self._authenticate_webstack(post_data)
+            if auth_error is not None:
+                return auth_error
 
             result = {
                 'status': 400
@@ -641,7 +710,6 @@ class WebRfidController(http.Controller):
                 'error_description': traceback.format_exc() or str(e),
                 'input_js': json.dumps(post_data),
             })
-            # print('Caught an exception, returning status=500 and creating a system event')
             return {'status': 500}
         except BadTimeException:
             _logger.error(f'Caught a time error from {webstack_id.name}/{webstack_id.company_id.name}, returning '

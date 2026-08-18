@@ -24,7 +24,8 @@ class BaseRFIDService(models.Model):
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        default=lambda self: self.env.company
+        default=lambda self: self.env.company,
+        help="Company that owns this service template. Services are isolated per company - users only see services of their allowed companies.",
     )
     color = fields.Integer(string='Color Index')
     displayed_image_id = fields.Many2one('ir.attachment',
@@ -131,7 +132,8 @@ class ServiceTags(models.Model):
     company_id = fields.Many2one(
         comodel_name='res.company',
         string='Company',
-        default=lambda self: self.env.company
+        default=lambda self: self.env.company,
+        help="Company that owns this tag. Tags are isolated per company so each tenant can build its own catalog taxonomy.",
     )
 
     _sql_constraints = [

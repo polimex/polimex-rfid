@@ -4,24 +4,36 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 15.0\n"
+"Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-26 11:30+0000\n"
-"PO-Revision-Date: 2023-08-26 14:35+0300\n"
-"Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
+"POT-Creation-Date: 2026-07-02 08:02+0000\n"
+"PO-Revision-Date: 2026-07-02 11:03\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_action
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Tip: Fixed type sets the balance to the amount every cron run (good for a fixed daily allowance). Top-up type adds the amount until Max balance is reached (good for an \"up to N\" credit)."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Съвет: Типът Фиксиран задава баланса на посочената сума при всяко изпълнение на крон задачата (подходящо за фиксирана дневна квота). Типът Захранване добавя сумата, докато се достигне Максимален баланс (подходящо за кредит \"до N\")."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Action"
 msgstr "Действие"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_needaction
+msgid "Action Needed"
+msgstr "Необходимо действие"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__action_string
@@ -40,8 +52,20 @@ msgstr "Добавяне или премахване на салдо в проф
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Add/Subtract from balance"
-msgstr "Добавяне/изваждане от баланса"
+msgid "Add/Subtract"
+msgstr "Добави/Извади"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
+msgid ""
+"Adjust the employee's vending balance. Enter the amount, then click Add to "
+"credit it or Subtract to debit. Each operation creates a balance-history "
+"entry stamped with your name for the audit trail."
+msgstr ""
+"Коригирайте баланса на служителя за вендинг. Въведете сумата, след което "
+"натиснете Добавяне за завишаване или Изваждане за намаляване. Всяка операция"
+" създава запис в историята на баланса, подписан с вашето име за целите на "
+"одита."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
@@ -63,14 +87,60 @@ msgid "Alarm line affected by this event"
 msgstr "Алармена линия за това събитие"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
+msgid "Amount Collected"
+msgstr "Стойност"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__transaction_price
+msgid ""
+"Amount charged for this vending transaction.\n"
+"\n"
+"• Currency: Uses machine's configured currency/pricelist\n"
+"• Source: Price determined by product configuration and machine pricelist\n"
+"• Balance impact: This amount is deducted from employee's vending balance\n"
+"• Value -1: Indicates no transaction amount (for non-purchase events)\n"
+"\n"
+"Shows the actual cost of the purchased item."
+msgstr ""
+"Сума, начислена за тази вендинг транзакция.\n"
+"\n"
+"• Валута: Използва конфигурираната валута/ценова листа на машината\n"
+"• Източник: Цената се определя от конфигурацията на продукта и ценовата листа на машината\n"
+"• Влияние върху баланса: Тази сума се приспада от баланса за вендинг на служителя\n"
+"• Стойност -1: Показва липса на сума на транзакцията (за събития, различни от покупка)\n"
+"\n"
+"Показва действителната цена на закупения артикул."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__value
+msgid ""
+"Amount of cash to collect from each selected vending machine.\n"
+"\n"
+"• Per machine: This amount applies to each selected machine\n"
+"• Validation: Cannot exceed the cash currently in each machine\n"
+"• Default: Pre-filled with current cash amount if single machine selected\n"
+"• Tracking: Creates collection log entries for audit purposes\n"
+"\n"
+"Enter the amount you are physically removing from the machines."
+msgstr "Сума пари, които служител зарежда на автомата"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
 msgid "Amount of money an employee can spend on the vending machine"
 msgstr "Сума пари, които служител може да похарчи на автомата"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__value
-msgid "Amount of money collected from Vending machine"
+msgid ""
+"Amount of physical cash collected from the vending machine.\n"
+"\n"
+"• Physical cash: Real money removed from machine's cash storage\n"
+"• Tracking: Logged for audit trail and cash management\n"
+"• Machine update: Reduces the machine's cash_contained amount\n"
+"• Currency: Uses company's default currency\n"
+"\n"
+"Record the actual amount of cash physically removed from the machine."
 msgstr "Сума пари, които служител зарежда на автомата"
 
 #. module: hr_rfid_vending
@@ -80,9 +150,30 @@ msgid ""
 msgstr "Сума собствени пари, които служителят може да похарчи на автомата"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr "Присъствие"
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_attachment_count
+msgid "Attachment Count"
+msgstr "Брой прикачени файлове"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
+msgid ""
+"Audit note explaining why the purchase is reversed (machine jam, double-"
+"charge, customer dispute, etc.). Stored on the original event's chatter."
+msgstr ""
+"Бележка за одит, обясняваща защо покупката е сторнирана (засядане на "
+"машината, двойно таксуване, спор с клиент и др.). Съхранява се в чата на "
+"оригиналното събитие."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.actions.act_window,help:hr_rfid_vending.ctrl_cash_collect_log_action
+msgid ""
+"Audit trail of cash collected from each vending controller. A new entry is "
+"created every time an operator empties the controller's cash box through the"
+" Collect Cash wizard."
+msgstr ""
+"Одитна следа на инкасираните суми от всеки вендинг контролер. Нов запис се "
+"създава всеки път, когато оператор изпразни касовата кутия на контролера "
+"чрез съветника Инкасиране."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
@@ -113,6 +204,25 @@ msgstr "Автоматично зареждане"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill
 msgid "Auto refill amount"
 msgstr "Количество за автоматично зареждане"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
+msgid ""
+"Auto-generated reference for each cron run (e.g. AR/2026/000123). Used as "
+"the human label in lists and history reports."
+msgstr ""
+"Автоматично генериран номер за всяко изпълнение на крон задачата (напр. "
+"AR/2026/000123). Използва се като четимо от човека означение в списъци и "
+"отчети за история."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
+msgid ""
+"Auto-refill cron run that produced this credit. Empty for manual top-ups and"
+" for sales/reversals."
+msgstr ""
+"Изпълнение на крон задачата за авто-зареждане, което е генерирало този "
+"кредит. Празно за ръчни захранвания и за продажби/сторнирания."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
@@ -185,13 +295,26 @@ msgstr "Балансов резултат"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
 msgid "Cancel"
 msgstr "Отказ"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+#, python-format
+msgid "Cannot reverse a cash purchase (no employee)."
+msgstr "Не може да се сторнира кешова покупка (няма служител)."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__card_id
 msgid "Card"
 msgstr "Карта"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__card_number
+msgid "Card Number"
+msgstr "Номер на картата"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__card_id
@@ -250,6 +373,11 @@ msgid "Collect cash"
 msgstr "Зареждане"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__value
+msgid "Collection Amount"
+msgstr "Стойност"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
 msgid "Command time"
 msgstr "Време на команда"
@@ -272,7 +400,7 @@ msgstr "Команди от Днес"
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_res_company
 msgid "Companies"
-msgstr "Компании"
+msgstr "Фирми"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__company_id
@@ -283,6 +411,15 @@ msgstr "Компания"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__currency_id
 msgid "Company Currency"
 msgstr "Валута на компанията"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__company_id
+msgid ""
+"Company in whose scope this refill run executed. Auto-refill is scheduled "
+"per company."
+msgstr ""
+"Фирма, в чийто обхват е изпълнено това захранване. Авто-зареждането се "
+"планира на ниво фирма."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__contact_id
@@ -296,8 +433,6 @@ msgstr "Кнтакти засегнати от това събитие"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__controller_id
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__controller_ids
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__controller_id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__controller_id
 msgid "Controller"
@@ -317,6 +452,7 @@ msgstr "ИН на контролер"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__create_uid
 msgid "Created by"
 msgstr "Създаден от"
 
@@ -328,6 +464,7 @@ msgstr "Създаден от"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__create_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__create_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__create_date
 msgid "Created on"
 msgstr "Създаден на"
 
@@ -336,6 +473,16 @@ msgstr "Създаден на"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__currency_id
 msgid "Currency"
 msgstr "Валута"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__currency_id
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__currency_id
+msgid ""
+"Currency used to record the collected amount - taken from the company "
+"default and shown for context only."
+msgstr ""
+"Валута, използвана за записване на инкасираната сума - взета от настройката "
+"по подразбиране на фирмата и показана само за информация."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__daily_limit_type__day
@@ -378,9 +525,38 @@ msgid "Debug Information"
 msgstr "Информация за отстраняване на грешки"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__department_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__department_id
+msgid "Department"
+msgstr "Отдел"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__department_id
+msgid ""
+"Department of the employee at the time of the change. Stored so reports "
+"filter correctly even after the employee moves."
+msgstr ""
+"Отдел на служителя към момента на промяната. Съхранява се, за да могат "
+"отчетите да филтрират правилно дори след като служителят смени отдела си."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__department_id
+msgid ""
+"Department of the employee at the time this event was recorded. Stored copy "
+"lets us filter and group events by department directly."
+msgstr ""
+"Отдел на служителя към момента на регистриране на това събитие. Съхраненото "
+"копие позволява филтриране и групиране на събитията директно по отдел."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
+msgid "Details"
+msgstr "Детайли"
+
+#. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_digest_digest
 msgid "Digest"
-msgstr "Доклад"
+msgstr "Публикация"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__display_name
@@ -391,10 +567,12 @@ msgstr "Доклад"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__display_name
 msgid "Display Name"
 msgstr "Име за показване"
 
 #. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/models/digest.py:0
 #, python-format
 msgid "Do not have access, skip this data for user's digest email"
@@ -436,6 +614,16 @@ msgid "Employee balance setter"
 msgstr "Определяне на баланса на служителите"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__employee_id
+msgid ""
+"Employee whose vending balance changed. Cascades on delete - when the "
+"employee record is removed, their balance history is removed with them."
+msgstr ""
+"Служител, чийто баланс за вендинг се е променил. Каскадно изтриване - когато"
+" записът на служителя бъде премахнат, историята на неговия баланс се "
+"премахва заедно с него."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__48
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__49
 msgid "Error"
@@ -443,14 +631,16 @@ msgstr "Грешка"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__event_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_pivot
 msgid "Event"
 msgstr "Събитие"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_action
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Event Type"
-msgstr "Тип събитие"
+msgstr "Действие"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -489,12 +679,22 @@ msgstr "Фиксиран"
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_type
 msgid ""
-"Fixed type just adds the refill amount to the user's balance every month. "
-"Up To type adds to the user's balance every month with a maximum the auto "
+"Fixed type just adds the refill amount to the user's balance every month. Up"
+" To type adds to the user's balance every month with a maximum the auto "
 "refill will never go over."
 msgstr ""
 "Фиксираният тип добавя сумата за зареждане към потребителският баланс всеки "
 "месец. Зареди До добавя баланс до определената максимална сума за месеца."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_follower_ids
+msgid "Followers"
+msgstr "Последователи"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Последователи (Партньори)"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_auto_refill_search
@@ -505,10 +705,13 @@ msgstr "Групирай по"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.server,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill_ir_actions_server
-#: model:ir.cron,cron_name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill
-#: model:ir.cron,name:hr_rfid_vending.hr_rfid_vending_employees_auto_refill
 msgid "HR RFID Vending: Employees Auto Refill"
-msgstr ""
+msgstr "HR RFID Автомати: Автоматично зареждане на служители"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__has_message
+msgid "Has Message"
+msgstr "Има съобщение"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__hours
@@ -531,6 +734,17 @@ msgid "How much was deposited/withdrawn from the employee's balance"
 msgstr "Колко да се добави/премахне от баланса на служителя"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
+msgid ""
+"Human-readable label - the operator who made the change for manual "
+"adjustments, the product name for vending sales, or 'Reversal: ...' for "
+"reversed sales."
+msgstr ""
+"Четимо от човека означение - операторът, извършил ръчната корекция, името на"
+" продукта при вендинг продажби, или 'Сторниране: ...' при сторнирани "
+"продажби."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__id
@@ -539,6 +753,7 @@ msgstr "Колко да се добави/премахне от баланса �
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__id
 msgid "ID"
 msgstr "Номер (ID)"
 
@@ -550,9 +765,24 @@ msgid ""
 msgstr "ID на Контролерът в Модула го различава от останалите"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__input_js
-msgid "Input JSON"
-msgstr "Входящ JSON"
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Ако е отметнато, новите съобщения изискват вашето внимание."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Ако е отметнато, някои съобщения имат грешка при доставка."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
+msgid ""
+"Individual employee balance-history entries created by this run. Use them to"
+" see exactly which employees were topped up and by how much."
+msgstr ""
+"Индивидуални записи от историята на баланса на служителите, създадени от "
+"това изпълнение. Използвайте ги, за да видите точно кои служители са "
+"захранени и с каква сума."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_type
@@ -560,25 +790,31 @@ msgid "Interval Unit"
 msgstr "Единица интервал"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_is_follower
+msgid "Is Follower"
+msgstr "Е последовател"
+
+#. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/controllers/main.py:0
 #, python-format
 msgid "Item %s has the cost of %f but vending reported it costs %f!"
 msgstr "Продукт %s има стойност %f но автомата отговаря с %f!"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
+msgid "Item Slot Number"
+msgstr "Номер на продаден продукт"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Item Sold"
 msgstr "Продаден продукт"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
-msgid "Item Sold Number"
-msgstr "Номер на продаден продукт"
-
-#. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/controllers/main.py:0
 #, python-format
 msgid "Item number %d missing from vending machine configuration"
@@ -612,34 +848,46 @@ msgstr "Продукт/Цена"
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill_value
 msgid "Kpi Hr Rfid Vending Refill Value"
-msgstr ""
+msgstr "КПИ HR RFID Автомати Стойност Зареждане"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count_value
 msgid "Kpi Hr Rfid Vending Sale Count Value"
-msgstr ""
+msgstr "КПИ HR RFID Автомати Брой Продажби"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_value
 msgid "Kpi Hr Rfid Vending Sale Value"
+msgstr "КПИ HR RFID Автомати Стойност Продажби"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
+msgid ""
+"Label for the first slot in this row, computed from row_num (e.g. 'Item #1:'"
+" on row 1, 'Item #5:' on row 2)."
 msgstr ""
+"Означение за първия слот в този ред, изчислено от row_num (напр. 'Артикул "
+"№1:' на ред 1, 'Артикул №5:' на ред 2)."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number4
+msgid "Label for the fourth slot in this row."
+msgstr "Означение за четвъртия слот в този ред."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number2
+msgid "Label for the second slot in this row."
+msgstr "Означение за втория слот в този ред."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number3
+msgid "Label for the third slot in this row."
+msgstr "Означение за третия слот в този ред."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__daily_limit_type__last_24
 msgid "Last 24 hours"
 msgstr "Последните 24 часа"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history____last_update
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event____last_update
-msgid "Last Modified on"
-msgstr "Последно променено на"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__write_uid
@@ -650,6 +898,7 @@ msgstr "Последно променено на"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__write_uid
 msgid "Last Updated by"
 msgstr "Последно актуализиран от"
 
@@ -662,6 +911,7 @@ msgstr "Последно актуализиран от"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__write_date
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__write_date
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__write_date
 msgid "Last Updated on"
 msgstr "Последно актуализиран на"
 
@@ -671,25 +921,50 @@ msgid "Limit"
 msgstr "Лимит"
 
 #. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/models/ctrl_cash_collect_wizard.py:0
 #, python-format
 msgid "Manual cash collect amount: %f %s"
 msgstr "Ръчно събиране на суми в брой: %f %s"
 
 #. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/models/hr_employee_wizards.py:0
 #, python-format
 msgid "Manual updated employee personal balance from %d to %d"
 msgstr "Ръчно актуализиран личен баланс на служителя от %d на %d"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid ""
+"Map products to the controller's 4-per-row slot grid and tune two firmware "
+"parameters: how long the price stays on the LCD, and the scale factor used "
+"to encode prices into a single byte. Save writes the new I/O table to the "
+"controller."
+msgstr ""
+"Съпоставете продуктите с решетката от 4 слота на ред на контролера и "
+"настройте два параметъра на фърмуера: колко дълго цената остава на LCD "
+"дисплея и мащабния коефициент, използван за кодиране на цените в един байт. "
+"Запис записва новата I/O таблица в контролера."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_daily_limit
 msgid ""
-"Maximum amount of funds allowed for the employee to spend each day. No "
-"limit if set to 0."
+"Maximum amount of funds allowed for the employee to spend each day. No limit"
+" if set to 0."
 msgstr ""
 "Максимално разрешена сума за харчене на служителя за всеки ден. 0 означава "
 "без лимит."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
+msgid "Message Delivery error"
+msgstr "Грешка при доставка на съобщение"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_ids
+msgid "Messages"
+msgstr "Съобщения"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -729,9 +1004,34 @@ msgid "Next planned execution date for this refill."
 msgstr "Следващата планирана дата за изпълнение на това зареждане."
 
 #. module: hr_rfid_vending
+#: model_terms:ir.actions.act_window,help:hr_rfid_vending.ctrl_cash_collect_log_action
+msgid "No cash collections recorded yet"
+msgstr "Все още няма регистрирани инкасирания"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Non-Employee Transaction Events"
 msgstr "Събитие не от служител"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Брой действия"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error_counter
+msgid "Number of errors"
+msgstr "Брой грешки"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Брой съобщения изискващи действие"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Брой съобщения с грешка при доставка"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_in_attendance
@@ -739,9 +1039,48 @@ msgid "Only allow the user to perform vending transactions while attending"
 msgstr "Позволи Служителя да ползва Вендинги само ако присъства"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+#, python-format
+msgid "Only purchase events can be reversed."
+msgstr "Само покупки могат да бъдат сторнирани."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_in_attendance
 msgid "Only while attending"
 msgstr "Само докато присъства"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__input_js
+msgid ""
+"Original JSON data received from the vending machine hardware.\n"
+"\n"
+"• Debugging: Raw communication data for technical troubleshooting\n"
+"• Audit: Complete record of machine communication\n"
+"• Privacy: Only saved if 'Save Webstack Communications' is enabled\n"
+"• Technical: Primarily for system administrators and developers\n"
+"\n"
+"Contains technical details about the hardware communication."
+msgstr ""
+"Оригинални JSON данни, получени от хардуера на вендинг машината.\n"
+"\n"
+"• Отстраняване на грешки: Сурови комуникационни данни за техническо отстраняване на проблеми\n"
+"• Одит: Пълен запис на комуникацията с машината\n"
+"• Поверителност: Записва се само ако е активирано 'Запис на комуникациите с Webstack'\n"
+"• Техническо: Предимно за системни администратори и разработчици\n"
+"\n"
+"Съдържа технически подробности за хардуерната комуникация."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid ""
+"Overwrite the employee's vending balance with the exact value below. Useful "
+"after a manual reconciliation; for incremental changes use the Add/Subtract "
+"wizard instead."
+msgstr ""
+"Презаписва баланса на служителя за вендинг с точната стойност по-долу. "
+"Полезно след ръчно съгласуване; за поетапни промени използвайте съветника "
+"Добавяне/Изваждане."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -759,6 +1098,38 @@ msgid "Person responsible for the change"
 msgstr "Отговорно лице за смяна"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid ""
+"Personal vending balance and refill rules. The current balance is the value "
+"the controller charges against on each purchase; the auto-refill settings "
+"drive how often the company cron tops it up."
+msgstr ""
+"Личен баланс за вендинг и правила за захранване. Текущият баланс е "
+"стойността, срещу която контролерът таксува при всяка покупка; настройките "
+"за авто-зареждане определят колко често фирмената крон задача го захранва."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
+msgid ""
+"Physical slot/position number in the vending machine where the item was located.\n"
+"\n"
+"• Hardware reference: Corresponds to machine's physical product slots\n"
+"• Configuration: Used to map physical slots to products\n"
+"• Maintenance: Helps identify which machine sections are most used\n"
+"• Restocking: Useful for inventory management and restocking planning\n"
+"\n"
+"This is the machine's internal slot identifier, not the product ID."
+msgstr ""
+"Физически номер на слот/позиция във вендинг машината, където се е намирал артикулът.\n"
+"\n"
+"• Хардуерна референция: Съответства на физическите продуктови слотове на машината\n"
+"• Конфигурация: Използва се за съпоставяне на физическите слотове с продукти\n"
+"• Поддръжка: Помага за идентифициране на най-използваните секции на машината\n"
+"• Зареждане: Полезно за управление на инвентара и планиране на зареждането\n"
+"\n"
+"Това е вътрешният идентификатор на слота на машината, не ID на продукта."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__pricelist_id
 msgid "Pricelist"
 msgstr "Ценова листа"
@@ -769,14 +1140,66 @@ msgid "Prices"
 msgstr "Цени"
 
 #. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_product_template
+msgid "Product"
+msgstr "Продукт"
+
+#. module: hr_rfid_vending
 #: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_products_pricelist_menu
 msgid "Product Price list"
 msgstr "Ценова листа на продукта"
 
 #. module: hr_rfid_vending
-#: model:ir.model,name:hr_rfid_vending.model_product_template
-msgid "Product Template"
-msgstr "Шаблон за продукт"
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
+msgid "Product Purchased"
+msgstr "Продаден продукт"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
+msgid ""
+"Product mapped to the first slot of this row. Determines the name shown on "
+"the controller's price screen."
+msgstr ""
+"Продукт, съпоставен с първия слот на този ред. Определя името, показвано на "
+"екрана с цени на контролера."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item4
+msgid "Product mapped to the fourth slot of this row."
+msgstr "Продукт, съпоставен с четвъртия слот на този ред."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item2
+msgid "Product mapped to the second slot of this row."
+msgstr "Продукт, съпоставен с втория слот на този ред."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item3
+msgid "Product mapped to the third slot of this row."
+msgstr "Продукт, съпоставен с третия слот на този ред."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
+msgid ""
+"Product matching the item sold by the vending controller for this entry - "
+"copied from the linked vending event so it survives event archiving."
+msgstr ""
+"Продукт, съответстващ на артикула, продаден от вендинг контролера за този "
+"запис - копиран от свързаното вендинг събитие, за да се запази при "
+"архивиране на събитието."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
+msgid ""
+"Product that was purchased in this vending transaction.\n"
+"\n"
+"• Product tracking: Links sales events to specific products\n"
+"• Inventory: Helps track which products are selling well\n"
+"• Reporting: Enables product-specific sales analysis\n"
+"• Pricing: Connected to product price and pricelist settings\n"
+"\n"
+"Empty for non-purchase events (errors, cash collection, etc.)."
+msgstr "Продукта продаден в транзакцията"
 
 #. module: hr_rfid_vending
 #: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_products_menu
@@ -794,6 +1217,44 @@ msgid "RFID Vending Event"
 msgstr "Вендинг Събития"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__controller_id
+msgid ""
+"RFID controller/vending machine where this event occurred.\n"
+"\n"
+"• Location tracking: Identifies which machine was used\n"
+"• Machine management: Links events to specific hardware units\n"
+"• Reporting: Enables machine-specific sales and usage analysis\n"
+"• Maintenance: Helps track machine performance and issues\n"
+"\n"
+"Useful for multi-machine installations and location-based reporting."
+msgstr ""
+"RFID контролер/вендинг машина, в която е настъпило това събитие.\n"
+"\n"
+"• Проследяване на местоположение: Идентифицира коя машина е използвана\n"
+"• Управление на машини: Свързва събитията с конкретни хардуерни устройства\n"
+"• Отчитане: Позволява анализ на продажби и използване по отделни машини\n"
+"• Поддръжка: Помага за проследяване на производителността и проблемите на машината\n"
+"\n"
+"Полезно за инсталации с множество машини и отчитане по местоположение."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__input_js
+msgid "Raw Event Data"
+msgstr "Входящ JSON"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
+msgid ""
+"Read-only firmware counters reported by the vending controller. The scale "
+"factor maps card-balance units to physical currency; cash contained is the "
+"running tally the controller has yet to deposit."
+msgstr ""
+"Броячи от фърмуера само за четене, докладвани от вендинг контролера. "
+"Мащабният коефициент съпоставя единиците на баланса на картата с физическата"
+" валута; съдържаните пари са текущата сума, която контролерът все още не е "
+"депозирал."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
 msgid "Reader"
 msgstr "Четец"
@@ -804,9 +1265,32 @@ msgid "Reader affected by this event"
 msgstr "Четец засегнат от това събитие"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
+msgid "Reason"
+msgstr "Причина"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
+msgid "Reason for reversal..."
+msgstr "Причина за сторниране..."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Receive Date"
 msgstr "Дата на приемане"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
+msgid ""
+"Record the cash you have physically removed from the selected vending "
+"controllers. The amount is logged for audit and the controller's cash "
+"counter is reduced accordingly. The amount cannot exceed what each "
+"controller currently reports."
+msgstr ""
+"Регистрирайте парите, които сте изтеглили физически от избраните вендинг "
+"контролери. Сумата се записва за одит и брояча за пари на контролера се "
+"намалява съответно. Сумата не може да надвишава текущо отчетеното от всеки "
+"контролер."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
@@ -834,19 +1318,57 @@ msgid "Repeat every x."
 msgstr "Повтаряйте на всеки x."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__command_id
-msgid "Response"
-msgstr "Отговор"
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/balance_history.py:0
+#, python-format
+msgid "Reversal"
+msgstr "Сторниране"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__command_id
-msgid "Response command"
-msgstr "Команда за отговор"
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/balance_history.py:0
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+#, python-format
+msgid "Reversal: %s"
+msgstr "Сторниране: %s"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.vending_event_reverse_form
+msgid "Reverse"
+msgstr "Сторнирай"
+
+#. module: hr_rfid_vending
+#: model:ir.actions.act_window,name:hr_rfid_vending.action_vending_event_reverse
+msgid "Reverse Purchase"
+msgstr "Сторниране на покупка"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_vending_event_reverse
+msgid "Reverse Vending Purchase"
+msgstr "Сторниране на вендинг покупка"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+#, python-format
+msgid "Reversed by %s. Reason: %s"
+msgstr "Сторнирано от %s. Причина: %s"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
 msgid "Row Num"
 msgstr "Номер на ред"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
+msgid ""
+"Row index inside the vending machine grid (1-based). Each row holds 4 item "
+"slots; the global item number is (row_num - 1) * 4 + slot."
+msgstr ""
+"Индекс на реда в решетката на вендинг машината (базиран от 1). Всеки ред "
+"съдържа 4 слота за артикули; глобалният номер на артикула е (row_num - 1) * "
+"4 + slot."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
@@ -874,6 +1396,18 @@ msgid "Scale Factor"
 msgstr "Минимална монета"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.view_company_form_inherit_vending
+msgid ""
+"Schedule for the auto-refill cron at the company level. The interval below "
+"controls how often employee balances are recharged; the next call timestamp "
+"shows when the scheduler will fire next."
+msgstr ""
+"График за крон задачата за авто-зареждане на ниво фирма. Интервалът по-долу "
+"контролира колко често балансите на служителите се захранват; времевата "
+"марка за следващо изпълнение показва кога планировчикът ще се задейства "
+"следващия път."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_recharge_balance
 msgid "Self Recharge Balance"
 msgstr "Баланс за самозареждане"
@@ -885,8 +1419,8 @@ msgstr "Задай Баланс за вендинг"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Set balance to"
-msgstr "Задай баланс за"
+msgid "Set balance"
+msgstr "Задай баланс"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
@@ -895,8 +1429,13 @@ msgstr "Задай баланс"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
-msgid "Set private balance"
-msgstr "Задаване на частен баланс"
+msgid "Set person's private balance"
+msgstr "Задаване на личния баланс на служител"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid "Set private"
+msgstr "Задай личен"
 
 #. module: hr_rfid_vending
 #: model:ir.actions.act_window,name:hr_rfid_vending.hr_employee_vending_recharge_balance_set_action
@@ -934,14 +1473,36 @@ msgid "Subtract"
 msgstr "Извади"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
+msgid ""
+"Sum of all balance top-ups credited during this run. A useful sanity check "
+"against the company's vending budget."
+msgstr ""
+"Сума от всички захранвания на баланса, кредитирани по време на това "
+"изпълнение. Полезна проверка спрямо бюджета на фирмата за вендинг."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__command_id
+msgid "System Response"
+msgstr "Отговор"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__command_id
+msgid ""
+"System command sent to the vending machine in response to this event.\n"
+"\n"
+"• Communication: Links events to system responses and commands\n"
+"• Debugging: Useful for troubleshooting communication issues\n"
+"• Audit trail: Shows system's response to vending events\n"
+"• Technical: Primarily used for system administration and debugging\n"
+"\n"
+"Mostly relevant for technical users and system troubleshooting."
+msgstr "Команда за отговор"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__cash_contained
 msgid "The amount of cash the vending machine currently contains"
 msgstr "Сумата в монети, която машината съдържа"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
-msgid "The item that was sold in the transaction"
-msgstr "Продукта продаден в транзакцията"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_max
@@ -949,10 +1510,18 @@ msgid "The limit of cash the auto refill should never go over"
 msgstr "Лимитът, който автоматичното зареждане не трябва да превишава"
 
 #. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/models/hr_rfid_ctrl_settings.py:0
 #, python-format
 msgid "The value of %s is invalid. Must be between 0 and 255"
 msgstr "Стойността %s е невалидна. Трябва да е от 0 до 255"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
+#, python-format
+msgid "This event has already been reversed."
+msgstr "Това събитие вече е сторнирано."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
@@ -965,9 +1534,28 @@ msgid "Time the event triggered"
 msgstr "Времето на самото събитие"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_res_company__refill_interval_type
+msgid ""
+"Time unit for the auto-refill repeat interval. Combined with Repeat every "
+"(above): 'every 1 months' tops up balances on the same day each month."
+msgstr ""
+"Времева единица за интервала на повторение на авто-зареждането. В комбинация"
+" с Повтаряй на всеки (по-горе): 'всеки 1 месеца' захранва балансите на същия"
+" ден всеки месец."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_time
 msgid "Timestamp"
 msgstr "Дата и час"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
+msgid ""
+"Timestamp the cron run created the record. Use this to correlate refill "
+"totals with the cron's nextcall schedule."
+msgstr ""
+"Времева марка на създаване на записа от крон задачата. Използвайте я, за да "
+"съотнесете общите суми от захранването с графика nextcall на крон задачата."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
@@ -975,7 +1563,16 @@ msgid "Total Cash Refilled"
 msgstr "Общо презаредена сума"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
+msgid "Transaction"
+msgstr "Транзакция"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__transaction_price
+msgid "Transaction Amount"
+msgstr "Цена на транзакцията"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Transaction Price"
 msgstr "Цена на транзакцията"
@@ -984,6 +1581,19 @@ msgstr "Цена на транзакцията"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Transaction events"
 msgstr "Транзакциони събития"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__event_action
+msgid ""
+"Type of vending machine event that occurred.\n"
+"\n"
+"• Purchase Complete (47): Successful product purchase transaction\n"
+"• Collect cash (50): Cash collection or management event\n"
+"• Error (48/49): Various machine error conditions\n"
+"• Bad Data Error (-1): Communication or data parsing error\n"
+"\n"
+"Most common events are successful purchases (47)."
+msgstr "Какво се случи за получаване на събитие"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__up_to
@@ -1001,9 +1611,17 @@ msgid "User rights for the Vending module"
 msgstr "Потребителски права за вендинг модула"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
+msgid ""
+"User who triggered the balance change. For vending sales this is the system "
+"user; for manual top-ups it is the operator who used the wizard."
+msgstr ""
+"Потребител, инициирал промяната на баланса. За вендинг продажби това е "
+"системният потребител; за ръчни захранвания това е операторът, използвал "
+"съветника."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__value
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__value
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__value
 msgid "Value"
 msgstr "Стойност"
 
@@ -1058,10 +1676,11 @@ msgid "Vending Events"
 msgstr "Вендинг Събития"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__controller_id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__controller_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Vending Machine"
-msgstr "Вендинг Машини"
+msgstr "Контролер"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_row
@@ -1072,6 +1691,11 @@ msgstr "Ред за вендинг машини"
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_settings
 msgid "Vending Machine Settings"
 msgstr "Настройки на Вендинг Машина"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__controller_ids
+msgid "Vending Machines"
+msgstr "Контролер"
 
 #. module: hr_rfid_vending
 #: model:res.groups,name:hr_rfid_vending.group_operator
@@ -1089,9 +1713,66 @@ msgid "Vending Settings"
 msgstr "Вендинг Настройки"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+msgid ""
+"Vending controller event that triggered the balance change (a sale or a sale"
+" reversal). Empty for manual operator adjustments."
+msgstr ""
+"Събитие от вендинг контролера, което е предизвикало промяната на баланса "
+"(продажба или сторниране на продажба). Празно за ръчни корекции от оператор."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__controller_id
+msgid ""
+"Vending controller this row belongs to. Cascade on delete - rows do not "
+"survive their controller."
+msgstr ""
+"Вендинг контролер, към който принадлежи този ред. Каскадно изтриване - "
+"редовете не се запазват след изтриване на техния контролер."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__event_id
+msgid ""
+"Vending event being reversed. Set automatically from the active record when "
+"the wizard is opened."
+msgstr ""
+"Вендинг събитие, което се сторнира. Задава се автоматично от активния запис "
+"при отваряне на съветника."
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
 msgid "Vending info"
 msgstr "Вендинг Информация"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__controller_id
+msgid ""
+"Vending machine from which cash was collected. Set automatically based on "
+"the collection event."
+msgstr ""
+"Вендинг машина, от която е събран кеша. Задава се автоматично въз основа на "
+"събитието за събиране."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__controller_ids
+msgid ""
+"Vending machines from which cash will be collected.\n"
+"\n"
+"• Multiple machines: Can collect from several machines at once\n"
+"• Batch operation: Efficient for route-based cash collection\n"
+"• Pre-selected: Based on current context or selection\n"
+"• Validation: System ensures machines have sufficient cash\n"
+"\n"
+"Select all machines from which you are physically collecting cash."
+msgstr ""
+"Вендинг машини, от които ще бъдат инкасирани пари.\n"
+"\n"
+"• Множество машини: Възможност за инкасиране от няколко машини едновременно\n"
+"• Групова операция: Ефективна за инкасиране по маршрут\n"
+"• Предварително избрани: Въз основа на текущия контекст или選ор\n"
+"• Валидация: Системата гарантира, че машините разполагат с достатъчно пари\n"
+"\n"
+"Изберете всички машини, от които физически инкасирате пари."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
@@ -1109,6 +1790,16 @@ msgid "Vending settings:"
 msgstr "Вендинг Настройки:"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__website_message_ids
+msgid "Website Messages"
+msgstr "Уебсайт съобщения"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__website_message_ids
+msgid "Website communication history"
+msgstr "История на уебсайт комуникацията"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__res_company__refill_interval_type__weeks
 msgid "Weeks"
 msgstr "Седмици"
@@ -1119,11 +1810,6 @@ msgid "What"
 msgstr "Какво"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__event_action
-msgid "What happened to trigger the event"
-msgstr "Какво се случи за получаване на събитие"
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "When"
 msgstr "Кога"
@@ -1132,11 +1818,6 @@ msgstr "Кога"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Where"
 msgstr "Къде"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Whether the user came in or out"
-msgstr "Дали потребителят е влязъл или излязъл"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_negative_balance
@@ -1184,17 +1865,22 @@ msgid "_Collect"
 msgstr "_Извади"
 
 #. module: hr_rfid_vending
-#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_log_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 msgid "_form"
-msgstr ""
+msgstr "_форма"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_log_view_tree
 msgid "_tree"
-msgstr ""
+msgstr "_списък"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
+msgid "by Department"
+msgstr "по отдел"
+
+#. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/models/hr_rfid_ctrl_settings.py:0
 #, python-format
 msgid "item %s: %f is not a valid price. Must be between %f and %f"

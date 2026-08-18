@@ -7,10 +7,24 @@
             <field name="view_mode">tree,form,search,calendar,pivot</field>
             <field name="context">{'search_default_filter_this_day': 1}</field>
             <field name="help" type="html">
-            <p class="oe_view_nocontent_create">
-                There aren't any events form today. Have you already set up the system?
-            </p>
-        </field>
+                <p class="o_view_nocontent_smiling_face">
+                    No user access events found for today
+                </p>
+                <p>
+                    User events track all access attempts by employees and contacts:
+                </p>
+                <ul>
+                    <li><b>Access Granted</b> - Successful entry/exit through doors</li>
+                    <li><b>Access Denied</b> - Failed attempts due to invalid permissions</li>
+                    <li><b>Time Schedule Errors</b> - Access outside allowed hours</li>
+                    <li><b>Anti-Passback Violations</b> - Improper entry/exit sequences</li>
+                    <li><b>Zone Controls</b> - Security zone arming/disarming</li>
+                </ul>
+                <p>
+                    Events are automatically logged when users present their RFID cards to readers.
+                    Use filters to analyze access patterns, security violations, and attendance data.
+                </p>
+            </field>
         </record>
 
         <record id="hr_rfid_user_ev_view_form" model="ir.ui.view">
@@ -128,6 +142,7 @@
                     <field name="card_id"/>
                     <field name="contact_id"/>
                     <field name="employee_id"/>
+                    <field name="department_id"/>
                     <field name="door_id"/>
                     <field name="event_action"/>
 
@@ -156,9 +171,11 @@
                     <filter name="groupby_reader" string="by Reader" context="{'group_by':'reader_id'}"/>
                     <filter name="groupby_time" string="by Event Time" context="{'group_by':'event_time'}"/>
                     <filter name="groupby_employee" string="by Employee" context="{'group_by':'employee_id'}"/>
+                    <filter name="groupby_department" string="by Department" context="{'group_by':'department_id'}"/>
                     <filter name="groupby_contact" string="by Contact" context="{'group_by':'contact_id'}"/>
                     <searchpanel>
                         <field name="event_action" string="Status" icon="fa-info-circle" color="#875A7B"/>
+                        <field name="department_id" string="Department" icon="fa-users" color="#4A5568" enable_counters="1"/>
                     </searchpanel>
 
                 </search>

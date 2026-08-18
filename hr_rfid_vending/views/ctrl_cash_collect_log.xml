@@ -5,13 +5,19 @@
             <field name="name">Cash collect Log</field>
             <field name="res_model">hr.rfid.ctrl.cash.log</field>
             <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">No cash collections recorded yet</p>
+                <p>
+                    Audit trail of cash collected from each vending controller. A new entry is created every time an operator empties the controller's cash box through the Collect Cash wizard.
+                </p>
+            </field>
         </record>
 
         <record id="ctrl_cash_collect_log_view_form" model="ir.ui.view">
             <field name="name">ctrl.cash.collect.log.view.form</field>
             <field name="model">hr.rfid.ctrl.cash.log</field>
             <field name="arch" type="xml">
-                <form string="_form" create="0" options="{'create': False, 'edit': False}">
+                <form create="0" edit="0">
                     <sheet>
                         <group>
                             <group>
@@ -33,7 +39,7 @@
             <field name="name">ctrl.cash.collect.log.view.tree</field>
             <field name="model">hr.rfid.ctrl.cash.log</field>
             <field name="arch" type="xml">
-                <tree string="_tree" create="0" delete="0" edit="0">
+                <tree sample="1" string="_tree" create="0" delete="0" edit="0">
                     <field name="controller_id"/>
                     <field name="value"/>
                     <field name="currency_id" invisible="1"/>

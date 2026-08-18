@@ -7,6 +7,7 @@
             <field name="model">hr.rfid.ctrl.io.table.wiz</field>
             <field name="arch" type="xml">
                 <form string="View/Modify IO table">
+                    <p>Edit how the controller responds to each event - for every event row, set the value written to outputs 1-8 (range 0-99). Use Load factory defaults to reset the table to the values shipped with the controller's hardware version.</p>
                     <div>
                         <field name="controller_id" invisible="1"/>
                         <field name="outs" invisible="1"/>
@@ -57,6 +58,12 @@
             <field name="binding_view_types">form</field>
             <field name="groups_id" eval="[(4, ref('hr_rfid.hr_rfid_group_manager'))]"/>
             <field name="target">new</field>
+            <field name="help" type="html">
+                <p>
+                    Configure the Input/Output table for RFID controllers.
+                    This defines how different events trigger output pins on the controller hardware.
+                </p>
+            </field>
         </record>
 
     </data>
