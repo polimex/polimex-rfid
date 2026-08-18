@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, exceptions, http, _
+import itertools
 import re
 from datetime import datetime
 
@@ -149,12 +150,16 @@ class ResPartner(models.Model):
 
     def check_for_ts_inconsistencies(self):
         acc_gr_door_rel_env = self.env['hr.rfid.access.group.door.rel']
-        acc_grs = self.hr_rfid_access_group_ids.mapped('access_group_id')
-        for i in range(len(acc_grs)):
-            for j in range(i + 1, len(acc_grs)):
-                door_rels1 = acc_grs[i].all_door_ids
-                door_rels2 = acc_grs[i].all_door_ids
-                acc_gr_door_rel_env.check_for_ts_inconsistencies(door_rels1, door_rels2)
+        # Every PAIR of the contact's access groups - the same shape as the
+        # twin on hr.employee. Hand-written as two counters, the second group
+        # was taken from the FIRST index, so every group was compared with
+        # itself: the schedules always matched, the check never refused
+        # anything, and a contact could hold one door on two different
+        # schedules with nothing to say so.
+        for acc_gr1, acc_gr2 in itertools.combinations(
+                self.hr_rfid_access_group_ids.mapped('access_group_id'), 2):
+            acc_gr_door_rel_env.check_for_ts_inconsistencies(
+                acc_gr1.all_door_ids, acc_gr2.all_door_ids)
 
     @api.constrains('hr_rfid_access_group_ids')
     def check_access_group(self):
