@@ -47,6 +47,19 @@ class HrDepartment(models.Model):
     def write(self, vals):
         ret = super(HrDepartment, self).write(vals)
 
+        if self.env.context.get('no_hardware_commands'):
+            # Data being carried in from elsewhere. The rights of the people
+            # come from THERE and are already written down; deciding any of
+            # them here means the system that arrives is not the system that
+            # left. Measured while moving a 27-tenant cloud: setting a
+            # department's allowed groups handed six people the department's
+            # default group - six doors that opened for them here and did not
+            # over there - and the same branch takes away any right whose
+            # group is not on the list it has just been given.
+            # hr.employee.create is guarded the same way and for the same
+            # reason; this was the half of the mechanism left open.
+            return ret
+
         if 'hr_rfid_allowed_access_groups' in vals:
 
             to_unlink = self.env['hr.rfid.access.group.employee.rel']

@@ -213,12 +213,25 @@
             <field name="name">HR RFID User Events: Multi Company</field>
             <field name="model_id" ref="model_hr_rfid_event_user"/>
             <field name="global" eval="True"/>
+            <!-- The third branch is for an event that names NOBODY: an
+                 unknown card presented at a door, or a card whose holder is
+                 gone. Both dotted "= False" tests above compile to an EXISTS
+                 and therefore never match a NULL link, so such an event was
+                 visible to no one at all - present in the table, absent from
+                 every screen and every count. Measured while moving an Odoo 14
+                 tenant: 4 202 of its 66 357 events sat unreadable. The system
+                 events' own rule has carried the equivalent branch
+                 (controller_id = False) all along; this was the half of the
+                 mechanism left open. It must be a CONJUNCTION - a bare
+                 "contact_id = False" would show every employee's event to
+                 every company. -->
             <field name="domain_force">[
-                '|',
+                '|', '|',
                 '|', ('employee_id.company_id', 'in', company_ids),
                 ('employee_id.company_id', '=', False),
                 '|', ('contact_id.company_id', 'in', company_ids),
-                ('contact_id.company_id', '=', False)
+                ('contact_id.company_id', '=', False),
+                '&amp;', ('employee_id', '=', False), ('contact_id', '=', False)
             ]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
