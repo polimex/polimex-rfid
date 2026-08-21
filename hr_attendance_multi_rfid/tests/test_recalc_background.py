@@ -52,6 +52,20 @@ A_REFUSAL_OF_REAL_LENGTH = (
 ) % LAST_WORDS_OF_THE_REFUSAL
 
 
+def _windows_the_browser_must_open(action):
+    """Every window in a returned action, the chained ones included.
+
+    An action can carry another one to open after it (``params['next']``), and
+    the browser treats what it finds there exactly like a top-level window.
+    """
+    if not isinstance(action, dict):
+        return
+    if action.get('type') == 'ir.actions.act_window':
+        yield action
+    yield from _windows_the_browser_must_open((action.get('params') or {}).get('next'))
+
+
+
 @tagged("post_install", "-at_install", "rfid_attendance_recalc")
 class TestAttendanceRebuildInBackground(TransactionCase):
 
@@ -237,6 +251,47 @@ class TestAttendanceRebuildInBackground(TransactionCase):
         self.assertEqual(result['params']['next']['res_model'],
                          'hr.attendance.recalc.run',
                          "and be shown where to watch it")
+
+    def test_the_progress_screen_the_operator_is_sent_to_can_open(self):
+        """Being told where to watch is not the same as getting there.
+
+        What the button returns is cleaned by the server
+        (web/controllers/utils.py:23, clean_action) and then handed to the
+        browser, which calls action.views.map(...) on every window it is asked
+        to open (web/static/src/webclient/actions/action_service.js:442). The
+        cleaning fills in 'views' for the action that is RETURNED, and only for
+        that one - a window carried inside another action's params is passed
+        through untouched. Without 'views' it takes the whole screen down with
+        "Cannot read properties of undefined", AFTER the rebuild has been
+        queued and started: the work runs to completion and the operator is
+        left looking at a crash, with no way to the progress they were
+        promised. Reported from a 208-person site on 2026-08-21, where the
+        rebuild had in fact finished - 107 people rebuilt - while the screen
+        showed an error.
+
+        The test asserts the browser's rule, not ours, and walks the whole
+        chain: it is the nested window that nobody completes.
+        """
+        # The server's own cleaning, so the test sees exactly what the browser
+        # is sent - not what the method happened to return.
+        from odoo.addons.web.controllers.utils import clean_action
+
+        self._a_normal_working_day(self.employee_1)
+        _, shown = self._ask_for_a_rebuild()
+
+        windows = list(_windows_the_browser_must_open(
+            clean_action(shown, env=self.env)))
+        self.assertTrue(
+            windows,
+            "the operator is told where to watch the rebuild - if no window is "
+            "offered any more, this test is guarding nothing")
+        for window in windows:
+            self.assertIsInstance(
+                window.get('views'), list,
+                "the window '%s' reaches the browser without 'views', and the "
+                "browser maps over it unconditionally - the operator gets a "
+                "crash instead of the progress screen"
+                % (window.get('res_model') or window.get('name')))
 
     def test_the_rebuild_replays_the_door_events(self):
         """Once the scheduler picks it up, attendance matches the doors."""

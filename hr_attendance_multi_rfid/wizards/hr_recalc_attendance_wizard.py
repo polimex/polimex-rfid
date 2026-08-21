@@ -81,6 +81,16 @@ Use this when attendance data seems incorrect or after changing zone settings.""
             'res_model': 'hr.attendance.recalc.run',
             'res_id': run.id,
             'view_mode': 'form',
+            # 'views' spelled out, not left to 'view_mode'. The server fills it
+            # in for the action a button RETURNS (web/controllers/utils.py:23-26
+            # calls generate_views), but this one travels inside another
+            # action's params, where nothing walks in to complete it. The
+            # client then does action.views.map(...) unconditionally
+            # (web/static/src/webclient/actions/action_service.js:442) and the
+            # whole screen dies with "Cannot read properties of undefined".
+            # Core spells it out in the same position - see
+            # mass_mailing/wizard/mailing_contact_import.py:114-115.
+            'views': [(False, 'form')],
             'target': 'current',
         }
         return {
