@@ -202,7 +202,10 @@ jobs:
             echo "::error::No test summary in the log - the tests did not run"
             exit 1
           fi
-          if echo "$verdicts" | grep -qvE "0 failed, 0 error\(s\) of [1-9][0-9]* tests"; then
+          # [^0-9] before the zero: without it "10 failed" CONTAINS the green
+          # pattern as a substring (the trailing 0 of "10") and any N0-failure
+          # run passes the gate. Caught by the business-logic validation sweep.
+          if echo "$verdicts" | grep -qvE "[^0-9]0 failed, 0 error\(s\) of [1-9][0-9]* tests"; then
             echo "::error::Tests reported failures or errors"
             exit 1
           fi
