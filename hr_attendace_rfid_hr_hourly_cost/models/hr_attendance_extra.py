@@ -77,9 +77,17 @@ class HrAttendanceExtraCost(models.Model):
     def _is_public_holiday(self):
         """True if this day is an official public holiday for the employee.
 
-        Reads global (resource-less) Public Holidays on the employee's working
-        calendar — the records the BG localisation seeds. Used to split
-        rest-day pay (lower) from official-holiday pay (higher)."""
+        Reads global (resource-less) Public Holidays the same way core
+        resolves them (resource_calendar.py:509-511 and
+        hr_employee._get_public_holidays): a record bound to the employee's
+        working calendar OR bound to no calendar at all - the form the core
+        Time Off -> Public Holidays menu creates. The strict calendar match
+        used before made menu-entered holidays invisible here, so work on
+        them was paid at the rest-day rate instead of the holiday rate.
+        Scoped to the employee's company: another company's holiday is not
+        this employee's day off (same guard as resource_calendar.py:531).
+        Used to split rest-day pay (lower) from official-holiday pay
+        (higher)."""
         self.ensure_one()
         if not self.for_date:
             return False
@@ -90,7 +98,8 @@ class HrAttendanceExtraCost(models.Model):
         dt_from = datetime.combine(self.for_date, time.min)
         dt_to = datetime.combine(self.for_date, time.max)
         return bool(self.env['resource.calendar.leaves'].search_count([
-            ('calendar_id', '=', calendar.id),
+            ('calendar_id', 'in', [False, calendar.id]),
+            ('company_id', 'in', [False, self.employee_id.company_id.id]),
             ('resource_id', '=', False),
             ('time_type', '=', 'leave'),
             ('date_from', '<=', dt_to),
