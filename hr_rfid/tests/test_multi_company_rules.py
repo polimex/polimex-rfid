@@ -23,6 +23,7 @@ company-bound non-superuser RFID user.
 """
 from odoo import fields
 from odoo.tests.common import tagged, new_test_user
+from odoo.tools import mute_logger
 
 from odoo.addons.hr_rfid.tests.common import RFIDAppCase
 
@@ -253,4 +254,291 @@ class TestMultiCompanySharedRecords(RFIDAppCase):
         self.assertFalse(
             self._visible('hr.rfid.event.system', event_b),
             'company-B system event must stay hidden from a company-A user',
+        )
+
+
+@tagged('standard', 'at_install', 'rfid', 'rfid_security')
+class TestOrphanUserEventVisibility(RFIDAppCase):
+    """Owner decision 5: an event that names NOBODY (unknown card) belongs
+    to the door where it happened - the company operating that door, and
+    the companies the module is shared with, see it; everyone else does
+    not. Only when the hardware chain is broken (no reader, or a chain
+    ending in a company-less module) does the event stay visible to all,
+    because hiding it would bring back the visible-to-no-one defect.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.company_a = cls.env['res.company'].browse(cls.test_company_id)
+        cls.company_b = cls.env['res.company'].create(
+            {'name': 'Orphan Rule Co B'})
+
+        # One restricted (non-superuser) events reader per company: the
+        # record rule, not the ACL, is what decides who sees what.
+        cls.user_a = new_test_user(
+            cls.env,
+            login='rfid_orphan_officer_a',
+            groups='hr_rfid.hr_rfid_group_officer',
+            name='Orphan Rule Officer A',
+            company_id=cls.company_a.id,
+            company_ids=[(6, 0, [cls.company_a.id])],
+        )
+        cls.user_b = new_test_user(
+            cls.env,
+            login='rfid_orphan_officer_b',
+            groups='hr_rfid.hr_rfid_group_officer',
+            name='Orphan Rule Officer B',
+            company_id=cls.company_b.id,
+            company_ids=[(6, 0, [cls.company_b.id])],
+        )
+
+        def _chain(webstack, ctrl_id, tag):
+            ctrl = cls.env['hr.rfid.ctrl'].create({
+                'name': 'Orphan Rule Ctrl %s' % tag,
+                'webstack_id': webstack.id,
+                'ctrl_id': ctrl_id,
+            })
+            return cls.env['hr.rfid.reader'].create({
+                'name': 'Orphan Rule Reader %s' % tag,
+                'number': 1,
+                'reader_type': '0',
+                'controller_id': ctrl.id,
+            })
+
+        # Company-A hardware: reuse the base fixture module (company A).
+        cls.reader_a = _chain(cls.test_webstack_10_3_id, 81, 'A')
+        # Company-B hardware.
+        cls.webstack_b = cls.env['hr.rfid.webstack'].create({
+            'name': 'Orphan Rule Stack B',
+            'serial': '664401',
+            'company_id': cls.company_b.id,
+            'available': 'a',
+            'tz': 'Europe/Sofia',
+            'active': True,
+        })
+        cls.reader_b = _chain(cls.webstack_b, 82, 'B')
+        # Module owned by B and SHARED with A (Laravel customer_web_stack
+        # parity - one physical entrance serving two companies).
+        cls.webstack_shared = cls.env['hr.rfid.webstack'].create({
+            'name': 'Orphan Rule Shared Stack',
+            'serial': '664402',
+            'company_id': cls.company_b.id,
+            'shared_company_ids': [(6, 0, [cls.company_a.id])],
+            'available': 'a',
+            'tz': 'Europe/Sofia',
+            'active': True,
+        })
+        cls.reader_shared = _chain(cls.webstack_shared, 83, 'S')
+        # Module with NO owner company - the chain resolves to nobody.
+        cls.webstack_nocomp = cls.env['hr.rfid.webstack'].create({
+            'name': 'Orphan Rule No-Company Stack',
+            'serial': '664403',
+            'company_id': False,
+            'available': 'a',
+            'tz': 'Europe/Sofia',
+            'active': True,
+        })
+        cls.reader_nocomp = _chain(cls.webstack_nocomp, 84, 'N')
+        # Reader wired to no controller at all - chain broken one link in.
+        cls.reader_broken = cls.env['hr.rfid.reader'].create({
+            'name': 'Orphan Rule Broken Reader',
+            'number': 1,
+            'reader_type': '0',
+        })
+
+        cls.employee_b = cls.env['hr.employee'].create({
+            'name': 'Orphan Rule Emp B',
+            'company_id': cls.company_b.id,
+        })
+
+        def _orphan(reader):
+            # An unknown card names nobody: no employee, no contact, no
+            # card. The model logs an ERROR line for that shape by design;
+            # mute it so the log-error watchdog does not fail the fixture.
+            with mute_logger(
+                    'odoo.addons.hr_rfid.models.hr_rfid_event_user'):
+                return cls.env['hr.rfid.event.user'].create({
+                    'reader_id': reader.id,
+                    'event_action': '2',
+                    'event_time': fields.Datetime.now(),
+                })
+
+        cls.ev_orphan_a = _orphan(cls.reader_a)
+        cls.ev_orphan_b = _orphan(cls.reader_b)
+        cls.ev_orphan_shared = _orphan(cls.reader_shared)
+        cls.ev_orphan_nocomp = _orphan(cls.reader_nocomp)
+        cls.ev_orphan_broken = _orphan(cls.reader_broken)
+
+        # Reader-LESS orphan: reader_id is required today, but migrated
+        # databases predate that requirement and hold such rows (Odoo
+        # cannot apply NOT NULL over existing NULLs on upgrade - it keeps
+        # them and logs a warning). Reproduce that legacy shape: relax the
+        # constraint inside the test transaction (rolled back afterwards)
+        # and insert the row the way old data actually sits in the table.
+        cls.env.cr.execute(
+            "ALTER TABLE hr_rfid_event_user"
+            " ALTER COLUMN reader_id DROP NOT NULL")
+        cls.env.cr.execute(
+            """INSERT INTO hr_rfid_event_user
+                   (event_time, event_action,
+                    create_date, write_date, create_uid, write_uid)
+               VALUES (now() at time zone 'UTC', '2',
+                       now() at time zone 'UTC', now() at time zone 'UTC',
+                       %s, %s)
+               RETURNING id""",
+            [cls.env.uid, cls.env.uid])
+        cls.ev_orphan_readerless = cls.env['hr.rfid.event.user'].browse(
+            cls.env.cr.fetchone()[0])
+
+        # Identified events for the negative assertions.
+        cls.ev_emp_a_on_reader_b = cls.env['hr.rfid.event.user'].create({
+            'reader_id': cls.reader_b.id,
+            'employee_id': cls.test_employee_id.id,
+            'event_action': '2',
+            'event_time': fields.Datetime.now(),
+        })
+        cls.ev_emp_b_on_reader_a = cls.env['hr.rfid.event.user'].create({
+            'reader_id': cls.reader_a.id,
+            'employee_id': cls.employee_b.id,
+            'event_action': '2',
+            'event_time': fields.Datetime.now(),
+        })
+        cls.ev_emp_b_on_reader_b = cls.env['hr.rfid.event.user'].create({
+            'reader_id': cls.reader_b.id,
+            'employee_id': cls.employee_b.id,
+            'event_action': '2',
+            'event_time': fields.Datetime.now(),
+        })
+
+    def _sees(self, user, event):
+        return bool(self.env['hr.rfid.event.user'].with_user(user).search(
+            [('id', '=', event.id)]))
+
+    # ------------------------------------------------------------------
+    # (a) an orphan belongs to the company operating the door
+    # ------------------------------------------------------------------
+    def test_orphan_visible_to_door_owner(self):
+        """The security officer of the company operating a door must see
+        an unknown card presented at that door - it is THEIR incident."""
+        self.assertTrue(
+            self._sees(self.user_a, self.ev_orphan_a),
+            'orphan event on a company-A reader must be visible to the '
+            'company-A officer',
+        )
+        self.assertTrue(
+            self._sees(self.user_b, self.ev_orphan_b),
+            'orphan event on a company-B reader must be visible to the '
+            'company-B officer',
+        )
+
+    def test_orphan_hidden_from_other_company(self):
+        """NEGATIVE: another company's officer must NOT see an unknown
+        card presented at a door that is not theirs - the old rule showed
+        every orphan to every company."""
+        self.assertFalse(
+            self._sees(self.user_b, self.ev_orphan_a),
+            'orphan event on a company-A reader must stay hidden from the '
+            'company-B officer - the orphan branch is no longer global',
+        )
+        self.assertFalse(
+            self._sees(self.user_a, self.ev_orphan_b),
+            'orphan event on a company-B reader must stay hidden from the '
+            'company-A officer - the orphan branch is no longer global',
+        )
+
+    # ------------------------------------------------------------------
+    # (b) shared module: the sharing company sees the door's orphans too
+    # ------------------------------------------------------------------
+    def test_orphan_on_shared_module_visible_to_sharing_company(self):
+        """Two companies sharing one entrance both guard it: the sharing
+        company's officer must see an unknown card at the shared door,
+        exactly as they see its system events (rule parity)."""
+        self.assertTrue(
+            self._sees(self.user_b, self.ev_orphan_shared),
+            'orphan event on the shared module must be visible to its '
+            'OWNER company officer',
+        )
+        self.assertTrue(
+            self._sees(self.user_a, self.ev_orphan_shared),
+            'orphan event on a module shared with company A must be '
+            'visible to the company-A officer (shared_company_ids branch)',
+        )
+
+    # ------------------------------------------------------------------
+    # (c) broken chain: the orphan must not become invisible to everyone
+    # ------------------------------------------------------------------
+    def test_orphan_without_reader_stays_visible(self):
+        """A legacy imported event with NO reader resolves to no company;
+        narrowing must not hide it from everyone - that would recreate
+        the visible-to-no-one defect the orphan branch was born to fix."""
+        self.assertTrue(
+            self._sees(self.user_a, self.ev_orphan_readerless),
+            'reader-less orphan event must remain visible to company A - '
+            "the ('reader_id', '=', False) fallback branch must match",
+        )
+        self.assertTrue(
+            self._sees(self.user_b, self.ev_orphan_readerless),
+            'reader-less orphan event must remain visible to company B - '
+            "the ('reader_id', '=', False) fallback branch must match",
+        )
+
+    def test_orphan_broken_chain_stays_visible(self):
+        """A chain that stops before naming a company (reader with no
+        controller; module with no owner company) also resolves to
+        nobody - such orphans stay visible instead of vanishing. Each
+        optional link needs its own branch: a dotted '= False' never
+        matches a NULL intermediate link in Odoo 19."""
+        for event, label in [
+            (self.ev_orphan_broken, 'controller-less reader'),
+            (self.ev_orphan_nocomp, 'company-less module'),
+        ]:
+            self.assertTrue(
+                self._sees(self.user_a, event),
+                'orphan event on a %s must remain visible to company A' %
+                label,
+            )
+            self.assertTrue(
+                self._sees(self.user_b, event),
+                'orphan event on a %s must remain visible to company B' %
+                label,
+            )
+
+    # ------------------------------------------------------------------
+    # (d) NEGATIVE: an identified event never rides the orphan branch
+    # ------------------------------------------------------------------
+    def test_identified_event_ignores_hardware_chain(self):
+        """An event that DOES name a person is governed by that person's
+        company, not by the door: company A still sees its employee badge
+        at a foreign door, and a foreign employee at company A's own door
+        stays the foreign company's business."""
+        self.assertTrue(
+            self._sees(self.user_a, self.ev_emp_a_on_reader_b),
+            'event of a company-A employee on a company-B reader must stay '
+            'visible to company A - the employee branch, not the hardware '
+            'chain, decides for identified events',
+        )
+        self.assertFalse(
+            self._sees(self.user_a, self.ev_emp_b_on_reader_a),
+            'event of a company-B employee on a company-A reader must stay '
+            'hidden from company A - the new hardware-chain branch must '
+            'not leak identified events',
+        )
+
+    # ------------------------------------------------------------------
+    # (e) NEGATIVE: a foreign identified event stays hidden
+    # ------------------------------------------------------------------
+    def test_foreign_identified_event_stays_hidden(self):
+        """Company A must not see another company's employee events at
+        that company's own doors - the pre-existing isolation survives
+        the orphan-branch change untouched."""
+        self.assertFalse(
+            self._sees(self.user_a, self.ev_emp_b_on_reader_b),
+            'company-B employee event on company-B hardware must stay '
+            'hidden from the company-A officer',
+        )
+        self.assertTrue(
+            self._sees(self.user_b, self.ev_emp_b_on_reader_b),
+            'company-B employee event must remain visible to the '
+            'company-B officer',
         )

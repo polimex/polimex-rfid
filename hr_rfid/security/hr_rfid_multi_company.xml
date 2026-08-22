@@ -224,14 +224,34 @@
                  (controller_id = False) all along; this was the half of the
                  mechanism left open. It must be a CONJUNCTION - a bare
                  "contact_id = False" would show every employee's event to
-                 every company. -->
+                 every company.
+                 The orphan is NOT globally visible: it almost always still
+                 has a reader -> controller -> module chain naming a company
+                 (an unknown card at a CONCRETE door), so it belongs to the
+                 module's owner and to the companies the module is shared
+                 with - mirroring the system events' rule below. Only when
+                 that chain is BROKEN (no reader - legacy imported rows
+                 predating the reader requirement - or a chain ending in a
+                 company-less module) does the event stay visible everywhere,
+                 because hiding it would recreate the visible-to-no-one
+                 defect. Every optional link needs its own explicit branch:
+                 reader_id and reader.controller_id can be NULL and a dotted
+                 "= False" never matches a NULL intermediate; ctrl.webstack_id
+                 is required, so it needs none. -->
             <field name="domain_force">[
                 '|', '|',
                 '|', ('employee_id.company_id', 'in', company_ids),
                 ('employee_id.company_id', '=', False),
                 '|', ('contact_id.company_id', 'in', company_ids),
                 ('contact_id.company_id', '=', False),
-                '&amp;', ('employee_id', '=', False), ('contact_id', '=', False)
+                '&amp;', ('employee_id', '=', False),
+                '&amp;', ('contact_id', '=', False),
+                '|', '|', '|', '|',
+                ('reader_id.controller_id.webstack_id.company_id', 'in', company_ids),
+                ('reader_id.controller_id.webstack_id.shared_company_ids', 'in', company_ids),
+                ('reader_id', '=', False),
+                ('reader_id.controller_id', '=', False),
+                ('reader_id.controller_id.webstack_id.company_id', '=', False)
             ]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>

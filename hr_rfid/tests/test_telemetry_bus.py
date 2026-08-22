@@ -213,7 +213,16 @@ class TestThePresenceScanIsInstalled(RFIDAppCase):
 
     def test_the_scan_runs_by_itself(self):
         cron = self.env.ref('hr_rfid.hr_rfid_check_module_presence_cron')
-        self.assertTrue(cron.active, 'the scan must be scheduled, not dormant')
+        # A neutralized database (test clones, staging restores) deactivates
+        # every cron on purpose (base/data/neutralize.sql) and the cron data
+        # file is noupdate="1", so an upgrade cannot re-activate it there.
+        # That dormancy is the neutralization's doing, not the product's -
+        # only a non-neutralized database proves the product ships the scan
+        # active. Same gate core itself uses (base/models/ir_cron.py).
+        if not self.env['ir.config_parameter'].sudo().get_param(
+                'database.is_neutralized'):
+            self.assertTrue(cron.active,
+                            'the scan must be scheduled, not dormant')
         self.assertEqual(cron.model_id.model, 'hr.rfid.webstack')
         self.assertEqual(cron.interval_type, 'minutes')
         self.assertTrue(
