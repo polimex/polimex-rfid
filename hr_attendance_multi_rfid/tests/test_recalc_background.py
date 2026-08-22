@@ -567,12 +567,16 @@ class TestAttendanceRebuildInBackground(TransactionCase):
         # Something the operator already had, on a day of its own inside the
         # period they are about to rebuild.
         a_quiet_day = self.yesterday - timedelta(days=3)
+        # A record the RFID machinery itself made on an earlier run - the
+        # only kind a rebuild clears. A typed-in record surviving is its own
+        # test (test_zone_autoclose); here the point is the honest report.
         theirs = self.env['hr.attendance'].create({
             'employee_id': self.employee_1.id,
             'check_in': a_quiet_day.replace(hour=9, minute=0, second=0,
                                             microsecond=0),
             'check_out': a_quiet_day.replace(hour=17, minute=0, second=0,
                                              microsecond=0),
+            'in_mode': 'rfid',
         })
         # A door event that cannot make a day at work on its own: somebody
         # leaving, with no record of them arriving. Replaying it produces
@@ -841,66 +845,106 @@ class TestAttendanceRebuildInBackground(TransactionCase):
         with the person. Nothing in the door events can produce them again, so
         a rebuild that deletes them loses them for good.
 
-        WHAT THIS PROVES, AND WHAT IT DOES NOT. Telling a typed-in record from
-        a made one is only possible where the site records WHY each attendance
-        exists, which comes with the attendance-reason add-on. That add-on is
-        not part of this installation - neither the company setting nor the
-        reason on the attendance exists here - so the sparing cannot be
-        watched from one end to the other on this database. What is proven
-        here is the decision that does the sparing: with a reason configured,
-        the rebuild asks only for records carrying no reason at all, or the
-        one it puts on what it closed itself. A record carrying any other
-        reason cannot match what it asks for, and is therefore not deleted.
+        Every record the RFID machinery makes is stamped as its own
+        (in_mode 'rfid'), so the rebuild can ask for exactly those and
+        nothing else: not manual entries, not kiosk or systray check-ins,
+        and nothing outside the chosen period or person.
         """
-        the_reason_it_puts_on_its_own = 4242
-        self.patch(self.registry['hr.employee'],
-                   '_recalc_manual_attendance_reason',
-                   lambda employee: the_reason_it_puts_on_its_own)
         period_start, period_end = self.employee_1._recalc_window(
             self.start_date, self.end_date)
 
         asked_for = self.employee_1._recalc_clear_domain(period_start, period_end)
 
-        self.assertEqual(
-            asked_for[-3:],
-            ['|',
-             ('attendance_reason_ids', '=', False),
-             ('attendance_reason_ids', '=', the_reason_it_puts_on_its_own)],
-            "the rebuild must ask only for records with no reason on them, or "
-            "the one it puts on what it closed itself - anything else was put "
-            "there by a person and is not ours to delete")
+        self.assertIn(('in_mode', '=', 'rfid'), asked_for,
+                      "the rebuild may ask only for the records the machine "
+                      "itself made - anything else was put there by a person "
+                      "and is not ours to delete")
+        self.assertNotIn('|', asked_for,
+                         "and there is no branch that widens the asking "
+                         "beyond them")
         self.assertIn(('employee_id', '=', self.employee_1.id), asked_for,
                       "and only for this person")
         self.assertIn(('check_in', '>=', period_start), asked_for)
         self.assertIn(('check_in', '<', period_end), asked_for,
                       "and only inside the period that was asked about")
 
-    def test_where_nothing_records_the_reason_the_loss_is_not_silent(self):
-        """The other half of the same truth, and why it is worth saying.
+    def test_a_typed_in_record_survives_the_rebuild_that_replays_the_rest(self):
+        """The HR officer's own entry outlives a rebuild; the machine's does not.
 
-        Where nothing records why an attendance exists, a typed-in record
-        cannot be told from a made one, and the rebuild takes the period
-        whole. That is a real loss for a site that types corrections in, so it
-        must at least be visible to whoever keeps the system - not passed over
-        without a word.
+        A person forgot their badge on Tuesday, so HR typed the day in by
+        hand. Later the operator rebuilds the whole week from the door
+        events. The week's machine-made attendance is deleted and replayed -
+        but the typed-in Tuesday, which no door event can produce again,
+        comes out of the rebuild exactly as it went in.
         """
-        period_start, period_end = self.employee_1._recalc_window(
-            self.start_date, self.end_date)
+        # The machine records a working day from the door events.
+        came_in, went_out = self._a_normal_working_day(self.employee_1)
+        made_by_the_machine = self.env['hr.attendance'].search([
+            ('employee_id', '=', self.employee_1.id)])
+        self.assertTrue(made_by_the_machine,
+                        "walking through the door must record attendance")
+        self.assertEqual(set(made_by_the_machine.mapped('in_mode')), {'rfid'},
+                         "and what the machine records is stamped as the "
+                         "machine's own")
 
-        with self.assertLogs(
-                'odoo.addons.hr_attendance_multi_rfid.models.hr_employee',
-                level='WARNING') as logged:
-            asked_for = self.employee_1._recalc_clear_domain(
-                period_start, period_end)
+        # HR types in a day the doors never saw, three days earlier.
+        typed_in_day = self.yesterday.replace(
+            hour=8, minute=0, second=0, microsecond=0) - timedelta(days=3)
+        typed_in = self.env['hr.attendance'].create({
+            'employee_id': self.employee_1.id,
+            'check_in': typed_in_day,
+            'check_out': typed_in_day + timedelta(hours=8),
+        })
+        self.assertNotEqual(typed_in.in_mode, 'rfid',
+                            "an entry typed in through the form is nobody's "
+                            "machine record")
 
-        self.assertNotIn(
-            '|', asked_for,
-            "with nothing to tell the records apart by, the rebuild asks for "
-            "the whole period - if it ever starts sparing records here, it is "
-            "sparing them on a guess")
-        self.assertTrue(
-            any('attendance' in line.lower() for line in logged.output),
-            "and it must say so where somebody can see it")
+        run, _shown = self._ask_for_a_rebuild(employees=self.employee_1)
+        self._let_the_scheduler_work(run)
+        self.assertEqual(run.state, 'done')
+
+        self.assertTrue(typed_in.exists(),
+                        "the typed-in day must survive the rebuild - it "
+                        "cannot be worked out again from the door events")
+        self.assertEqual((typed_in.check_in, typed_in.check_out),
+                         (typed_in_day, typed_in_day + timedelta(hours=8)),
+                         "and it must say exactly what the person typed")
+        replayed = self.env['hr.attendance'].search([
+            ('employee_id', '=', self.employee_1.id),
+            ('in_mode', '=', 'rfid')])
+        self.assertEqual(
+            [(r.check_in, r.check_out) for r in replayed],
+            [(came_in, went_out)],
+            "while the machine's own record is replayed from the door "
+            "events - the same working day once, neither lost nor doubled")
+
+    def test_a_person_still_inside_is_replayed_open_and_stamped(self):
+        """An employee still at work when the rebuild runs stays checked in.
+
+        Somebody walked in and has not left yet. The rebuild replays their
+        entry as an OPEN attendance - no check-out is invented for them - and
+        the open record is stamped as the machine's own, so the next rebuild
+        may take it back and replay it again.
+        """
+        came_in = self.yesterday.replace(hour=8, minute=0, second=0,
+                                         microsecond=0)
+        self._door_event(self.employee_1, self.reader_in, came_in)
+
+        run, _shown = self._ask_for_a_rebuild(employees=self.employee_1)
+        self._let_the_scheduler_work(run)
+        self.assertEqual(run.state, 'done')
+
+        replayed = self.env['hr.attendance'].search([
+            ('employee_id', '=', self.employee_1.id)])
+        self.assertEqual(len(replayed), 1,
+                         "one entry through the door is one attendance")
+        self.assertEqual(replayed.check_in, came_in)
+        self.assertFalse(replayed.check_out,
+                         "no check-out may be invented for a person still "
+                         "inside")
+        self.assertEqual(replayed.in_mode, 'rfid',
+                         "and the open record is stamped as the machine's "
+                         "own")
 
 
 @tagged("post_install", "-at_install", "rfid_attendance_recalc")

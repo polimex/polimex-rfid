@@ -1,7 +1,7 @@
-from odoo import api, fields, models, _
-from datetime import datetime, timedelta
-from odoo.tools.float_utils import float_round, float_is_zero
-import base64
+from datetime import timedelta
+
+from odoo import api, fields, models
+from odoo.tools.float_utils import float_compare
 
 
 class HrAttendance(models.Model):
@@ -29,33 +29,18 @@ class HrAttendance(models.Model):
         'hr.rfid.zone',
         help="The RFID zone where this attendance session is taking place. Set when checking in "
              "and cleared when checking out. Used to track which area the employee is working in.",
-        # compute='_compute_checkin_zone',
-        # store=True
     )
-
-    def _update_check_in(self, new):
-        self.ensure_one()
-        vals = {
-            'employee_id': self.employee_id.id,
-            'check_in': new,
-            'in_zone_id': self.in_zone_id.id
-        }
-        self.unlink()
-        self.flush()
-        return self.create(vals)
-
-    @api.depends('check_in', 'check_out')
-    def _compute_checkin_zone(self):
-        for att in self:
-            if att.check_out:
-                att.in_zone_id = False
-            else:
-                att_zones_ids = [self.employee_id.in_zone_ids.filtered(lambda z: z.attendance)]
-                att.in_zone_id = att_zones_ids[0] or False
+    # Every attendance the RFID machinery creates is stamped 'rfid', so a
+    # rebuild can tell its own records from what a person typed in by hand
+    # (manual/kiosk/systray). On uninstall the records fall back to the
+    # field's default ('manual') rather than being deleted.
+    in_mode = fields.Selection(
+        selection_add=[('rfid', "RFID")],
+        ondelete={'rfid': 'set default'},
+    )
 
     def write(self, vals):
         for att in self:
-            # in_zone_ids = att.employee_id.in_zone_ids.filtered(lambda z: z.attendance)
             if vals.get('check_out', False) and not att.check_out and att.in_zone_id:
                 if self.env.context.get('from_event', None) is None:
                     att.in_zone_id.person_left(att.employee_id)
@@ -63,58 +48,83 @@ class HrAttendance(models.Model):
         return super(HrAttendance, self).write(vals)
 
     def _get_zone_settings(self):
+        """Auto-close settings of the zone THIS attendance was opened in.
+
+        The zone is read from the record's own in_zone_id - the zone the
+        session belongs to - never from employee_id.in_zone_ids, which says
+        where the person is NOW. A person who already left the zone has
+        nothing there, which made their forgotten open attendance impossible
+        to close.
+
+        :return: (max_time_in_zone, auto_close_time_for_zone) of the
+                 session's zone, or (False, False) when the record carries no
+                 attendance zone or the zone sets no limit
+                 (max_time_in_zone == 0).
+        """
         self.ensure_one()
-        att_zones_ids = self.employee_id.in_zone_ids.filtered(lambda z: z.attendance and z.max_time_in_zone)
-        if att_zones_ids:
-            # TODO multiple zone not proccessed!!!
-            max_hours = att_zones_ids[0].max_time_in_zone
-            return att_zones_ids[0].max_time_in_zone, att_zones_ids[0].auto_close_time_for_zone
-        else:
+        zone = self.in_zone_id
+        if not zone or not zone.attendance:
             return False, False
+        if float_compare(zone.max_time_in_zone, 0.0, precision_digits=2) <= 0:
+            return False, False
+        return zone.max_time_in_zone, zone.auto_close_time_for_zone
 
-    # inherited from hr_attendance_autoclose
     def needs_autoclose(self):
+        """Whether this open attendance has outstayed its zone's limit.
+
+        True only for an open record whose zone limits the stay
+        (max_time_in_zone > 0) and whose check-in is older than that limit.
+        Records without a zone are never closed by the zone machinery.
+        """
+        self.ensure_one()
+        if self.check_out:
+            return False
+        max_time, _autoclose = self._get_zone_settings()
+        if not max_time:
+            return False
+        open_worked_hours = (fields.Datetime.now() - self.check_in).total_seconds() / 3600.0
+        return float_compare(open_worked_hours, max_time, precision_digits=2) > 0
+
+    def autoclose_attendance(self):
+        """Close a forgotten attendance with the hours the zone promises.
+
+        check_out = check_in + auto_close_time_for_zone; when the zone does
+        not set Auto-close Worked Hours (0/empty), max_time_in_zone is used
+        instead - exactly what the zone's field help promises.
+        """
         self.ensure_one()
         max_time, autoclose = self._get_zone_settings()
-        # TODO multiple zone not proccessed!!!
-        if hasattr(super(), 'needs_autoclose'):
-            max_hours = max_time or self.employee_id.company_id.attendance_maximum_hours_per_day
-            close = not self.employee_id.no_autoclose
-            return close and max_hours and self.open_worked_hours > max_hours
+        if not max_time:
+            return
+        if float_compare(autoclose or 0.0, 0.0, precision_digits=2) > 0:
+            hours = autoclose
         else:
-            max_hours = max_time
-            close = not float_is_zero(max_time or 0.0, precision_digits=2)
-            open_worked_hours = (fields.Datetime.now() - self.check_in).total_seconds() / 3600
-            return close and max_hours and open_worked_hours > max_hours
+            hours = max_time
+        # Stamped with core's own "Automatic Check-Out" mode: the operator's
+        # existing filter (hr_attendance_view.xml, "Automatically Checked-Out")
+        # then lists these for free, and a record closed by the zone rule is
+        # never mistaken for a person's real badge-out. Core's calendar-based
+        # cron and this zone sweep work the same pool of open records - either
+        # may close first, the other then finds check_out set and moves on.
+        self.write({
+            'check_out': self.check_in + timedelta(hours=hours),
+            'out_mode': 'auto_check_out',
+        })
 
-
-    # inherited from hr_attendance_autoclose
-    def autoclose_attendance(self, reason):
-        self.ensure_one()
-        max_time, autoclose = self._get_zone_settings()
-        if hasattr(super(), 'autoclose_attendance'):
-            max_hours = autoclose or self.employee_id.company_id.attendance_maximum_hours_per_day
-            leave_time = self.check_in + timedelta(hours=max_hours)
-            vals = {"check_out": leave_time}
-            if reason:
-                vals["attendance_reason_ids"] = [(4, reason.id)]
-        else:
-            max_hours = max_time
-            leave_time = self.check_in + timedelta(hours=max_hours)
-            vals = {"check_out": leave_time}
-        self.write(vals)
-
-    # inherited from hr_attendance_autoclose
     @api.model
     def check_for_incomplete_attendances(self):
-        # Проверка дали функцията съществува в суперкласа
-        if not hasattr(super(), 'check_for_incomplete_attendances'):
-            # super().check_for_incomplete_attendances()
-        # else:
-            stale_attendances = self.search([("check_out", "=", False)])
-            # reason = self.env.company.hr_attendance_autoclose_reason
-            for att in stale_attendances.filtered(lambda a: a.needs_autoclose()):
-                att.autoclose_attendance('')
+        """Close every forgotten open attendance whose zone limit has passed.
+
+        Run by the scheduled task. Only records carrying a zone can be
+        measured against a zone limit, so only those are read; whether the
+        limit has passed still depends on each zone's own settings.
+        """
+        stale_attendances = self.search([
+            ('check_out', '=', False),
+            ('in_zone_id', '!=', False),
+        ])
+        for att in stale_attendances.filtered(lambda a: a.needs_autoclose()):
+            att.autoclose_attendance()
 
     # bypass validity if old events processed
     def _check_validity(self):

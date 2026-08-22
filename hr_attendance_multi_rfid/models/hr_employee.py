@@ -1,7 +1,6 @@
 from datetime import datetime, time, timedelta
 
 from odoo import models, exceptions, _, api, fields
-from dateutil.relativedelta import relativedelta
 from pytz import timezone, utc
 
 import logging
@@ -93,13 +92,15 @@ class HrEmployee(models.Model):
         
         # For check-in or when no suitable open attendance found
         if self.attendance_state != 'checked_in' or not open_attendance:
-            # Create new attendance record
+            # Create new attendance record, stamped as made by the RFID
+            # machinery so a rebuild can tell it from a typed-in one.
             vals = {
                 'employee_id': self.id,
                 'check_in': action_date,
-                'in_zone_id': zone_id
+                'in_zone_id': zone_id,
+                'in_mode': 'rfid',
             }
-            
+
             # Use no_validity_check context for historical events to bypass constraints
             if self.env.context.get('no_validity_check'):
                 return self.env['hr.attendance'].with_context(no_validity_check=True).create(vals)
@@ -140,47 +141,21 @@ class HrEmployee(models.Model):
         return (start.astimezone(utc).replace(tzinfo=None),
                 end.astimezone(utc).replace(tzinfo=None))
 
-    def _recalc_manual_attendance_reason(self):
-        """The reason this system puts on attendance it closed by itself.
-
-        A site that records WHY an attendance exists can tell what the system
-        made from what a person typed in by hand. Where nothing records that,
-        there is nothing to tell them apart by, and the answer is nothing.
-        """
-        company = self.env.company
-        if not company._fields.get('hr_attendance_autoclose_reason', False):
-            return False
-        return company.hr_attendance_autoclose_reason.id or False
-
     def _recalc_clear_domain(self, period_start, period_end):
         """Which of this person's attendance a rebuild is asking to remove.
 
-        What the system made for the period, inside it and nothing outside it
-        - never what somebody typed in. On a site that records the reason an
-        attendance exists, that difference is real and this keeps it: only
-        records carrying no reason at all, or the one this system puts on what
-        it closed itself, are asked for. A person's own entry survives the
-        rebuild, which is the whole point - it cannot be worked out again from
-        the door events, so deleting it loses it for good.
-
-        Where nothing records the reason, a typed-in record cannot be told
-        from a made one and the whole period goes. That is a real loss and it
-        is said out loud in the log rather than passed over.
+        What the RFID machinery itself made for the period (in_mode 'rfid'),
+        inside it and nothing outside it - never what somebody typed in. A
+        record entered by hand (manual, kiosk, systray, or anything else)
+        cannot be worked out again from the door events, so deleting it would
+        lose it for good; it is never asked for.
         """
         self.ensure_one()
-        domain = [
+        return [
             ('check_in', '>=', period_start),
             ('check_in', '<', period_end),
             ('employee_id', '=', self.id),
-        ]
-        auto_close_reason = self._recalc_manual_attendance_reason()
-        if not auto_close_reason:
-            _logger.warning('No Attendance reason module found - removing all attendance records')
-            return domain
-        return domain + [
-            '|',
-            ('attendance_reason_ids', '=', False),
-            ('attendance_reason_ids', '=', auto_close_reason),
+            ('in_mode', '=', 'rfid'),
         ]
 
     @api.model
@@ -329,18 +304,23 @@ class HrEmployee(models.Model):
                     'check_out': presence[1],
                     'employee_id': employee_id.id,
                     'in_zone_id': in_zone and in_zone.id,
+                    'in_mode': 'rfid',
                 })
                 attendance_count += 1
                 presence = [None, None]
 
             previous_event_id = e
 
-        # Handle last open attendance (check-in without check-out)
+        # Handle last open attendance (check-in without check-out). Replayed
+        # historical events bypass validity the same way the paired-create
+        # above does - an open check-in inserted into the past would
+        # otherwise be refused.
         if presence[0] and not presence[1]:
-            self.env['hr.attendance'].create({
+            self.env['hr.attendance'].with_context(no_validity_check=True).create({
                 'check_in': presence[0],
                 'in_zone_id': in_zone and in_zone.id,
                 'employee_id': employee_id.id,
+                'in_mode': 'rfid',
             })
             attendance_count += 1
 
