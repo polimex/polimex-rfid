@@ -181,3 +181,27 @@ class TestZoneAutoClose(TransactionCase):
                          "a hand-made record must keep the standard manual "
                          "mode, or a rebuild could mistake it for the "
                          "machine's and delete it")
+
+    def test_the_zone_sweep_rides_the_core_check_out_task(self):
+        """One scheduled task closes forgotten attendance, not one per rule.
+
+        Core already schedules "Automatically check-out employees"; the zone
+        sweep runs from that same task. A site that never touches the
+        company's Automatic Check-Out setting still gets its zone limits
+        enforced - and no second cron exists to fall out of step. The module
+        must ship NO cron record of its own any more.
+        """
+        attendance = self._open_attendance(hours_ago=20, zone=self.zone)
+
+        # The core task's entry point - not our own method - must close it,
+        # even with the company's calendar-based auto check-out switched off.
+        self.assertFalse(self.env.company.auto_check_out)
+        self.env['hr.attendance']._cron_auto_check_out()
+
+        self.assertTrue(attendance.check_out,
+                        "the core check-out task must run the zone sweep")
+        self.assertFalse(
+            self.env.ref(
+                'hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron',
+                raise_if_not_found=False),
+            "the module's own cron record must be gone - one task, not two")

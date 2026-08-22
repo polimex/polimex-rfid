@@ -112,12 +112,29 @@ class HrAttendance(models.Model):
         })
 
     @api.model
+    def _cron_auto_check_out(self):
+        """Ride core's own check-out task instead of keeping a second one.
+
+        Core already schedules "Attendance: Automatically check-out
+        employees" (hr_attendance/data/hr_attendance_data.xml) for exactly
+        this business need - closing forgotten open attendance. The zone
+        sweep is the same job judged by a different rule (the zone's stay
+        limit instead of the calendar), so it runs on the same clock: one
+        scheduled task, both rules. The check-out each rule writes is
+        computed from check-in, never from the moment the task happens to
+        run, so sharing the slower core schedule changes no recorded hours.
+        """
+        super()._cron_auto_check_out()
+        self.check_for_incomplete_attendances()
+
+    @api.model
     def check_for_incomplete_attendances(self):
         """Close every forgotten open attendance whose zone limit has passed.
 
-        Run by the scheduled task. Only records carrying a zone can be
-        measured against a zone limit, so only those are read; whether the
-        limit has passed still depends on each zone's own settings.
+        Run from core's check-out task (see _cron_auto_check_out above).
+        Only records carrying a zone can be measured against a zone limit,
+        so only those are read; whether the limit has passed still depends
+        on each zone's own settings.
         """
         stale_attendances = self.search([
             ('check_out', '=', False),
