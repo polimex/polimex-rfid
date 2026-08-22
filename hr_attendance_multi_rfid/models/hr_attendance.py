@@ -45,7 +45,26 @@ class HrAttendance(models.Model):
                 if self.env.context.get('from_event', None) is None:
                     att.in_zone_id.person_left(att.employee_id)
                 vals['in_zone_id'] = False
-        return super(HrAttendance, self).write(vals)
+
+        # A person editing the times of a machine-born record takes it over:
+        # the operator who types the check-out a worker forgot is stating a
+        # fact the door events do not hold, and a rebuild must never replay
+        # that fact away. The record becomes theirs (in_mode 'manual') - the
+        # one kind the rebuild's delete-domain preserves. Machinery writes
+        # carry rfid_machinery_write (or the zone flow's from_event) and keep
+        # the record rebuildable: an administrative close is not a human
+        # statement.
+        touched_times = 'check_in' in vals or 'check_out' in vals
+        by_a_person = not (self.env.context.get('rfid_machinery_write')
+                           or self.env.context.get('from_event'))
+        taken_over = (self.filtered(lambda a: a.in_mode == 'rfid')
+                      if touched_times and by_a_person and 'in_mode' not in vals
+                      else self.browse())
+
+        res = super(HrAttendance, self).write(vals)
+        if taken_over:
+            super(HrAttendance, taken_over).write({'in_mode': 'manual'})
+        return res
 
     def _get_zone_settings(self):
         """Auto-close settings of the zone THIS attendance was opened in.
@@ -106,7 +125,7 @@ class HrAttendance(models.Model):
         # never mistaken for a person's real badge-out. Core's calendar-based
         # cron and this zone sweep work the same pool of open records - either
         # may close first, the other then finds check_out set and moves on.
-        self.write({
+        self.with_context(rfid_machinery_write=True).write({
             'check_out': self.check_in + timedelta(hours=hours),
             'out_mode': 'auto_check_out',
         })
@@ -124,8 +143,9 @@ class HrAttendance(models.Model):
         computed from check-in, never from the moment the task happens to
         run, so sharing the slower core schedule changes no recorded hours.
         """
-        super()._cron_auto_check_out()
-        self.check_for_incomplete_attendances()
+        machinery = self.with_context(rfid_machinery_write=True)
+        super(HrAttendance, machinery)._cron_auto_check_out()
+        machinery.check_for_incomplete_attendances()
 
     @api.model
     def check_for_incomplete_attendances(self):

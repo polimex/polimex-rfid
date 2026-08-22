@@ -85,9 +85,12 @@ class HrEmployee(models.Model):
             
             # Update the attendance with proper context for validation bypass
             if self.env.context.get('no_validity_check'):
-                open_attendance.with_context(no_validity_check=True).check_out = action_date
+                open_attendance.with_context(
+                    no_validity_check=True,
+                    rfid_machinery_write=True).check_out = action_date
             else:
-                open_attendance.check_out = action_date
+                open_attendance.with_context(
+                    rfid_machinery_write=True).check_out = action_date
             return open_attendance
         
         # For check-in or when no suitable open attendance found
@@ -253,12 +256,32 @@ class HrEmployee(models.Model):
         self.env['hr.attendance'].search(
             self._recalc_clear_domain(period_start, period_end)).unlink()
 
-        # Get remaining manual attendance records
-        manual_att_ids = self.env['hr.attendance'].search([
+        # What survived the clearing is a person's word - records typed in or
+        # taken over by an operator. The replay treats each as settled ground:
+        # door events falling under one are consumed (the person's record
+        # already accounts for them), and no machine record may overlap one.
+        # Without this, the operator's 9:00-17:30 next to that day's door
+        # events replayed into a SECOND overlapping record: the day counted
+        # twice, and the overlap crashes core's overtime engine besides
+        # (hr_attendance_overtime_rule.py, singleton per day). An OPEN
+        # preserved record (no check-out yet) owns everything from its
+        # check-in on: the human's standing statement wins until they close
+        # or remove it and rebuild again.
+        preserved = self.env['hr.attendance'].search([
             ('check_in', '>=', period_start),
             ('check_in', '<', period_end),
             ('employee_id', '=', employee_id.id),
         ])
+        preserved_spans = [(a.check_in, a.check_out or None) for a in preserved]
+
+        def settled_by_a_person(moment):
+            return any(start <= moment and (stop is None or moment <= stop)
+                       for start, stop in preserved_spans)
+
+        def collides_with_a_person(start, stop):
+            return any(start <= (p_stop or stop or start)
+                       and p_start <= (stop or p_start)
+                       for p_start, p_stop in preserved_spans)
 
         # Process events to create attendance records
         presence = [None, None]  # [check_in, check_out]
@@ -267,8 +290,9 @@ class HrEmployee(models.Model):
         previous_event_id = None
 
         for e in event_ids:
-            # Skip events that are already recorded in manual attendance
-            if manual_att_ids.filtered(lambda a: a.check_in == e.event_time or a.check_out == e.event_time):
+            # Events already accounted for by a person's record are consumed.
+            if settled_by_a_person(e.event_time):
+                e.in_or_out = 'no_info'
                 continue
 
             e.in_or_out = 'no_info'
@@ -294,11 +318,18 @@ class HrEmployee(models.Model):
                     in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
                     if in_zone.overwrite_check_out and previous_attendance_id.check_out and (
                             e.event_time - previous_attendance_id.check_out) < timedelta(hours=8):
-                        previous_attendance_id.with_context(no_validity_check=True).check_out = e.event_time
+                        previous_attendance_id.with_context(no_validity_check=True, rfid_machinery_write=True).check_out = e.event_time
                         e.in_or_out = 'out'
 
             # Create attendance record when we have both check-in and check-out
             if all(presence):
+                if collides_with_a_person(presence[0], presence[1]):
+                    # The pair straddles a person's record (in-event before
+                    # it, out-event after): their statement stands, the
+                    # machine does not write over or around it.
+                    presence = [None, None]
+                    previous_event_id = e
+                    continue
                 previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
                     'check_in': presence[0],
                     'check_out': presence[1],
@@ -315,7 +346,8 @@ class HrEmployee(models.Model):
         # historical events bypass validity the same way the paired-create
         # above does - an open check-in inserted into the past would
         # otherwise be refused.
-        if presence[0] and not presence[1]:
+        if presence[0] and not presence[1] \
+                and not collides_with_a_person(presence[0], None):
             self.env['hr.attendance'].with_context(no_validity_check=True).create({
                 'check_in': presence[0],
                 'in_zone_id': in_zone and in_zone.id,

@@ -77,11 +77,11 @@ class HrRfidZone(models.Model):
                 if event:
                     event.in_or_out = 'in'
                     if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
-                        check.with_context(no_validity_check=True).write({
+                        check.with_context(no_validity_check=True, rfid_machinery_write=True).write({
                             'check_in': event.event_time
                         })
                 else:
-                    check.with_context(no_validity_check=True).write({
+                    check.with_context(no_validity_check=True, rfid_machinery_write=True).write({
                         'check_in': fields.Datetime.now()
                     })
             if not check:

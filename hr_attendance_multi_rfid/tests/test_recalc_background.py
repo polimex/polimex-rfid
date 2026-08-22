@@ -1201,3 +1201,145 @@ class TestTransferredAttendanceIsNeverRebuilt(TransactionCase):
         told = " ".join(message.body or '' for message in run.message_ids)
         self.assertIn(LAST_WORDS_OF_THE_REFUSAL, told,
                       "and the operator must be told what to do instead")
+
+
+@tagged("post_install", "-at_install", "rfid_attendance_recalc")
+class TestAnOperatorsWordSurvivesTheRebuild(TransactionCase):
+    """The operator who fixes what a worker forgot must not be undone.
+
+    A worker badges in and forgets to badge out. The operator types the real
+    leaving time into that same record. From that moment the record is the
+    operator's word about the day - the door events do not hold it, so no
+    delete-and-replay may take it away or write a second record next to it.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env.ref(
+            'hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron'
+        ).active = True
+        cls.company = cls.env.company
+        cls.employee = cls.env['hr.employee'].create({
+            'name': 'Forgetful Worker', 'company_id': cls.company.id,
+        })
+        webstack = cls.env['hr.rfid.webstack'].create({
+            'name': 'WS Preserve', 'serial': '777001', 'key': '0000',
+            'company_id': cls.company.id, 'available': 'a',
+            'tz': 'UTC', 'active': True,
+        })
+        ctrl = cls.env['hr.rfid.ctrl'].create({
+            'name': 'Ctrl Preserve', 'ctrl_id': 77, 'webstack_id': webstack.id,
+            'hw_version': '12', 'serial_number': '777', 'sw_version': '030',
+            'mode': 1, 'inputs': 1, 'outputs': 1, 'readers': 2,
+        })
+        door = cls.env['hr.rfid.door'].create({
+            'name': 'Door Preserve', 'number': 1, 'controller_id': ctrl.id,
+            'company_id': cls.company.id,
+        })
+        cls.reader_in = cls.env['hr.rfid.reader'].create({
+            'name': 'In', 'number': 1, 'reader_type': '0', 'mode': '01',
+            'controller_id': ctrl.id, 'door_id': door.id,
+        })
+        cls.reader_out = cls.env['hr.rfid.reader'].create({
+            'name': 'Out', 'number': 2, 'reader_type': '1', 'mode': '01',
+            'controller_id': ctrl.id, 'door_id': door.id,
+        })
+        cls.env['hr.rfid.zone'].create({
+            'name': 'Zone Preserve', 'company_id': cls.company.id,
+            'attendance': True, 'door_ids': [(4, door.id)],
+        })
+        cls.day = (fields.Datetime.now() - timedelta(days=7)).replace(
+            hour=0, minute=0, second=0, microsecond=0)
+
+    def _door_event(self, reader, moment):
+        return self.env['hr.rfid.event.user'].create({
+            'employee_id': self.employee.id,
+            'door_id': reader.door_id.id,
+            'reader_id': reader.id,
+            'event_action': '1',
+            'event_time': moment,
+        })
+
+    def _day_records(self):
+        return self.env['hr.attendance'].search([
+            ('employee_id', '=', self.employee.id),
+            ('check_in', '>=', self.day),
+            ('check_in', '<', self.day + timedelta(days=1)),
+        ], order='check_in')
+
+    def _rebuild(self):
+        ctx = self.employee._recalc_attendance_context()
+        self.employee._recalc_attendance_one(
+            self.day.date(), self.day.date(), ctx)
+
+    def test_the_checkout_the_operator_typed_survives_a_rebuild(self):
+        """The worker forgot to badge out; the operator typed 21:15 into the
+        machine's record. A rebuild keeps that 21:15 - it does not replay
+        the day back to an open record, and it does not write a twin."""
+        self._door_event(self.reader_in, self.day.replace(hour=8))
+        self._rebuild()
+        record = self._day_records()
+        self.assertEqual(len(record), 1)
+        self.assertFalse(record.check_out, "the forgotten day starts open")
+        self.assertEqual(record.in_mode, 'rfid')
+
+        record.write({'check_out': self.day.replace(hour=21, minute=15)})
+        self.assertEqual(record.in_mode, 'manual',
+                         "the operator's edit takes the record over")
+
+        self._rebuild()
+        after = self._day_records()
+        self.assertEqual(len(after), 1,
+                         "no twin may appear next to the operator's record")
+        self.assertEqual(after.check_out, self.day.replace(hour=21, minute=15),
+                         "the operator's leaving time is the day's truth")
+
+    def test_a_machine_close_stays_the_machines_and_is_still_rebuildable(self):
+        """NEGATIVE: the zone sweep's administrative close is not a human
+        statement - the record stays 'rfid' and the next rebuild may replay
+        it from the door events."""
+        zone = self.env['hr.rfid.zone'].search(
+            [('name', '=', 'Zone Preserve')])
+        zone.write({'max_time_in_zone': 10.0,
+                    'auto_close_time_for_zone': 7.0})
+        self._door_event(self.reader_in, self.day.replace(hour=8))
+        self._rebuild()
+        record = self._day_records()
+        record.with_context(rfid_machinery_write=True).write(
+            {'in_zone_id': zone.id})
+
+        record.autoclose_attendance()
+        self.assertTrue(record.check_out)
+        self.assertEqual(record.in_mode, 'rfid',
+                         "an administrative close must stay the machine's")
+        self.assertEqual(record.out_mode, 'auto_check_out')
+
+    def test_door_events_under_the_operators_record_make_no_second_record(self):
+        """The operator recorded the whole day by hand; the door events of
+        that day are already accounted for. A rebuild must not turn them
+        into a second, overlapping record - the day would count twice.
+
+        The realistic path: the door events arrive and the machinery makes
+        its record at once; the operator finds it wrong, deletes it and
+        types the whole day themselves. The events are still there - only
+        the rebuild's restraint keeps the day single."""
+        self._door_event(self.reader_in, self.day.replace(hour=8, minute=3))
+        self._door_event(self.reader_out, self.day.replace(hour=16, minute=40))
+        made_by_the_machine = self._day_records()
+        self.assertTrue(made_by_the_machine,
+                        "the events must have made the machine's record")
+        made_by_the_machine.unlink()
+        self.env['hr.attendance'].create({
+            'employee_id': self.employee.id,
+            'check_in': self.day.replace(hour=8),
+            'check_out': self.day.replace(hour=17, minute=30),
+        })
+
+        self._rebuild()
+        after = self._day_records()
+        self.assertEqual(
+            len(after), 1,
+            "one day, one record - the person's; no machine twin beside it")
+        self.assertEqual(after.in_mode, 'manual')
+        self.assertEqual(after.check_out, self.day.replace(hour=17, minute=30))
