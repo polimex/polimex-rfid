@@ -65,35 +65,38 @@ class TestAttendanceCalculation(TestAttendanceLateCommon):
         self.assertGreater(attendance_extra.actual_work_time, 0)
     
     def test_03_missing_checkout_with_zone_autoclose(self):
-        """Test attendance with missing check-out exceeding max zone time"""
-        self.skipTest(
-            "auto_close_time_for_zone semantics: expected 8h but getter returns 7h. "
-            "Needs business-logic review before re-enabling."
-        )
+        """A worker who forgets to badge out past the zone's maximum stay is
+        administratively closed at check_in + auto_close_time_for_zone (the
+        agreed zone formula). Closed 08:00-16:00 against the 8-12 / 13-17
+        schedule, the day measures 7 worked hours (the 12-13 schedule gap is
+        not presence) and 1 hour left early - not a full 8-hour day."""
         if not self.zone:
             self.skipTest("hr_rfid module not installed")
 
         test_date = fields.Date.from_string('2026-11-09')  # Monday
-        
+
         # Create attendance without check_out
         check_in = datetime.combine(test_date, time(8, 0))
         attendance = self.create_attendance(self.employee, check_in, None, self.zone)
-        
+
         # Simulate calculation 15 hours later - should auto-close
         # Use context to simulate different current time
         calc_time = datetime.combine(test_date, time(23, 0))
         self.employee.with_context(
             attendance_calc_time=calc_time
         ).update_extra_attendance_data(test_date, overwrite_existing=True)
-        
+
         attendance_extra = self.env['hr.attendance.extra'].search([
             ('employee_id', '=', self.employee.id),
             ('for_date', '=', test_date),
         ])
-        
+
         self.assertTrue(attendance_extra)
-        # Should be auto-closed at 8 hours
-        self.assertAlmostEqual(attendance_extra.actual_work_time, 8.0, 2)
+        # Auto-closed at 16:00 (8h zone duration): worked time is the
+        # presence inside the schedule (08-12 + 13-16 = 7h), and the last
+        # scheduled hour (16-17) is an early leave.
+        self.assertAlmostEqual(attendance_extra.actual_work_time, 7.0, 2)
+        self.assertAlmostEqual(attendance_extra.early_leave_time, 1.0, 2)
     
     def test_04_late_arrival_within_tolerance(self):
         """Test late arrival within department tolerance"""

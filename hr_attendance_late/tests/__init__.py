@@ -6,3 +6,4 @@ from . import test_legal_rate
 from . import test_no_show_digest
 from . import test_tours
 from . import test_measurement_regressions
+from . import test_theoretical_core_calendar

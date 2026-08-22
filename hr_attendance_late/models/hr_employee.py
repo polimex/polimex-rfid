@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from dateutil.rrule import rrule, DAILY
-
 from odoo import api, fields, models
 from datetime import datetime, timedelta, time, date
 from pytz import timezone, UTC
@@ -53,6 +51,46 @@ class HrEmployee(models.Model):
                         if end1 and end2 and start1 <= end2 and start2 <= end1]
         return intersection
 
+    def _get_scheduled_work_ranges(self, calendar, for_date, tz):
+        """Scheduled work ranges of one local calendar day, as sorted
+        naive-UTC ``(start, stop)`` tuples.
+
+        Built on core ``resource.calendar._work_intervals_batch`` so the
+        theoretical schedule is exactly what the rest of Odoo considers
+        working time:
+
+        * lunch rows (``day_period='lunch'``) are excluded - an 8-12 / 12-13
+          break / 13-17 calendar plans 8 hours, not 9;
+        * two-week calendars and the calendar timezone are honoured;
+        * validated time off and global public holidays remove the scheduled
+          time (``compute_leaves=True``), so a day fully covered by a leave
+          or a public holiday yields no ranges and behaves like a non-working
+          day: theoretical time 0 and any presence counts as extra time.
+
+        Each calendar row stays a distinct range (core keeps the intervals
+        distinct), so shift detection over ``daily_ranges_are_shifts``
+        calendars keeps working per row.
+
+        :param calendar: resource.calendar to read (may be empty)
+        :param for_date: the local calendar day (date)
+        :param tz: pytz timezone of that calendar
+        :return: list of naive-UTC (start, stop) tuples sorted by start
+        """
+        self.ensure_one()
+        if not calendar:
+            return []
+        day_start = tz.localize(datetime.combine(for_date, time.min))
+        day_end = tz.localize(
+            datetime.combine(for_date + timedelta(days=1), time.min))
+        intervals = calendar._work_intervals_batch(
+            day_start, day_end, resources=self.resource_id, tz=tz,
+        )[self.resource_id.id]
+        return sorted(
+            (start.astimezone(UTC).replace(tzinfo=None),
+             stop.astimezone(UTC).replace(tzinfo=None))
+            for start, stop, _meta in intervals
+        )
+
     def update_extra_attendance_data(self, from_datetime, to_datetime=None, overwrite_existing=False):
         """Update attendance extra records for employees in date range.
         
@@ -63,24 +101,6 @@ class HrEmployee(models.Model):
         :param to_datetime: End date for calculation (defaults to from_datetime)
         :param overwrite_existing: Whether to recalculate existing records
         """
-        def line_to_tz_datetime(for_date, line, tz):
-            """Convert calendar attendance line to UTC datetime range."""
-            ht = line.hour_to
-            dt = for_date
-            if float_compare(ht, 24.00, 2) == 0:
-                ht = 0.0
-                dt = for_date + timedelta(days=1)
-            return (
-                tz.localize(
-                    datetime.combine(for_date,
-                                     time(hour=int(line.hour_from),
-                                          minute=int((line.hour_from % 1) * 60)))).astimezone(UTC).replace(tzinfo=None),
-                tz.localize(
-                    datetime.combine(dt,
-                                     time(hour=int(ht),
-                                          minute=int((ht % 1) * 60)))).astimezone(UTC).replace(tzinfo=None)
-            )
-
         def convert_day_period_to_utc(day_period, tz):
             """Convert local day/night period times to UTC."""
             start_time_local = datetime.combine(date.today(), day_period[0])
@@ -96,7 +116,18 @@ class HrEmployee(models.Model):
         for e in self:
             _logger.info('Attendance extra calculation for %s' % e.name)
             current_date = from_datetime
-            tz = timezone(e.resource_calendar_id.tz) if e.resource_calendar_id.tz else UTC
+            # The employee's own working calendar, falling back to the company
+            # one - the same resolution core hr uses for scheduling.
+            calendar = e.resource_calendar_id or e.company_id.resource_calendar_id
+            tz = timezone(calendar.tz) if calendar.tz else UTC
+            # A flexible-hours calendar plans no rows at all: measured against
+            # it every day reads "unscheduled" and the whole presence lands in
+            # extra_time at the rest-day/holiday premium. There is nothing to
+            # be late against, so no daily measurement rows are produced -
+            # core's auto check-out cron excludes these people for the same
+            # reason (hr_attendance.py:594).
+            if calendar.flexible_hours:
+                continue
             while current_date <= to_datetime:
                 attendance_extra_id = self.env['hr.attendance.extra'].sudo().search([
                     ('employee_id', '=', e.id),
@@ -115,6 +146,14 @@ class HrEmployee(models.Model):
                 
                 attendances = self.env['hr.attendance'].search([
                     ('employee_id', '=', e.id),
+                    # Core absence detection plants a one-second 'technical'
+                    # attendance at local midnight for every no-show
+                    # (hr_attendance/models/hr_attendance.py:664-675). It is
+                    # bookkeeping for the overtime engine, not presence: fed
+                    # into the measurement it turns a no-show day into "came
+                    # at midnight" (8h early_come, 0h worked) and starves the
+                    # absence branch that should have fired instead.
+                    ('in_mode', '!=', 'technical'),
                     '|',
                     # Records starting on current date
                     '&',
@@ -154,11 +193,17 @@ class HrEmployee(models.Model):
                             max_duration = timedelta(hours=zone.max_time_in_zone)
                             time_in_zone = calc_time - check_in
                             if time_in_zone > max_duration:
-                                # Auto-close with configured duration when max time exceeded
-                                auto_close_hours = getattr(zone, 'auto_close_time_for_zone', 8.0)
+                                # Administrative close per the agreed zone
+                                # formula: the zone's auto-close duration wins;
+                                # when it is not configured (0/empty) fall back
+                                # to the zone's own maximum stay. Never a
+                                # hardcoded duration.
+                                auto_close_hours = (
+                                    getattr(zone, 'auto_close_time_for_zone', 0.0)
+                                    or zone.max_time_in_zone)
                                 check_out = check_in + timedelta(hours=auto_close_hours)
                                 _logger.info('Auto-closing attendance for %s on %s after %.1f hours (zone: %s)',
-                                            e.name, current_date.strftime('%Y-%m-%d'), 
+                                            e.name, current_date.strftime('%Y-%m-%d'),
                                             auto_close_hours, zone.name)
                             else:
                                 # Still within max time - use calculation time
@@ -172,12 +217,14 @@ class HrEmployee(models.Model):
                     
                     attendance_ranges.append((check_in, check_out))
 
-                # Scheduled work ranges for the day (empty on a non-working day).
-                # Computed once here and reused both for the absence-row
-                # theoretical time below and the presence calculation further down.
-                work_time_ranges = [line_to_tz_datetime(current_date, line, tz) for line in
-                                    e.resource_calendar_id.attendance_ids if
-                                    line.dayofweek == str(current_date.weekday())]
+                # Scheduled work ranges for the day (empty on a non-working
+                # day). Built on the core calendar intervals so lunch breaks
+                # are NOT part of the theoretical time and validated leaves /
+                # public holidays clear the schedule for the day. Computed once
+                # here and reused both for the absence-row theoretical time
+                # below and the presence calculation further down.
+                work_time_ranges = e._get_scheduled_work_ranges(
+                    calendar, current_date, tz)
 
                 # Check if we have any attendance data to process
                 if not attendance_ranges:
@@ -217,7 +264,7 @@ class HrEmployee(models.Model):
                 # max([]) raising on shift calendars when someone badges on a day
                 # off - which would otherwise crash attendance creation via the
                 # create hook.
-                if e.resource_calendar_id.daily_ranges_are_shifts and work_time_ranges:
+                if calendar.daily_ranges_are_shifts and work_time_ranges:
                     # Handle shift-based schedules
                     shift_intersections = [self._total_time(self._intersection_time([wr], attendance_ranges)) for
                                            wr in work_time_ranges]
