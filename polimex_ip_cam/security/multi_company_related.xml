@@ -66,5 +66,42 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
         </record>
+
+        <!-- An unknown plate at a camera produces an event with no employee
+             and no contact. In hr_rfid such an orphan is kept visible when
+             its reader chain is BROKEN, so it is not lost to everyone - and
+             a camera reader has no controller by design (the camera is the
+             equipment), so every ANPR orphan fell into that branch and was
+             readable by every company, plate and snapshot included. The
+             camera itself names the company; that is the answer here, with
+             the broken-chain fallback kept only for a reader that belongs to
+             neither a camera nor a controller. -->
+        <record id="hr_rfid.ir_rule_hr_rfid_event_user_multi_company" model="ir.rule">
+            <field name="name">HR RFID User Events Camera: Multi Company</field>
+            <field name="model_id" ref="model_hr_rfid_event_user"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[
+                '|', '|',
+                '|', ('employee_id.company_id', 'in', company_ids),
+                ('employee_id.company_id', '=', False),
+                '|', ('contact_id.company_id', 'in', company_ids),
+                ('contact_id.company_id', '=', False),
+                '&amp;', ('employee_id', '=', False),
+                '&amp;', ('contact_id', '=', False),
+                '|', '|', '|', '|', '|', '|',
+                ('camera_id.company_id', 'in', company_ids),
+                ('reader_id.camera_id.company_id', 'in', company_ids),
+                ('reader_id.controller_id.webstack_id.company_id', 'in', company_ids),
+                ('reader_id.controller_id.webstack_id.shared_company_ids', 'in', company_ids),
+                '&amp;', ('reader_id', '=', False), ('camera_id', '=', False),
+                '&amp;', ('reader_id.controller_id', '=', False),
+                ('reader_id.camera_id', '=', False),
+                ('reader_id.controller_id.webstack_id.company_id', '=', False)
+            ]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
     </data>
 </odoo>

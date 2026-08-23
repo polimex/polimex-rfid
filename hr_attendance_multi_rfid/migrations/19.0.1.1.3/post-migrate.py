@@ -26,10 +26,22 @@ def migrate(cr, version):
                          AND model = 'ir.cron')
     """)
     removed = cr.rowcount
+    # ir.cron delegates to ir.actions.server (_inherits, ir_cron.py:104), so
+    # deleting only the cron row leaves the server action behind - visible
+    # for good under Technical -> Server Actions, still carrying the code of
+    # a task that no longer exists.
+    cr.execute("""
+        DELETE FROM ir_act_server
+         WHERE id IN (SELECT res_id FROM ir_model_data
+                       WHERE module = 'hr_attendance_multi_rfid'
+                         AND name = 'hr_attendance_multi_rfid_autoclose_cron_ir_actions_server')
+            OR (usage = 'ir_cron'
+                AND code = 'model.check_for_incomplete_attendances()')
+    """)
     cr.execute("""
         DELETE FROM ir_model_data
          WHERE module = 'hr_attendance_multi_rfid'
-           AND name = 'hr_attendance_multi_rfid_autoclose_cron'
+           AND name LIKE 'hr\\_attendance\\_multi\\_rfid\\_autoclose\\_cron%'
     """)
     _logger.info(
         "hr_attendance_multi_rfid 19.0.1.1.3: retired %d module cron(s) - "

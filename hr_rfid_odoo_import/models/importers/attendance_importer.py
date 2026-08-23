@@ -96,6 +96,14 @@ class AttendanceImporter(PhaseImporter):
         # We must include it in SQL INSERT since it's required
         has_date_col = 'date' in target_fields
         columns = ['employee_id', 'check_in', 'check_out']
+        # Carried attendance is the machine's, not a person's: it came from
+        # the other system's own door events. A raw INSERT bypasses the ORM
+        # default, so the stamp is written here - without it every carried
+        # record reads as typed in by hand, and a rebuild of that period both
+        # refuses to replace them and treats them as somebody's word.
+        stamps_origin = 'in_mode' in target_fields
+        if stamps_origin:
+            columns.append('in_mode')
         if has_date_col:
             columns.append('date')
         if 'in_zone_id' in fields_to_read:
@@ -117,6 +125,8 @@ class AttendanceImporter(PhaseImporter):
                 check_in,
                 rec.get('check_out') or None,
             ]
+            if stamps_origin:
+                row.append('rfid')
             if has_date_col:
                 # Compute date from check_in (UTC → date, simplified)
                 # check_in is a string like '2025-08-28 11:59:46'

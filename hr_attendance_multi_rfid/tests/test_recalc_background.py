@@ -1343,3 +1343,110 @@ class TestAnOperatorsWordSurvivesTheRebuild(TransactionCase):
             "one day, one record - the person's; no machine twin beside it")
         self.assertEqual(after.in_mode, 'manual')
         self.assertEqual(after.check_out, self.day.replace(hour=17, minute=30))
+
+    def test_events_straddling_the_operators_record_make_no_twin(self):
+        """The events sit AROUND the operator's record, not inside it.
+
+        The person badged at 08:30 and 17:30; the operator recorded the day
+        as 09:00-17:00. Replaying the pair would put a record right across
+        theirs - the day counted twice, and two overlapping records for one
+        day is what core's overtime engine refuses outright. Only the
+        collision guard stops it: the events fall outside the record, so
+        consuming them one by one is not enough.
+        """
+        self._door_event(self.reader_in, self.day.replace(hour=8, minute=30))
+        self._door_event(self.reader_out, self.day.replace(hour=17, minute=30))
+        self._day_records().unlink()
+        self.env['hr.attendance'].create({
+            'employee_id': self.employee.id,
+            'check_in': self.day.replace(hour=9),
+            'check_out': self.day.replace(hour=17),
+        })
+
+        self._rebuild()
+        after = self._day_records()
+        self.assertEqual(len(after), 1,
+                         "the straddling pair must not become a second record")
+        self.assertEqual(after.check_in, self.day.replace(hour=9))
+        self.assertEqual(after.check_out, self.day.replace(hour=17))
+
+    def test_an_open_record_of_a_person_owns_the_rest_of_the_day(self):
+        """An operator's record left open is a standing statement.
+
+        They wrote "this person is in from 08:00" and have not closed it.
+        Door events after that moment belong to that statement - the rebuild
+        may not write records over the top of it. It stays as they left it.
+        """
+        self.env['hr.attendance'].create({
+            'employee_id': self.employee.id,
+            'check_in': self.day.replace(hour=8),
+        })
+        self._door_event(self.reader_in, self.day.replace(hour=10))
+        self._door_event(self.reader_out, self.day.replace(hour=16))
+
+        self._rebuild()
+        after = self._day_records()
+        self.assertEqual(len(after), 1,
+                         "nothing may be written under an open statement")
+        self.assertFalse(after.check_out, "and it stays open, as they left it")
+        self.assertEqual(after.in_mode, 'manual')
+
+    def test_a_batch_edit_takes_over_only_the_machines_records(self):
+        """NEGATIVE: editing several rows at once (the core list does that)
+        takes over the machine's rows and leaves a person's own alone."""
+        # Two people, same day: one row the machine made, one the operator
+        # typed in. This is the shape a mass edit really has - one value
+        # written across rows of DIFFERENT people (two rows of the same
+        # person given one time would overlap, which core refuses outright).
+        colleague = self.env['hr.employee'].create({
+            'name': 'Second Worker', 'company_id': self.company.id,
+        })
+        machine = self.env['hr.attendance'].with_context(
+            rfid_machinery_write=True).create({
+                'employee_id': self.employee.id,
+                'check_in': self.day.replace(hour=8),
+                'check_out': self.day.replace(hour=16),
+                'in_mode': 'rfid',
+            })
+        typed_in = self.env['hr.attendance'].create({
+            'employee_id': colleague.id,
+            'check_in': self.day.replace(hour=8),
+            'check_out': self.day.replace(hour=16),
+        })
+        self.assertEqual(typed_in.in_mode, 'manual')
+
+        # The operator selects both rows and corrects the leaving time. The
+        # edit comes through a CLEAN recordset, the way the web client sends
+        # it - a machine flag lives on the recordset's context, so writing
+        # back through the very recordset the machinery created would carry
+        # its flag along and prove nothing.
+        both = self.env['hr.attendance'].browse((machine | typed_in).ids)
+        both.write({'check_out': self.day.replace(hour=17)})
+        machine.invalidate_recordset()
+        typed_in.invalidate_recordset()
+
+        self.assertEqual(machine.in_mode, 'manual',
+                         "the machine's row was edited - it is theirs now")
+        self.assertEqual(typed_in.in_mode, 'manual',
+                         "and a row that was already theirs is untouched")
+
+    def test_the_core_calendar_close_leaves_the_record_rebuildable(self):
+        """NEGATIVE: core's own calendar-based check-out closes a forgotten
+        record too - and that is still the machine talking, so the record
+        keeps its origin and a later rebuild may replay it."""
+        self.env.company.auto_check_out = True
+        self.env['hr.attendance'].with_context(
+            rfid_machinery_write=True).create({
+                'employee_id': self.employee.id,
+                'check_in': fields.Datetime.now() - timedelta(hours=30),
+                'in_mode': 'rfid',
+            })
+
+        self.env['hr.attendance']._cron_auto_check_out()
+
+        closed = self.env['hr.attendance'].search([
+            ('employee_id', '=', self.employee.id)], order='check_in desc',
+            limit=1)
+        self.assertTrue(closed.check_out, "core must have closed it")
+        self.assertEqual(closed.in_mode, 'rfid',
+                         "an automatic close is not a person's statement")

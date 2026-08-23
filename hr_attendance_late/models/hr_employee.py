@@ -51,7 +51,7 @@ class HrEmployee(models.Model):
                         if end1 and end2 and start1 <= end2 and start2 <= end1]
         return intersection
 
-    def _get_scheduled_work_ranges(self, calendar, for_date, tz):
+    def _get_scheduled_work_ranges(self, calendar, for_date, tz, owed=False):
         """Scheduled work ranges of one local calendar day, as sorted
         naive-UTC ``(start, stop)`` tuples.
 
@@ -61,11 +61,20 @@ class HrEmployee(models.Model):
 
         * lunch rows (``day_period='lunch'``) are excluded - an 8-12 / 12-13
           break / 13-17 calendar plans 8 hours, not 9;
-        * two-week calendars and the calendar timezone are honoured;
-        * validated time off and global public holidays remove the scheduled
-          time (``compute_leaves=True``), so a day fully covered by a leave
-          or a public holiday yields no ranges and behaves like a non-working
-          day: theoretical time 0 and any presence counts as extra time.
+        * two-week calendars and the calendar timezone are honoured.
+
+        Two questions are asked of the same day, and they are NOT the same:
+
+        * ``owed=False`` - IS this a working day at all? Only company-wide
+          absences (public holidays: resource-less calendar leaves) can
+          answer no. A holiday is nobody's workday, so presence on it is
+          extraordinary work and is paid as such.
+        * ``owed=True`` - what did THIS person owe? Their own validated time
+          off comes off as well: somebody on approved leave owes nothing and
+          is not a no-show. But their day remains a working day - if they do
+          come in, they work ordinary hours, not premium ones. Charging a
+          rest-day premium for the morning somebody worked before their
+          afternoon off is not what "leave" means.
 
         Each calendar row stays a distinct range (core keeps the intervals
         distinct), so shift detection over ``daily_ranges_are_shifts``
@@ -74,6 +83,9 @@ class HrEmployee(models.Model):
         :param calendar: resource.calendar to read (may be empty)
         :param for_date: the local calendar day (date)
         :param tz: pytz timezone of that calendar
+        :param owed: also take this person's own validated time off off the
+                     day (what they owed), instead of only the company-wide
+                     holidays (whether it is a working day at all)
         :return: list of naive-UTC (start, stop) tuples sorted by start
         """
         self.ensure_one()
@@ -82,8 +94,14 @@ class HrEmployee(models.Model):
         day_start = tz.localize(datetime.combine(for_date, time.min))
         day_end = tz.localize(
             datetime.combine(for_date + timedelta(days=1), time.min))
+        # A resource-less leave is one that belongs to nobody in particular -
+        # the shape core's Time Off -> Public Holidays creates
+        # (resource_calendar_leaves.py:47-49). Restricting the domain to those
+        # keeps a person's own leave out of the answer.
+        leaves_domain = None if owed else [('resource_id', '=', False)]
         intervals = calendar._work_intervals_batch(
             day_start, day_end, resources=self.resource_id, tz=tz,
+            domain=leaves_domain,
         )[self.resource_id.id]
         return sorted(
             (start.astimezone(UTC).replace(tzinfo=None),
@@ -187,9 +205,11 @@ class HrEmployee(models.Model):
                         # Context 'attendance_calc_time' can be used for testing
                         calc_time = self.env.context.get('attendance_calc_time', now)
                         
-                        # Check if we have zone configuration (from hr_rfid module)
-                        zone = getattr(att, 'in_zone_id', None) if hasattr(att, 'in_zone_id') else None
-                        if zone and hasattr(zone, 'max_time_in_zone') and zone.max_time_in_zone > 0:
+                        # The zone this session was opened in. hr_rfid's zone
+                        # fields are always there - this module depends on
+                        # hr_attendance_multi_rfid, which declares them.
+                        zone = att.in_zone_id
+                        if zone and zone.max_time_in_zone > 0:
                             max_duration = timedelta(hours=zone.max_time_in_zone)
                             time_in_zone = calc_time - check_in
                             if time_in_zone > max_duration:
@@ -198,9 +218,8 @@ class HrEmployee(models.Model):
                                 # when it is not configured (0/empty) fall back
                                 # to the zone's own maximum stay. Never a
                                 # hardcoded duration.
-                                auto_close_hours = (
-                                    getattr(zone, 'auto_close_time_for_zone', 0.0)
-                                    or zone.max_time_in_zone)
+                                auto_close_hours = (zone.auto_close_time_for_zone
+                                                    or zone.max_time_in_zone)
                                 check_out = check_in + timedelta(hours=auto_close_hours)
                                 _logger.info('Auto-closing attendance for %s on %s after %.1f hours (zone: %s)',
                                             e.name, current_date.strftime('%Y-%m-%d'),
@@ -225,6 +244,9 @@ class HrEmployee(models.Model):
                 # below and the presence calculation further down.
                 work_time_ranges = e._get_scheduled_work_ranges(
                     calendar, current_date, tz)
+                # What this person owed: the same day minus their own leave.
+                owed_ranges = e._get_scheduled_work_ranges(
+                    calendar, current_date, tz, owed=True)
 
                 # Check if we have any attendance data to process
                 if not attendance_ranges:
@@ -234,7 +256,7 @@ class HrEmployee(models.Model):
                     # missing", absence rate, absences per department) can be
                     # counted directly: theoretical_work_time > 0 and
                     # actual_work_time = 0. Non-working days stay rowless.
-                    planned_time = (self._total_time(work_time_ranges) / 3600.0) if work_time_ranges else 0.0
+                    planned_time = (self._total_time(owed_ranges) / 3600.0) if owed_ranges else 0.0
                     if planned_time > 0 and current_date < fields.Date.today():
                         absence_vals = {
                             'theoretical_work_time': planned_time,
@@ -277,6 +299,7 @@ class HrEmployee(models.Model):
                     att_extra_vals = self.get_work_time_details(
                         for_date=current_date,
                         work_time_ranges=work_time_ranges,
+                        owed_ranges=owed_ranges,
                         attendance_ranges=attendance_ranges,
                         day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
                     )
@@ -338,7 +361,8 @@ class HrEmployee(models.Model):
 
     @api.model
     def get_work_time_details(self, for_date, work_time_ranges, attendance_ranges,
-                              day_period=(time(6, 0), time(22, 0))):
+                              day_period=(time(6, 0), time(22, 0)),
+                              owed_ranges=None):
         """Calculate detailed work time metrics for a specific date.
         
         This method analyzes attendance records against work schedules to calculate:
@@ -390,6 +414,13 @@ class HrEmployee(models.Model):
             # Filter out attendances without check_out
             attendance_ranges = [range for range in attendance_ranges if range[1]]
             if not attendance_ranges:
+                return 0
+            if not work_time_ranges:
+                # An unscheduled day has no end to leave early from. Its five
+                # siblings all guard this; without it the whole day's row is
+                # lost to an IndexError swallowed by the caller - and days
+                # with no schedule became common the moment holidays started
+                # clearing it.
                 return 0
             last_attendance, last_work = (attendance_ranges[-1][1] or attendance_ranges[-1][0]), work_time_ranges[-1][1]
             return max(0, (last_work - last_attendance).total_seconds())
@@ -456,7 +487,11 @@ class HrEmployee(models.Model):
         _logger.debug(debug_msg)
 
         # Calculate all time metrics
-        theoretical_work_time = self._total_time(work_time_ranges)
+        # What the person owed is measured on THEIR day (own leave taken
+        # off); whether the day is a working day at all - and therefore
+        # whether presence is premium extra - stays on work_time_ranges.
+        owed = work_time_ranges if owed_ranges is None else owed_ranges
+        theoretical_work_time = self._total_time(owed)
         extra_time_value = extra_time(work_time_ranges, attendance_ranges)
         extra_night_time = extra_night(work_time_ranges, attendance_ranges)
 

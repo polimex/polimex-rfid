@@ -7,6 +7,10 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+# An attendance without a check-out has not ended yet: for the rebuild's
+# overlap arithmetic it runs to the end of time.
+STILL_OPEN = datetime.max
+
 
 class HrEmployee(models.Model):
     _name = "hr.employee"
@@ -83,14 +87,12 @@ class HrEmployee(models.Model):
                 # Set check_out to check_in + 1 minute to maintain valid record
                 action_date = open_attendance.check_in + timedelta(minutes=1)
             
-            # Update the attendance with proper context for validation bypass
-            if self.env.context.get('no_validity_check'):
-                open_attendance.with_context(
-                    no_validity_check=True,
-                    rfid_machinery_write=True).check_out = action_date
-            else:
-                open_attendance.with_context(
-                    rfid_machinery_write=True).check_out = action_date
+            # A machinery write, so the record stays rebuildable. The
+            # no_validity_check a historical replay sets travels along on its
+            # own: with_context ADDS to the context this code already runs
+            # under, it does not replace it.
+            open_attendance.with_context(
+                rfid_machinery_write=True).check_out = action_date
             return open_attendance
         
         # For check-in or when no suitable open attendance found
@@ -104,11 +106,10 @@ class HrEmployee(models.Model):
                 'in_mode': 'rfid',
             }
 
-            # Use no_validity_check context for historical events to bypass constraints
-            if self.env.context.get('no_validity_check'):
-                return self.env['hr.attendance'].with_context(no_validity_check=True).create(vals)
-            else:
-                return self.env['hr.attendance'].create(vals)
+            # A historical event's no_validity_check is already in the context
+            # this create runs under, so the constraints are bypassed without
+            # it having to be re-stated here.
+            return self.env['hr.attendance'].create(vals)
         
         # If we get here, something went wrong
         raise exceptions.UserError(
@@ -271,16 +272,24 @@ class HrEmployee(models.Model):
             ('check_in', '>=', period_start),
             ('check_in', '<', period_end),
             ('employee_id', '=', employee_id.id),
+            # Core's absence detection plants a one-second record at local
+            # midnight for every no-show. It is bookkeeping, not a person's
+            # word - and treating it as one would hand it the whole night:
+            # a 22:00-06:00 shift straddles that midnight second and would
+            # never be replayed again.
+            ('in_mode', '!=', 'technical'),
         ])
-        preserved_spans = [(a.check_in, a.check_out or None) for a in preserved]
+        # An open record (no check-out) runs to STILL_OPEN, so both questions
+        # below are ordinary interval arithmetic on closed spans.
+        preserved_spans = [(a.check_in, a.check_out or STILL_OPEN)
+                           for a in preserved]
 
         def settled_by_a_person(moment):
-            return any(start <= moment and (stop is None or moment <= stop)
-                       for start, stop in preserved_spans)
+            return any(start <= moment <= stop for start, stop in preserved_spans)
 
         def collides_with_a_person(start, stop):
-            return any(start <= (p_stop or stop or start)
-                       and p_start <= (stop or p_start)
+            stop = stop or STILL_OPEN
+            return any(start <= p_stop and p_start <= stop
                        for p_start, p_stop in preserved_spans)
 
         # Process events to create attendance records

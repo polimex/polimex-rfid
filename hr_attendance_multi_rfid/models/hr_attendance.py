@@ -57,9 +57,9 @@ class HrAttendance(models.Model):
         touched_times = 'check_in' in vals or 'check_out' in vals
         by_a_person = not (self.env.context.get('rfid_machinery_write')
                            or self.env.context.get('from_event'))
-        taken_over = (self.filtered(lambda a: a.in_mode == 'rfid')
-                      if touched_times and by_a_person and 'in_mode' not in vals
-                      else self.browse())
+        taken_over = self.browse()
+        if touched_times and by_a_person and 'in_mode' not in vals:
+            taken_over = self.filtered(lambda a: a.in_mode == 'rfid')
 
         res = super(HrAttendance, self).write(vals)
         if taken_over:
