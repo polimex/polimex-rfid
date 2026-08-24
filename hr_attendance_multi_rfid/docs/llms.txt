@@ -104,24 +104,43 @@ the record; this log is only the receipt of the job that rebuilt it. One still
 waiting or under way is never tidied away, however long ago it was asked for.
 
 
-## A stay nobody could have had
+## A forgotten badge
 
 Crossing midnight is ordinary work: the evening that runs to 01:00 belongs,
 whole, to the evening it started on, and it is counted there and nowhere else.
 Counting it on both days used to turn eight hours worked into sixteen.
 
-A stay longer than a WHOLE DAY is a different thing - a badge-out that never
-happened. The system settles those by itself, the same way it settles a stay
-somebody forgot to close: the check-out is moved to the hours the zone
-promises (Auto-close Worked Hours, or Maximum Hours in Zone), and where the
-record carries no zone - everything brought over from an older system - to the
-working day of that person's own schedule. The record then says
-"Automatically Checked-Out", and the chatter keeps what it used to say, so
-nobody is left with a number they cannot explain.
+A stay that runs longer than the working day allows is a different thing - a
+badge-out that never happened.
 
-Where neither the zone nor a working schedule can say anything, the record is
-left exactly as it is and the log says why: a made-up duration would land in
-somebody's hours.
+### One setting, in one place
+
+**Settings -> Attendances -> Automatic Check-Out** decides WHEN: the hours the
+person's own schedule says for that day, plus the tolerance beside the switch.
+An eight-hour day with four hours of tolerance means a stay is settled once it
+passes twelve.
+
+Right under it, **Forgotten badge** decides WHAT is then recorded:
+
+| Setting | What the person gets |
+|---|---|
+| Credit the scheduled day | Their working day, counted from the moment they came in - the unpaid break included, so the day is worth exactly what a normal one is worth. |
+| Credit the scheduled day, minus a penalty | The same, less the hours set beside it - for companies that treat a forgotten badge as time off site. |
+| Count nothing for that day | No working time at all. The stay is marked as a forgotten badge and the real hours have to be entered by hand - which is the point: the person has to say why they forgot. |
+
+Nothing is settled at all where Automatic Check-Out is off, or on a day the
+person was not scheduled to work: there is no working day to measure against,
+and a made-up duration would land in somebody's hours. The log says so.
+
+A record the system settled reads **Automatically Checked-Out**, is marked as
+a **Forgotten Badge**, and - where a check-out was already there and had to be
+moved - keeps in its chatter what it used to say. A number nobody can explain
+is worse than a number somebody changed on purpose.
+
+Earlier versions kept a second pair of hours on each zone (Maximum Hours in
+Zone, Auto-close Worked Hours) that answered the same question with a
+different number. They are gone; an upgrade carries what they said onto the
+company, so nothing changes for an installation that had them set.
 
 Measured on a live installation: 1827 records ran longer than a day, the
 longest 361 days, and each of them lent its whole length to every day it

@@ -36,30 +36,13 @@ class HrRfidZone(models.Model):
         default=False,
     )
 
-    max_time_in_zone = fields.Float(
-        string="Maximum Hours in Zone",
-        help="Maximum hours an employee can stay in the zone before attendance is automatically closed. "
-             "This prevents forgotten check-outs from creating excessively long attendance records. "
-             "Set to 0 to disable automatic closure. Example: 12 hours for a standard work day.",
-        default=12,
-        digits=(2, 2)
-    )
-    auto_close_time_for_zone = fields.Float(
-        string="Auto-close Worked Hours",
-        help="When attendance is automatically closed (due to max_time_in_zone), this value will be "
-             "recorded as the actual worked hours. For example, if max is 12 hours but this is set to 7, "
-             "the system will record 7 hours of work when auto-closing.",
-        default=7,
-        digits=(2, 2)
-    )
-    delete_attendance_if_late_more_than = fields.Float(
-        string="Delete if Late More Than (Hours)",
-        help="Automatically delete attendance records if the employee is late by more than this many hours. "
-             "This helps maintain data quality by removing likely erroneous entries. Set to 0 to disable "
-             "this feature. Example: Set to 4 to delete attendance if someone is more than 4 hours late.",
-        default=0,
-        digits=(2, 2)
-    )
+    # The hours that used to live here - Maximum Hours in Zone, Auto-close
+    # Worked Hours, Delete if Late More Than - are gone. The first two asked
+    # the same question as Settings -> Attendances -> Automatic Check-Out and
+    # answered it with a different number (12 against core's 10 on the
+    # installation this came from), and the third was never read by anything
+    # at all: an operator could set it and nothing happened. The migration
+    # carries what the first two said onto the company.
 
     # TODO Need to added .with_context(no_validity_check=True) for attendance management!!!
     def person_entered(self, person, event):

@@ -14,10 +14,11 @@ Business oracle (owner decisions, Stage 1 / task 1b):
 * Owner decision 2: a global public holiday on a weekday clears the
   schedule too, and hours actually worked on it count as extra (premium)
   time so the labour-cost layer can pay them at the holiday rate.
-* Agreed zone formula: an open attendance is administratively closed at
-  check_in + auto_close_time_for_zone, falling back to the zone's own
-  max_time_in_zone when the auto-close duration is not configured - never
-  a hardcoded 8 hours.
+* A forgotten badge-out is settled by ONE setting, in one place: the
+  company's Automatic Check-Out (when) and its Forgotten Badge policy
+  (what is then credited), both measured against the person's own
+  working schedule - never a hardcoded 8 hours, and never a second set
+  of hours on the zone saying something different.
 """
 from datetime import datetime, time, timedelta
 
@@ -80,13 +81,19 @@ class TestTheoreticalFromCoreCalendar(TransactionCase):
             'company_id': cls.company.id,
             'resource_calendar_id': cls.calendar.id,
         })
+        # A forgotten stay is settled once it runs two hours past the
+        # schedule, and the person is credited the day they were scheduled -
+        # one setting, on the company, measured against their own calendar.
+        cls.company.write({
+            'auto_check_out': True,
+            'auto_check_out_tolerance': 2.0,
+            'forgotten_badge_policy': 'credit_schedule',
+        })
         if 'hr.rfid.zone' in cls.env:
             cls.zone_no_autoclose = cls.env['hr.rfid.zone'].create({
-                'name': 'Zone Without Auto-Close Duration',
+                'name': 'Plain Attendance Zone',
                 'company_id': cls.company.id,
                 'attendance': True,
-                'max_time_in_zone': 10.0,
-                'auto_close_time_for_zone': 0.0,
             })
         else:
             cls.zone_no_autoclose = False
@@ -213,11 +220,14 @@ class TestTheoreticalFromCoreCalendar(TransactionCase):
         self.assertAlmostEqual(extra.late_time, 0.0, places=2)
         self.assertAlmostEqual(extra.overtime, 0.0, places=2)
 
-    def test_autoclose_falls_back_to_zone_max_time(self):
-        """NEGATIVE (no hardcoded 8h): with no auto-close duration on the
-        zone, a forgotten badge-out is closed at check_in + max_time_in_zone
-        (10h here -> 08:00-18:00), so the day measures the full schedule
-        plus one hour of overtime."""
+    def test_a_forgotten_badge_out_is_credited_the_scheduled_day(self):
+        """NEGATIVE (no hardcoded 8h anywhere): somebody who badged in at
+        08:00 and never out is credited the day their schedule says - eight
+        hours, from the calendar, not a number the code chose.
+
+        The day therefore measures a full schedule and no overtime: an
+        administrative close is not an achievement.
+        """
         if not self.zone_no_autoclose:
             self.skipTest("hr_rfid zones are not installed")
         monday = _monday_of_last_week()
@@ -228,11 +238,12 @@ class TestTheoreticalFromCoreCalendar(TransactionCase):
         ).update_extra_attendance_data(monday, monday, overwrite_existing=True)
         extra = self._extra_for(monday)
         self.assertTrue(extra)
-        # Closed at 18:00: schedule 8-12 + 13-17 fully covered (8h) and one
-        # hour past the scheduled end (17-18) is overtime. A hardcoded 8h
-        # close (16:00) would measure 7h worked and no overtime instead.
-        self.assertAlmostEqual(extra.actual_work_time, 8.0, places=2)
-        self.assertAlmostEqual(extra.overtime, 1.0, places=2)
+        self.assertAlmostEqual(
+            extra.actual_work_time, 8.0, places=2,
+            msg="the whole scheduled day, break excluded - closing at "
+                "check-in plus eight hours would fall an hour short of it")
+        self.assertAlmostEqual(extra.overtime, 0.0, places=2,
+                               msg="a stay nobody closed earns no overtime")
 
     def test_a_technical_no_show_marker_does_not_hide_the_absence(self):
         """NEGATIVE (core coexistence): the one-second 'technical' attendance

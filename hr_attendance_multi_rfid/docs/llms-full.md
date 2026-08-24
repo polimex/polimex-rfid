@@ -417,31 +417,51 @@ Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.
     reason - a typed-in record then cannot be told from a made one, the whole
     period is cleared, and the loss is logged rather than passed over.
 
-#### Settling a stay nobody could have had
+#### Settling a forgotten badge
+
+One setting, in one place. **When**: core's `res.company.auto_check_out` +
+`auto_check_out_tolerance`, measured against the person's own scheduled day.
+**What**: `res.company.forgotten_badge_policy` (`credit_schedule` / `penalty`
+/ `ignore`) with `forgotten_badge_penalty_hours`, shown right under the core
+switch in Settings -> Attendances.
 
 `hr.attendance` (models/hr_attendance.py):
 
-- **`MAX_PLAUSIBLE_STAY_HOURS`** = `24.0` (module constant) - crossing midnight
-  is ordinary work; a span longer than one whole day is a badge-out that never
-  happened.
-- **`stay_is_not_credible(self)`** - true for an OPEN record past its zone's
-  limit, and for a CLOSED one whose `check_out - check_in` exceeds
-  `MAX_PLAUSIBLE_STAY_HOURS`.
-- **`_settled_stay_hours(self)`** - what such a record is credited: the zone's
-  `auto_close_time_for_zone`, else its `max_time_in_zone`, else the employee's
-  `resource_calendar_id.hours_per_day`; `0.0` when nothing can say, and the
-  record is then left alone with a warning.
-- **`needs_autoclose(self)`** - kept for callers outside this module: open
-  records only.
+- **`forgotten_badge`** (Boolean, indexed) - the system judged this stay a
+  forgotten badge. Set under every policy, so they can all be found.
+- **`_scheduled_day(self)`** - `(hours, span)` for the day of the check-in,
+  from core's `hr.employee._get_expected_attendances`, so leaves, public
+  holidays and two-week calendars read as they do everywhere else. `(0, 0)`
+  on an unscheduled day - no answer, not a small one.
+- **`_max_allowed_stay_hours(self)`** - scheduled hours + the company's
+  tolerance; `0.0` when Automatic Check-Out is off or the day was not
+  scheduled, and then nothing is ever settled.
+- **`_settled_check_out(self)`** - when the stay is taken to have ended:
+  check-in + the SPAN of the scheduled day (break included, so a settled day
+  is worth a normal one), less the penalty where the policy sets one;
+  `False` for `ignore` or when nothing can be said.
+- **`stay_is_not_credible(self)`** - open or closed, the same question:
+  does it run past `_max_allowed_stay_hours`? Honours the
+  `attendance_calc_time` context, the module's own clock seam.
 - **`check_for_incomplete_attendances(self)`** - settles both shapes. The
-  over-long ones are found by a raw-SQL span query, NOT by `worked_hours`:
-  that field is paid time with the unpaid break already deducted, so it reads
-  under a day for a record that spans more than one (measured: 1827 real cases,
-  `worked_hours > 24` matched none of them).
+  over-long CLOSED ones are found by a raw-SQL span query, NOT by
+  `worked_hours`: that field is paid time with the unpaid break already
+  deducted, so it reads under the limit for a record that spans more than it
+  (measured: 1827 real cases, `worked_hours > 24` matched none of them).
 
 Day ownership (hr_attendance_late/models/hr_employee.py): a day's presence is
 the records whose `check_in` falls on that day, counted in full. A record that
-started earlier no longer contributes to later days.
+started earlier no longer contributes to later days. A record the system would
+settle is capped at `_settled_check_out()` while measuring, and skipped
+entirely under the `ignore` policy.
+
+Migration `19.0.1.5.0/pre-migrate.py` carries the removed zone hours
+(`max_time_in_zone`, `auto_close_time_for_zone`,
+`delete_attendance_if_late_more_than`) onto the company: Automatic Check-Out
+on, tolerance = zone limit - the company calendar's `hours_per_day`. The same
+conversion runs in `hr_rfid_odoo_import`
+(`core_importer._carry_forgotten_badge_settings`) when zones come from an
+older instance.
 
 ### `hr.rfid.event.user` <a id='model-hr-rfid-event-user'></a>
 Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:6`.  Model.  Inherits: `hr.rfid.event.user`.

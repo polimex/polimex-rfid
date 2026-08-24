@@ -1023,12 +1023,14 @@ class CoreImporter(PhaseImporter):
         for f in ['door_ids', 'permitted_department_ids',
                   'permitted_employee_category_ids', 'employee_ids',
                   'contact_ids', 'anti_passback', 'anti_pass_back',
-                  'attendance', 'auto_close_time_for_zone',
-                  'max_time_in_zone', 'overwrite_check_in',
-                  'overwrite_check_out', 'log_out_on_exit',
-                  'delete_attendance_if_late_more_than']:
+                  'attendance', 'overwrite_check_in',
+                  'overwrite_check_out', 'log_out_on_exit']:
             if f in source_fields_info and f in target_fields:
                 fields_to_read.append(f)
+        # Read even though the target has no such field any more: it is not
+        # copied, it is CONVERTED - see _carry_forgotten_badge_settings below.
+        if 'max_time_in_zone' in source_fields_info:
+            fields_to_read.append('max_time_in_zone')
         source_records = self.b._search_read(
             model, self.b._company_domain(), fields_to_read)
         imported = 0
@@ -1052,9 +1054,8 @@ class CoreImporter(PhaseImporter):
             vals = {'name': rec['name'], 'company_id': target_company_id}
             # Add scalar fields that are in both source and target
             for sf in ['anti_passback', 'anti_pass_back', 'attendance',
-                       'auto_close_time_for_zone', 'max_time_in_zone',
                        'overwrite_check_in', 'overwrite_check_out',
-                       'log_out_on_exit', 'delete_attendance_if_late_more_than']:
+                       'log_out_on_exit']:
                 if sf in rec and sf in target_fields and rec[sf] is not False:
                     vals[sf] = rec[sf]
             # Map M2M fields (only if they were read and exist in target)
@@ -1079,10 +1080,60 @@ class CoreImporter(PhaseImporter):
             else:
                 skipped += 1
 
+        self._carry_forgotten_badge_settings(source_records)
+
         self.results.append(self.b._make_result(
             model, len(source_records), imported, 0, skipped,
             duration=time.time() - start,
         ))
+
+    def _carry_forgotten_badge_settings(self, source_zones):
+        """What the OLD zones said about forgotten badges, said here properly.
+
+        Older versions kept two numbers on each attendance zone - Maximum
+        Hours in Zone (when a forgotten stay is settled) and Auto-close Worked
+        Hours (what it is credited). Both are gone from the target: they
+        answered the same question as Settings -> Attendances -> Automatic
+        Check-Out, which measures against the person's own schedule, and the
+        two disagreed. Copying the zones alone would therefore drop the
+        setting silently - the transfer would look complete and the new
+        installation would settle nothing.
+
+        So the answer travels: a company whose zones limited the stay wanted
+        forgotten stays settled, and it gets Automatic Check-Out switched on
+        with the tolerance that marks the same point in the day.
+
+        A company that has already been given the setting by hand is left
+        alone - the operator's word outranks a converted default.
+        """
+        limit_by_company = {}
+        for rec in source_zones:
+            if not rec.get('attendance'):
+                continue
+            limit = rec.get('max_time_in_zone') or 0.0
+            if limit <= 0:
+                continue
+            target_company_id = self.b._map_company(rec.get('company_id'))
+            if not target_company_id:
+                continue
+            limit_by_company[target_company_id] = max(
+                limit_by_company.get(target_company_id, 0.0), limit)
+
+        for company_id, limit in limit_by_company.items():
+            company = self.env['res.company'].browse(company_id)
+            if company.auto_check_out:
+                continue
+            hours_per_day = company.resource_calendar_id.hours_per_day or 0.0
+            company.write({
+                'auto_check_out': True,
+                'auto_check_out_tolerance': max(0.0, limit - hours_per_day),
+            })
+            _logger.info(
+                "%s: Automatic Check-Out switched on with a tolerance of "
+                "%.2f hours, carried over from a zone that allowed %.2f "
+                "against a working day of %.2f.",
+                company.display_name, max(0.0, limit - hours_per_day),
+                limit, hours_per_day)
 
     def _import_notifications(self):
         """Step 19: hr.rfid.notification - owned by its zone.

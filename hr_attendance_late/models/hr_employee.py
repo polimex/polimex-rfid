@@ -196,48 +196,23 @@ class HrEmployee(models.Model):
                                           e.name, current_date.strftime('%Y-%m-%d'))
                             continue  # Skip this invalid record
                     else:
-                        # Missing check_out - apply zone rules or use context time
+                        # Missing check_out - measure up to now, or up to the
+                        # point the installation would have settled the stay.
                         # Context 'attendance_calc_time' can be used for testing
                         calc_time = self.env.context.get('attendance_calc_time', now)
-                        
-                        # The zone this session was opened in. hr_rfid's zone
-                        # fields are always there - this module depends on
-                        # hr_attendance_multi_rfid, which declares them.
-                        zone = att.in_zone_id
-                        if zone and zone.max_time_in_zone > 0:
-                            max_duration = timedelta(hours=zone.max_time_in_zone)
-                            time_in_zone = calc_time - check_in
-                            if time_in_zone > max_duration:
-                                # Administrative close per the agreed zone
-                                # formula: the zone's auto-close duration wins;
-                                # when it is not configured (0/empty) fall back
-                                # to the zone's own maximum stay. Never a
-                                # hardcoded duration.
-                                auto_close_hours = (zone.auto_close_time_for_zone
-                                                    or zone.max_time_in_zone)
-                                check_out = check_in + timedelta(hours=auto_close_hours)
-                                _logger.info('Auto-closing attendance for %s on %s after %.1f hours (zone: %s)',
-                                            e.name, current_date.strftime('%Y-%m-%d'),
-                                            auto_close_hours, zone.name)
-                            else:
-                                # Still within max time - use calculation time
-                                check_out = calc_time
-                        else:
-                            # No zone or no max time configured - use calculation time
-                            check_out = calc_time
-                            if (calc_time - check_in) > timedelta(hours=24):
-                                _logger.warning('Attendance without check_out for %s exceeds 24 hours on %s',
-                                               e.name, current_date.strftime('%Y-%m-%d'))
-                    
-                    # A stay longer than a whole day is a badge-out that never
-                    # happened; the sweep settles the record itself, and until
-                    # it does, the measurement must not hand one day the
-                    # hundreds of hours such a record carries.
-                    if att.stay_is_not_credible():
-                        settled = att._settled_stay_hours()
-                        if settled > 0:
-                            check_out = min(
-                                check_out, check_in + timedelta(hours=settled))
+                        check_out = calc_time
+
+                    # A stay the installation would have settled by itself is
+                    # a badge-out that never happened. The sweep settles the
+                    # RECORD; until it comes round, the measurement must not
+                    # hand this day the hours such a record carries - and where
+                    # the company counts nothing for a forgotten badge, the day
+                    # gets nothing, which is the point of that setting.
+                    if att.forgotten_badge or att.stay_is_not_credible():
+                        settled = att._settled_check_out()
+                        if not settled:
+                            continue
+                        check_out = min(check_out, settled)
                     attendance_ranges.append((check_in, check_out))
 
                 # Scheduled work ranges for the day (empty on a non-working

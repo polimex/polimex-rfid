@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form_forgotten_badge" model="ir.ui.view">
+            <field name="name">res.config.settings.form.forgotten.badge</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="hr_attendance.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <!-- Inside the switch that decides WHEN a stay is settled,
+                     because this says WHAT is then recorded. One question,
+                     one place: the zones used to carry a second set of hours
+                     that answered the same thing differently. -->
+                <xpath expr="//setting[field[@name='auto_check_out']]" position="inside">
+                    <div invisible="not auto_check_out" class="mt-2">
+                        <span class="me-2">Forgotten badge</span>
+                        <field name="forgotten_badge_policy" class="oe_inline"/>
+                        <div class="mt-1"
+                             invisible="forgotten_badge_policy != 'penalty'">
+                            <span class="me-2">Hours taken off</span>
+                            <field name="forgotten_badge_penalty_hours"
+                                   widget="float_time" class="text-center oe_inline"
+                                   style="width: 6ch;"/>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

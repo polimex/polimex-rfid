@@ -1311,8 +1311,10 @@ class TestAnOperatorsWordSurvivesTheRebuild(TransactionCase):
         it from the door events."""
         zone = self.env['hr.rfid.zone'].search(
             [('name', '=', 'Zone Preserve')])
-        zone.write({'max_time_in_zone': 10.0,
-                    'auto_close_time_for_zone': 7.0})
+        # When a stay is settled is one setting, in one place: the company's
+        # Automatic Check-Out, measured against the person's own schedule.
+        self.env.company.write({
+            'auto_check_out': True, 'auto_check_out_tolerance': 2.0})
         self._door_event(self.reader_in, self.day.replace(hour=8))
         self._rebuild()
         record = self._day_records()

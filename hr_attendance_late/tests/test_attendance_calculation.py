@@ -64,12 +64,14 @@ class TestAttendanceCalculation(TestAttendanceLateCommon):
         # Should have at least some work time
         self.assertGreater(attendance_extra.actual_work_time, 0)
     
-    def test_03_missing_checkout_with_zone_autoclose(self):
-        """A worker who forgets to badge out past the zone's maximum stay is
-        administratively closed at check_in + auto_close_time_for_zone (the
-        agreed zone formula). Closed 08:00-16:00 against the 8-12 / 13-17
-        schedule, the day measures 7 worked hours (the 12-13 schedule gap is
-        not presence) and 1 hour left early - not a full 8-hour day."""
+    def test_03_a_forgotten_badge_out_is_worth_the_working_day(self):
+        """A worker who forgets to badge out is credited their working day.
+
+        Settled at 08:00-17:00 - eight hours of work and the unpaid break
+        between them - the day measures the full eight hours and nobody left
+        early. A settled day is worth a normal one; the alternative was
+        explaining to the payroll clerk why a forgotten badge quietly costs
+        an hour."""
         if not self.zone:
             self.skipTest("hr_rfid module not installed")
 
@@ -92,11 +94,10 @@ class TestAttendanceCalculation(TestAttendanceLateCommon):
         ])
 
         self.assertTrue(attendance_extra)
-        # Auto-closed at 16:00 (8h zone duration): worked time is the
-        # presence inside the schedule (08-12 + 13-16 = 7h), and the last
-        # scheduled hour (16-17) is an early leave.
-        self.assertAlmostEqual(attendance_extra.actual_work_time, 7.0, 2)
-        self.assertAlmostEqual(attendance_extra.early_leave_time, 1.0, 2)
+        # Settled at 17:00: the presence covers the whole schedule
+        # (08-12 + 13-17 = 8h) and nothing is left early.
+        self.assertAlmostEqual(attendance_extra.actual_work_time, 8.0, 2)
+        self.assertAlmostEqual(attendance_extra.early_leave_time, 0.0, 2)
     
     def test_04_late_arrival_within_tolerance(self):
         """Test late arrival within department tolerance"""

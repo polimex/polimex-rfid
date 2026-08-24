@@ -116,14 +116,23 @@ class TestAttendanceLateCommon(TransactionCase):
             'resource_calendar_id': cls.calendar.id,
         })
         
+        # When a forgotten stay is settled, and what it is then credited,
+        # is one setting in one place: the company's Automatic Check-Out
+        # measured against the person's own schedule (8h here), plus its
+        # tolerance. Four hours of grace, so a stay is settled once it runs
+        # past twelve - the number the zones used to carry.
+        cls.company.write({
+            'auto_check_out': True,
+            'auto_check_out_tolerance': 4.0,
+            'forgotten_badge_policy': 'credit_schedule',
+        })
+
         # Create zone if hr_rfid module is installed
         if 'hr.rfid.zone' in cls.env:
             cls.zone = cls.env['hr.rfid.zone'].create({
                 'name': 'Test Zone',
                 'company_id': cls.company.id,
                 'attendance': True,
-                'max_time_in_zone': 12.0,  # 12 hours max
-                'auto_close_time_for_zone': 8.0,  # Auto-close with 8 hours
             })
         else:
             cls.zone = False

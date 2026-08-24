@@ -25,18 +25,31 @@ class TestZoneAutoClose(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.company = cls.env.company
-        # The zone form promises: after 12 hours the stay is abandoned, and
-        # the person is credited 7 worked hours.
+        # One setting, in one place: a stay is settled once it runs four hours
+        # past the person's schedule, and they are credited the day that
+        # schedule says - seven hours here.
+        cls.calendar = cls.env['resource.calendar'].create({
+            'name': 'Autoclose Calendar 7h', 'company_id': cls.company.id,
+            'tz': 'UTC', 'hours_per_day': 7.0,
+            'attendance_ids': [(0, 0, {
+                'name': '%s' % day, 'dayofweek': day,
+                'hour_from': 8.0, 'hour_to': 15.0, 'day_period': 'morning'})
+                for day in ('0', '1', '2', '3', '4', '5', '6')],
+        })
+        cls.company.write({
+            'auto_check_out': True,
+            'auto_check_out_tolerance': 4.0,
+            'forgotten_badge_policy': 'credit_schedule',
+        })
         cls.zone = cls.env['hr.rfid.zone'].create({
             'name': 'Autoclose Zone',
             'company_id': cls.company.id,
             'attendance': True,
-            'max_time_in_zone': 12.0,
-            'auto_close_time_for_zone': 7.0,
         })
         cls.employee = cls.env['hr.employee'].create({
             'name': 'Forgetful Employee',
             'company_id': cls.company.id,
+            'resource_calendar_id': cls.calendar.id,
         })
 
     def _open_attendance(self, hours_ago, zone=None):
@@ -51,10 +64,10 @@ class TestZoneAutoClose(TransactionCase):
         """HR finds no attendance hanging open days after the person left.
 
         The person badged in, walked out without badging, and is long gone -
-        the zone does not list them any more. Their attendance still knows
-        which zone it was opened in, and that is what settles it: the sweep
-        closes it with the 7 hours the zone promises (check-out = check-in +
-        Auto-close Worked Hours).
+        the zone does not list them any more. The sweep settles the record all
+        the same, crediting the seven hours their own schedule says for that
+        day. Where they happen to be now was never the question; the old code
+        asked it and could not close anybody who had walked away.
         """
         attendance = self._open_attendance(hours_ago=20, zone=self.zone)
         self.assertNotIn(self.employee, self.zone.employee_ids,
@@ -69,38 +82,49 @@ class TestZoneAutoClose(TransactionCase):
         self.assertEqual(
             attendance.check_out,
             attendance.check_in + timedelta(hours=7),
-            "and it must credit the zone's Auto-close Worked Hours (7h), "
-            "not the 12h abandonment limit and not any built-in number")
+            "and it must credit the scheduled day (7h), not the twelve hours "
+            "the stay was allowed to run and not any built-in number")
 
-    def test_a_zone_without_auto_close_hours_settles_at_the_maximum(self):
-        """Where the zone promises no worked-hours figure, the limit is used.
+    def test_the_company_can_take_hours_off_for_forgetting(self):
+        """Some companies treat a forgotten badge as time off site.
 
-        The zone form says: set Auto-close Worked Hours to 0 and the closure
-        credits Maximum Hours in Zone instead. A 12-hour zone with no
-        auto-close figure settles the record at check-in + 12 hours.
+        The setting says so out loud: credit the scheduled day, less a
+        penalty. Seven scheduled hours, two off, and the person is credited
+        five - they were here, but nobody can say until when.
         """
-        no_figure_zone = self.env['hr.rfid.zone'].create({
-            'name': 'No Figure Zone',
-            'company_id': self.company.id,
-            'attendance': True,
-            'max_time_in_zone': 12.0,
-            'auto_close_time_for_zone': 0.0,
-        })
-        attendance = self._open_attendance(hours_ago=20, zone=no_figure_zone)
+        self.company.write({'forgotten_badge_policy': 'penalty',
+                            'forgotten_badge_penalty_hours': 2.0})
+        attendance = self._open_attendance(hours_ago=20, zone=self.zone)
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
         self.assertEqual(
             attendance.check_out,
-            attendance.check_in + timedelta(hours=12),
-            "with no Auto-close Worked Hours set, the person is credited "
-            "the zone's Maximum Hours in Zone")
+            attendance.check_in + timedelta(hours=5),
+            "seven scheduled hours less the two-hour penalty")
+
+    def test_the_company_can_count_nothing_at_all(self):
+        """Others want the person to come and explain.
+
+        Nothing is credited and the times are left exactly as they are: the
+        stay is only MARKED as a forgotten badge, so it can be found, and the
+        real hours have to be entered by hand.
+        """
+        self.company.write({'forgotten_badge_policy': 'ignore'})
+        attendance = self._open_attendance(hours_ago=20, zone=self.zone)
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertFalse(attendance.check_out,
+                         "nothing was credited, so nothing was closed")
+        self.assertTrue(attendance.forgotten_badge,
+                        "but it is marked, or nobody would ever find it")
 
     def test_a_stay_within_the_limit_is_left_alone(self):
         """A person still legitimately at work is not checked out early.
 
-        Five hours into a 12-hour zone there is nothing to settle: the sweep
-        must not touch the open attendance.
+        Five hours into a seven-hour day with four hours of tolerance there
+        is nothing to settle: the sweep must not touch the open attendance.
         """
         attendance = self._open_attendance(hours_ago=5, zone=self.zone)
 
@@ -110,42 +134,38 @@ class TestZoneAutoClose(TransactionCase):
                          "an attendance still within the zone's limit must "
                          "stay open - the person may simply still be at work")
 
-    def test_a_record_without_a_zone_is_never_closed_by_the_zone_sweep(self):
-        """What the zone never saw is not the zone's to settle.
+    def test_a_record_without_a_zone_is_settled_the_same_way(self):
+        """The zone was never the question - the person's schedule is.
 
-        An attendance carrying no zone - typed in by HR, or made by a kiosk -
-        has no zone limit to be measured against. However old it grows, the
-        zone sweep leaves it alone; closing it is a person's decision.
+        An attendance carrying no zone at all (typed in, made by a kiosk, or
+        brought over from an older system) is judged exactly like any other:
+        the schedule says seven hours, the tolerance four, and a stay of
+        thirty hours is a badge-out that never happened. The old code let
+        these grow forever, and a customer database ended up with 1827 of
+        them, the longest 361 days.
         """
         attendance = self._open_attendance(hours_ago=30, zone=None)
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
-        self.assertFalse(attendance.check_out,
-                         "a record without a zone must never be closed by "
-                         "the zone auto-close sweep")
+        self.assertEqual(attendance.check_out,
+                         attendance.check_in + timedelta(hours=7),
+                         "settled on the person's own schedule, zone or no zone")
 
-    def test_a_zone_with_no_limit_never_closes_anybody(self):
-        """A zone that sets no maximum promises no automatic closure.
+    def test_switching_the_setting_off_closes_nobody(self):
+        """NEGATIVE: with Automatic Check-Out off, nothing is ever settled.
 
-        The zone form says: set Maximum Hours in Zone to 0 to disable
-        automatic closure. Records in such a zone stay open until a person
-        or a badge closes them.
+        The company has not asked for it, so no record is touched however old
+        it grows - and nothing here invents a limit of its own.
         """
-        unlimited_zone = self.env['hr.rfid.zone'].create({
-            'name': 'Unlimited Zone',
-            'company_id': self.company.id,
-            'attendance': True,
-            'max_time_in_zone': 0.0,
-            'auto_close_time_for_zone': 7.0,
-        })
-        attendance = self._open_attendance(hours_ago=48, zone=unlimited_zone)
+        self.company.auto_check_out = False
+        attendance = self._open_attendance(hours_ago=48, zone=self.zone)
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
         self.assertFalse(attendance.check_out,
-                         "a zone with Maximum Hours in Zone = 0 promises no "
-                         "automatic closure, however old the record grows")
+                         "Automatic Check-Out is off: nothing may be settled")
+        self.assertFalse(attendance.forgotten_badge)
 
     def test_walking_into_a_zone_makes_a_record_stamped_as_the_machines(self):
         """What the badge makes is marked as the machine's, from the start.
@@ -182,24 +202,21 @@ class TestZoneAutoClose(TransactionCase):
                          "mode, or a rebuild could mistake it for the "
                          "machine's and delete it")
 
-    def test_the_zone_sweep_rides_the_core_check_out_task(self):
-        """One scheduled task closes forgotten attendance, not one per rule.
+    def test_one_scheduled_task_settles_forgotten_stays(self):
+        """One task closes forgotten attendance, not one per rule.
 
-        Core already schedules "Automatically check-out employees"; the zone
-        sweep runs from that same task. A site that never touches the
-        company's Automatic Check-Out setting still gets its zone limits
-        enforced - and no second cron exists to fall out of step. The module
-        must ship NO cron record of its own any more.
+        Core already schedules "Automatically check-out employees" and our
+        sweep runs from that same task - it covers what core leaves behind,
+        the records closed long after the person left. One clock, one setting,
+        and no second cron to fall out of step with the first.
         """
         attendance = self._open_attendance(hours_ago=20, zone=self.zone)
 
-        # The core task's entry point - not our own method - must close it,
-        # even with the company's calendar-based auto check-out switched off.
-        self.assertFalse(self.env.company.auto_check_out)
+        # The core task's entry point, not our own method.
         self.env['hr.attendance']._cron_auto_check_out()
 
         self.assertTrue(attendance.check_out,
-                        "the core check-out task must run the zone sweep")
+                        "the core check-out task must settle it")
         self.assertFalse(
             self.env.ref(
                 'hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron',
@@ -225,7 +242,23 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
         cls.company = cls.env.company
         cls.calendar = cls.env['resource.calendar'].create({
             'name': 'Settle Calendar', 'company_id': cls.company.id,
-            'tz': 'UTC', 'hours_per_day': 8.0})
+            'tz': 'UTC', 'hours_per_day': 8.0,
+            # With a real unpaid break, so the tests can show that Worked
+            # Hours reads UNDER the span of the record - which is why the
+            # search is on the two timestamps and not on that field.
+            'attendance_ids': [(0, 0, {
+                'name': '%s %s' % (day, period), 'dayofweek': day,
+                'hour_from': start, 'hour_to': stop, 'day_period': period})
+                for day in ('0', '1', '2', '3', '4', '5', '6')
+                for period, start, stop in (('morning', 8.0, 12.0),
+                                            ('lunch', 12.0, 13.0),
+                                            ('afternoon', 13.0, 17.0))]})
+        # Eight scheduled hours and two of tolerance: a stay is settled once
+        # it runs past ten, and is credited the eight the schedule says.
+        cls.company.write({
+            'auto_check_out': True,
+            'auto_check_out_tolerance': 2.0,
+            'forgotten_badge_policy': 'credit_schedule'})
         cls.employee = cls.env['hr.employee'].create({
             'name': 'Night Worker', 'company_id': cls.company.id,
             'resource_calendar_id': cls.calendar.id})
@@ -267,11 +300,16 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
-        self.assertEqual(forgotten.check_out, start + timedelta(hours=8),
-                         "credited the working day, not the 300 days it stood")
+        self.assertEqual(forgotten.check_out, start + timedelta(hours=9),
+                         "credited the working day - eight hours of work and "
+                         "the unpaid break between them - not the 300 days "
+                         "it stood")
         self.assertEqual(forgotten.out_mode, 'auto_check_out',
                          "and it reads as settled by the system, not by a person")
-        note = forgotten.message_ids[:1].body or ''
+        # Every message on the record, not just the newest: the write itself
+        # also posts a tracking line, and which of the two lands last is not
+        # ours to depend on.
+        note = ' '.join(forgotten.message_ids.mapped('body'))
         self.assertIn(str(was.year), note,
                       "the chatter must keep what the record used to say - a "
                       "number nobody can explain is worse than one somebody "
@@ -312,19 +350,24 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
-        self.assertEqual(forgotten.check_out, start + timedelta(hours=8),
+        self.assertEqual(forgotten.check_out, start + timedelta(hours=9),
                          "and it is settled all the same, because the RECORD "
-                         "spans more than a day")
+                         "spans more than the schedule allows - credited the "
+                         "working day, break included, as any other day is")
 
     def test_a_stay_that_cannot_be_judged_is_left_for_a_person(self):
-        """NEGATIVE: with no zone limit and no working schedule, hands off.
+        """NEGATIVE: with no working schedule for the day, hands off.
 
-        Guessing a duration here would put a made-up number into somebody's
-        hours. The record stays as it is and the log says why.
+        There is nothing to measure the stay against and nothing to credit;
+        guessing would put a made-up number into somebody's hours. The record
+        stays as it is and the log says why.
         """
+        empty = self.env['resource.calendar'].create({
+            'name': 'Nothing Scheduled', 'company_id': self.company.id,
+            'tz': 'UTC', 'hours_per_day': 0.0, 'attendance_ids': []})
         nobody = self.env['hr.employee'].create({
             'name': 'No Schedule Worker', 'company_id': self.company.id,
-            'resource_calendar_id': False})
+            'resource_calendar_id': empty.id})
         start = fields.Datetime.now() - timedelta(days=100)
         record = self.env['hr.attendance'].with_context(
             no_validity_check=True).create({

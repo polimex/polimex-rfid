@@ -33,6 +33,15 @@ def _monday_of_last_week():
 @tagged('post_install', '-at_install', 'hr_attendance_late', 'hr_attendance_late_regressions')
 class TestMeasurementRegressions(TestAttendanceLateCommon):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # These tests measure long but perfectly real days - somebody who
+        # stayed until 23:30 and badged out. Settling forgotten badges is a
+        # different feature with its own tests, and it must not be allowed to
+        # cut these days short.
+        cls.company.auto_check_out = False
+
     def _extra_for(self, day):
         return self.env['hr.attendance.extra'].search([
             ('employee_id', '=', self.employee.id),
