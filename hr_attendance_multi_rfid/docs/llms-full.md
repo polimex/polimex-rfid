@@ -174,20 +174,15 @@ RFID Attendance bridges the gap between physical access control and time trackin
 2. **Working Hours**: Set employee working schedules
 3. **PIN Codes**: Optional PIN for attendance validation
 
-###### System Parameters
+###### Where the rules live
 
-Configure in Settings → Technical → System Parameters:
-
-```
-#### Minimum time between attendance events (seconds)
-hr_attendance_multi_rfid.min_time_between_events: 60
-
-#### Auto check-out after hours
-hr_attendance_multi_rfid.auto_checkout_hours: 12
-
-#### Allow multiple check-ins per day
-hr_attendance_multi_rfid.allow_multiple_sessions: True
-```
+This module reads no system parameters. What decides how passages become
+attendance is on `hr.rfid.zone`: `attendance`, `overwrite_check_in`,
+`overwrite_check_out`, `max_time_in_zone`, `auto_close_time_for_zone`. The
+tolerances for small deviations are on `hr.department` (hr_attendance_late:
+`ignore_late_time`, `ignore_early_come_time`, `ignore_early_leave_time`,
+`ignore_overtime`, `ignore_extra_time`) and work on AMOUNTS OF TIME, never on
+passages.
 
 ##### 📖 Usage
 
@@ -250,9 +245,12 @@ class CustomZone(models.Model):
    - Check system parameters
 
 2. **Duplicate entries**
-   - Increase min_time_between_events
-   - Check for multiple doors in same zone
-   - Review event processing logs
+   - A second badge while the person is already inside creates nothing when
+     the zone's "Overwrite check-in" is off - the passage says "Already
+     inside" in Why Not Counted. If duplicates DO appear, that switch is on.
+   - Check whether the door belongs to more than one attendance zone: each
+     zone counting the same door opens its own attendance for the same day.
+   - Review the event list, filtered by Why Not Counted.
 
 3. **Wrong in/out detection**
    - Verify zone type settings

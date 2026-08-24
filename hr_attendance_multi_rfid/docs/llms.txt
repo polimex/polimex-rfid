@@ -241,20 +241,26 @@ RFID Attendance bridges the gap between physical access control and time trackin
 2. **Working Hours**: Set employee working schedules
 3. **PIN Codes**: Optional PIN for attendance validation
 
-##### System Parameters
+##### Where the rules actually live
 
-Configure in Settings → Technical → System Parameters:
+There are no system parameters for this module. Everything that decides how
+door passages become attendance is on the ZONE (RFID -> Zones), where the
+operator can see it:
 
-```
-### Minimum time between attendance events (seconds)
-hr_attendance_multi_rfid.min_time_between_events: 60
+- **Counts as attendance** - passages at this zone's doors make attendance.
+- **Overwrite check-in** - off (the usual setting) means a SECOND entry while
+  the person is already inside changes nothing: the first entry of the day
+  stands. The passage says "Already inside" in Why Not Counted.
+- **Overwrite check-out** - off means an exit with no attendance open changes
+  nothing; it says "Nothing open to close".
+- **Maximum Hours in Zone** / **Auto-close Worked Hours** - how long anybody
+  may be inside, and what a forgotten stay is credited when the system settles
+  it.
 
-### Auto check-out after hours
-hr_attendance_multi_rfid.auto_checkout_hours: 12
-
-### Allow multiple check-ins per day
-hr_attendance_multi_rfid.allow_multiple_sessions: True
-```
+The tolerances that swallow small deviations (a few minutes late, a few
+minutes of overtime) are on the DEPARTMENT, not here - see hr_attendance_late.
+They work on amounts of time, not on passages: nothing there ignores a second
+badge.
 
 #### 📖 Usage
 
@@ -317,9 +323,12 @@ class CustomZone(models.Model):
    - Check system parameters
 
 2. **Duplicate entries**
-   - Increase min_time_between_events
-   - Check for multiple doors in same zone
-   - Review event processing logs
+   - A second badge while the person is already inside creates nothing when
+     the zone's "Overwrite check-in" is off - the passage says "Already
+     inside" in Why Not Counted. If duplicates DO appear, that switch is on.
+   - Check whether the door belongs to more than one attendance zone: each
+     zone counting the same door opens its own attendance for the same day.
+   - Review the event list, filtered by Why Not Counted.
 
 3. **Wrong in/out detection**
    - Verify zone type settings
