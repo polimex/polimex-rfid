@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Attendance',
-    'version': '19.0.1.2.1',
+    'version': '19.0.1.3.0',
     'category': 'Human Resources',
     'summary': 'Manage employee attendance',
     'author': 'Polimex',
@@ -16,6 +16,12 @@
 
     'depends': ['hr_rfid', 'hr_attendance'],
     # 'depends': ['hr_rfid', 'hr_attendance', 'hr_attendance_reason', 'hr_attendance_autoclose'],
+
+    'assets': {
+        'web.assets_tests': [
+            'hr_attendance_multi_rfid/static/tests/tours/*.js',
+        ],
+    },
 
     'data': [
         'security/ir.model.access.csv',

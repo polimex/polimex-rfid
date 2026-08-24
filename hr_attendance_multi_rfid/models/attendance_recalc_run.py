@@ -171,9 +171,40 @@ class HrAttendanceRecalcRun(models.Model):
     def action_start(self):
         """Ask for the work to begin. Returns at once."""
         self.ensure_one()
-        self.state = 'queued'
+        # Written only when it is not already what it says. A rebuild the
+        # worker has in hand must not be written to from a web request at
+        # all: the two transactions touch the same row and the request loses
+        # with "could not serialize access due to concurrent update" - a
+        # server error on the operator's screen while the system is working
+        # perfectly well.
+        if self.state != 'queued':
+            self.state = 'queued'
+        # How many people this covers is known the moment it is asked for.
+        # Left to the worker, the operator opens a rebuild of 208 people and
+        # reads "0 people in total" until the scheduler comes round - which
+        # looks like an empty request, not a waiting one.
+        if self.total_count != len(self.employee_ids):
+            self.total_count = len(self.employee_ids)
         self._wake_the_worker()
         return True
+
+    def action_refresh(self):
+        """Show what the rebuild has got to by now.
+
+        Reading, never writing. The progress bar does not move on its own,
+        so the operator is given a way to look again - but looking must not
+        touch the record the worker is updating, which is what an earlier
+        "Continue now" button did: it set the state on every press and
+        collided with the running worker.
+
+        The worker is nudged as well, in case the scheduler has not come
+        round yet; that writes a trigger row of its own and never the
+        rebuild (ir_cron._trigger_list, base/models/ir_cron.py:781-785).
+        """
+        self.ensure_one()
+        if self.state in ('queued', 'running'):
+            self._wake_the_worker()
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
 
     def _wake_the_worker(self):
         cron = self.env.ref(

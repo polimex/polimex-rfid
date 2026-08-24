@@ -103,6 +103,39 @@ answer "who rebuilt this month's attendance, and what did it do?". One still
 waiting or under way is never tidied away, however long ago it was asked for.
 
 
+## Why a passage was not counted
+
+A person walks through the door, the access is granted, and the attendance
+does not change. That is usually correct - most often the person was already
+checked in - but until now the event list simply said "No Info" and there was
+no way to tell an ordinary second badge from something set up wrong.
+
+Every granted passage that changes no attendance now says why, in the
+**Why Not Counted** column of the User Events list (also a filter section in
+the search panel, so the whole list can be narrowed to one reason at a time):
+
+| What it says | What happened |
+|---|---|
+| Already inside | The person was already checked in, and this zone keeps the first entry of the day. Ordinary. |
+| Not tracked in this zone | The zone follows only certain departments or tags, and this person is not one of them. |
+| Nothing open to close | An exit arrived with no attendance open, and this zone does not reopen the previous one. |
+| Covered by a manual record | The moment falls inside attendance somebody typed in by hand, which is never overwritten. |
+| Replaced by a later entry | A second entry came before any exit, and the zone keeps the later one. |
+| Reader direction not set | The reader is neither In nor Out, so the passage cannot be read as an arrival or a departure. Set its direction on the controller. |
+
+An empty column on a passage the system has seen since this was installed
+means the passage did count - it is the check-in or the check-out shown in the
+Attendance column beside it.
+
+Passages from BEFORE the update carry no reason: nothing was recorded at the
+time and it cannot be worked out afterwards. To fill in a past period, rebuild
+it (Attendances -> Configuration -> Attendance Rebuilds) - the rebuild writes a
+reason on every passage it replays. Keep that in mind when filtering by reason:
+the filter shows what has been marked, not the whole history.
+
+Both the live processing and a rebuild fill this in, and they agree: a rebuild
+that turns a discarded passage into a real check-out clears the old reason.
+
 ## How to use it
 
 ### RFID Attendance

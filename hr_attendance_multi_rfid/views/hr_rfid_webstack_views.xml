@@ -19,6 +19,8 @@
                 <xpath expr="//group" position="inside">
                     <group string="Attendance data" id="attendance_group">
                         <field name="in_or_out"/>
+                        <field name="no_attendance_reason"
+                               invisible="not no_attendance_reason"/>
                     </group>
                 </xpath>
             </field>
@@ -36,6 +38,10 @@
                 </xpath>
                 <xpath expr="//field[@name='door_id']" position="after">
                     <field name="in_or_out"/>
+                    <!-- Shown by default: the whole point is that a passage
+                         which changed no attendance says so where the
+                         operator already looks. -->
+                    <field name="no_attendance_reason" optional="show"/>
                 </xpath>
             </field>
         </record>
@@ -93,6 +99,10 @@
             <field name="arch" type="xml">
                 <xpath expr="/search/searchpanel" position="inside">
                     <field name="in_or_out" string="Attendance" icon="fa-info-circle" color="#875A7B"/>
+                    <!-- One click answers the question three customers wrote
+                         in with: which passages were not counted, and why. -->
+                    <field name="no_attendance_reason" string="Why Not Counted"
+                           icon="fa-question-circle" color="#875A7B"/>
                 </xpath>
             </field>
         </record>

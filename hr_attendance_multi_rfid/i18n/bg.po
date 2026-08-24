@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 13:55+0000\n"
-"PO-Revision-Date: 2026-08-14 17:02\n"
+"POT-Creation-Date: 2026-08-24 09:33+0000\n"
+"PO-Revision-Date: 2026-08-24 12:33\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Bulgarian\n"
 "Language: bg\n"
@@ -46,6 +46,11 @@ msgstr "Отсъстващи служители"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
 msgid "Action Needed"
 msgstr "Изисква действие"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__already_inside
+msgid "Already inside"
+msgstr "Вече е вътре"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_attachment_count
@@ -234,7 +239,6 @@ msgstr ""
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__check_in
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__in
-#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__in
 msgid "Check In"
 msgstr "Записване"
 
@@ -247,7 +251,6 @@ msgstr "Записвания {}"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__check_out
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__out
-#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__out
 msgid "Check Out"
 msgstr "Отписване"
 
@@ -263,9 +266,9 @@ msgid "Company"
 msgstr "Фирма"
 
 #. module: hr_attendance_multi_rfid
-#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
-msgid "Continue now"
-msgstr "Продължи сега"
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__manual_record
+msgid "Covered by a manual record"
+msgstr "Покрито от ръчен запис"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__create_uid
@@ -317,6 +320,11 @@ msgstr "Отдел"
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_view_filter_inherit
 msgid "Departments"
 msgstr "Отдели"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__direction_unknown
+msgid "Direction unknown"
+msgstr "Неизвестна посока"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
@@ -383,6 +391,42 @@ msgid ""
 msgstr ""
 "Крайна дата за преизчисляване на присъствието. Записите за присъствие ще "
 "бъдат обработени до тази дата включително. По подразбиране е днес."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__no_attendance_reason
+msgid ""
+"Filled in when a granted passage did not change the attendance, so the "
+"reason is visible instead of a blank Attendance column:\n"
+"\n"
+"• Already inside: the person was already checked in and this zone keeps the "
+"first entry.\n"
+"• Not tracked in this zone: the zone follows only certain departments or "
+"tags, and this person is not one of them.\n"
+"• Nothing open to close: an exit arrived with no attendance open, and this "
+"zone does not reopen the previous one.\n"
+"• Covered by a manual record: the moment already falls inside attendance "
+"entered by hand, which is never overwritten.\n"
+"• Replaced by a later entry: a second entry came before any exit, and the "
+"zone keeps the later one.\n"
+"• Direction unknown: the passage carries no reader, or one that is set to "
+"neither In nor Out, so it cannot be read as an arrival or a departure."
+msgstr ""
+"Попълва се, когато разрешено преминаване не е променило присъствието, така "
+"че причината е видима вместо празна колона Присъствие:\n"
+"\n"
+"• Вече вътре: лицето вече е било с регистрирано идване и тази зона запазва "
+"първия запис.\n"
+"• Не се проследява в тази зона: зоната следи само определени отдели или "
+"етикети, а това лице не е сред тях.\n"
+"• Няма отворено за затваряне: пристигнало е излизане без отворено "
+"присъствие, а тази зона не преотваря предишното.\n"
+"• Покрито от ръчен запис: моментът вече попада в присъствие, въведено ръчно, "
+"което никога не се презаписва.\n"
+"• Заменено от по-късен запис: второ влизане е пристигнало преди каквото и да "
+"е излизане, а зоната запазва по-късния запис.\n"
+"• Не е зададена посока на четеца: четецът не е нито Вход, нито Изход, така "
+"че преминаването не може да бъде отчетено като идване или излизане. Задайте "
+"посоката му на контролера."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__done
@@ -550,13 +594,17 @@ msgid "Messages"
 msgstr "Съобщения"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_mode
+msgid "Mode"
+msgstr "Вид"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
 msgid "Name"
 msgstr "Име"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__no_info
-#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__no_info
 msgid "No Info"
 msgstr "Няма информация"
 
@@ -589,6 +637,16 @@ msgstr "Няма събития от врата"
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__error
 msgid "Not rebuilt"
 msgstr "Непреизчислено"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__not_tracked_here
+msgid "Not tracked in this zone"
+msgstr "Не се проследява в тази зона"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__nothing_to_close
+msgid "Nothing open to close"
+msgstr "Няма отворено присъствие"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__nothing
@@ -727,6 +785,11 @@ msgid "Progress"
 msgstr "Напредък"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance__in_mode__rfid
+msgid "RFID"
+msgstr "RFID"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
 msgid "RFID User Event"
 msgstr "RFID потребителско събитие"
@@ -803,10 +866,20 @@ msgid "Recalculate attendance for selected employees"
 msgstr "Преизчисляване на присъствие за избраните служители"
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "Refresh"
+msgstr "Обновяване"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__refused
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__refused
 msgid "Refused"
 msgstr "Отказано"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__superseded
+msgid "Replaced by a later entry"
+msgstr "Заменено от по-късно влизане"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
@@ -942,12 +1015,12 @@ msgstr "Лицето, за което е този ред."
 msgid ""
 "The rebuild carries on in the background, one person\n"
 "                            at a time. You can close this page - press "
-"Continue\n"
-"                            now to refresh what you see."
+"Refresh\n"
+"                            to see how far it has got."
 msgstr ""
 "Преизчисляването продължава във фонов режим, по едно лице наведнъж. Можете "
-"да затворите тази страница - натиснете „Продължи сега\", за да опресните "
-"видяното."
+"да затворите тази страница - натиснете Обновяване, за да видите докъде е "
+"стигнало."
 
 #. module: hr_attendance_multi_rfid
 #. odoo-python
@@ -1165,6 +1238,12 @@ msgid ""
 msgstr ""
 "Кой е заявил преизчисляването. Работата се изпълнява във фонов режим, така "
 "че този получава уведомление при завършването ѝ."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__no_attendance_reason
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid
+msgid "Why Not Counted"
+msgstr "Защо не е отчетено"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__error_message

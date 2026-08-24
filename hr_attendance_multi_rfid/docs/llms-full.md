@@ -427,11 +427,28 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:6`.  Model.  Inh
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `in_or_out` | Selection | Attendance |  | ✓ | Indicates whether this RFID event was processed as attendance check-in or check- |
+| `no_attendance_reason` | Selection | Why Not Counted |  | ✓ | Why a granted passage changed no attendance: `already_inside`, `not_tracked_here`, `nothing_to_close`, `manual_record`, `superseded`, `direction_unknown` |
 
 #### Notable methods
 
+- **`_mark_attendance(self, direction)`** - this passage IS the check-in / check-out;
+  clears `no_attendance_reason` so the two columns cannot contradict each other.
+- **`_mark_no_attendance(self, reason)`** - LIVE: records WHY the passage changed
+  no attendance, but never over a passage another zone already counted (a door
+  can belong to several zones, answered one after another).
+- **`_rewrite_no_attendance(self, reason)`** - REBUILD: the same, replacing any
+  earlier answer, because a replay is authoritative for its period. Two methods
+  rather than one method and a flag: a forgotten flag would have looked like
+  nothing at all.
+- **`_write_no_attendance(self, reason)`** - the shared write; tolerates the
+  empty recordset, so callers need no guard.
 - **`button_show_employee_att_events(self)`** — decorators: —
   - effects: `i18n`
+
+Both markers are used by the two machines that turn events into attendance -
+`hr.rfid.zone` (live, as people walk through) and
+`hr.employee._recalc_attendance_one` (replay) - so the two always tell the
+operator the same thing about the same passage.
 
 ### `hr.rfid.zone` <a id='model-hr-rfid-zone'></a>
 Python class `HrRfidZone` in `models/hr_rfid_zone.py:8`.  Model.  Inherits: `hr.rfid.zone`.

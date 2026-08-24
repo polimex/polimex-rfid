@@ -3,8 +3,7 @@ import logging
 
 from datetime import timedelta
 
-from odoo import models, api, fields, _, exceptions
-from dateutil.relativedelta import relativedelta
+from odoo import models, fields, _
 
 _logger = logging.getLogger(__name__)
 
@@ -68,25 +67,47 @@ class HrRfidZone(models.Model):
         if not is_employee:
             return super(HrRfidZone, self).person_entered(person, event)
 
-        for zone in self.filtered(lambda z: z.attendance):
-            if is_employee and not zone._check_employee_permit(person):
-                continue
-            check = person._last_open_checkin(zone.id, before_dt=event and event.event_time or None)
+        # Callers pass a bare False when they act on their own clock rather
+        # than on a passage; the empty recordset behaves the same in every
+        # test below and lets the reason be recorded without a guard.
+        event = event or self.env['hr.rfid.event.user']
 
-            if check and zone.overwrite_check_in:
+        for zone in self.filtered(lambda z: z.attendance):
+            if not zone._check_employee_permit(person):
+                event._mark_no_attendance('not_tracked_here')
+                continue
+            check = person._last_open_checkin(
+                zone.id, before_dt=event.event_time or None)
+
+            if check and not zone.overwrite_check_in:
+                # Already checked in and this zone keeps the first entry -
+                # nothing to do, but the passage must not read as an
+                # unexplained blank in the operator's list.
+                event._mark_no_attendance('already_inside')
+                continue
+
+            if check:
+                # This zone moves the check-in to the newer entry. It only
+                # does so when a LATER, already closed attendance says the
+                # open one started too early; otherwise the person is simply
+                # inside already and nothing changes - and the passage says
+                # that instead of claiming a check-in nobody made.
                 if event:
-                    event.in_or_out = 'in'
-                    if person.last_attendance_id and person.last_attendance_id.check_out and person.last_attendance_id.check_out < event.event_time:
+                    moved_by = person.last_attendance_id
+                    if moved_by.check_out and moved_by.check_out < event.event_time:
                         check.with_context(no_validity_check=True, rfid_machinery_write=True).write({
                             'check_in': event.event_time
                         })
+                        event._mark_attendance('in')
+                    else:
+                        event._mark_no_attendance('already_inside')
                 else:
                     check.with_context(no_validity_check=True, rfid_machinery_write=True).write({
                         'check_in': fields.Datetime.now()
                     })
-            if not check:
+            else:
                 if event:
-                    event.in_or_out = 'in'
+                    event._mark_attendance('in')
                     person.with_context(no_validity_check=True).attendance_action_change_with_date(event.event_time,
                                                                                                zone.id)
                 else:
@@ -110,8 +131,12 @@ class HrRfidZone(models.Model):
         if not is_employee:
             return super(HrRfidZone, self).person_left(person, event)
 
+        # See person_entered: a missing event is the empty recordset here.
+        event = event or self.env['hr.rfid.event.user']
+
         for zone in self.filtered(lambda z: z.attendance):
-            if is_employee and not zone._check_employee_permit(person):
+            if not zone._check_employee_permit(person):
+                event._mark_no_attendance('not_tracked_here')
                 continue
             
             # For out-of-order events, we need more sophisticated attendance matching
@@ -133,7 +158,7 @@ class HrRfidZone(models.Model):
                 
                 if attendance_to_close:
                     # Found an open attendance to close
-                    event.in_or_out = 'out'
+                    event._mark_attendance('out')
                     
                     # Validate check_out time is after check_in
                     check_out_time = event.event_time
@@ -150,8 +175,6 @@ class HrRfidZone(models.Model):
                     })
                 elif zone.overwrite_check_out:
                     # No open attendance found, but zone allows overwriting recent check-outs
-                    event.in_or_out = 'out'
-                    
                     # Find the most recent closed attendance
                     last_att_id = self.env['hr.attendance'].search([
                         ('check_out', '<', event.event_time),
@@ -164,6 +187,10 @@ class HrRfidZone(models.Model):
                     if last_att_id and (event.event_time - last_att_id.check_out) < timedelta(hours=8):
                         # Ensure the new check_out is still after check_in
                         if event.event_time > last_att_id.check_in:
+                            # Only now is this passage a check-out. Saying so
+                            # before the write meant every exit that reopened
+                            # nothing still read as one.
+                            event._mark_attendance('out')
                             last_att_id.with_context(from_event=True, no_validity_check=True).write({
                                 'check_out': event.event_time
                             })
@@ -172,6 +199,13 @@ class HrRfidZone(models.Model):
                                 'Cannot update check-out to %s as it would be before check-in %s',
                                 event.event_time, last_att_id.check_in
                             )
+                            event._mark_no_attendance('nothing_to_close')
+                    else:
+                        event._mark_no_attendance('nothing_to_close')
+                else:
+                    # An exit with nothing open, and this zone does not reopen
+                    # the previous record. The commonest silent discard there is.
+                    event._mark_no_attendance('nothing_to_close')
             else:
                 # Real-time event (no specific event time)
                 # Use the standard logic for finding open attendance

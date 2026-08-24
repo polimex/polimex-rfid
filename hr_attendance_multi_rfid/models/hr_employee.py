@@ -178,6 +178,11 @@ class HrEmployee(models.Model):
             'doors': doors_with_attendance,
             'in_readers': readers_ids.filtered(lambda r: r.reader_type == '0'),
             'out_readers': readers_ids.filtered(lambda r: r.reader_type == '1'),
+            # Does ANY attendance zone follow only certain departments or
+            # tags? Asked once here so that the installations which have none
+            # - most of them - skip the per-employee question below entirely.
+            'has_restricted_zones': bool(att_zone_ids.filtered(
+                lambda z: z.permitted_department_ids or z.permitted_employee_category_ids)),
         }
 
     def recalc_attendance(self, from_date=None, to_date=None):
@@ -252,6 +257,24 @@ class HrEmployee(models.Model):
         if not event_ids:  # no events for processing
             return {'event_count': 0, 'attendance_count': 0}
 
+        # Which of those doors actually follow THIS person. A zone limited to
+        # certain departments or tags is skipped on every live passage
+        # (hr.rfid.zone._check_employee_permit), so a rebuild that ignored the
+        # limit handed people attendance in zones that never tracked them -
+        # the same day told two different stories depending on which machine
+        # wrote it. A door shared with a zone that does follow them stays in,
+        # exactly as the live loop over zones leaves it in.
+        permitted_doors = doors_with_attendance
+        if ctx['has_restricted_zones']:
+            permitted_doors = att_zone_ids.filtered(
+                lambda z: z._check_employee_permit(employee_id)).door_ids
+        # Asked once per event below, and a big tenant replays hundreds of
+        # thousands of them, so all three questions are set lookups rather
+        # than scans of a recordset.
+        permitted_door_ids = set(permitted_doors.ids)
+        in_reader_ids = set(in_readers_ids.ids)
+        out_reader_ids = set(out_readers_ids.ids)
+
         # Remove the attendance this system made for the period, and only
         # that - what a person typed in by hand is theirs, not ours to replay.
         self.env['hr.attendance'].search(
@@ -292,43 +315,90 @@ class HrEmployee(models.Model):
             return any(start <= p_stop and p_start <= stop
                        for p_start, p_stop in preserved_spans)
 
+        def zone_of(event):
+            """The attendance zone this passage happened in.
+
+            A door can belong to more than one; the first is taken, because
+            everything asked of it here (does it move the check-in, does it
+            reopen the last stay, which zone is written on the record) needs
+            one answer. Reading a field off the whole set raised "Expected
+            singleton" and the background worker turned that into
+            "Something went wrong" for EVERY person in the rebuild - one
+            shared door was enough.
+            """
+            return att_zone_ids.filtered(
+                lambda z: event.door_id in z.door_ids)[:1]
+
         # Process events to create attendance records
         presence = [None, None]  # [check_in, check_out]
-        in_zone = None
+        in_zone = self.env['hr.rfid.zone']
         previous_attendance_id = None
-        previous_event_id = None
+        # The passage that opened the presence currently being built. Kept so
+        # that when it turns out to stand for nothing, the reason lands on THE
+        # ENTRY itself rather than on whatever event happened to come last.
+        # The empty recordset, not None, so every marker call below is safe
+        # whether or not an entry is open.
+        checkin_event = self.env['hr.rfid.event.user']
+        # Passages nothing could be made of because they carry no direction.
+        # Counted, and said once at the end - a line per passage would drown
+        # the log of a rebuild that reads hundreds of thousands of them.
+        without_direction = 0
 
         for e in event_ids:
-            # Events already accounted for by a person's record are consumed.
-            if settled_by_a_person(e.event_time):
-                e.in_or_out = 'no_info'
+            if e.door_id.id not in permitted_door_ids:
+                e._rewrite_no_attendance('not_tracked_here')
                 continue
 
-            e.in_or_out = 'no_info'
+            # Events already accounted for by a person's record are consumed.
+            if settled_by_a_person(e.event_time):
+                e._rewrite_no_attendance('manual_record')
+                continue
 
             # Handle check-in events (entry readers)
-            if e.reader_id in in_readers_ids:
+            if e.reader_id.id in in_reader_ids:
                 # Create new check-in or override existing based on zone settings
-                if not presence[0] or (presence[0] and in_zone.overwrite_check_in):
-                    if presence[0] and in_zone.overwrite_check_in and previous_event_id:
-                        previous_event_id.in_or_out = 'no_info'
+                if not presence[0] or in_zone.overwrite_check_in:
+                    # A later entry replaces this one; the earlier passage no
+                    # longer stands for any attendance.
+                    checkin_event._rewrite_no_attendance('superseded')
                     presence[0] = e.event_time
-                    e.in_or_out = 'in'
-                    in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+                    checkin_event = e
+                    e._mark_attendance('in')
+                    in_zone = zone_of(e)
+                else:
+                    # Already checked in and this zone keeps the first entry.
+                    # By far the commonest silent discard: measured on a live
+                    # installation, 1417 of 1420 unexplained passages were this.
+                    e._rewrite_no_attendance('already_inside')
 
             # Handle check-out events (exit readers)
-            if e.reader_id in out_readers_ids:
+            elif e.reader_id.id in out_reader_ids:
                 if presence[0]:
                     # Normal check-out for open attendance
                     presence[1] = e.event_time
-                    e.in_or_out = 'out'
-                elif not presence[0] and previous_attendance_id:
+                    e._mark_attendance('out')
+                elif previous_attendance_id:
                     # Out-of-order check-out - update previous attendance if allowed
-                    in_zone = att_zone_ids.filtered(lambda z: e.door_id in z.door_ids)
+                    in_zone = zone_of(e)
                     if in_zone.overwrite_check_out and previous_attendance_id.check_out and (
                             e.event_time - previous_attendance_id.check_out) < timedelta(hours=8):
                         previous_attendance_id.with_context(no_validity_check=True, rfid_machinery_write=True).check_out = e.event_time
-                        e.in_or_out = 'out'
+                        e._mark_attendance('out')
+                    else:
+                        e._rewrite_no_attendance('nothing_to_close')
+                else:
+                    e._rewrite_no_attendance('nothing_to_close')
+
+            else:
+                # Neither an entry nor an exit: the passage carries no reader
+                # at all (the events are found by door, not by reader), so
+                # there is no direction to read it as. Named rather than left
+                # blank - and note the live machinery does NOT agree here: it
+                # treats anything that is not an entry reader as an exit
+                # (hr_rfid/models/hr_rfid_event_user.py, in create()), so such
+                # a passage reads differently before and after a rebuild.
+                without_direction += 1
+                e._rewrite_no_attendance('direction_unknown')
 
             # Create attendance record when we have both check-in and check-out
             if all(presence):
@@ -336,8 +406,10 @@ class HrEmployee(models.Model):
                     # The pair straddles a person's record (in-event before
                     # it, out-event after): their statement stands, the
                     # machine does not write over or around it.
+                    e._rewrite_no_attendance('manual_record')
+                    checkin_event._rewrite_no_attendance('manual_record')
                     presence = [None, None]
-                    previous_event_id = e
+                    checkin_event = self.env['hr.rfid.event.user']
                     continue
                 previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
                     'check_in': presence[0],
@@ -348,21 +420,32 @@ class HrEmployee(models.Model):
                 })
                 attendance_count += 1
                 presence = [None, None]
-
-            previous_event_id = e
+                checkin_event = self.env['hr.rfid.event.user']
 
         # Handle last open attendance (check-in without check-out). Replayed
         # historical events bypass validity the same way the paired-create
         # above does - an open check-in inserted into the past would
         # otherwise be refused.
-        if presence[0] and not presence[1] \
-                and not collides_with_a_person(presence[0], None):
-            self.env['hr.attendance'].with_context(no_validity_check=True).create({
-                'check_in': presence[0],
-                'in_zone_id': in_zone and in_zone.id,
-                'employee_id': employee_id.id,
-                'in_mode': 'rfid',
-            })
-            attendance_count += 1
+        if presence[0] and not presence[1]:
+            if collides_with_a_person(presence[0], None):
+                # The last entry runs into attendance a person entered by
+                # hand: theirs stands, and the passage says so instead of
+                # ending the day as an unexplained blank.
+                checkin_event._rewrite_no_attendance('manual_record')
+            else:
+                self.env['hr.attendance'].with_context(no_validity_check=True).create({
+                    'check_in': presence[0],
+                    'in_zone_id': in_zone and in_zone.id,
+                    'employee_id': employee_id.id,
+                    'in_mode': 'rfid',
+                })
+                attendance_count += 1
+
+        if without_direction:
+            _logger.warning(
+                "%s passages of %s could not be read as an arrival or a "
+                "departure and were left out of the attendance: they carry no "
+                "reader. Each one says so in Why Not Counted.",
+                without_direction, employee_id.display_name)
 
         return {'event_count': len(event_ids), 'attendance_count': attendance_count}

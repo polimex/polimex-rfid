@@ -30,11 +30,14 @@
             <field name="arch" type="xml">
                 <form string="Attendance Rebuild" create="0">
                     <header>
-                        <!-- Refresh, because the bar does not move on its own.
-                             Without it people conclude the rebuild has stalled
-                             and start another one. -->
-                        <button name="action_start" type="object"
-                                string="Continue now" class="btn-primary"
+                        <!-- Look again, because the bar does not move on its
+                             own. Without it people conclude the rebuild has
+                             stalled and start another one. It only READS: the
+                             button that used to write the state here collided
+                             with the worker holding the same row and put a
+                             server error on the operator's screen. -->
+                        <button name="action_refresh" type="object"
+                                string="Refresh" class="btn-primary"
                                 invisible="state in ('done', 'nothing', 'refused', 'failed')"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="queued,running,done"/>
@@ -43,8 +46,8 @@
                         <div class="alert alert-info" role="status"
                              invisible="state not in ('queued', 'running')">
                             The rebuild carries on in the background, one person
-                            at a time. You can close this page - press Continue
-                            now to refresh what you see.
+                            at a time. You can close this page - press Refresh
+                            to see how far it has got.
                         </div>
                         <!-- A rebuild that replayed nothing looks finished
                              unless it says so. The commonest cause is a
@@ -143,11 +146,17 @@
             </field>
         </record>
 
+        <!-- A maintenance log, not a section of the app: it belongs with the
+             other manager-only tools under Configuration, not as a sixth
+             top-level menu beside Overview and Reporting. The manager who
+             starts a rebuild is taken straight to it anyway; this menu is
+             for looking back at what was rebuilt and when. Sequence 40
+             leaves room before Legal Rates (50) and after core's Settings. -->
         <menuitem id="hr_attendance_recalc_run_menu"
                   name="Attendance Rebuilds"
-                  parent="hr_attendance.menu_hr_attendance_root"
+                  parent="hr_attendance.menu_hr_attendance_configuration"
                   action="hr_attendance_recalc_run_action"
                   groups="hr_attendance.group_hr_attendance_manager"
-                  sequence="50"/>
+                  sequence="40"/>
     </data>
 </odoo>
