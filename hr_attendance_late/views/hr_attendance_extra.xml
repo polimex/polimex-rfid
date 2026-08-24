@@ -177,16 +177,16 @@
         <!--                groups="hr_attendance.group_hr_attendance_user"-->
         <!--                action="hr_attendance.hr_attendance_action_graph"-->
         <!--        />-->
-        <menuitem
-                id="menu_hr_attendance_report"
-                name="Reports"
-                sequence="20"
-                parent="hr_attendance.menu_hr_attendance_root"/>
+        <!-- Under the app's own Reporting menu, not beside it. This module
+             used to add a SECOND top-level "Reports" next to the built-in
+             one, so the app showed two reporting menus and the operator had
+             to learn which of them held what. Core's Reporting lists its own
+             "Attendances" at sequence 10; ours follow it. -->
         <menuitem
                 id="menu_hr_attendance_extra"
                 name="Extra calculations"
                 sequence="20"
-                parent="hr_attendance_late.menu_hr_attendance_report"
+                parent="hr_attendance.menu_hr_attendance_reporting"
                 action="hr_attendance_extra_action"
                 groups="hr_attendance.group_hr_attendance_officer"/>
 
@@ -213,8 +213,8 @@
         <menuitem
                 id="menu_hr_attendance_self_leave"
                 name="Self-leave"
-                sequence="25"
-                parent="hr_attendance_late.menu_hr_attendance_report"
+                sequence="30"
+                parent="hr_attendance.menu_hr_attendance_reporting"
                 action="hr_attendance_self_leave_action"
                 groups="hr_attendance.group_hr_attendance_officer"/>
 

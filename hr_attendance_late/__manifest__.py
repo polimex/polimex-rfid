@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'Late Attendance',
-    'version': '19.0.2.0.1',
+    'version': '19.0.2.0.2',
     'category': 'Human Resources',
     'summary': 'Enhances employee attendance tracking with additional work time calculations',
     'author': 'Polimex',

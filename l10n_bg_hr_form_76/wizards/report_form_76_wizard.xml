@@ -32,11 +32,16 @@
             </form>
         </field>
     </record>
+    <!-- Under the attendance app's own Reporting menu. It used to hang off a
+         second, home-made "Reports" menu that hr_attendance_late added beside
+         the built-in one; that menu is gone, and every report the family adds
+         now sits in one place (Attendance 10 / Extra calculations 20 /
+         Self-leave 30 / this 40). -->
     <menuitem
                 id="menu_wizard_generate_form76_attendance"
                 name="Generate Form 76"
-                sequence="52"
-                parent="hr_attendance_late.menu_hr_attendance_report"
+                sequence="40"
+                parent="hr_attendance.menu_hr_attendance_reporting"
                 action="l10n_bg_hr_form_76.act_wizard_generate_form76"
                 groups="hr_attendance.group_hr_attendance_manager"/>
 </odoo>
