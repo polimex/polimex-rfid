@@ -419,6 +419,32 @@ Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.
     reason - a typed-in record then cannot be told from a made one, the whole
     period is cleared, and the loss is logged rather than passed over.
 
+#### Settling a stay nobody could have had
+
+`hr.attendance` (models/hr_attendance.py):
+
+- **`MAX_PLAUSIBLE_STAY_HOURS`** = `24.0` (module constant) - crossing midnight
+  is ordinary work; a span longer than one whole day is a badge-out that never
+  happened.
+- **`stay_is_not_credible(self)`** - true for an OPEN record past its zone's
+  limit, and for a CLOSED one whose `check_out - check_in` exceeds
+  `MAX_PLAUSIBLE_STAY_HOURS`.
+- **`_settled_stay_hours(self)`** - what such a record is credited: the zone's
+  `auto_close_time_for_zone`, else its `max_time_in_zone`, else the employee's
+  `resource_calendar_id.hours_per_day`; `0.0` when nothing can say, and the
+  record is then left alone with a warning.
+- **`needs_autoclose(self)`** - kept for callers outside this module: open
+  records only.
+- **`check_for_incomplete_attendances(self)`** - settles both shapes. The
+  over-long ones are found by a raw-SQL span query, NOT by `worked_hours`:
+  that field is paid time with the unpaid break already deducted, so it reads
+  under a day for a record that spans more than one (measured: 1827 real cases,
+  `worked_hours > 24` matched none of them).
+
+Day ownership (hr_attendance_late/models/hr_employee.py): a day's presence is
+the records whose `check_in` falls on that day, counted in full. A record that
+started earlier no longer contributes to later days.
+
 ### `hr.rfid.event.user` <a id='model-hr-rfid-event-user'></a>
 Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:6`.  Model.  Inherits: `hr.rfid.event.user`.
 
@@ -607,7 +633,7 @@ UPPER_CASE module-level assignments - tuning and safety parameters.
 - **`FINISHED_STATES`** = `('done', 'nothing', 'refused', 'failed')` - drives the
   vacuum and the "Continue now" / banner visibility. Anything else is still on
   its way and must never be tidied away.
-- **`HrAttendanceRecalcRun.GC_LIMIT`** = `500`, **`GC_DAYS`** = `90` (class
+- **`HrAttendanceRecalcRun.GC_LIMIT`** = `500`, **`GC_DAYS`** = `7` (class
   attributes) - bounded deletion; a year of history in one transaction locks
   the table.
 

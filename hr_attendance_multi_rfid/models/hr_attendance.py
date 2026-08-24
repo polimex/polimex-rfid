@@ -1,7 +1,18 @@
+import logging
 from datetime import timedelta
 
 from odoo import api, fields, models
 from odoo.tools.float_utils import float_compare
+
+_logger = logging.getLogger(__name__)
+
+#: Longer than this and it is not a stay any more. Crossing midnight is
+#: ordinary work - plenty of people are on shift at midnight - but nobody is
+#: on site for more than a whole day, so a span longer than one is a badge-out
+#: that never happened. Measured on a customer database: 1906 records ran past
+#: 24 hours and 356 past a week, the longest 361 days, each of them counting
+#: its whole length towards every day it touched.
+MAX_PLAUSIBLE_STAY_HOURS = 24.0
 
 
 class HrAttendance(models.Model):
@@ -88,37 +99,70 @@ class HrAttendance(models.Model):
             return False, False
         return zone.max_time_in_zone, zone.auto_close_time_for_zone
 
-    def needs_autoclose(self):
-        """Whether this open attendance has outstayed its zone's limit.
+    def _settled_stay_hours(self):
+        """How long a forgotten stay is credited when it is settled.
 
-        True only for an open record whose zone limits the stay
-        (max_time_in_zone > 0) and whose check-in is older than that limit.
-        Records without a zone are never closed by the zone machinery.
+        The zone answers first, exactly as its own fields promise: Auto-close
+        Worked Hours, and where that is not set, Maximum Hours in Zone. A
+        record that carries no zone - everything brought over from an older
+        system does - is credited the day the person was supposed to work,
+        from their own working schedule. Never a number invented here.
+
+        :return: hours, or 0.0 when neither can say and the record is left
+                 alone rather than settled on a guess.
+        """
+        self.ensure_one()
+        max_time, autoclose = self._get_zone_settings()
+        if float_compare(autoclose or 0.0, 0.0, precision_digits=2) > 0:
+            return autoclose
+        if max_time:
+            return max_time
+        return self.employee_id.resource_calendar_id.hours_per_day or 0.0
+
+    def stay_is_not_credible(self):
+        """Whether this record is a badge-out that never happened.
+
+        Two shapes, one meaning. An OPEN record that has outstayed its zone's
+        limit - the zone says how long anybody may be inside. And a CLOSED one
+        longer than a whole day: whoever or whatever closed it did so long
+        after the person left, and until it is settled it lends its entire
+        length to every day it touches.
         """
         self.ensure_one()
         if self.check_out:
-            return False
+            stayed = (self.check_out - self.check_in).total_seconds() / 3600.0
+            return float_compare(stayed, MAX_PLAUSIBLE_STAY_HOURS,
+                                 precision_digits=2) > 0
         max_time, _autoclose = self._get_zone_settings()
         if not max_time:
             return False
         open_worked_hours = (fields.Datetime.now() - self.check_in).total_seconds() / 3600.0
         return float_compare(open_worked_hours, max_time, precision_digits=2) > 0
 
-    def autoclose_attendance(self):
-        """Close a forgotten attendance with the hours the zone promises.
+    def needs_autoclose(self):
+        """Kept under its old name for callers outside this module."""
+        self.ensure_one()
+        return not self.check_out and self.stay_is_not_credible()
 
-        check_out = check_in + auto_close_time_for_zone; when the zone does
-        not set Auto-close Worked Hours (0/empty), max_time_in_zone is used
-        instead - exactly what the zone's field help promises.
+    def autoclose_attendance(self):
+        """Settle a forgotten stay with the hours the zone or schedule says.
+
+        check_out = check_in + the settled duration. A record that was already
+        closed - far too late - is moved back to the same duration, and the
+        chatter keeps what it used to say, because a number nobody can explain
+        is worse than a number somebody changed on purpose.
         """
         self.ensure_one()
-        max_time, autoclose = self._get_zone_settings()
-        if not max_time:
+        hours = self._settled_stay_hours()
+        if float_compare(hours, 0.0, precision_digits=2) <= 0:
+            _logger.warning(
+                "Attendance %s of %s runs from %s to %s and cannot be settled: "
+                "its zone sets no limit and the employee has no working "
+                "schedule to credit. Set one, or correct the record by hand.",
+                self.id, self.employee_id.display_name, self.check_in,
+                self.check_out or "(still open)")
             return
-        if float_compare(autoclose or 0.0, 0.0, precision_digits=2) > 0:
-            hours = autoclose
-        else:
-            hours = max_time
+        was = self.check_out
         # Stamped with core's own "Automatic Check-Out" mode: the operator's
         # existing filter (hr_attendance_view.xml, "Automatically Checked-Out")
         # then lists these for free, and a record closed by the zone rule is
@@ -129,6 +173,15 @@ class HrAttendance(models.Model):
             'check_out': self.check_in + timedelta(hours=hours),
             'out_mode': 'auto_check_out',
         })
+        if was:
+            # Only the already-closed case leaves a note: an open record being
+            # closed is the ordinary end of a stay, while MOVING a check-out
+            # that was already there changes a number somebody may have read.
+            self.message_post(body=self.env._(
+                "Check-out moved back to %(new)s: the stay ran from %(start)s "
+                "to %(old)s, which is longer than a day and therefore a "
+                "badge-out that never happened. Credited %(hours).2f hours.",
+                new=self.check_out, start=self.check_in, old=was, hours=hours))
 
     @api.model
     def _cron_auto_check_out(self):
@@ -149,18 +202,35 @@ class HrAttendance(models.Model):
 
     @api.model
     def check_for_incomplete_attendances(self):
-        """Close every forgotten open attendance whose zone limit has passed.
+        """Settle every forgotten stay - the open ones and the over-long ones.
 
         Run from core's check-out task (see _cron_auto_check_out above).
         Only records carrying a zone can be measured against a zone limit,
         so only those are read; whether the limit has passed still depends
         on each zone's own settings.
         """
-        stale_attendances = self.search([
+        # Still open, and the zone says how long that may last.
+        forgotten = self.search([
             ('check_out', '=', False),
             ('in_zone_id', '!=', False),
         ])
-        for att in stale_attendances.filtered(lambda a: a.needs_autoclose()):
+        # Closed, but only long after the person left. No zone needed: a stay
+        # longer than a day is not a stay whatever recorded it.
+        #
+        # Asked of the two timestamps, NOT of worked_hours: that field is what
+        # the person is PAID for, with the unpaid break already taken off, so
+        # it reads under a day for a record that really spans more than one.
+        # Measured on a customer database: 1827 records ran past 24 hours and
+        # worked_hours reported 0 of them - a search on it settled 122 and
+        # walked past the rest without a word.
+        self.env.cr.execute(
+            "SELECT id FROM hr_attendance "
+            " WHERE check_out IS NOT NULL "
+            "   AND check_out - check_in > %s * interval '1 hour'",
+            (MAX_PLAUSIBLE_STAY_HOURS,),
+        )
+        forgotten |= self.browse(row[0] for row in self.env.cr.fetchall())
+        for att in forgotten.filtered(lambda a: a.stay_is_not_credible()):
             att.autoclose_attendance()
 
     # bypass validity if old events processed

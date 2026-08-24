@@ -62,9 +62,11 @@ class HrAttendanceRecalcRun(models.Model):
     #: history in one transaction locks the table and times out
     #: (odoo/odoo/addons/base/models/ir_cron.py:906-915 is the shape).
     GC_LIMIT = 500
-    #: Kept long enough to answer "who rebuilt this month's attendance, and
-    #: what did it do?" - which is exactly when the question gets asked.
-    GC_DAYS = 90
+    #: A week. Long enough to answer "what did yesterday's rebuild do?" while
+    #: anybody still cares, and short enough that the log does not become an
+    #: archive: the attendance itself is the record, this is only the receipt
+    #: of the job that rebuilt it (owner's decision, 24.08.2026).
+    GC_DAYS = 7
 
     name = fields.Char(
         compute='_compute_name', store=True,

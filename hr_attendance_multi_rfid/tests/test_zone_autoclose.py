@@ -205,3 +205,133 @@ class TestZoneAutoClose(TransactionCase):
                 'hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron',
                 raise_if_not_found=False),
             "the module's own cron record must be gone - one task, not two")
+
+
+@tagged('post_install', '-at_install', 'rfid_attendance_autoclose')
+class TestAStayNobodyCouldHaveHad(TransactionCase):
+    """Crossing midnight is work. Staying for a week is a missed badge-out.
+
+    The theatre's people are on shift at midnight, so a night that runs to
+    01:00 must be left exactly as it is. But the same database holds records
+    running for months - 1906 of them past 24 hours, the longest 361 days -
+    because somebody forgot to badge out and the record was closed much later.
+    Those are not stays, and while they stand they lend their whole length to
+    every day they touch.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.company = cls.env.company
+        cls.calendar = cls.env['resource.calendar'].create({
+            'name': 'Settle Calendar', 'company_id': cls.company.id,
+            'tz': 'UTC', 'hours_per_day': 8.0})
+        cls.employee = cls.env['hr.employee'].create({
+            'name': 'Night Worker', 'company_id': cls.company.id,
+            'resource_calendar_id': cls.calendar.id})
+
+    def _stay(self, start, hours):
+        return self.env['hr.attendance'].with_context(
+            no_validity_check=True).create({
+                'employee_id': self.employee.id,
+                'check_in': start,
+                'check_out': start + timedelta(hours=hours),
+            })
+
+    def test_a_night_shift_is_left_alone(self):
+        """NEGATIVE: 22:00 to 06:00 crosses midnight and is ordinary work.
+
+        Nothing about it may be settled, moved or shortened.
+        """
+        start = fields.Datetime.now().replace(
+            hour=22, minute=0, second=0, microsecond=0) - timedelta(days=2)
+        night = self._stay(start, 8)
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertEqual(night.check_out, start + timedelta(hours=8),
+                         "a shift across midnight is work, not a fault")
+        self.assertFalse(night.out_mode == 'auto_check_out',
+                         "and it is nobody's administrative closure")
+
+    def test_a_stay_of_months_is_settled_at_the_schedule(self):
+        """The record closed long after the person left is put right.
+
+        No zone on it - everything brought over from an older system is like
+        that - so the day they were supposed to work is what they are
+        credited: eight hours, from their own working schedule.
+        """
+        start = fields.Datetime.now() - timedelta(days=300)
+        forgotten = self._stay(start, 300 * 24)
+        was = forgotten.check_out
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertEqual(forgotten.check_out, start + timedelta(hours=8),
+                         "credited the working day, not the 300 days it stood")
+        self.assertEqual(forgotten.out_mode, 'auto_check_out',
+                         "and it reads as settled by the system, not by a person")
+        note = forgotten.message_ids[:1].body or ''
+        self.assertIn(str(was.year), note,
+                      "the chatter must keep what the record used to say - a "
+                      "number nobody can explain is worse than one somebody "
+                      "changed on purpose")
+
+    def test_a_settled_stay_is_not_settled_again(self):
+        """NEGATIVE: running the sweep twice changes nothing the second time.
+
+        It runs on a scheduled task, so it will pass over these records again
+        and again for as long as the installation lives.
+        """
+        start = fields.Datetime.now() - timedelta(days=40)
+        forgotten = self._stay(start, 40 * 24)
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+        settled = forgotten.check_out
+        notes = len(forgotten.message_ids)
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertEqual(forgotten.check_out, settled)
+        self.assertEqual(len(forgotten.message_ids), notes,
+                         "and it does not write a second note about it")
+
+    def test_a_stay_just_over_a_day_is_found_too(self):
+        """The one the search used to walk past.
+
+        A person badges in at 11:14 and the next day's badge closes the record
+        at 11:56 - a day and three quarters of an hour. Odoo's Worked Hours
+        takes the unpaid break off and reports 23.7, so a search on THAT field
+        called it a normal day and left it standing. Measured on a customer
+        database: 1827 such records, of which that search found nothing.
+        """
+        start = fields.Datetime.now().replace(
+            hour=11, minute=14, second=0, microsecond=0) - timedelta(days=10)
+        forgotten = self._stay(start, 24.7)
+        self.assertLess(forgotten.worked_hours, 24,
+                        "the premise: paid hours read under a day")
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertEqual(forgotten.check_out, start + timedelta(hours=8),
+                         "and it is settled all the same, because the RECORD "
+                         "spans more than a day")
+
+    def test_a_stay_that_cannot_be_judged_is_left_for_a_person(self):
+        """NEGATIVE: with no zone limit and no working schedule, hands off.
+
+        Guessing a duration here would put a made-up number into somebody's
+        hours. The record stays as it is and the log says why.
+        """
+        nobody = self.env['hr.employee'].create({
+            'name': 'No Schedule Worker', 'company_id': self.company.id,
+            'resource_calendar_id': False})
+        start = fields.Datetime.now() - timedelta(days=100)
+        record = self.env['hr.attendance'].with_context(
+            no_validity_check=True).create({
+                'employee_id': nobody.id, 'check_in': start,
+                'check_out': start + timedelta(days=100)})
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertEqual(record.check_out, start + timedelta(days=100),
+                         "nothing may be invented for a record nobody can judge")

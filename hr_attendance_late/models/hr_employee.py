@@ -155,13 +155,17 @@ class HrEmployee(models.Model):
                     current_date += timedelta(days=1)
                     continue
 
-                # Get attendance records that affect the current date
-                # Include records that:
-                # 1. Start on current date, OR
-                # 2. Start before current date but end on/after current date (night shifts)
+                # A shift belongs, whole, to the day it STARTED on. Crossing
+                # midnight is ordinary work - people are on shift at midnight -
+                # and the evening that runs to 01:00 is that evening's work,
+                # not the next morning's. Counting it on both days was the
+                # other half of the same mistake: eight hours worked showed as
+                # sixteen, and a record that had been left open for months
+                # lent its whole length to every day it touched.
+                # (Owner's decision, 24.08.2026.)
                 current_date_start = datetime.combine(current_date, datetime.min.time())
                 current_date_end = datetime.combine(current_date, datetime.max.time())
-                
+
                 attendances = self.env['hr.attendance'].search([
                     ('employee_id', '=', e.id),
                     # Core absence detection plants a one-second 'technical'
@@ -172,17 +176,8 @@ class HrEmployee(models.Model):
                     # at midnight" (8h early_come, 0h worked) and starves the
                     # absence branch that should have fired instead.
                     ('in_mode', '!=', 'technical'),
-                    '|',
-                    # Records starting on current date
-                    '&',
                     ('check_in', '>=', current_date_start),
                     ('check_in', '<=', current_date_end),
-                    # Records from previous days that extend into current date
-                    '&',
-                    ('check_in', '<', current_date_start),
-                    '|',
-                    ('check_out', '>=', current_date_start),
-                    ('check_out', '=', False)
                 ], order='check_in')
                 
                 # Process attendances, including those without check_out
@@ -234,6 +229,15 @@ class HrEmployee(models.Model):
                                 _logger.warning('Attendance without check_out for %s exceeds 24 hours on %s',
                                                e.name, current_date.strftime('%Y-%m-%d'))
                     
+                    # A stay longer than a whole day is a badge-out that never
+                    # happened; the sweep settles the record itself, and until
+                    # it does, the measurement must not hand one day the
+                    # hundreds of hours such a record carries.
+                    if att.stay_is_not_credible():
+                        settled = att._settled_stay_hours()
+                        if settled > 0:
+                            check_out = min(
+                                check_out, check_in + timedelta(hours=settled))
                     attendance_ranges.append((check_in, check_out))
 
                 # Scheduled work ranges for the day (empty on a non-working
