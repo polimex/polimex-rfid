@@ -30,6 +30,12 @@ class TestWhoMayRebuildAttendance(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # A rebuild is handed to a scheduled task and refused outright when
+        # that task is switched off - the state a restored copy of a customer
+        # database arrives in. Tests that press the button set up their own
+        # precondition, or they pass on a fresh database and fail on a copy.
+        cls.env.ref('hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron'
+                    ).sudo().active = True
         cls.company_a = cls.env.company
         cls.company_b = cls.env['res.company'].create(
             {'name': 'Rebuild Rights Co B'})

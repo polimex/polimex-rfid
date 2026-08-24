@@ -85,6 +85,9 @@ class TestAttendanceCostRates(TransactionCase):
         calendar match used before silently downgraded exactly these."""
         self.env['resource.calendar.leaves'].create({
             'name': 'Global Holiday (menu form)',
+            # No company here on purpose: this IS the calendar-less shape the
+            # Public Holidays form creates, and core resolves its company from
+            # whoever is active - which in a test is this module's company.
             'calendar_id': False,
             'resource_id': False,
             'date_from': datetime.combine(date(2026, 12, 24), time.min),
@@ -100,9 +103,13 @@ class TestAttendanceCostRates(TransactionCase):
         """NEGATIVE: a holiday declared by ANOTHER company does not raise
         this employee's pay - a day off is the company's to declare."""
         other = self.env['res.company'].create({'name': 'Other Cost Co'})
-        self.env['resource.calendar.leaves'].with_company(other).create({
+        self.env['resource.calendar.leaves'].create({
             'name': 'Their Holiday',
-            'calendar_id': False,
+            # Their working schedule is what makes it theirs: company_id on a
+            # calendar leave is readonly and computed from the calendar, so a
+            # company passed in is ignored and a calendar-less holiday lands
+            # on whichever company happens to be active.
+            'calendar_id': other.resource_calendar_id.id,
             'resource_id': False,
             'date_from': datetime.combine(date(2026, 12, 27), time.min),
             'date_to': datetime.combine(date(2026, 12, 27), time.max),

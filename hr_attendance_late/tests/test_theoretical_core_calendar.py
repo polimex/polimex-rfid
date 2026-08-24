@@ -178,14 +178,22 @@ class TestTheoreticalFromCoreCalendar(TransactionCase):
         """Owner decision 2: a global public holiday falling on a weekday
         clears the plan, and the hours actually worked on it count as
         extra (premium) time - never as ordinary/late/overtime hours."""
-        # company_id on the record is a stored compute: with no calendar it
-        # takes env.company (resource_calendar_leaves.py:59-61), and the
-        # per-resource filter skips leaves of another company
-        # (resource_calendar.py:531). Created the way a real user under the
-        # company does it - with that company active.
-        self.env['resource.calendar.leaves'].with_company(self.company).create({
+        # The holiday is bound to the working schedule, which is the shape a
+        # Bulgarian installation gets (l10n_bg_hr_attendance_overtime_rates
+        # generates the year that way) AND the only shape whose company is
+        # decided outright: core computes company_id from the calendar, and
+        # for a calendar-less holiday falls back to whichever company happens
+        # to be active when the value is first read - passing company_id in
+        # does nothing, the field is readonly and computed
+        # (resource_calendar_leaves.py:35-37, 58-61). Measured on a customer
+        # copy: a holiday created under company X landed on the ambient
+        # company, and core then skipped it for X's people, so the day showed
+        # a holiday on screen and still planned eight hours.
+        # The calendar-less shape an operator types into Time Off -> Public
+        # Holidays is covered in hr_attendace_rfid_hr_hourly_cost.
+        self.env['resource.calendar.leaves'].create({
             'name': 'Test Public Holiday',
-            'calendar_id': False,
+            'calendar_id': self.calendar.id,
             'resource_id': False,
             'time_type': 'leave',
             'date_from': datetime.combine(FUTURE_MONDAY, time.min),

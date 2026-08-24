@@ -126,6 +126,16 @@ class TestAttendanceRebuildInBackground(TransactionCase):
         cls.start_date = fields.Date.to_date(cls.yesterday) - timedelta(days=7)
         cls.end_date = fields.Date.today()
 
+        # The rebuild is handed to a scheduled task, and the request is
+        # refused outright when that task is switched off - which is what a
+        # copy of a customer database arrives as, since restoring one switches
+        # every scheduled task off. Tests that press the button must therefore
+        # put their own precondition in place, or they pass on a fresh
+        # database and fail on a copy of the very installation they are about.
+        cron = cls.env.ref(
+            'hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron')
+        cron.sudo().active = True
+
     def setUp(self):
         super().setUp()
         # The job commits after every person so that an interrupted rebuild

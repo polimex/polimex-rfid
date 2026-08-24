@@ -12,6 +12,26 @@ from odoo.tests import TransactionCase, tagged
 class TestOnboardingPanel(TransactionCase):
     """The onboarding banner reuses core's server-rendered panel template."""
 
+    def setUp(self):
+        super().setUp()
+        # On a working installation the setup panel has long been dismissed
+        # and its steps are done, and both of those change what the panel
+        # renders - which is the whole point of it. Tests about what the panel
+        # LOOKS like therefore start from an installation that has not seen it
+        # yet: throwing the progress away is how this file already does that
+        # (test_progress_is_created_once_per_company below). Without it they
+        # pass on a fresh database and fail on a copy of the very customer
+        # database they are meant to speak for.
+        onboarding = self.env['onboarding.onboarding'].sudo().search([
+            ('route_name', '=', 'hr_rfid_setup')])
+        # Both halves: the panel's own record AND the per-step ones, which do
+        # not go with it - a step whose progress row still says done renders
+        # its "done" line instead of the button, and the panel looks finished.
+        self.env['onboarding.progress.step'].sudo().search([
+            ('step_id', 'in', onboarding.step_ids.ids)]).unlink()
+        self.env['onboarding.progress'].sudo().search([
+            ('onboarding_id', '=', onboarding.id)]).unlink()
+
     def test_panel_html_renders_core_markup(self):
         html = self.env["onboarding.onboarding"].get_onboarding_panel_html("hr_rfid_setup")
         self.assertIsInstance(

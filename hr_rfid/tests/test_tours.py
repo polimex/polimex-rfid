@@ -115,6 +115,13 @@ class TestHrRfidTours(HttpCase):
     def test_onboarding_panel_tour(self):
         """Process 0: a new admin lands on User Events and is guided by the
         native onboarding banner, then opens a step's action."""
+        # This tour needs an installation whose setup steps are not done yet,
+        # and that premise cannot be arranged from here: measured on a copy of
+        # a customer database, the browser session reads the COMMITTED state,
+        # not this transaction (a marker written here never reached the
+        # rendered panel). So on a live copy the banner shows finished steps
+        # and the tour cannot pass; it is a fresh-installation test and is run
+        # as such.
         self.start_tour(
             "/odoo/action-hr_rfid.hr_rfid_event_user_action",
             "hr_rfid_onboarding_panel_tour",
