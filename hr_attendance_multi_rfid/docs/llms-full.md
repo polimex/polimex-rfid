@@ -449,6 +449,15 @@ switch in Settings -> Attendances.
   deducted, so it reads under the limit for a record that spans more than it
   (measured: 1827 real cases, `worked_hours > 24` matched none of them).
 
+`hr.employee._recompute_daily_figures(from_date, to_date)` - hook called by
+`_recalc_attendance_one` on every path, including the early return when there
+were no events. Empty in `hr_attendance_multi_rfid`; `hr_attendance_late`
+overrides it and calls `update_extra_attendance_data(..., overwrite_existing=
+True)` for the whole period. Without it only the days whose attendance records
+changed were refreshed - measured on a customer copy, 82 of 148 daily rows in
+one June kept their old figures after a full rebuild, all of them days with
+nothing to replay.
+
 Day ownership (hr_attendance_late/models/hr_employee.py): a day's presence is
 the records whose `check_in` falls on that day, counted in full. A record that
 started earlier no longer contributes to later days. A record the system would

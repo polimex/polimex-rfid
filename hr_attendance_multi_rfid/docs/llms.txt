@@ -42,6 +42,15 @@ that period.
 
 Only an attendance manager can start a rebuild.
 
+### What it refreshes
+
+The attendance itself, and the daily figures of EVERY day in the period - the
+days with no passage at all included. Those are most days on a real
+installation, and nothing else would ever touch them again: there is no
+attendance record to save, so no other calculation is triggered. Pressing
+Recalculate for a period is therefore enough; there is no second thing to run
+afterwards.
+
 ### It runs in the background
 
 A rebuild is not done while you wait. The people are worked through one at a

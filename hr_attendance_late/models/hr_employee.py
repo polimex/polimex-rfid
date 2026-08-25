@@ -109,6 +109,23 @@ class HrEmployee(models.Model):
             for start, stop, _meta in intervals
         )
 
+    def _recompute_daily_figures(self, from_date, to_date):
+        """Measure again every day of the period a rebuild has just replayed.
+
+        The rebuild is asked for a period, not for a list of days, and the
+        operator reads the daily figures afterwards. The write hooks on
+        hr.attendance already refresh the days whose records changed; this
+        covers the rest - above all the days with no passage at all, which are
+        most of them on a real installation and which nothing else would ever
+        touch again.
+
+        Overwriting is the point: these rows exist and hold what an older
+        calculation said.
+        """
+        super()._recompute_daily_figures(from_date, to_date)
+        self.update_extra_attendance_data(
+            from_date, to_date, overwrite_existing=True)
+
     def update_extra_attendance_data(self, from_datetime, to_datetime=None, overwrite_existing=False):
         """Update attendance extra records for employees in date range.
         

@@ -8,3 +8,4 @@ from . import test_tours
 from . import test_measurement_regressions
 from . import test_theoretical_core_calendar
 from . import test_menus_are_in_order
+from . import test_recalc_refreshes_the_whole_period

@@ -62,10 +62,30 @@ Use this when attendance data seems incorrect or after changing zone settings.""
         (odoo/addons/account/wizard/account_move_send_batch_wizard.py:88-119).
         """
         self.ensure_one()
-        # Asked here as well as in the rebuild itself, so anybody who may not
-        # be rebuilt is named on the screen the operator is looking at, rather
-        # than in a report they have to go and find later.
-        self.employee_ids._check_recalc_allowed(self.start_date, self.end_date)
+        # Asked here as well as in the rebuild itself, so somebody who may not
+        # be rebuilt is named on the screen the operator is looking at rather
+        # than in a report they have to go and find.
+        #
+        # But only when it settles the whole request. Asked of the SELECTION,
+        # one person with attendance brought over from another system refused
+        # the job for everybody: on a customer installation 46 such records
+        # belonging to 40 people made "rebuild everyone" impossible for all
+        # 208, with a message telling the operator to leave those people out -
+        # of a list they would have to work out themselves. The rebuild judges
+        # person by person anyway, reports each refusal on its own line, and
+        # measures their days again regardless. So it is queued unless NOBODY
+        # in the selection can be rebuilt.
+        refusal = None
+        rebuildable = self.employee_ids.browse()
+        for employee in self.employee_ids:
+            try:
+                employee._check_recalc_allowed(self.start_date, self.end_date)
+            except UserError as exc:
+                refusal = refusal or exc
+                continue
+            rebuildable |= employee
+        if not rebuildable and refusal:
+            raise refusal
         self._check_background_worker_available()
 
         run = self.env['hr.attendance.recalc.run'].create({

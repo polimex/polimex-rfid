@@ -214,6 +214,23 @@ class HrEmployee(models.Model):
         for employee_id in self:
             employee_id._recalc_attendance_one(from_date, to_date, ctx)
 
+    def _recompute_daily_figures(self, from_date, to_date):
+        """The daily measurements of the period a rebuild has just replayed.
+
+        Nothing to do here - this module makes attendance, it does not measure
+        it. hr_attendance_late overrides this and recomputes its daily rows.
+
+        It exists because rebuilding the attendance is only half of what the
+        operator asked for. The measurements are recomputed by the write hooks
+        of the records the rebuild touches, so the days that HAVE attendance
+        come out right - and every other day in the period keeps whatever it
+        was last told. Measured on a customer database after a rebuild of one
+        June: 83 of 148 daily rows still carried the old figures, all of them
+        days with no passage at all, which is what the operator was looking at
+        and rightly called wrong.
+        """
+        return
+
     def _recalc_attendance_one(self, from_date, to_date, ctx):
         """Rebuild attendance for ONE employee, from the events in the period.
 
@@ -255,6 +272,9 @@ class HrEmployee(models.Model):
         ], order='event_time')
 
         if not event_ids:  # no events for processing
+            # Still their period, still asked for: the figures are recomputed
+            # even where there was nothing to replay.
+            self._recompute_daily_figures(from_date, to_date)
             return {'event_count': 0, 'attendance_count': 0}
 
         # Which of those doors actually follow THIS person. A zone limited to
@@ -447,5 +467,9 @@ class HrEmployee(models.Model):
                 "departure and were left out of the attendance: they carry no "
                 "reader. Each one says so in Why Not Counted.",
                 without_direction, employee_id.display_name)
+
+        # The whole period the operator asked for, not only the days this
+        # replay happened to touch.
+        self._recompute_daily_figures(from_date, to_date)
 
         return {'event_count': len(event_ids), 'attendance_count': attendance_count}

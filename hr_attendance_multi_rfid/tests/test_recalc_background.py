@@ -743,6 +743,72 @@ class TestAttendanceRebuildInBackground(TransactionCase):
                          as_it_was,
                          "attendance must be left exactly as it was")
 
+    def test_one_person_who_cannot_be_rebuilt_does_not_refuse_the_rest(self):
+        """The whole site must not be blocked by a handful of old records.
+
+        On a customer installation 46 attendance records brought over from
+        another system belonged to 40 people - and asking to rebuild everyone
+        was refused for all 208, with a message telling the operator to leave
+        those people out of a list they would have had to work out for
+        themselves. The rebuild judges each person on their own anyway.
+        """
+        def refuse_the_first(employees, *args, **kwargs):
+            if self.employee_1 in employees:
+                raise UserError(A_REFUSAL_OF_REAL_LENGTH)
+        self.patch(type(self.employees), '_check_recalc_allowed',
+                   refuse_the_first)
+
+        run, _shown = self._ask_for_a_rebuild(self.employees)
+
+        self.assertTrue(run, "the request is recorded, not thrown away")
+        self.assertEqual(
+            set(run.employee_ids.ids), set(self.employees.ids),
+            "everybody stays in the job - each is judged when their turn comes")
+
+    def test_a_selection_nobody_can_rebuild_is_still_refused_at_once(self):
+        """NEGATIVE: when there is nothing to do, say so on the screen.
+
+        Queueing a job that can only produce refusals would make the operator
+        go and look for an answer they could have had immediately.
+        """
+        self.patch(
+            type(self.employees), '_check_recalc_allowed',
+            lambda employees, *args, **kwargs: (_ for _ in ()).throw(
+                UserError(A_REFUSAL_OF_REAL_LENGTH)))
+
+        with self.assertRaises(UserError):
+            self._ask_for_a_rebuild(self.employee_1)
+
+    def test_a_refused_person_still_gets_their_figures_refreshed(self):
+        """A refusal is about REPLAYING, not about measuring.
+
+        Their attendance was brought over from another system and must not be
+        worked out again from door events - that is what the refusal protects.
+        Reading those same records and writing the daily figures touches no
+        attendance at all, and if it did not happen these people would be the
+        only ones left on the screen showing what an older calculation said,
+        with nothing an operator could press to put it right.
+        """
+        run, _shown = self._ask_for_a_rebuild(self.employee_1)
+        # Patched after the request is made: the wizard asks the same question
+        # before it queues anything, and a refusal there is a different story
+        # (the operator is told at once and no rebuild is recorded).
+        seen = []
+        self.patch(
+            type(self.employee_1), '_recompute_daily_figures',
+            lambda records, from_date, to_date: seen.append(records.ids))
+        self.patch(
+            type(self.employee_1), '_check_recalc_allowed',
+            lambda records, *args, **kwargs: (_ for _ in ()).throw(
+                UserError(A_REFUSAL_OF_REAL_LENGTH)))
+
+        run._process_pass()
+
+        self.assertEqual(run.log_ids.mapped('status'), ['refused'],
+                         "the refusal is still reported as a refusal")
+        self.assertEqual(seen, [self.employee_1.ids],
+                         "and their days were measured again all the same")
+
     def test_being_refused_is_not_the_same_as_breaking_down(self):
         """Told that somebody's records are not for this system to rebuild,
         the operator must be able to tell that apart from a breakdown.

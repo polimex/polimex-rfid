@@ -448,6 +448,23 @@ class HrAttendanceRecalcRun(models.Model):
         except UserError as refusal:
             # The one way an add-on refuses (hr_rfid/models/hr_employee.py,
             # _check_recalc_allowed).
+            #
+            # What is refused is REPLAYING their attendance from the door
+            # events - it would break the link with the system the records
+            # came from. Measuring the days again touches no attendance at
+            # all: it only reads what is there and writes the daily figures.
+            # So it still happens, or these people would be the only ones on
+            # the screen still showing what an older calculation said, with
+            # nothing an operator could press to put it right.
+            try:
+                with self.env.cr.savepoint():
+                    employee._recompute_daily_figures(
+                        self.date_from, self.date_to)
+            except Exception:
+                _logger.warning(
+                    "Could not refresh the daily figures of %s after the "
+                    "rebuild was refused for them; their older figures stand.",
+                    employee.display_name, exc_info=True)
             self._refusal_on_employee(employee, refusal)
             return
         try:
