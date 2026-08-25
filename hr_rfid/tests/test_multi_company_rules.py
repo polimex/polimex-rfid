@@ -32,7 +32,17 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-@tagged('standard', 'at_install', 'rfid', 'rfid_security')
+# Record rules are the whole subject here, and the rule the DATABASE holds is
+# not always the one this module ships: polimex_ip_cam overrides several of
+# them by xml id, to let a camera's own company answer for events its hardware
+# chain cannot. At install time those rules are already in place while the
+# camera module's FIELDS are not yet loaded, so reading anything through them
+# raises KeyError: 'camera_id' - a red suite on every database that has the
+# camera module, curable only by updating hr_rfid in the same command, which
+# nobody should have to know. Post-install is also the honest moment to ask
+# these questions: what a user may see is decided by the rules an installation
+# ENDS UP with, not by ours in isolation.
+@tagged('standard', 'post_install', '-at_install', 'rfid', 'rfid_security')
 class TestMultiCompanySharedRecords(RFIDAppCase):
     """Global (no-company) records visible; other-company records hidden."""
 
@@ -257,7 +267,7 @@ class TestMultiCompanySharedRecords(RFIDAppCase):
         )
 
 
-@tagged('standard', 'at_install', 'rfid', 'rfid_security')
+@tagged('standard', 'post_install', '-at_install', 'rfid', 'rfid_security')
 class TestOrphanUserEventVisibility(RFIDAppCase):
     """Owner decision 5: an event that names NOBODY (unknown card) belongs
     to the door where it happened - the company operating that door, and

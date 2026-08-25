@@ -1565,21 +1565,6 @@ Python class `RFIDNotification` in `models/hr_rfid_notification.py:11`.  Model. 
 - **`check_recipients(self)`** — decorators: `@api.constrains`
   - effects: `raise:UserError`
 
-### `hr.rfid.raw.data` <a id='model-hr-rfid-raw-data'></a>
-Python class `RawData` in `models/hr_rfid_raw_data.py:6`.  Model.  Description: *RFID System Raw Data Storage*.
-
-#### Fields
-
-| Name | Type | Label | Required | Store | Help |
-|---|---|---|---|---|---|
-| `data` | Char | Raw Data |  | ✓ | The complete raw data packet received from RFID devices. This includes card read |
-| `timestamp` | Datetime | Event Time |  | ✓ | When this event occurred at the RFID device (e.g., when a card was scanned). Thi |
-| `receive_ts` | Datetime | Received At |  | ✓ | When our system received this data from the RFID device. Compare with Event Time |
-| `identification` | Char | Device Serial |  | ✓ | The serial number of the webstack (communication module) that sent this data. Th |
-| `security` | Char | Security Token |  | ✓ | Security verification data to ensure this message came from an authorized device |
-| `do_not_save` | Boolean | Temporary Data |  | ✓ | Check this box if this data should be processed but not permanently stored. Usef |
-| `return_data` | Char | Response Data |  | ✓ | The response sent back to the RFID device after processing this data. Usually co |
-
 ### `res.config.settings` <a id='model-res-config-settings'></a>
 Python class `ResConfigSettings` in `models/hr_rfid_settings.py:4`.  TransientModel (wizard).  Inherits: `res.config.settings`.
 
@@ -2815,10 +2800,10 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 - **`WebRfidController._make_response(self, result)`** — `controllers/main.py:660`
   - Wrap result in JSON-RPC 2.0 for ESP32 modules, plain JSON for legacy.
 - **`WebRfidController._parse_raw_data(self, post_data)`** — `controllers/main.py:815`
-  - Parses the raw data received from the RFID webstack.
-- **`WebRfidController._parse_barcode_device(self, post_data)`** — `controllers/main.py:829`
-  - :param post_data: A dictionary containing the post data received from the barcode device. It should have the following keys:
-  - touches: `hr.rfid.raw.data`
+  - Acknowledges device data this endpoint does not handle: logs the payload
+    keys and answers `{'status': 200}`, so a device in an unknown shape is
+    visible in the log and is not left retrying.
+
 - **`BaseImporter.__init__(self, old_url, old_db, old_username, old_password, new_url, new_db, new_username, new_password, source_version, batch_size=100)`** — `manual_import.py:8`
 - **`_check_overlap(ranges)`** — `models/hr_rfid_access_group.py:523`
 - **`_tz_get(self)`** — `models/hr_rfid_webstack.py:45`

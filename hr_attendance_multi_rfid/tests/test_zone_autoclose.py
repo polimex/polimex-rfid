@@ -12,7 +12,7 @@ attendance opened in" (in_zone_id). A person who had already left the zone
 had nothing there, so their forgotten open attendance could never be closed -
 measured on a real customer database as 41 of 44 records stuck open.
 """
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 
 from odoo import fields
 from odoo.tests.common import TransactionCase, tagged
@@ -378,3 +378,91 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
 
         self.assertEqual(record.check_out, start + timedelta(days=100),
                          "nothing may be invented for a record nobody can judge")
+
+
+@tagged('post_install', '-at_install', 'rfid_attendance_autoclose')
+class TestADayNobodyWasScheduledFor(TransactionCase):
+    """Working on a day off is work. Forgetting to badge on one is not.
+
+    The theatre plays on Sundays, and its people are on a Monday-to-Friday
+    schedule. Their Sunday hours are premium time and must survive untouched.
+    But a badge forgotten on that Sunday has no schedule to be measured
+    against - and until this was settled, one open Saturday stay was lending
+    66 hours to that Saturday and growing by the day.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.company = cls.env.company
+        cls.company.write({
+            'auto_check_out': True,
+            'auto_check_out_tolerance': 2.0,
+            'forgotten_badge_policy': 'credit_schedule'})
+        cls.calendar = cls.env['resource.calendar'].create({
+            'name': 'Weekdays Only 8-17', 'company_id': cls.company.id,
+            'tz': 'UTC', 'hours_per_day': 8.0,
+            'attendance_ids': [(0, 0, {
+                'name': '%s %s' % (day, period), 'dayofweek': day,
+                'hour_from': start, 'hour_to': stop, 'day_period': period})
+                for day in ('0', '1', '2', '3', '4')
+                for period, start, stop in (('morning', 8.0, 12.0),
+                                            ('lunch', 12.0, 13.0),
+                                            ('afternoon', 13.0, 17.0))]})
+        cls.employee = cls.env['hr.employee'].create({
+            'name': 'Sunday Player', 'company_id': cls.company.id,
+            'resource_calendar_id': cls.calendar.id})
+        today = fields.Date.today()
+        cls.sunday = today - timedelta(days=(today.weekday() + 1) % 7 or 7)
+        cls.saturday = cls.sunday - timedelta(days=1)
+
+    def _extra_for(self, day):
+        return self.env['hr.attendance.extra'].search([
+            ('employee_id', '=', self.employee.id), ('for_date', '=', day)])
+
+    def test_a_sunday_performance_is_paid_and_never_settled(self):
+        """NEGATIVE: five hours on a day off are five hours of premium time.
+
+        Nothing about a properly badged Sunday may be settled, shortened or
+        marked - it is exactly the work the theatre exists for.
+        """
+        performance = self.env['hr.attendance'].with_context(
+            no_validity_check=True).create({
+                'employee_id': self.employee.id,
+                'check_in': datetime.combine(self.sunday, time(18, 0)),
+                'check_out': datetime.combine(self.sunday, time(23, 0))})
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+        self.employee.update_extra_attendance_data(
+            self.sunday, self.sunday, overwrite_existing=True)
+
+        self.assertFalse(performance.forgotten_badge,
+                         "a badged Sunday shift is not a forgotten badge")
+        self.assertEqual(performance.check_out,
+                         datetime.combine(self.sunday, time(23, 0)),
+                         "and nobody moved its end")
+        extra = self._extra_for(self.sunday)
+        self.assertAlmostEqual(extra.extra_time, 5.0, places=2,
+                               msg="the whole Sunday is premium time")
+
+    def test_a_badge_forgotten_on_a_day_off_is_settled_all_the_same(self):
+        """A day with no schedule still has a working day to be judged by.
+
+        Their calendar says eight hours; that stands in for the day nobody
+        planned. Otherwise the stay would never be settled and would keep
+        lending the day more hours every time the figures are recalculated -
+        66 of them by the third day, measured.
+        """
+        forgotten = self.env['hr.attendance'].with_context(
+            no_validity_check=True).create({
+                'employee_id': self.employee.id,
+                'check_in': datetime.combine(self.saturday, time(18, 0))})
+
+        self.env['hr.attendance'].check_for_incomplete_attendances()
+
+        self.assertTrue(forgotten.check_out, "it must not stay open forever")
+        self.assertEqual(
+            forgotten.check_out,
+            forgotten.check_in + timedelta(hours=8),
+            "credited the ordinary working day their calendar describes")
+        self.assertTrue(forgotten.forgotten_badge)

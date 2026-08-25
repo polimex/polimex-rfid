@@ -129,24 +129,51 @@ class HrAttendance(models.Model):
         self.ensure_one()
         return self._scheduled_day()[0]
 
+    def _working_day_of_the_person(self):
+        """The day a stay is judged by, in hours, and how long it lasts.
+
+        Normally the day their schedule describes. On a day they were NOT
+        scheduled - a Sunday performance, a call-out - there is no such day,
+        and their calendar's ordinary working day stands in for it. Without
+        the stand-in a badge forgotten on a Sunday could never be settled at
+        all: measured on a fixture, one open Saturday stay was lending 66
+        hours to that Saturday and growing by the day.
+
+        The stand-in is never harsher than the real thing: a five-hour evening
+        performance stays well inside an ordinary day plus the tolerance and
+        is not touched.
+
+        :return: (hours, span). (0.0, 0.0) when even the calendar says
+                 nothing, and then no stay is ever settled here.
+        """
+        self.ensure_one()
+        hours, span = self._scheduled_day()
+        if float_compare(hours, 0.0, precision_digits=2) > 0:
+            return hours, span
+        ordinary = self.employee_id.resource_calendar_id.hours_per_day or 0.0
+        return ordinary, ordinary
+
     def _max_allowed_stay_hours(self):
         """The point at which this installation closes a stay by itself.
 
-        The person's own scheduled day plus the company's tolerance - core's
+        The person's own working day plus the company's tolerance - core's
         rule, read from core's own setting. 0.0 when Automatic Check-Out is
-        off, or on a day nobody was scheduled for: then no stay here can be
-        called forgotten, and the record is left for a person to judge. (An
-        evening performance on a Sunday is not a forgotten badge, and would be
-        one if the answer were "the tolerance".)
+        off, or when not even the calendar can say what an ordinary working
+        day is for this person: then no stay here can be called forgotten and
+        the record is left for a person to judge.
+
+        On a day nobody was scheduled for, the yardstick is that person's
+        ordinary working day, NOT the bare tolerance: an evening performance
+        on a Sunday is not a forgotten badge, and would read as one if it were.
         """
         self.ensure_one()
         company = self.employee_id.company_id
         if not company.auto_check_out:
             return 0.0
-        scheduled = self._scheduled_hours_of_the_day()
-        if float_compare(scheduled, 0.0, precision_digits=2) <= 0:
+        working_day, _span = self._working_day_of_the_person()
+        if float_compare(working_day, 0.0, precision_digits=2) <= 0:
             return 0.0
-        return scheduled + company.auto_check_out_tolerance
+        return working_day + company.auto_check_out_tolerance
 
     def _settled_check_out(self):
         """When a settled stay is taken to have ended - the company's policy.
@@ -176,7 +203,7 @@ class HrAttendance(models.Model):
         company = self.employee_id.company_id
         if company.forgotten_badge_policy == 'ignore':
             return False
-        _hours, span = self._scheduled_day()
+        _hours, span = self._working_day_of_the_person()
         if float_compare(span, 0.0, precision_digits=2) <= 0:
             return False
         if company.forgotten_badge_policy == 'penalty':

@@ -115,13 +115,34 @@ class TestHrRfidTours(HttpCase):
     def test_onboarding_panel_tour(self):
         """Process 0: a new admin lands on User Events and is guided by the
         native onboarding banner, then opens a step's action."""
-        # This tour needs an installation whose setup steps are not done yet,
-        # and that premise cannot be arranged from here: measured on a copy of
-        # a customer database, the browser session reads the COMMITTED state,
-        # not this transaction (a marker written here never reached the
-        # rendered panel). So on a live copy the banner shows finished steps
-        # and the tour cannot pass; it is a fresh-installation test and is run
-        # as such.
+        # The panel guides an admin who has not set the system up yet, and it
+        # tells the truth: our own code marks a step done as soon as the thing
+        # it asks for EXISTS - a controller, an access group with doors, an
+        # active card (models/onboarding_onboarding.py). Deleting the progress
+        # records does not help: they are recomputed from the data on the next
+        # render. Measured on a copy of a customer database, four of the five
+        # steps came straight back as done.
+        #
+        # The panel is per COMPANY, though, and a company that has just been
+        # created genuinely has nothing set up - which is the situation this
+        # tour is about, and a real one: it is what the operator sees the day
+        # a second company is added. So the test makes that company and looks
+        # at the panel through it, and then it runs everywhere: on a fresh
+        # database and on a copy of a customer's alike.
+        fresh = self.env['res.company'].create({'name': 'Onboarding Tour Co'})
+        admin = self.env.ref('base.user_admin')
+        admin.sudo().write({
+            'company_ids': [(4, fresh.id)],
+            'company_id': fresh.id,
+        })
+        onboarding = self.env['onboarding.onboarding'].sudo().search([
+            ('route_name', '=', 'hr_rfid_setup')])
+        self.env['onboarding.progress.step'].sudo().search([
+            ('step_id', 'in', onboarding.step_ids.ids),
+            ('company_id', '=', fresh.id)]).unlink()
+        self.env['onboarding.progress'].sudo().search([
+            ('onboarding_id', '=', onboarding.id),
+            ('company_id', '=', fresh.id)]).unlink()
         self.start_tour(
             "/odoo/action-hr_rfid.hr_rfid_event_user_action",
             "hr_rfid_onboarding_panel_tour",

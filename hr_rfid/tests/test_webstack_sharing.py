@@ -122,7 +122,17 @@ class SharedModuleCase(RFIDController):
         })
 
 
-@tagged('standard', 'at_install', 'rfid', 'rfid_sharing')
+# Record rules are the whole subject here, and the rule the DATABASE holds is
+# not always the one this module ships: polimex_ip_cam overrides several of
+# them by xml id, to let a camera's own company answer for events its hardware
+# chain cannot. At install time those rules are already in place while the
+# camera module's FIELDS are not yet loaded, so reading anything through them
+# raises KeyError: 'camera_id' - a red suite on every database that has the
+# camera module, curable only by updating hr_rfid in the same command, which
+# nobody should have to know. Post-install is also the honest moment to ask
+# these questions: what a user may see is decided by the rules an installation
+# ENDS UP with, not by ours in isolation.
+@tagged('standard', 'post_install', '-at_install', 'rfid', 'rfid_sharing')
 class TestSharedModuleVisibility(SharedModuleCase):
     """Who sees what: the sharing company sees the shared hardware, the
     control company sees nothing, per-company data stays isolated."""
@@ -217,7 +227,7 @@ class TestSharedModuleVisibility(SharedModuleCase):
         self.assertTrue(cmd, "B's grant must queue an add-card command")
 
 
-@tagged('standard', 'at_install', 'rfid', 'rfid_sharing')
+@tagged('standard', 'post_install', '-at_install', 'rfid', 'rfid_sharing')
 class TestSharedModuleGuards(SharedModuleCase):
     """The safety rules of sharing: no duplicate card numbers on the shared
     hardware, foreign grants only 24/7, ownership stays with the owner."""
@@ -415,7 +425,7 @@ class TestSharedModuleGuards(SharedModuleCase):
                          'The replacement module must keep the sharing list')
 
 
-@tagged('standard', 'at_install', 'rfid', 'rfid_sharing')
+@tagged('standard', 'post_install', '-at_install', 'rfid', 'rfid_sharing')
 class TestSharedModuleWorkcodes(SharedModuleCase):
     """Work codes of the badging person's company are recognised on the
     shared module (with the owner's codes as fallback)."""
@@ -449,7 +459,7 @@ class TestSharedModuleWorkcodes(SharedModuleCase):
                          'An unknown code is kept as raw text, as before')
 
 
-@tagged('standard', 'at_install', 'rfid', 'rfid_sharing', 'rfid_sharing_e2e')
+@tagged('standard', 'post_install', '-at_install', 'rfid', 'rfid_sharing', 'rfid_sharing_e2e')
 class TestSharedModuleE2E(SharedModuleCase, HttpCase):
     """Full walk of the real flow through the device HTTP endpoint: share ->
     grant -> command delivery -> badge -> event lands in the right company ->

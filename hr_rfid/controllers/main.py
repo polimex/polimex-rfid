@@ -339,45 +339,29 @@ class WebRfidController(http.Controller):
             return self._make_response({'status': 500})
 
     def _parse_raw_data(self, post_data: dict):
+        """Answer a device that speaks a shape this endpoint does not handle.
+
+        Everything from a webstack carries a 'convertor'; what reaches here
+        does not, and there is nothing to do with it but acknowledge it. The
+        payload is logged, because a device talking to us in an unknown shape
+        is worth seeing in the log, and it is answered 200 - the device has
+        done nothing wrong and must not be left retrying.
+
+        Until now one shape - serial + security + events, sent by barcode
+        devices - was handed to a helper that built an 'hr.rfid.raw.data'
+        record. That model has never been loaded: its file was never imported,
+        in this version or in 15.0 or 18.0. So the call could only ever end in
+        KeyError, i.e. HTTP 500 on the product's public device endpoint, for
+        every request of that shape. The dead model and its helper are gone.
+
+        :param post_data: what the device sent, already unwrapped
+        :return: {'status': 200}
         """
-        Parses the raw data received from the RFID webstack.
-
-        :param post_data: The raw data received from the RFID webstack.
-        :return: If the 'serial', 'security', and 'events' keys are present in the post_data dictionary, it calls the _parse_barcode_device method with the post_data. Otherwise, it returns a dictionary with a 'status' key set to 200.
-
-        :rtype: dict
-        """
-        if 'serial' in post_data and 'security' in post_data and 'events' in post_data:
-            return self._parse_barcode_device(post_data)
-
+        _logger.info(
+            "Device data that this endpoint does not handle (keys: %s); "
+            "acknowledged and dropped.", sorted(post_data))
         return {'status': 200}
 
-    def _parse_barcode_device(self, post_data: dict):
-        """
-        :param post_data: A dictionary containing the post data received from the barcode device. It should have the following keys:
-            - 'serial': The serial number of the barcode device.
-            - 'security': The security key of the barcode device.
-        :return: A dictionary containing the parsed data from the barcode device.
-
-        The method creates a new record in the 'hr.rfid.raw.data' table with the provided post data. It sets the 'do_not_save' field to True, the 'identification' field with the serial number, and the 'data' field with the serialized post data.
-
-        After creating the record, it retrieves the 'return_data' field value from the created record. If the 'do_not_save' field was set to True, the record is unlinked, meaning it gets deleted from the database.
-
-        Finally, the method returns the parsed data from the barcode device as a dictionary. The 'return_data' field value is deserialized from JSON to a dictionary using the 'json.loads()' method.
-        """
-        ret = request.env['hr.rfid.raw.data'].create([{
-            'do_not_save': True,
-            'identification': post_data['serial'],
-            'security': post_data['security'],
-            'data': json.dumps(post_data),
-        }])
-
-        ret_data = ret.return_data
-
-        if ret.do_not_save is True:
-            ret.unlink()
-
-        return json.loads(ret_data)
 
     def vending_request_for_balance(self):
         raise NotImplementedError('Not implemented')
