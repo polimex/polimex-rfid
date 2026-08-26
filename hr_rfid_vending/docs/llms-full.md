@@ -2,7 +2,7 @@
 id: hr_rfid_vending
 title: RFID Vending Control
 module: hr_rfid_vending
-module_version: 19.0.1.7.8
+module_version: 19.0.1.7.12
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage EXECUTIVE based vending machines
-last_updated: '2026-05-14'
-source_digest: sha256:9bcbf88c8ed2cabeb3b1a9972dd251f32ddffeb4ecf7f6732a67cdea37b111cf
+last_updated: '2026-08-26'
+source_digest: sha256:39dcdcb8b6b3c5d2bbff3e65b2f375fbba9281adbab7db195040463d59d2ef3b
 depends:
 - hr_rfid
 - product
@@ -82,7 +82,7 @@ chunking:
 ---
 
 
-# RFID Vending Control — `hr_rfid_vending` v19.0.1.7.8
+# RFID Vending Control - `hr_rfid_vending` v19.0.1.7.12
 
 Manage EXECUTIVE based vending machines
 
@@ -91,10 +91,10 @@ Manage EXECUTIVE based vending machines
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_vending`
-- **Version**: `19.0.1.7.8`
+- **Version**: `19.0.1.7.12`
 - **Category**: Vending
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -436,10 +436,10 @@ Python class `VendingAutoRefillEvents` in `models/auto_refill.py:16`.  Model.  D
 
 #### Notable methods
 
-- **`auto_refill_job(self)`** — decorators: `@api.model`
+- **`auto_refill_job(self)`** - decorators: `@api.model`
   - effects: `log_info`, `log_warn`, `with_company`
   - touches: `res.company`
-- **`_auto_refill(self)`** — decorators: `@api.model`
+- **`_auto_refill(self)`** - decorators: `@api.model`
   - effects: `create`, `log_info`, `sudo`
   - touches: `hr.employee`, `hr.rfid.vending.balance.history`
 
@@ -450,7 +450,7 @@ Python class `BalanceHistory` in `models/balance_history.py:4`.  Model.  Descrip
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char | Person Responsible/Item |  | — | Human-readable label — the operator who made the change for manual adjustments,  |
+| `name` | Char | Person Responsible/Item |  | - | Human-readable label — the operator who made the change for manual adjustments,  |
 | `person_responsible` | Many2one → \`res.users\` | Person responsible for the change |  | ✓ | User who triggered the balance change. For vending sales this is the system user |
 | `balance_change` | Float | Balance change | ✓ | ✓ | How much was deposited/withdrawn from the employee's balance |
 | `balance_result` | Float | Balance result | ✓ | ✓ | How much the balance was after the change |
@@ -484,7 +484,7 @@ Python class `CashCollectWiz` in `models/ctrl_cash_collect_wizard.py:37`.  Trans
 
 #### Notable methods
 
-- **`collect(self)`** — decorators: —
+- **`collect(self)`** - decorators: -
   - effects: `message_post`, `raise:ValidationError`
   - touches: `hr.rfid.ctrl.cash.log`
 
@@ -498,9 +498,9 @@ Python class `Digest` in `models/digest.py:9`.  Model.  Inherits: `digest.digest
 | `kpi_hr_rfid_vending_refill` | Boolean | Auto refill amount |  | ✓ | Include the total amount auto-refilled to employee balances in the digest email. |
 | `kpi_hr_rfid_vending_sale` | Boolean | Sales amount |  | ✓ | Include the total amount of vending purchases (positive sum of debits) in the di |
 | `kpi_hr_rfid_vending_sale_count` | Boolean | Sales count |  | ✓ | Include the count of individual purchases made through the vending controllers i |
-| `kpi_hr_rfid_vending_refill_value` | Monetary |  |  | — | Live total of auto-refill credits added to employee balances during the digest w |
-| `kpi_hr_rfid_vending_sale_value` | Monetary |  |  | — | Live total spent by employees through the vending controllers during the digest  |
-| `kpi_hr_rfid_vending_sale_count_value` | Integer |  |  | — | Live count of individual vending purchases during the digest window. |
+| `kpi_hr_rfid_vending_refill_value` | Monetary |  |  | - | Live total of auto-refill credits added to employee balances during the digest w |
+| `kpi_hr_rfid_vending_sale_value` | Monetary |  |  | - | Live total spent by employees through the vending controllers during the digest  |
+| `kpi_hr_rfid_vending_sale_count_value` | Integer |  |  | - | Live count of individual vending purchases during the digest window. |
 
 ### `hr.employee` <a id='model-hr-employee'></a>
 Python class `HrEmployee` in `models/hr_employee.py:7`.  Model.  Inherits: `hr.employee`.
@@ -516,9 +516,9 @@ Python class `HrEmployee` in `models/hr_employee.py:7`.  Model.  Inherits: `hr.e
 | `hr_rfid_vending_in_attendance` | Boolean | Require Active Attendance |  | ✓ | Restrict vending purchases to work hours only.          • When enabled: Employee |
 | `hr_rfid_vending_daily_limit` | Float | Daily Spending Limit |  | ✓ | Maximum amount employee can spend per day on vending purchases.          • Purpo |
 | `daily_limit_type` | Selection | Daily Limit Type |  | ✓ | How to calculate the daily spending period.          • Last 24 hours: Rolling 24 |
-| `hr_rfid_vending_spent_today` | Monetary | Spent Today |  | — | Amount already spent today based on the daily limit type setting. Used to calcul |
-| `hr_rfid_vending_current_balance` | Monetary | Available Balance |  | — | Total amount currently available for vending purchases. Combines company balance |
-| `currency_id` | Many2one | Company Currency |  | — |  |
+| `hr_rfid_vending_spent_today` | Monetary | Spent Today |  | - | Amount already spent today based on the daily limit type setting. Used to calcul |
+| `hr_rfid_vending_current_balance` | Monetary | Available Balance |  | - | Total amount currently available for vending purchases. Combines company balance |
+| `currency_id` | Many2one | Company Currency |  | - |  |
 | `hr_rfid_vending_auto_refill` | Boolean | Enable Auto Refill |  | ✓ | Automatically add money to employee's vending balance on a monthly schedule.     |
 | `hr_rfid_vending_refill_amount` | Monetary | Refill Amount |  | ✓ | Amount to add during each auto-refill cycle.          • Fixed type: Exact amount |
 | `hr_rfid_vending_refill_type` | Selection | Refill Type |  | ✓ | How the auto-refill amount is applied to the employee's balance.          • Fixe |
@@ -527,19 +527,19 @@ Python class `HrEmployee` in `models/hr_employee.py:7`.  Model.  Inherits: `hr.e
 
 #### Notable methods
 
-- **`employee_vending_balance_history_action(self)`** — decorators: —
+- **`employee_vending_balance_history_action(self)`** - decorators: -
   - effects: `sudo`
-- **`_compute_current_balance(self)`** — decorators: `@api.depends`
-- **`_compute_spend_today(self)`** — decorators: `@api.depends`
+- **`_compute_current_balance(self)`** - decorators: `@api.depends`
+- **`_compute_spend_today(self)`** - decorators: `@api.depends`
   - touches: `hr.rfid.vending.balance.history`
-- **`get_employee_balance(self, controller=None)`** — decorators: —
-- **`hr_rfid_vending_add_to_balance(self, value, ev=0)`** — decorators: —
+- **`get_employee_balance(self, controller=None)`** - decorators: -
+- **`hr_rfid_vending_add_to_balance(self, value, ev=0)`** - decorators: -
   - Add to the balance of an employee
   - touches: `hr.rfid.vending.balance.history`
-- **`hr_rfid_vending_set_balance(self, value, max_add=0, min_add=0, ev=0)`** — decorators: —
+- **`hr_rfid_vending_set_balance(self, value, max_add=0, min_add=0, ev=0)`** - decorators: -
   - Set an employee's balance to a specific number, with the option of max_add
   - touches: `hr.rfid.vending.balance.history`
-- **`hr_rfid_vending_purchase(self, cost, ev=0)`** — decorators: —
+- **`hr_rfid_vending_purchase(self, cost, ev=0)`** - decorators: -
   - Purchase a product. Subtracts the parameter "cost" from the employee's balance
 
 ### `hr.employee.vending.balance.wiz` <a id='model-hr-employee-vending-balance-wiz'></a>
@@ -554,11 +554,11 @@ Python class `VendingBalanceWiz` in `models/hr_employee_wizards.py:6`.  Transien
 
 #### Notable methods
 
-- **`add_value(self)`** — decorators: —
+- **`add_value(self)`** - decorators: -
   - effects: `raise:ValidationError`
-- **`subtract_value(self)`** — decorators: —
+- **`subtract_value(self)`** - decorators: -
   - effects: `raise:ValidationError`
-- **`set_value(self)`** — decorators: —
+- **`set_value(self)`** - decorators: -
   - effects: `message_post`, `raise:ValidationError`
 
 ### `hr.rfid.ctrl` <a id='model-hr-rfid-ctrl'></a>
@@ -568,17 +568,17 @@ Python class `HrRfidControllerVending` in `models/hr_rfid_ctrl.py:4`.  Model.  I
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `show_price_timeout` | Integer | Price Display Timeout |  | — | Duration (in seconds) that product prices remain visible on the vending machine  |
-| `scale_factor` | Integer | Price Scale Factor |  | — | Multiplier used to convert currency amounts to vending machine units.          • |
+| `show_price_timeout` | Integer | Price Display Timeout |  | - | Duration (in seconds) that product prices remain visible on the vending machine  |
+| `scale_factor` | Integer | Price Scale Factor |  | - | Multiplier used to convert currency amounts to vending machine units.          • |
 | `cash_contained` | Float | Cash in Machine |  | ✓ | Current amount of physical cash stored in the vending machine.          • Purpos |
 | `pricelist_id` | Many2one → \`product.pricelist\` | Product Pricelist |  | ✓ | Pricelist used to determine product prices for this vending machine.          •  |
 
 #### Notable methods
 
-- **`_convert_balance_to_ctrl(self, balance)`** — decorators: `@api.model`
-- **`create_vending_rows(self)`** — decorators: —
+- **`_convert_balance_to_ctrl(self, balance)`** - decorators: `@api.model`
+- **`create_vending_rows(self)`** - decorators: -
   - touches: `hr.rfid.ctrl.vending.row`
-- **`write(self, vals)`** — decorators: —
+- **`write(self, vals)`** - decorators: -
   - calls `super() `write``
   - touches: `hr.rfid.ctrl.vending.row`
 
@@ -596,7 +596,7 @@ Python class `HrRfidVendingSettingsWiz` in `models/hr_rfid_ctrl_settings.py:5`. 
 
 #### Notable methods
 
-- **`save_settings(self)`** — decorators: —
+- **`save_settings(self)`** - decorators: -
   - effects: `raise:ValidationError`
 
 ### `hr.rfid.ctrl.vending.row` <a id='model-hr-rfid-ctrl-vending-row'></a>
@@ -608,10 +608,10 @@ Python class `HrRfidVendingRow` in `models/hr_rfid_ctrl_vending_row.py:5`.  Mode
 |---|---|---|---|---|---|
 | `row_num` | Integer |  | ✓ | ✓ | Row index inside the vending machine grid (1-based). Each row holds 4 item slots |
 | `controller_id` | Many2one → \`hr.rfid.ctrl\` |  | ✓ | ✓ | Vending controller this row belongs to. Cascade on delete — rows do not survive  |
-| `item_number1` | Char | # |  | — | Label for the first slot in this row, computed from row_num (e.g. 'Item #1:' on  |
-| `item_number2` | Char | # |  | — | Label for the second slot in this row. |
-| `item_number3` | Char | # |  | — | Label for the third slot in this row. |
-| `item_number4` | Char | # |  | — | Label for the fourth slot in this row. |
+| `item_number1` | Char | Slot 1 Number |  | - | Number the buyer presses on the machine keypad for the first slot of this row, c |
+| `item_number2` | Char | Slot 2 Number |  | - | Number the buyer presses on the machine keypad for the second slot of this row. |
+| `item_number3` | Char | Slot 3 Number |  | - | Number the buyer presses on the machine keypad for the third slot of this row. |
+| `item_number4` | Char | Slot 4 Number |  | - | Number the buyer presses on the machine keypad for the fourth slot of this row. |
 | `item1` | Many2one → \`product.template\` | Item#1 |  | ✓ | Product mapped to the first slot of this row. Determines the name shown on the c |
 | `item2` | Many2one → \`product.template\` | Item#2 |  | ✓ | Product mapped to the second slot of this row. |
 | `item3` | Many2one → \`product.template\` | Item#3 |  | ✓ | Product mapped to the third slot of this row. |
@@ -634,11 +634,11 @@ Python class `VendingEvents` in `models/hr_rfid_vending_event.py:8`.  Model.  In
 
 #### Notable methods
 
-- **`create(self, vals_list)`** — decorators: `@api.model_create_multi`
+- **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
   - calls `super() `create``
-- **`write(self, vals)`** — decorators: —
+- **`write(self, vals)`** - decorators: -
   - calls `super() `write``
-- **`search(self, *args, **kwargs)`** — decorators: `@api.model`
+- **`search(self, *args, **kwargs)`** - decorators: `@api.model`
   - calls `super() `search``
 
 ### `product.template` <a id='model-product-template'></a>
@@ -646,7 +646,7 @@ Python class `ProductTemplate` in `models/product_template.py:4`.  Model.  Inher
 
 #### Notable methods
 
-- **`write(self, vals)`** — decorators: —
+- **`write(self, vals)`** - decorators: -
   - calls `super() `write``
   - effects: `with_context`
   - touches: `hr.rfid.ctrl.vending.row`, `hr.rfid.ctrl.vending.settings`
@@ -669,15 +669,15 @@ Python class `ResConfigSettings` in `models/res_config_settings.py:4`.  Transien
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `refill_interval_number` | Integer |  |  | — | Repeat every x. |
-| `refill_interval_type` | Selection | Interval Unit |  | — | Time unit for the auto-refill repeat interval. Combined with Repeat every (above |
-| `refill_nextcall` | Datetime | Next Execution Date |  | — | Next planned execution date for this refill. |
+| `refill_interval_number` | Integer |  |  | - | Repeat every x. |
+| `refill_interval_type` | Selection | Interval Unit |  | - | Time unit for the auto-refill repeat interval. Combined with Repeat every (above |
+| `refill_nextcall` | Datetime | Next Execution Date |  | - | Next planned execution date for this refill. |
 
 #### Notable methods
 
-- **`get_values(self)`** — decorators: `@api.model`
+- **`get_values(self)`** - decorators: `@api.model`
   - calls `super() `get_values``
-- **`set_values(self)`** — decorators: —
+- **`set_values(self)`** - decorators: -
   - calls `super() `set_values``
 
 ### `hr.rfid.vending.event.reverse` <a id='model-hr-rfid-vending-event-reverse'></a>
@@ -692,7 +692,7 @@ Python class `VendingEventReverse` in `wizards/vending_event_reverse.py:7`.  Tra
 
 #### Notable methods
 
-- **`action_reverse(self)`** — decorators: —
+- **`action_reverse(self)`** - decorators: -
   - effects: `message_post`, `raise:UserError`
 
 
@@ -708,216 +708,247 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 
 ### Public helpers
 
-- **`HrRfidVending.post_event(self, **post)`** (`@http.route`) — `controllers/main.py:22`
-  - super-split (super): pre=`sudo` · post=`log_error`, `log_info`, `with_company`, `with_context`
-  - effects: `log_error`, `log_info`, `sudo`, `with_company`, `with_context`
-  - touches: `hr.rfid.card`, `hr.rfid.command`, `hr.rfid.ctrl.vending.row`, `hr.rfid.event.system`, `hr.rfid.vending.event`, `hr.rfid.webstack`
-- **`fc(a, b)`** — `tests/test_auto_refill_cron.py:30`
-- **`TestAutoRefillCron.setUpClass(cls)`** (`@classmethod`) — `tests/test_auto_refill_cron.py:39`
+- **`HrRfidVending.post_event(self, **post)`** (`@http.route`) - `controllers/main.py:22`
+  - super-split (super): pre=- · post=`log_error`, `log_info`, `with_company`, `with_context`
+  - effects: `log_error`, `log_info`, `with_company`, `with_context`
+  - touches: `hr.rfid.card`, `hr.rfid.command`, `hr.rfid.ctrl.vending.row`, `hr.rfid.event.system`, `hr.rfid.vending.event`
+- **`fc(a, b)`** - `tests/test_auto_refill_cron.py:30`
+- **`TestAutoRefillCron.setUpClass(cls)`** (`@classmethod`) - `tests/test_auto_refill_cron.py:39`
   - calls `super()`
   - touches: `hr.rfid.vending.auto.refill`, `hr.rfid.vending.balance.history`
-- **`TestAutoRefillCron.test_cron_skips_when_nextcall_in_future(self)`** — `tests/test_auto_refill_cron.py:75`
+- **`TestAutoRefillCron.test_cron_skips_when_nextcall_in_future(self)`** - `tests/test_auto_refill_cron.py:75`
   - Future nextcall: cron must not modify balances.
-- **`TestAutoRefillCron.test_cron_runs_when_nextcall_in_past(self)`** — `tests/test_auto_refill_cron.py:89`
+- **`TestAutoRefillCron.test_cron_runs_when_nextcall_in_past(self)`** - `tests/test_auto_refill_cron.py:89`
   - Past nextcall: cron must run and advance the timestamp.
-- **`TestAutoRefillCron.test_cron_skips_when_nextcall_is_null(self)`** — `tests/test_auto_refill_cron.py:105`
+- **`TestAutoRefillCron.test_cron_skips_when_nextcall_is_null(self)`** - `tests/test_auto_refill_cron.py:105`
   - Companies with no refill_nextcall set must be skipped, not crash.
-- **`TestAutoRefillCron.test_cron_advances_nextcall_even_when_no_employees_match(self)`** — `tests/test_auto_refill_cron.py:117`
+- **`TestAutoRefillCron.test_cron_advances_nextcall_even_when_no_employees_match(self)`** - `tests/test_auto_refill_cron.py:117`
   - Empty cohort still advances nextcall — otherwise the cron loops.
-- **`TestAutoRefillCron.test_cron_idempotent_within_interval(self)`** — `tests/test_auto_refill_cron.py:125`
+- **`TestAutoRefillCron.test_cron_idempotent_within_interval(self)`** - `tests/test_auto_refill_cron.py:125`
   - Second pass within interval must NOT refill again.
-- **`TestAutoRefillCron.test_fixed_sets_balance_up_to_amount(self)`** — `tests/test_auto_refill_cron.py:147`
+- **`TestAutoRefillCron.test_fixed_sets_balance_up_to_amount(self)`** - `tests/test_auto_refill_cron.py:147`
   - fixed: balance < refill_amount → set to refill_amount.
-- **`TestAutoRefillCron.test_fixed_sets_balance_down_to_amount(self)`** — `tests/test_auto_refill_cron.py:161`
+- **`TestAutoRefillCron.test_fixed_sets_balance_down_to_amount(self)`** - `tests/test_auto_refill_cron.py:161`
   - fixed: balance > refill_amount → balance is RESET DOWN.
-- **`TestAutoRefillCron.test_fixed_no_op_when_balance_equals_amount(self)`** — `tests/test_auto_refill_cron.py:179`
+- **`TestAutoRefillCron.test_fixed_no_op_when_balance_equals_amount(self)`** - `tests/test_auto_refill_cron.py:179`
   - fixed: balance == refill_amount → no change, no audit row.
-- **`TestAutoRefillCron.test_fixed_restores_from_negative_balance(self)`** — `tests/test_auto_refill_cron.py:200`
+- **`TestAutoRefillCron.test_fixed_restores_from_negative_balance(self)`** - `tests/test_auto_refill_cron.py:200`
   - fixed with negative balance (employee within credit limit) → set
-- **`TestAutoRefillCron.test_up_to_starts_from_zero_tops_to_max(self)`** — `tests/test_auto_refill_cron.py:224`
+- **`TestAutoRefillCron.test_up_to_starts_from_zero_tops_to_max(self)`** - `tests/test_auto_refill_cron.py:224`
   - up_to from zero, amount >= max → top to max.
-- **`TestAutoRefillCron.test_up_to_partial_when_amount_smaller_than_gap(self)`** — `tests/test_auto_refill_cron.py:238`
+- **`TestAutoRefillCron.test_up_to_partial_when_amount_smaller_than_gap(self)`** - `tests/test_auto_refill_cron.py:238`
   - up_to: amount < (max - balance) → add only amount, not full max.
-- **`TestAutoRefillCron.test_up_to_caps_when_amount_overshoots(self)`** — `tests/test_auto_refill_cron.py:254`
+- **`TestAutoRefillCron.test_up_to_caps_when_amount_overshoots(self)`** - `tests/test_auto_refill_cron.py:254`
   - up_to: amount > gap → only fill the gap, never overshoot max.
-- **`TestAutoRefillCron.test_up_to_no_op_when_balance_at_max(self)`** — `tests/test_auto_refill_cron.py:269`
+- **`TestAutoRefillCron.test_up_to_no_op_when_balance_at_max(self)`** - `tests/test_auto_refill_cron.py:269`
   - up_to: balance == max → no change.
-- **`TestAutoRefillCron.test_up_to_no_op_when_balance_above_max(self)`** — `tests/test_auto_refill_cron.py:284`
+- **`TestAutoRefillCron.test_up_to_no_op_when_balance_above_max(self)`** - `tests/test_auto_refill_cron.py:284`
   - up_to: balance > max (e.g. left over from prior config) → no change.
-- **`TestAutoRefillCron.test_filter_excludes_auto_refill_off(self)`** — `tests/test_auto_refill_cron.py:303`
+- **`TestAutoRefillCron.test_filter_excludes_auto_refill_off(self)`** - `tests/test_auto_refill_cron.py:303`
   - auto_refill = False → never touched.
-- **`TestAutoRefillCron.test_filter_excludes_zero_amount(self)`** — `tests/test_auto_refill_cron.py:317`
+- **`TestAutoRefillCron.test_filter_excludes_zero_amount(self)`** - `tests/test_auto_refill_cron.py:317`
   - refill_amount = 0 → search filter excludes; no history written.
-- **`TestAutoRefillCron.test_filter_excludes_archived_employees(self)`** — `tests/test_auto_refill_cron.py:335`
+- **`TestAutoRefillCron.test_filter_excludes_archived_employees(self)`** - `tests/test_auto_refill_cron.py:335`
   - active=False employees must NOT be refilled — search defaults to active=True.
-- **`TestAutoRefillCron.test_multicompany_each_company_advances_independently(self)`** — `tests/test_auto_refill_cron.py:354`
+- **`TestAutoRefillCron.test_multicompany_each_company_advances_independently(self)`** - `tests/test_auto_refill_cron.py:354`
   - Each company's nextcall advances independently. Refill of one
   - touches: `res.company`
-- **`TestAutoRefillCron.test_multicompany_refill_does_not_leak_across_companies(self)`** — `tests/test_auto_refill_cron.py:388`
+- **`TestAutoRefillCron.test_multicompany_refill_does_not_leak_across_companies(self)`** - `tests/test_auto_refill_cron.py:388`
   - Even when both companies are due, employee balances must not be
   - touches: `res.company`
-- **`TestAutoRefillCron.test_audit_row_created_when_at_least_one_refill(self)`** — `tests/test_auto_refill_cron.py:422`
+- **`TestAutoRefillCron.test_audit_row_created_when_at_least_one_refill(self)`** - `tests/test_auto_refill_cron.py:422`
   - One non-empty pass → exactly one hr.rfid.vending.auto.refill row.
-- **`TestAutoRefillCron.test_no_audit_row_when_nothing_changed(self)`** — `tests/test_auto_refill_cron.py:436`
+- **`TestAutoRefillCron.test_no_audit_row_when_nothing_changed(self)`** - `tests/test_auto_refill_cron.py:436`
   - If every employee was already at target, no audit row is created.
-- **`TestAutoRefillCron.test_history_rows_link_back_to_audit(self)`** — `tests/test_auto_refill_cron.py:452`
+- **`TestAutoRefillCron.test_history_rows_link_back_to_audit(self)`** - `tests/test_auto_refill_cron.py:452`
   - Every balance_history row from the pass has auto_refill_id set
-- **`TestAutoRefillCron.test_total_refill_aggregates_across_multiple_employees(self)`** — `tests/test_auto_refill_cron.py:468`
+- **`TestAutoRefillCron.test_total_refill_aggregates_across_multiple_employees(self)`** - `tests/test_auto_refill_cron.py:468`
   - auto_refill_total is sum of all per-employee balance_change values.
-- **`TestAutoRefillCron.test_mixed_cohort_processes_each_correctly(self)`** — `tests/test_auto_refill_cron.py:488`
+- **`TestAutoRefillCron.test_mixed_cohort_processes_each_correctly(self)`** - `tests/test_auto_refill_cron.py:488`
   - Multiple employees with mixed types and edge states in one pass —
-- **`TestAutoRefillCron.test_changing_amount_triggers_reset_on_next_cycle(self)`** — `tests/test_auto_refill_cron.py:558`
+- **`TestAutoRefillCron.test_changing_amount_triggers_reset_on_next_cycle(self)`** - `tests/test_auto_refill_cron.py:558`
   - If admin changes refill_amount mid-month, the next cycle must
-- **`TestAutoRefillCron.test_switching_type_fixed_to_up_to_keeps_balance(self)`** — `tests/test_auto_refill_cron.py:580`
+- **`TestAutoRefillCron.test_switching_type_fixed_to_up_to_keeps_balance(self)`** - `tests/test_auto_refill_cron.py:580`
   - Switching type from fixed → up_to mid-flight: existing balance
-- **`fc(a, b)`** — `tests/test_vending_e2e.py:15`
+- **`TestVendingEventMultiCompanyRule.setUpClass(cls)`** (`@classmethod`) - `tests/test_multi_company_rules.py:29`
+  - super-split (super): pre=- · post=`with_context`
+  - effects: `with_context`
+  - touches: `res.company`, `res.users`
+- **`TestVendingEventMultiCompanyRule.test_own_company_event_visible(self)`** - `tests/test_multi_company_rules.py:99`
+  - Sanity: an event on a company-A webstack stays visible to a
+- **`TestVendingEventMultiCompanyRule.test_no_company_webstack_event_visible(self)`** - `tests/test_multi_company_rules.py:107`
+  - Regression: an event whose controller->webstack chain ends in
+- **`TestVendingEventMultiCompanyRule.test_other_company_event_stays_hidden(self)`** - `tests/test_multi_company_rules.py:116`
+  - Loosening for False must NOT leak other companies' events.
+- **`fc(a, b)`** - `tests/test_vending_e2e.py:15`
   - Shorthand float_compare with 2 decimal precision.
-- **`TestVendingE2E.setUp(self)`** — `tests/test_vending_e2e.py:26`
+- **`TestVendingE2E.setUp(self)`** - `tests/test_vending_e2e.py:26`
   - calls `super()`
-- **`TestVendingE2E.test_01_ev64_balance_request_grant(self)`** — `tests/test_vending_e2e.py:202`
+- **`TestVendingE2E.test_01_ev64_balance_request_grant(self)`** - `tests/test_vending_e2e.py:202`
   - Full flow: add balance → ev64 → DB2 response with correct balance.
-- **`TestVendingE2E.test_02_ev64_deny_zero_balance(self)`** — `tests/test_vending_e2e.py:217`
+- **`TestVendingE2E.test_02_ev64_deny_zero_balance(self)`** - `tests/test_vending_e2e.py:217`
   - Zero balance → deny (empty response), event still created.
-- **`TestVendingE2E.test_03_ev47_purchase_deducts_balance(self)`** — `tests/test_vending_e2e.py:229`
+- **`TestVendingE2E.test_03_ev47_purchase_deducts_balance(self)`** - `tests/test_vending_e2e.py:229`
   - Purchase: balance decreases, history record created, event logged.
-- **`TestVendingE2E.test_04_ev47_cash_purchase_increases_cash_contained(self)`** — `tests/test_vending_e2e.py:251`
+- **`TestVendingE2E.test_04_ev47_cash_purchase_increases_cash_contained(self)`** - `tests/test_vending_e2e.py:251`
   - Cash purchase (no card) increases machine cash_contained.
-- **`TestVendingE2E.test_05_ev50_self_recharge(self)`** — `tests/test_vending_e2e.py:267`
+- **`TestVendingE2E.test_05_ev50_self_recharge(self)`** - `tests/test_vending_e2e.py:267`
   - Self recharge: employee adds personal money via machine.
-- **`TestVendingE2E.test_06_combined_balance_in_ev64(self)`** — `tests/test_vending_e2e.py:283`
+- **`TestVendingE2E.test_06_combined_balance_in_ev64(self)`** - `tests/test_vending_e2e.py:283`
   - ev64 returns sum of company + personal balance.
-- **`TestVendingE2E.test_07_daily_limit_caps_balance(self)`** — `tests/test_vending_e2e.py:298`
+- **`TestVendingE2E.test_07_daily_limit_caps_balance(self)`** - `tests/test_vending_e2e.py:298`
   - Daily limit restricts available balance in ev64.
-- **`TestVendingE2E.test_08_daily_limit_exhausted_after_purchase(self)`** — `tests/test_vending_e2e.py:313`
+- **`TestVendingE2E.test_08_daily_limit_exhausted_after_purchase(self)`** - `tests/test_vending_e2e.py:313`
   - After spending daily limit, next ev64 returns deny.
-- **`TestVendingE2E.test_09_negative_balance_with_credit_limit(self)`** — `tests/test_vending_e2e.py:330`
+- **`TestVendingE2E.test_09_negative_balance_with_credit_limit(self)`** - `tests/test_vending_e2e.py:330`
   - Negative balance allowed up to credit limit.
-- **`TestVendingE2E.test_10_attendance_not_checked_in_deny(self)`** — `tests/test_vending_e2e.py:345`
+- **`TestVendingE2E.test_10_attendance_not_checked_in_deny(self)`** - `tests/test_vending_e2e.py:345`
   - Employee with attendance check but not checked in → deny.
-- **`TestVendingE2E.test_11_purchase_overflows_to_personal_balance(self)`** — `tests/test_vending_e2e.py:358`
+- **`TestVendingE2E.test_11_purchase_overflows_to_personal_balance(self)`** - `tests/test_vending_e2e.py:358`
   - Purchase exceeding company balance uses credit, verified via ev64.
-- **`TestVendingE2E.test_12_auto_refill_fixed(self)`** — `tests/test_vending_e2e.py:381`
+- **`TestVendingE2E.test_12_auto_refill_fixed(self)`** - `tests/test_vending_e2e.py:381`
   - Fixed auto refill sets balance to refill_amount.
   - effects: `with_company`
   - touches: `hr.rfid.vending.auto.refill`
-- **`TestVendingE2E.test_13_auto_refill_up_to(self)`** — `tests/test_vending_e2e.py:399`
+- **`TestVendingE2E.test_13_auto_refill_up_to(self)`** - `tests/test_vending_e2e.py:399`
   - Up-to refill tops up balance to refill_max, not beyond.
   - effects: `with_company`
   - touches: `hr.rfid.vending.auto.refill`
-- **`TestVendingE2E.test_14_auto_refill_up_to_no_refill_when_full(self)`** — `tests/test_vending_e2e.py:422`
+- **`TestVendingE2E.test_14_auto_refill_up_to_no_refill_when_full(self)`** - `tests/test_vending_e2e.py:422`
   - Up-to refill does nothing when balance >= max.
   - effects: `with_company`
   - touches: `hr.rfid.vending.auto.refill`
-- **`TestVendingE2E.test_15_purchase_links_product(self)`** — `tests/test_vending_e2e.py:443`
+- **`TestVendingE2E.test_15_purchase_links_product(self)`** - `tests/test_vending_e2e.py:443`
   - Purchase event links correct product.template via slot mapping.
   - effects: `sudo`
   - touches: `hr.rfid.vending.event`
-- **`TestVendingE2E.test_16_balance_history_audit_trail(self)`** — `tests/test_vending_e2e.py:464`
+- **`TestVendingE2E.test_16_balance_history_audit_trail(self)`** - `tests/test_vending_e2e.py:464`
   - Each balance change creates a history record with correct data.
-- **`TestVendingE2E.test_17_cash_collect_wizard(self)`** — `tests/test_vending_e2e.py:486`
+- **`TestVendingE2E.test_17_cash_collect_wizard(self)`** - `tests/test_vending_e2e.py:486`
   - Cash collect wizard zeroes out machine cash_contained.
   - effects: `with_context`
   - touches: `hr.rfid.ctrl.cash.wiz`
-- **`TestVendingE2E.test_18_full_purchase_lifecycle(self)`** — `tests/test_vending_e2e.py:509`
+- **`TestVendingE2E.test_18_full_purchase_lifecycle(self)`** - `tests/test_vending_e2e.py:509`
   - Complete lifecycle: add balance → purchase → refill → purchase.
   - effects: `with_company`
   - touches: `hr.rfid.vending.auto.refill`
-- **`TestVendingE2E.test_19_multiple_employees_isolated(self)`** — `tests/test_vending_e2e.py:555`
+- **`TestVendingE2E.test_19_multiple_employees_isolated(self)`** - `tests/test_vending_e2e.py:555`
   - Purchases by one employee don't affect another's balance.
-- **`TestVendingE2E.test_20_unknown_card_deny(self)`** — `tests/test_vending_e2e.py:588`
+- **`TestVendingE2E.test_20_unknown_card_deny(self)`** - `tests/test_vending_e2e.py:588`
   - Unknown card gets deny, no events or balance changes.
-- **`TestVendingE2E.test_21_reversal_restores_balance(self)`** — `tests/test_vending_e2e.py:611`
+- **`TestVendingE2E.test_21_reversal_restores_balance(self)`** - `tests/test_vending_e2e.py:611`
   - Reversal of purchase restores balance, verified via ev64.
-- **`TestVendingE2E.test_22_reversal_creates_history(self)`** — `tests/test_vending_e2e.py:635`
+- **`TestVendingE2E.test_22_reversal_creates_history(self)`** - `tests/test_vending_e2e.py:635`
   - Reversal creates positive balance_history linked to same event.
   - touches: `hr.rfid.vending.balance.history`
-- **`TestVendingE2E.test_23_double_reversal_blocked(self)`** — `tests/test_vending_e2e.py:656`
+- **`TestVendingE2E.test_23_double_reversal_blocked(self)`** - `tests/test_vending_e2e.py:656`
   - Cannot reverse an already reversed event.
-- **`TestVendingE2E.test_24_reversal_non_purchase_blocked(self)`** — `tests/test_vending_e2e.py:670`
+- **`TestVendingE2E.test_24_reversal_non_purchase_blocked(self)`** - `tests/test_vending_e2e.py:670`
   - Cannot reverse non-purchase events.
   - effects: `sudo`
   - touches: `hr.rfid.vending.event`
-- **`TestVendingE2E.test_25_reversal_restores_daily_limit(self)`** — `tests/test_vending_e2e.py:685`
+- **`TestVendingE2E.test_25_reversal_restores_daily_limit(self)`** - `tests/test_vending_e2e.py:685`
   - Reversal within same day neutralizes daily spend.
-- **`TestVendingEv64.setUp(self)`** — `tests/test_vending_ev64.py:13`
+- **`TestVendingEv64.setUp(self)`** - `tests/test_vending_ev64.py:13`
   - calls `super()`
-- **`TestVendingEv64.test_ev64_card_not_found(self)`** — `tests/test_vending_ev64.py:62`
+- **`TestVendingEv64.test_ev64_card_not_found(self)`** - `tests/test_vending_ev64.py:62`
   - Card unknown to system -> deny (empty response), no vending event.
-- **`TestVendingEv64.test_ev64_card_inactive(self)`** — `tests/test_vending_ev64.py:70`
+- **`TestVendingEv64.test_ev64_card_inactive(self)`** - `tests/test_vending_ev64.py:70`
   - Inactive card -> deny, no vending event.
-- **`TestVendingEv64.test_ev64_employee_not_checked_in(self)`** — `tests/test_vending_ev64.py:79`
+- **`TestVendingEv64.test_ev64_employee_not_checked_in(self)`** - `tests/test_vending_ev64.py:79`
   - Employee with attendance check enabled but not checked in -> deny.
-- **`TestVendingEv64.test_ev64_zero_balance(self)`** — `tests/test_vending_ev64.py:88`
+- **`TestVendingEv64.test_ev64_zero_balance(self)`** - `tests/test_vending_ev64.py:88`
   - Employee with zero balance -> deny, vending event created.
-- **`TestVendingEv64.test_ev64_grant_with_balance(self)`** — `tests/test_vending_ev64.py:99`
+- **`TestVendingEv64.test_ev64_grant_with_balance(self)`** - `tests/test_vending_ev64.py:99`
   - Employee with balance -> grant (DB2 command with balance).
   - effects: `with_context`
-- **`TestVendingEv64.test_ev49_vend_fail_creates_system_event(self)`** — `tests/test_vending_ev64.py:120`
+- **`TestVendingEv64.test_ev49_vend_fail_creates_system_event(self)`** - `tests/test_vending_ev64.py:120`
   - VEND FAIL (ev49) -> creates system event.
   - touches: `hr.rfid.event.system`
-- **`TestVendingEv64.test_vending_init_skips_ff(self)`** — `tests/test_vending_ev64.py:133`
+- **`TestVendingEv64.test_vending_init_skips_ff(self)`** - `tests/test_vending_ev64.py:133`
   - Vending controller init sequence should NOT include FF command.
   - touches: `hr.rfid.command`
-- **`VendingController.test_vending_functionality(self)`** — `tests/test_vending_functionality.py:13`
+- **`VendingController.test_vending_functionality(self)`** - `tests/test_vending_functionality.py:13`
+- **`TestVendingKeyAuth.setUp(self)`** - `tests/test_vending_key_auth.py:26`
+  - calls `super()`
+- **`TestVendingKeyAuth.test_wrong_key_rejected(self)`** - `tests/test_vending_key_auth.py:63`
+  - A forged event with the wrong key is rejected: no vending event, no
+- **`TestVendingKeyAuth.test_correct_key_reaches_vending(self)`** - `tests/test_vending_key_auth.py:77`
+  - The same event WITH the correct key passes authentication and reaches
+- **`TestVendingKeyAuth.test_no_convertor_delegates_without_crash(self)`** - `tests/test_vending_key_auth.py:89`
+  - A POST with no 'convertor' (raw/barcode device) must not crash the
 
 ### Private helpers
 
-- **`TestAutoRefillCron._make_employee(self, name, company=None, **vending_vals)`** — `tests/test_auto_refill_cron.py:54`
+- **`TestAutoRefillCron._make_employee(self, name, company=None, **vending_vals)`** - `tests/test_auto_refill_cron.py:54`
   - touches: `hr.employee`
-- **`TestAutoRefillCron._set_company_due(self, company=None)`** — `tests/test_auto_refill_cron.py:61`
-- **`TestAutoRefillCron._set_company_future(self, company=None)`** — `tests/test_auto_refill_cron.py:66`
-- **`TestVendingE2E._setup_products(self)`** — `tests/test_vending_e2e.py:31`
+- **`TestAutoRefillCron._set_company_due(self, company=None)`** - `tests/test_auto_refill_cron.py:61`
+- **`TestAutoRefillCron._set_company_future(self, company=None)`** - `tests/test_auto_refill_cron.py:66`
+- **`TestVendingEventMultiCompanyRule._make_event_chain(cls, label, company_id, serial)`** (`@classmethod`) - `tests/test_multi_company_rules.py:65`
+  - Build webstack -> controller -> reader -> vending event.
+  - touches: `hr.rfid.ctrl`, `hr.rfid.reader`, `hr.rfid.vending.event`, `hr.rfid.webstack`
+- **`TestVendingEventMultiCompanyRule._visible_ids(self)`** - `tests/test_multi_company_rules.py:94`
+  - touches: `hr.rfid.vending.event`
+- **`TestVendingE2E._setup_products(self)`** - `tests/test_vending_e2e.py:31`
   - Create products and configure vending machine slots.
   - effects: `with_context`
   - touches: `hr.rfid.ctrl.vending.settings`, `product.template`
-- **`TestVendingE2E._ev64(self, card_number=None, ctrl_id=None)`** — `tests/test_vending_e2e.py:76`
+- **`TestVendingE2E._ev64(self, card_number=None, ctrl_id=None)`** - `tests/test_vending_e2e.py:76`
   - Send ev64 (balance request) from vending machine.
-- **`TestVendingE2E._ev47(self, product_slot, price_units, change_units=0, card_number=None, ctrl_id=None)`** — `tests/test_vending_e2e.py:96`
+- **`TestVendingE2E._ev47(self, product_slot, price_units, change_units=0, card_number=None, ctrl_id=None)`** - `tests/test_vending_e2e.py:96`
   - Send ev47 (purchase complete) from vending machine.
-- **`TestVendingE2E._ev50(self, price_units, change_units=0, card_number=None, ctrl_id=None)`** — `tests/test_vending_e2e.py:123`
+- **`TestVendingE2E._ev50(self, price_units, change_units=0, card_number=None, ctrl_id=None)`** - `tests/test_vending_e2e.py:123`
   - Send ev50 (cash collect / self recharge) from vending machine.
-- **`TestVendingE2E._assert_balance_response(self, response, expected_units)`** — `tests/test_vending_e2e.py:149`
+- **`TestVendingE2E._assert_balance_response(self, response, expected_units)`** - `tests/test_vending_e2e.py:149`
   - Assert that ev64 response contains correct balance.
-- **`TestVendingE2E._assert_deny(self, response)`** — `tests/test_vending_e2e.py:157`
+- **`TestVendingE2E._assert_deny(self, response)`** - `tests/test_vending_e2e.py:157`
   - Assert that ev64 response is a deny (empty).
-- **`TestVendingE2E._vending_event_count(self)`** — `tests/test_vending_e2e.py:161`
+- **`TestVendingE2E._vending_event_count(self)`** - `tests/test_vending_e2e.py:161`
   - effects: `sudo`
   - touches: `hr.rfid.vending.event`
-- **`TestVendingE2E._history_count(self, employee=None)`** — `tests/test_vending_e2e.py:166`
+- **`TestVendingE2E._history_count(self, employee=None)`** - `tests/test_vending_e2e.py:166`
   - touches: `hr.rfid.vending.balance.history`
-- **`TestVendingE2E._last_history(self, employee=None)`** — `tests/test_vending_e2e.py:172`
+- **`TestVendingE2E._last_history(self, employee=None)`** - `tests/test_vending_e2e.py:172`
   - touches: `hr.rfid.vending.balance.history`
-- **`TestVendingE2E._emp(self)`** — `tests/test_vending_e2e.py:178`
+- **`TestVendingE2E._emp(self)`** - `tests/test_vending_e2e.py:178`
   - Shortcut to reload employee.
-- **`TestVendingE2E._reset_employee(self, employee=None)`** — `tests/test_vending_e2e.py:183`
+- **`TestVendingE2E._reset_employee(self, employee=None)`** - `tests/test_vending_e2e.py:183`
   - Reset employee vending state to zero for test isolation.
-- **`TestVendingE2E._get_last_purchase_event(self)`** — `tests/test_vending_e2e.py:598`
+- **`TestVendingE2E._get_last_purchase_event(self)`** - `tests/test_vending_e2e.py:598`
   - effects: `sudo`
   - touches: `hr.rfid.vending.event`
-- **`TestVendingE2E._reverse_event(self, event, reason='Test reversal')`** — `tests/test_vending_e2e.py:604`
+- **`TestVendingE2E._reverse_event(self, event, reason='Test reversal')`** - `tests/test_vending_e2e.py:604`
   - Run the reversal wizard on an event.
   - effects: `with_context`
   - touches: `hr.rfid.vending.event.reverse`
-- **`TestVendingEv64._ev64(self, card_number, ctrl_id=None, bos=1, tos=1)`** — `tests/test_vending_ev64.py:17`
+- **`TestVendingEv64._ev64(self, card_number, ctrl_id=None, bos=1, tos=1)`** - `tests/test_vending_ev64.py:17`
   - Send ev64 (Cloud Card Request) and return parsed response.
-- **`TestVendingEv64._ev49(self, card_number, ctrl_id=None)`** — `tests/test_vending_ev64.py:36`
+- **`TestVendingEv64._ev49(self, card_number, ctrl_id=None)`** - `tests/test_vending_ev64.py:36`
   - Send ev49 (VEND FAIL) event.
-- **`TestVendingEv64._vending_event_count(self)`** — `tests/test_vending_ev64.py:55`
+- **`TestVendingEv64._vending_event_count(self)`** - `tests/test_vending_ev64.py:55`
   - effects: `sudo`
   - touches: `hr.rfid.vending.event`
-- **`VendingController._add_products(self, ctrl_id=None)`** — `tests/test_vending_functionality.py:24`
+- **`VendingController._add_products(self, ctrl_id=None)`** - `tests/test_vending_functionality.py:24`
   - effects: `with_context`
   - touches: `hr.rfid.ctrl.vending.settings`, `product.template`
-- **`VendingController._check_history_records_count(self, count)`** — `tests/test_vending_functionality.py:65`
+- **`VendingController._check_history_records_count(self, count)`** - `tests/test_vending_functionality.py:65`
   - touches: `hr.rfid.vending.balance.history`
-- **`VendingController._check_balance(self, expected, ctrl_id=None)`** — `tests/test_vending_functionality.py:73`
-- **`VendingController._balance_test(self, ctrl_id=None)`** — `tests/test_vending_functionality.py:95`
+- **`VendingController._check_balance(self, expected, ctrl_id=None)`** - `tests/test_vending_functionality.py:73`
+- **`VendingController._balance_test(self, ctrl_id=None)`** - `tests/test_vending_functionality.py:101`
   - effects: `with_company`
   - touches: `hr.rfid.vending.auto.refill`
-- **`VendingController._sale_event(self, product, price_in_units, change_in_units=0, card_number=None, ctrl_id=None)`** — `tests/test_vending_functionality.py:136`
-- **`VendingController._sale_test(self, ctrl_id=None)`** — `tests/test_vending_functionality.py:161`
+- **`VendingController._sale_event(self, product, price_in_units, change_in_units=0, card_number=None, ctrl_id=None)`** - `tests/test_vending_functionality.py:142`
+- **`VendingController._sale_test(self, ctrl_id=None)`** - `tests/test_vending_functionality.py:167`
   - effects: `with_company`
   - touches: `hr.rfid.vending.auto.refill`
+- **`TestVendingKeyAuth._ev64_with_key(self, card_number, key)`** - `tests/test_vending_key_auth.py:34`
+  - Send an ev64 (Cloud Card Request) signed with an explicit key.
+- **`TestVendingKeyAuth._vending_event_count(self)`** - `tests/test_vending_key_auth.py:52`
+  - effects: `sudo`
+  - touches: `hr.rfid.vending.event`
+- **`TestVendingKeyAuth._key_mismatch_sys_events(self)`** - `tests/test_vending_key_auth.py:57`
+  - effects: `sudo`
+  - touches: `hr.rfid.event.system`
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -926,30 +957,30 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `ctrl_cash_collect_log_view_form` | `hr.rfid.ctrl.cash.log` | — |  | `views/ctrl_cash_collect_log.xml` |
-| `ctrl_cash_collect_log_view_tree` | `hr.rfid.ctrl.cash.log` | — |  | `views/ctrl_cash_collect_log.xml` |
-| `ctrl_cash_collect_wizard_view_form` | `hr.rfid.ctrl.cash.wiz` | — |  | `views/ctrl_cash_collect_wizard.xml` |
-| `digest_digest_view_form` | `digest.digest` | — | digest.digest_digest_view_form | `views/digest_views.xml` |
-| `hr_employee_vending_balance_change_form` | `hr.employee.vending.balance.wiz` | — |  | `views/hr_employee_views.xml` |
-| `hr_employee_vending_balance_set_form` | `hr.employee.vending.balance.wiz` | — |  | `views/hr_employee_views.xml` |
-| `hr_rfid_employee_form_inherit_hr_rfid_vending` | `hr.employee` | — | hr.view_employee_form | `views/hr_employee_views.xml` |
-| `hr_rfid_employee_view_tree_inherit_hr_rfid_vending` | `hr.employee` | — | hr.view_employee_tree | `views/hr_employee_views.xml` |
-| `hr_rfid_ctrl_vending_prices_wiz` | `hr.rfid.ctrl.vending.settings` | — |  | `views/hr_rfid_ctrl.xml` |
-| `hr_rfid_ctrl_view_form_inherit_hr_rfid_vending` | `hr.rfid.ctrl` | — | hr_rfid.hr_rfid_controller_view_form | `views/hr_rfid_ctrl.xml` |
-| `hr_rfid_vending_auto_refill_form` | `hr.rfid.vending.auto.refill` | — |  | `views/hr_rfid_vending_auto_refill.xml` |
-| `hr_rfid_vending_auto_refill_tree` | `hr.rfid.vending.auto.refill` | — |  | `views/hr_rfid_vending_auto_refill.xml` |
-| `hr_rfid_vending_auto_refill_search` | `hr.rfid.vending.auto.refill` | — |  | `views/hr_rfid_vending_auto_refill.xml` |
-| `hr_rfid_vending_balance_history_form` | `hr.rfid.vending.balance.history` | — |  | `views/hr_rfid_vending_balance_history.xml` |
-| `hr_rfid_vending_balance_history_tree` | `hr.rfid.vending.balance.history` | — |  | `views/hr_rfid_vending_balance_history.xml` |
-| `hr_rfid_vending_balance_history_search` | `hr.rfid.vending.balance.history` | — |  | `views/hr_rfid_vending_balance_history.xml` |
-| `hr_rfid_vending_balance_history_graph` | `hr.rfid.vending.balance.history` | — |  | `views/hr_rfid_vending_balance_history.xml` |
-| `hr_rfid_vending_balance_history_pivot` | `hr.rfid.vending.balance.history` | — |  | `views/hr_rfid_vending_balance_history.xml` |
-| `view_company_form_inherit_vending` | `res.company` | — | base.view_company_form | `views/res_company.xml` |
-| `hr_rfid_vending_event_form` | `hr.rfid.vending.event` | — |  | `views/vending_event.xml` |
-| `hr_rfid_vending_event_tree` | `hr.rfid.vending.event` | — |  | `views/vending_event.xml` |
-| `hr_rfid_vending_event_search` | `hr.rfid.vending.event` | — |  | `views/vending_event.xml` |
-| `hr_rfid_vending_event_pivot` | `hr.rfid.vending.event` | — |  | `views/vending_event.xml` |
-| `hr_rfid_vending_event_graph` | `hr.rfid.vending.event` | — |  | `views/vending_event.xml` |
+| `ctrl_cash_collect_log_view_form` | `hr.rfid.ctrl.cash.log` | - |  | `views/ctrl_cash_collect_log.xml` |
+| `ctrl_cash_collect_log_view_tree` | `hr.rfid.ctrl.cash.log` | - |  | `views/ctrl_cash_collect_log.xml` |
+| `ctrl_cash_collect_wizard_view_form` | `hr.rfid.ctrl.cash.wiz` | - |  | `views/ctrl_cash_collect_wizard.xml` |
+| `digest_digest_view_form` | `digest.digest` | - | digest.digest_digest_view_form | `views/digest_views.xml` |
+| `hr_employee_vending_balance_change_form` | `hr.employee.vending.balance.wiz` | - |  | `views/hr_employee_views.xml` |
+| `hr_employee_vending_balance_set_form` | `hr.employee.vending.balance.wiz` | - |  | `views/hr_employee_views.xml` |
+| `hr_rfid_employee_form_inherit_hr_rfid_vending` | `hr.employee` | - | hr.view_employee_form | `views/hr_employee_views.xml` |
+| `hr_rfid_employee_view_tree_inherit_hr_rfid_vending` | `hr.employee` | - | hr.view_employee_tree | `views/hr_employee_views.xml` |
+| `hr_rfid_ctrl_vending_prices_wiz` | `hr.rfid.ctrl.vending.settings` | - |  | `views/hr_rfid_ctrl.xml` |
+| `hr_rfid_ctrl_view_form_inherit_hr_rfid_vending` | `hr.rfid.ctrl` | - | hr_rfid.hr_rfid_controller_view_form | `views/hr_rfid_ctrl.xml` |
+| `hr_rfid_vending_auto_refill_form` | `hr.rfid.vending.auto.refill` | - |  | `views/hr_rfid_vending_auto_refill.xml` |
+| `hr_rfid_vending_auto_refill_tree` | `hr.rfid.vending.auto.refill` | - |  | `views/hr_rfid_vending_auto_refill.xml` |
+| `hr_rfid_vending_auto_refill_search` | `hr.rfid.vending.auto.refill` | - |  | `views/hr_rfid_vending_auto_refill.xml` |
+| `hr_rfid_vending_balance_history_form` | `hr.rfid.vending.balance.history` | - |  | `views/hr_rfid_vending_balance_history.xml` |
+| `hr_rfid_vending_balance_history_tree` | `hr.rfid.vending.balance.history` | - |  | `views/hr_rfid_vending_balance_history.xml` |
+| `hr_rfid_vending_balance_history_search` | `hr.rfid.vending.balance.history` | - |  | `views/hr_rfid_vending_balance_history.xml` |
+| `hr_rfid_vending_balance_history_graph` | `hr.rfid.vending.balance.history` | - |  | `views/hr_rfid_vending_balance_history.xml` |
+| `hr_rfid_vending_balance_history_pivot` | `hr.rfid.vending.balance.history` | - |  | `views/hr_rfid_vending_balance_history.xml` |
+| `view_company_form_inherit_vending` | `res.company` | - | base.view_company_form | `views/res_company.xml` |
+| `hr_rfid_vending_event_form` | `hr.rfid.vending.event` | - |  | `views/vending_event.xml` |
+| `hr_rfid_vending_event_tree` | `hr.rfid.vending.event` | - |  | `views/vending_event.xml` |
+| `hr_rfid_vending_event_search` | `hr.rfid.vending.event` | - |  | `views/vending_event.xml` |
+| `hr_rfid_vending_event_pivot` | `hr.rfid.vending.event` | - |  | `views/vending_event.xml` |
+| `hr_rfid_vending_event_graph` | `hr.rfid.vending.event` | - |  | `views/vending_event.xml` |
 
 #### Sample XPath operations
 
@@ -1010,18 +1041,18 @@ Who can do what. Answer access-related questions from this section.
 
 ### Record rules (ir.rule)
 
-- **`ir_rule_hr_rfid_vending_event_user_multi_company`** on `model_hr_rfid_vending_event` — perms=`R`, groups=`global`, domain=`[('controller_id.webstack_id.company_id', 'in', company_ids)]`
-- **`ir_rule_hr_rfid_vending_balance_history_multi_company`** on `model_hr_rfid_vending_balance_history` — perms=`R`, groups=`global`, domain=`[
+- **`ir_rule_hr_rfid_vending_event_user_multi_company`** on `model_hr_rfid_vending_event` - perms=`R`, groups=`global`, domain=`['|', '|', ('controller_id', '=', False), ('controller_id.webstack_id.company_id', '=', False), ('controller_id.webstack_id.company_id', 'in', company_ids)]`
+- **`ir_rule_hr_rfid_vending_balance_history_multi_company`** on `model_hr_rfid_vending_balance_history` - perms=`R`, groups=`global`, domain=`[
                 '|',
                 '|', ('employee_id.company_id', 'in', company_ids), ('employee_id.company_id', '=', False),
                 '|', ('item_id.company_id', 'in', company_ids), ('item_id.company_id', '=', False)
             ]`
-- **`ir_rule_hr_rfid_vending_auto_refill_multi_company`** on `model_hr_rfid_vending_auto_refill` — perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
-- **`hr_rfid_vending_operator_department_vending_events_rule`** on `hr_rfid_vending.model_hr_rfid_vending_event` — perms=`RD`, groups=`global`, domain=`
+- **`ir_rule_hr_rfid_vending_auto_refill_multi_company`** on `model_hr_rfid_vending_auto_refill` - perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+- **`hr_rfid_vending_operator_department_vending_events_rule`** on `hr_rfid_vending.model_hr_rfid_vending_event` - perms=`RD`, groups=`global`, domain=`
         [('employee_id.department_id.id','=',user.employee_ids.department_id.id)]
       `
-- **`hr_rfid_group_operator_vending_events_rule`** on `hr_rfid_vending.model_hr_rfid_vending_event` — perms=`RD`, groups=`global`, domain=`[(1,'=',1)] `
-- **`hr_rfid_vending_department_vending_balance_history_rule`** on `hr_rfid_vending.model_hr_rfid_vending_balance_history` — perms=`RD`, groups=`global`, domain=`[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]`
+- **`hr_rfid_group_operator_vending_events_rule`** on `hr_rfid_vending.model_hr_rfid_vending_event` - perms=`RD`, groups=`global`, domain=`[(1,'=',1)] `
+- **`hr_rfid_vending_department_vending_balance_history_rule`** on `hr_rfid_vending.model_hr_rfid_vending_balance_history` - perms=`RD`, groups=`global`, domain=`[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]`
 
 
 ## Data & Automation <a id='data'></a>
@@ -1035,8 +1066,21 @@ XML records seeded at install and scheduled actions.
 
 ### Data records summary
 
+- `hr.rfid.vending.event`: 5 record(s)
+- `product.template`: 4 record(s)
+- `hr.rfid.vending.balance.history`: 4 record(s)
+- `hr.employee`: 3 record(s)
 - `ir.sequence`: 2 record(s)
+- `hr.rfid.ctrl.vending.row`: 2 record(s)
 - `ir.cron`: 1 record(s)
+- `product.pricelist`: 1 record(s)
+- `hr.rfid.ctrl`: 1 record(s)
+- `hr.rfid.reader`: 1 record(s)
+- `res.company`: 1 record(s)
+- `hr.rfid.card`: 1 record(s)
+- `hr.rfid.event.system`: 1 record(s)
+- `hr.rfid.vending.auto.refill`: 1 record(s)
+- `hr.rfid.ctrl.cash.log`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
@@ -1045,13 +1089,13 @@ This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWe
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -1060,312 +1104,177 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Candidate entries mined from code comments, git history and past Claude Code sessions. Review before publishing; `<!-- source: ... -->` markers should be removed after vetting.
+Entries derived from the module's own code comments and bug-fix commit history.
 
 ### From `code_comments` (9)
 
 #### TODO: Move into function "deal_with_ev_64"
-<!-- source: code_comments ref: controllers/main.py:102 occ: 1 conf: 0.50 -->
 
-**TODO** in `controllers/main.py:102`
+**TODO** in `controllers/main.py:115`
 
 > Move into function "deal_with_ev_64"
 
 #### TODO: Move into function "deal_with_ev_47"
-<!-- source: code_comments ref: controllers/main.py:145 occ: 1 conf: 0.50 -->
 
-**TODO** in `controllers/main.py:145`
+**TODO** in `controllers/main.py:158`
 
 > Move into function "deal_with_ev_47"
 
 #### TODO: Reduce item quantity
-<!-- source: code_comments ref: controllers/main.py:212 occ: 1 conf: 0.50 -->
 
-**TODO** in `controllers/main.py:212`
+**TODO** in `controllers/main.py:225`
 
 > Reduce item quantity
 
 #### TODO: Move into function "deal_with_err_evs"
-<!-- source: code_comments ref: controllers/main.py:224 occ: 1 conf: 0.50 -->
 
-**TODO** in `controllers/main.py:224`
+**TODO** in `controllers/main.py:237`
 
 > Move into function "deal_with_err_evs"
 
 #### TODO: What type of error?
-<!-- source: code_comments ref: models/hr_rfid_vending_event.py:17 occ: 1 conf: 0.50 -->
 
 **TODO** in `models/hr_rfid_vending_event.py:17`
 
 > What type of error?
 
 #### TODO: What type of error?
-<!-- source: code_comments ref: models/hr_rfid_vending_event.py:18 occ: 1 conf: 0.50 -->
 
 **TODO** in `models/hr_rfid_vending_event.py:18`
 
 > What type of error?
 
 #### TODO: What type of error?
-<!-- source: code_comments ref: models/hr_rfid_vending_event.py:19 occ: 1 conf: 0.50 -->
 
 **TODO** in `models/hr_rfid_vending_event.py:19`
 
 > What type of error?
 
 #### TODO: Replace this search() override with a proper ir.rule for group_custome
-<!-- source: code_comments ref: models/hr_rfid_vending_event.py:298 occ: 1 conf: 0.50 -->
 
 **TODO** in `models/hr_rfid_vending_event.py:298`
 
 > Replace this search() override with a proper ir.rule for group_customer.
 
 #### TODO: Add this event if happend
-<!-- source: code_comments ref: tests/test_vending_functionality.py:10 occ: 1 conf: 0.50 -->
 
 **TODO** in `tests/test_vending_functionality.py:10`
 
 > Add this event if happend
 
-### From `gotchas` (11)
+### From `git_log` (73)
 
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
+#### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior chang
 
-From **Модели и полета** in odoo19-gotchas.md:
+Commit `b5dfd0bc1f` (2026-07-22): fix(hr_rfid): green the vending + tour tests broken by three prior changes
 
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
+#### Fix: [FIX] hr_rfid/vending/ip_cam: authenticate hardware & camera webhooks
 
-Matched tokens: `@api.model_create_multi, api.model_create_multi, _compute`
+Commit `93125c7183` (2026-06-11): [FIX] hr_rfid/vending/ip_cam: authenticate hardware & camera webhooks
 
-#### Gotcha: `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpC
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
+#### Fix: [FIX] hr_rfid family: multi-company rules — global records + broken M2O 
 
-From **Тестове** in odoo19-gotchas.md:
-
-> `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpCase` тестове с DB writes
-
-Matched tokens: `readonly_enabled, _registry_readonly_enabled = false, httpcase`
-
-#### Gotcha: **`res.groups.category_id` премахнато** → `privilege_id` (M2O към `res
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Security & Constraints** in odoo19-gotchas.md:
-
-> **`res.groups.category_id` премахнато** → `privilege_id` (M2O към `res.groups.privilege`, който има `category_id`). Pattern: създаваш `res.groups.privilege` с `category_id=ref('module_category_X')`, после групите имат `privilege_id=ref('res_groups_privilege_X')`.
-
-Matched tokens: `res.groups.privilege, category_id, privilege_id`
-
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `help=, <p>`
-
-#### Gotcha: **TransientModel + `target='current'` = dead link.** TransientModel за
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Wizards & TransientModel** in odoo19-gotchas.md:
-
-> **TransientModel + `target='current'` = dead link.** TransientModel записи биват изтрити от autovacuum cron след минути до часове. Ако `action_window` връща `target='current'` с `res_id`, browser-ът bookmark-ва URL `/odoo/<model>/<id>` — следващ refresh/back-button → 404 "тотална грешка" / "запис не съществува". **Винаги** използвай `target='new'` (modal dialog) — modal-ите не променят URL-а, така че няма bookmarkable стара ID. Ако имаш Next/Back бутони (`type="object"`), pre-create record-а в `action_open_wizard()` за да съществува за compute_field-а, но дръж dialog-а modal. Производна на това: `_reopen()` helper-и за multistep wizard-и също трябва да са `target='new'`, не `'current'`.
-
-Matched tokens: `'current', type="object"`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчита
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчитай на него за валидация
-
-Matched tokens: `fields.char`
-
-#### Gotcha: SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, н
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, не `ValidationError`
-
-Matched tokens: `validationerror`
-
-#### Gotcha: **Search view: `<group>` без атрибути** — `expand="0"` и `string="Grou
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Search view: `<group>` без атрибути** — `expand="0"` и `string="Group By"` са премахнати. Стария път гърми с `RELAXNG_ERR_INVALIDATTR`.
-
-Matched tokens: `<group>`
-
-#### Gotcha: **Form view inline x2many: `default_X: id` НЕ `active_id`** — `active_
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Form view inline x2many: `default_X: id` НЕ `active_id`** — `active_id` е действие-context, не form-context. Често по-чисто е да не подаваш context изобщо — Odoo автоматично попълва inverse FK.
-
-Matched tokens: `active_id`
-
-#### Gotcha: При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted even
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Общи** in odoo19-gotchas.md:
-
-> При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted event след grant — симулирай с `event_code=3`
-
-Matched tokens: `ev64`
-
-### From `git_log` (70)
+Commit `a58ac6f455` (2026-06-11): [FIX] hr_rfid family: multi-company rules — global records + broken M2O chains were hidden
 
 #### Fix: [FIX] hr_rfid_vending: diagnostic logging + sudo() guard for auto_refill
-<!-- source: git_log ref: cb95baba9e0bb07b08bc290ca2deb89d2f028a69 occ: 1 conf: 0.60 -->
 
 Commit `cb95baba9e` (2026-05-01): [FIX] hr_rfid_vending: diagnostic logging + sudo() guard for auto_refill cron
 
 #### Fix: [FIX] hr_rfid_vending: persist cron interval changes across upgrades
-<!-- source: git_log ref: 2c77712f8c27a5d7af9c5cf465e9e92537253c47 occ: 1 conf: 0.60 -->
 
 Commit `2c77712f8c` (2026-05-01): [FIX] hr_rfid_vending: persist cron interval changes across upgrades
 
 #### Fix: [TEST] hr_rfid_vending: Add ev64 flow tests and fix init sequence
-<!-- source: git_log ref: 27d717a56ea3d05bd8b59d3182cf62d679c1ad0d occ: 1 conf: 0.60 -->
 
 Commit `27d717a56e` (2026-04-03): [TEST] hr_rfid_vending: Add ev64 flow tests and fix init sequence
 
 #### Fix: [IMP] hr_rfid_vending: Fix lazy log formatting and type comparison
-<!-- source: git_log ref: ffabeb6b6e970cf6fb715a84dd67dced80fa64be occ: 1 conf: 0.60 -->
 
 Commit `ffabeb6b6e` (2026-04-03): [IMP] hr_rfid_vending: Fix lazy log formatting and type comparison
 
 #### Fix: [FIX] hr_rfid_vending: Fix singleton error on search with auth=none
-<!-- source: git_log ref: aae51e92e6ccb9b3442dc37867acdb673ca10c33 occ: 1 conf: 0.60 -->
 
 Commit `aae51e92e6` (2026-04-03): [FIX] hr_rfid_vending: Fix singleton error on search with auth=none
 
 #### Fix: [FIX] hr_rfid_vending: Restore TODO comment removed by mistake
-<!-- source: git_log ref: 8ff6c6f7a2e67247368c44dee198d7d413bcc1b0 occ: 1 conf: 0.60 -->
 
 Commit `8ff6c6f7a2` (2026-04-03): [FIX] hr_rfid_vending: Restore TODO comment removed by mistake
 
 #### Fix: [IMP] hr_rfid_vending: Upgrade logging from debug to info level
-<!-- source: git_log ref: 84db2e0a9abc1549f95787dc12d77e2b8e20b01e occ: 1 conf: 0.60 -->
 
 Commit `84db2e0a9a` (2026-04-03): [IMP] hr_rfid_vending: Upgrade logging from debug to info level
 
 #### Fix: [FIX] hr_rfid,hr_rfid_vending: Add readonly=False to hardware routes and
-<!-- source: git_log ref: 1309fee0a83bcda7aa15937f6d220a7d94597be8 occ: 1 conf: 0.60 -->
 
 Commit `1309fee0a8` (2026-04-03): [FIX] hr_rfid,hr_rfid_vending: Add readonly=False to hardware routes and fix onboarding access
 
 #### Fix: [FIX] hr_rfid_vending: Replace deprecated read_group with _read_group
-<!-- source: git_log ref: 544cae50153d2372715848db507efb868bed001d occ: 1 conf: 0.60 -->
 
 Commit `544cae5015` (2026-03-31): [FIX] hr_rfid_vending: Replace deprecated read_group with _read_group
 
 #### Fix: [MIG] all: Migrate hardware routes to Odoo 19 Json2Dispatcher
-<!-- source: git_log ref: 57aba8363e96203480d3792434639abc1b2bc33b occ: 1 conf: 0.60 -->
 
 Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 Json2Dispatcher
 
 #### Fix: [FIX] all: Replace deprecated self._cr with self.env.cr
-<!-- source: git_log ref: f0f152c3e002870dae7239001f5784ec18ba4029 occ: 1 conf: 0.60 -->
 
 Commit `f0f152c3e0` (2026-03-18): [FIX] all: Replace deprecated self._cr with self.env.cr
 
 #### Fix: [FIX] all: Replace deprecated self._context with self.env.context
-<!-- source: git_log ref: c2b001ba20353637d0a0b6541fa6df7d479636e6 occ: 1 conf: 0.60 -->
 
 Commit `c2b001ba20` (2026-02-16): [FIX] all: Replace deprecated self._context with self.env.context
 
 #### Fix: fix license
-<!-- source: git_log ref: 6e49a3ef0cee2364b143dcd71a33030362365dd1 occ: 1 conf: 0.60 -->
 
 Commit `6e49a3ef0c` (2024-09-09): fix license
 
 #### Fix: FIX: Stop balance for archived employees and fix balance with self-charg
-<!-- source: git_log ref: ece161eb61084800fe471cf668d7fa8e705b8452 occ: 1 conf: 0.60 -->
 
 Commit `ece161eb61` (2023-12-05): FIX: Stop balance for archived employees and fix balance with self-charge
 
 #### Fix: Fix for shifted sales data
-<!-- source: git_log ref: 7e85e39f18e6dc837f4c2c1c1d0c01d26a5c44a0 occ: 1 conf: 0.60 -->
 
 Commit `7e85e39f18` (2023-10-16): Fix for shifted sales data
 
 #### Fix: fix product rights for vending operators
-<!-- source: git_log ref: 9971e59c3355f7edf7e67bb5f1a30ed9547535fe occ: 1 conf: 0.60 -->
 
 Commit `9971e59c33` (2023-09-19): fix product rights for vending operators
 
 #### Fix: fix vending event 48,49
-<!-- source: git_log ref: b4e2645783c8f9de177654d44fb87f1d60728049 occ: 1 conf: 0.60 -->
 
 Commit `b4e2645783` (2023-09-13): fix vending event 48,49
 
 #### Fix: fix vending event 48,49
-<!-- source: git_log ref: eb59550e454897cc548d1caedbf25f72c54181a9 occ: 1 conf: 0.60 -->
 
 Commit `eb59550e45` (2023-09-13): fix vending event 48,49
 
 #### Fix: vending fix spend today
-<!-- source: git_log ref: cf2e3f2cb971cc5a2647c058f6a18d6fb4727903 occ: 1 conf: 0.60 -->
 
 Commit `cf2e3f2cb9` (2023-08-08): vending fix spend today
 
 #### Fix: vending fix cron
-<!-- source: git_log ref: 065fada151abf9665337f819a478f16e2680ff74 occ: 1 conf: 0.60 -->
 
 Commit `065fada151` (2023-08-07): vending fix cron
 
 #### Fix: vending fix daly balance
-<!-- source: git_log ref: 5c9f902bc064da42d828a9092e027c1c7d89dbb8 occ: 1 conf: 0.60 -->
 
 Commit `5c9f902bc0` (2023-08-07): vending fix daly balance
 
 #### Fix: v2.1 Added portal functionality, barcode generation and RFID services. M
-<!-- source: git_log ref: 3c84986ac48326833d2f41e4de1d121e3c526130 occ: 1 conf: 0.60 -->
 
 Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
-
-#### Fix: fix kpi field type sales count
-<!-- source: git_log ref: eb7897abe37adf6ddf01d4a53abceaf8c4c4ed90 occ: 1 conf: 0.60 -->
-
-Commit `eb7897abe3` (2023-05-26): fix kpi field type sales count
-
-#### Fix: auto refill next call fix
-<!-- source: git_log ref: 349ff481e87ea1545c28ffe4084ce148b34f65a2 occ: 1 conf: 0.60 -->
-
-Commit `349ff481e8` (2023-01-24): auto refill next call fix
-
-#### Fix: Add Refill balance additional action to fix problem
-<!-- source: git_log ref: 6e3b378483c739c68df581aaf763349c8e625ea4 occ: 1 conf: 0.60 -->
-
-Commit `6e3b378483` (2022-11-24): Add Refill balance additional action to fix problem
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/hr_rfid_vending`
-- Source digest: `sha256:9bcbf88c8ed2cabeb3b1a9972dd251f32ddffeb4ecf7f6732a67cdea37b111cf`
-- Generated at: `2026-05-14T11:16:44+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `hr_rfid_vending`
+- Source digest: `sha256:39dcdcb8b6b3c5d2bbff3e65b2f375fbba9281adbab7db195040463d59d2ef3b`
+- Generated at: `2026-08-26T11:07:13+00:00`
+- Generator: `polimex_module_knowledge`

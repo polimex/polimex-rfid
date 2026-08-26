@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage employee access control
-last_updated: '2026-08-14'
-source_digest: sha256:18a5bc33f9e3eeafc8e2df0aa02b1848dbaa0d1cd812b22cb324be4e0271183a
+last_updated: '2026-08-26'
+source_digest: sha256:bfab40bc1cfdb3403bf012bf5a0430bfb6d4596ac391cee94607bed4b739ad8c
 companion_doc: llms-full.md
 ---
 
@@ -28,125 +28,18 @@ This guide is for users who **configure** and **use** the module. If you need to
 
 Open **Settings → General Settings** and look for the section named after this module. Available options:
 
-- **Event life time** — Number of days to keep access events in the system. Events older than this will be automatically deleted to save storage space. Default is 365 days (1 year).
-- **Accept new Modules** — Allow the system to automatically register new hardware modules when they connect. Enable this when adding new controllers to your system. Disable for security after all modules are registered. Note: Does not support Multi-Company setups.
-- **Debug JSON communication** — Save all communication between the system and hardware controllers to logs. Only enable this for troubleshooting hardware issues. It creates large log files and should be disabled during normal operation.
-- **Time & Attendance control** — Enable time tracking features using RFID cards. Employees can check in/out by scanning their cards at designated readers.
-- **Time & Attendance additional calculations** — Add advanced attendance calculations like late arrivals, early departures, and overtime tracking to the basic time & attendance features.
-- **Vending Control** — Control vending machines with RFID cards. Allows employees to purchase items from vending machines using their access cards.
-- **Realtime Dashboards** — Display live dashboards showing current access activity, who's in each area, and real-time security monitoring.
-- **PMS Base functionality** — Property Management System integration. Allows using RFID system for hotel room access and guest management.
-- **Andromeda Import** — Import data from Andromeda access control systems. Use this to migrate from an existing Andromeda installation.
+- **Event life time** - Number of days to keep access events in the system. Events older than this will be automatically deleted to save storage space. Default is 365 days (1 year).
+- **Accept new Modules** - Allow the system to automatically register new hardware modules when they connect. Enable this when adding new controllers to your system. Disable for security after all modules are registered. Note: Does not support Multi-Company setups.
+- **Debug JSON communication** - Save all communication between the system and hardware controllers to logs. Only enable this for troubleshooting hardware issues. It creates large log files and should be disabled during normal operation.
+- **Time & Attendance control** - Enable time tracking features using RFID cards. Employees can check in/out by scanning their cards at designated readers.
+- **Time & Attendance additional calculations** - Add advanced attendance calculations like late arrivals, early departures, and overtime tracking to the basic time & attendance features.
+- **Vending Control** - Control vending machines with RFID cards. Allows employees to purchase items from vending machines using their access cards.
+- **Realtime Dashboards** - Display live dashboards showing current access activity, who's in each area, and real-time security monitoring.
+- **PMS Base functionality** - Property Management System integration. Allows using RFID system for hotel room access and guest management.
+- **Andromeda Import** - Import data from Andromeda access control systems. Use this to migrate from an existing Andromeda installation.
 
 
 ## How to use it
-
-### The setup checklist
-
-Until the system is set up, a checklist appears above the list of user events
-(**Events -> User Events**): the settings, then add a module, find its
-controllers, make an access group, register a first card. Each step opens the
-screen where it is done, and the last four tick themselves off as soon as the
-system can see the thing exists - there is nothing to mark by hand.
-
-Close it with the **X** and it is gone for good, for everybody in the company;
-you are asked to confirm first. The other parts of the suite - visitor
-services, hotel rooms, voting - each show their own checklist over their own
-screen in the same way.
-
-If the checklist never appears, it has been closed already. Nothing else in the
-system depends on it.
-
-### Real-time connection (instant commands)
-
-By default a module picks up its commands on its next check-in, which can take
-up to a minute. The real-time connection keeps the module permanently linked
-to the system, so commands (open a door, update a card, set the clock) reach
-it within seconds - even when the module is behind NAT or a firewall.
-
-- **Automatic for the newest modules**: an iCON1XX 100.1 module turns the
-  real-time connection on by itself the first time it is discovered - nothing
-  to press. Older modules use **Enable real-time** (Access Control -> Modules,
-  "Real-time connection" section). Either way the module receives its
-  connection settings on its next check-in - nothing to configure on the device.
-- **Online badge**: "Real-time Online" shows whether the module is currently
-  connected. "Last Real-time Activity" is the last moment it was heard from.
-- **Accept new key** (officers only): use it after you change the module's
-  security key on the device itself - the module's next check-in then registers
-  the new key with the system.
-- **Disable real-time** returns the module to the classic check-in mode.
-- The classic communication keeps working at all times: if the real-time
-  connection drops, the module falls back automatically and no events are
-  lost.
-
-Requirement: the server must be reachable over HTTPS in production and run
-with a websocket (gevent) port - see the technical reference for deployment
-notes.
-
-### When the screens update, and when they stay quiet
-
-The monitoring screens refresh by themselves when something happens that an
-operator would act on: a badge at a door, a zone in alarm, a refused command, a
-module that went dark or came back, or any change someone makes in Odoo.
-
-They deliberately do NOT refresh for device housekeeping. A module checks in
-about once a minute and a controller reports its status every five minutes;
-those messages repeat the same picture, and repainting the screen for each of
-them was the single largest source of traffic in the system - on a 176-module
-site, roughly half a million updates a day, enough to overwhelm the real-time
-connection. The data is still recorded; only the pointless refresh is dropped.
-
-**Module presence.** A module that stops reporting cannot tell anyone - so the
-system checks for itself every five minutes. A module that has been silent for
-more than ten minutes counts as a miss, and after three misses in a row it is
-reported as no longer reachable: the list and the cards turn from green to
-orange. The tolerance exists because only modules Odoo set up itself are
-guaranteed to report every minute - one configured by hand on the device may
-report more slowly, and a single missed check-in must not paint it orange.
-Coming back is not delayed by any of this: the very first check-in turns it
-green again at once. Modules on the real-time connection are judged by that
-connection, not by the older check-in timestamp, so a healthy real-time module
-is never reported as dark.
-
-Note this corrects a long-standing defect: until now the indicator only ever
-turned green and never back, so a module that had gone dark still looked healthy.
-
-### Sharing a module between companies
-
-One physical module can serve two (or more) companies at the same time - for
-example two schools sharing one building entrance. The module always has ONE
-owner company; the "Shared With" field on the module form lists the other
-companies that use it.
-
-- **What the sharing companies get**: they SEE the controllers, doors and
-  readers of the module, and can add its doors to their OWN access groups to
-  give access to their OWN people. System events of the module (forced door,
-  power loss, unknown card) are visible to every company using it. They cannot
-  change the hardware itself - configuring, moving or deleting controllers and
-  doors, and the command queue, stay with the owner company (the queue lists
-  the owner's card numbers and PIN codes).
-- **The module record stays private to the owner**: it holds the device
-  credentials that let the hardware sign in, so it is never shown to the
-  sharing companies. They work with the doors and readers instead.
-- **What stays private**: cards, access groups, schedules, work codes and
-  people are never shared. Each company sees only its own people's access
-  events - even on a shared door.
-- **Ownership stays with the owner**: only the owner company (or a system
-  administrator) can change the owner, change the sharing list or delete the
-  module.
-- **Setting it up**: adding a company to "Shared With" requires a user who can
-  see both companies (typically the administrator serving both). The owner
-  company can always REMOVE a company from the list on its own - the removed
-  company's access rights on the module's doors are revoked automatically.
-- **Card numbers on a shared module**: people from the sharing companies must
-  carry different card numbers on the shared doors - the hardware stores only
-  the number, so a duplicate would make the events ambiguous. The system
-  refuses such a duplicate at the moment access is granted and tells you which
-  number collides.
-- **Time schedules**: a sharing company grants access with the unrestricted
-  (24/7) schedule. Time-limited access on a shared module is configured by the
-  owner company.
-
 
 ### HR RFID Access Control
 
@@ -387,7 +280,7 @@ For more information, visit [polimex.co](https://polimex.co)
 
 - **Set active**
 - **Set inactive**
-- **Set webstack settings** — Set webstack settings for the module.
+- **Set webstack settings** - Set webstack settings for the module.
 - **Check if ws available**
 - **Close panel rfid setup**
 - **Open step rfid settings**
@@ -395,14 +288,14 @@ For more information, visit [polimex.co](https://polimex.co)
 - **Open step scan controllers**
 - **Open step create access group**
 - **Open step register card**
-- **Send badge email** — Open a window to compose an email, with the template - 'card_badge'
+- **Send badge email** - Open a window to compose an email, with the template - 'card_badge'
 
 
 ## Common questions and errors
 
 Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
 
-- **Set webstack settings** (on `hr.rfid.webstack`) — Set webstack settings for the module.
+- **Set webstack settings** (on `hr.rfid.webstack`) - Set webstack settings for the module.
 - **Check if ws available** (on `hr.rfid.webstack`)
 
 
@@ -412,7 +305,7 @@ Actions in this list display a message dialog when something is wrong (missing d
 
 ![How To Fold 1](static/src/img/how_to_fold_1.png)
 
-<figcaption>[Placeholder caption] Image at `how_to_fold_1.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>How To Fold 1</figcaption>
 </figure>
 
 > Tags: `how`, `fold`
@@ -421,7 +314,7 @@ Actions in this list display a message dialog when something is wrong (missing d
 
 ![How To Fold 2](static/src/img/how_to_fold_2.png)
 
-<figcaption>[Placeholder caption] Image at `how_to_fold_2.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>How To Fold 2</figcaption>
 </figure>
 
 > Tags: `how`, `fold`
@@ -430,7 +323,7 @@ Actions in this list display a message dialog when something is wrong (missing d
 
 ![How To Fold 3](static/src/img/how_to_fold_3.png)
 
-<figcaption>[Placeholder caption] Image at `how_to_fold_3.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>How To Fold 3</figcaption>
 </figure>
 
 > Tags: `how`, `fold`
@@ -439,7 +332,7 @@ Actions in this list display a message dialog when something is wrong (missing d
 
 ![How To Fold 4](static/src/img/how_to_fold_4.png)
 
-<figcaption>[Placeholder caption] Image at `how_to_fold_4.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>How To Fold 4</figcaption>
 </figure>
 
 > Tags: `how`, `fold`
@@ -448,7 +341,7 @@ Actions in this list display a message dialog when something is wrong (missing d
 
 ![Report Foldable Badge Background](static/src/img/report_foldable_badge_background.png)
 
-<figcaption>[Placeholder caption] Image at `report_foldable_badge_background.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Report Foldable Badge Background</figcaption>
 </figure>
 
 > Tags: `report`, `foldable`, `badge`, `background`
@@ -457,7 +350,7 @@ Actions in this list display a message dialog when something is wrong (missing d
 
 ![Report Full Page Ticket Background](static/src/img/report_full_page_ticket_background.png)
 
-<figcaption>[Placeholder caption] Image at `report_full_page_ticket_background.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Report Full Page Ticket Background</figcaption>
 </figure>
 
 > Tags: `report`, `full`, `page`, `ticket`, `background`

@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo data for hr_rfid_odoo_import.
+
+        Without it the "Data Transfers" list is empty on a demo database and
+        shows only its empty-state text, so nothing anywhere shows what a
+        finished transfer actually tells the operator. The other menu this
+        module adds opens the wizard, which is transient and cannot be filled
+        from here at all.
+
+        What is shipped is ONE finished transfer and its protocol - the account
+        of a small access-control site moved off an Odoo 14 server. Only the two
+        kept models can carry demo data at all: the conflict list and the
+        company-mapping list are TransientModels that belong to the wizard and
+        are swept away by the cleaner, so a resolved-versus-open conflict cannot
+        be shown here at all.
+
+        The transfer is 'done' ON PURPOSE and no other state is shippable: the
+        scheduled job picks up the OLDEST transfer left in 'queued' or 'running'
+        (_cron_process) and would immediately try to read the address below over
+        XML-RPC, while _abandon_stalled_runs would close a 'running' one as dead
+        thirty minutes later. A finished transfer is inert.
+
+        The password field is deliberately absent - _finish clears it the moment
+        a transfer ends, so a finished record that still held one would be a
+        shape the product never produces.
+
+        noupdate="1": the protocol is a historical account of one job. Nothing
+        may rewrite it on a later upgrade, and an operator may delete it once
+        they have seen it.
+
+        tracking_disable is NOT set: the creation note in the chatter is part of
+        what an operator sees on a real transfer.
+    -->
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- The transfer itself                                          -->
+        <!-- ============================================================ -->
+        <!--
+            Every JSON column below is what the wizard hands over in
+            _queue_run, and what a finished pass leaves behind:
+
+            * installed_modules_json - the answer to the probe the wizard makes
+              from source_probe_modules(): the source keeps the RFID core, the
+              site manager, the working-time pair and leaves, and does NOT keep
+              cameras, vending or the service desk.
+            * options_json - exactly the keys _build_options writes, in that
+              order. import_vending / import_service are false because the
+              other system has neither module, which is how the wizard gates
+              them; import_cameras stays ticked and is refused later by the
+              phase itself, which is why the two produce different reasons in
+              the protocol below.
+            * done_phases_json - the sixteen phases of the registry, sorted, as
+              _save_progress writes them. Skipped phases count as done: they
+              had their turn and left their line.
+            * read_cursors_json - every long read at CURSOR_FINISHED (-1), the
+              mark _read_all sets when it reaches the end of the source. That is
+              what a transfer that has nothing left to read looks like.
+            * step_totals_json - the running totals that travel WITH those
+              cursors, so the protocol reports the whole transfer and not just
+              the slice the last pass happened to read.
+        -->
+        <record id="demo_import_run_v14" model="hr.rfid.odoo.import.run">
+            <field name="state">done</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="source_url">https://acs-old.example.com</field>
+            <field name="source_db">acs_v14</field>
+            <field name="source_login">migration</field>
+            <field name="source_uid">6</field>
+            <field name="source_slug">acs_v14</field>
+            <field name="installed_modules_json">["hr_holidays", "hr_attendance_late", "hr_attendance_multi_rfid", "hr_rfid", "hr_rfid_site_manager"]</field>
+            <field name="options_json">{"import_hardware": true, "import_people": true, "import_leaves": true, "import_access": true, "import_cameras": true, "import_sites": true, "import_cards": true, "import_all_partners": true, "import_all_employees": true, "import_images": true, "import_users": false, "import_user_groups": false, "import_user_events": true, "import_system_events": true, "import_th_logs": false, "event_date_from": false, "orphan_event_cutoff": false, "import_vending": false, "import_attendance": true, "import_attendance_extra": true, "import_service": false}</field>
+            <field name="company_map_json" eval="'{&quot;1&quot;: %s}' % ref('base.main_company')"/>
+            <field name="resolution_json">[]</field>
+            <field name="done_phases_json">["Phase 1+3", "Phase 10", "Phase 2", "Phase 2c", "Phase 3b", "Phase 3c", "Phase 4", "Phase 4b", "Phase 5", "Phase 6a", "Phase 6b", "Phase 6c", "Phase 7", "Phase 7c", "Phase 8", "Phase 9"]</field>
+            <field name="read_cursors_json">{"people:res.partner": -1, "people:hr.employee": -1, "leaves:hr.leave.allocation": -1, "leaves:hr.leave": -1, "sites:equipment:hr.rfid.webstack": -1, "sites:equipment:hr.rfid.ctrl": -1, "sites:equipment:hr.rfid.door": -1, "sites:equipment:hr.rfid.access.group": -1, "sites:equipment:hr.rfid.ctrl.alarm.group": -1, "sites:contacts:res.partner": -1, "access:hr.rfid.card": -1, "events:hr.rfid.event.user:module": -1, "events:hr.rfid.event.system:module": -1, "attendance:hr.attendance": -1}</field>
+            <field name="step_totals_json">{"people:res.partner": {"source": 12, "imported": 12, "linked": 0, "skipped": 0, "rejected": 0}, "people:hr.employee": {"source": 27, "imported": 27, "linked": 0, "skipped": 0, "rejected": 0}, "leaves:hr.leave.allocation": {"source": 21, "imported": 21, "linked": 0, "skipped": 0, "rejected": 0}, "leaves:hr.leave": {"source": 58, "imported": 58, "linked": 0, "skipped": 0, "rejected": 0}, "access:hr.rfid.card": {"source": 31, "imported": 31, "linked": 0, "skipped": 0, "rejected": 0}, "events:hr.rfid.event.user": {"source": 8412, "imported": 8412, "linked": 0, "skipped": 0, "rejected": 0, "camera": 0}, "events:hr.rfid.event.system": {"source": 1190, "imported": 1190, "linked": 0, "skipped": 0, "rejected": 0, "camera": 0}, "attendance:hr.attendance": {"source": 4268, "imported": 4268, "linked": 0, "skipped": 0, "rejected": 0}}</field>
+            <field name="done_count">16</field>
+            <field name="total_count">16</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- The protocol - one line per step, in the order they ran      -->
+        <!-- ============================================================ -->
+        <!--
+            The lines are created in reading order because the model is ordered
+            by id, so the notebook on the transfer form reads top to bottom the
+            way the work happened. Every 'model' value below is what the code
+            really puts there: a model name for a step that moves records, and
+            a plain label for the steps that check rather than move (the IO
+            tables, the consistency checks, the reconciliation).
+
+            There is deliberately no 'error' line anywhere: _finish_reporting_
+            failures ends a transfer that has one in 'failed', so an error line
+            beside state 'done' would be a shape the product cannot produce.
+        -->
+
+        <!-- Phase 1+3, step 1-5: the foundation both systems share. -->
+        <!-- Card types are matched on their external id, never created again -
+             that is why every one of them is Linked and none Imported. -->
+        <record id="demo_log_01_card_type" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.card.type</field>
+            <field name="source_count">4</field>
+            <field name="imported_count">0</field>
+            <field name="linked_count">4</field>
+            <field name="status">done</field>
+            <field name="duration">0.41</field>
+        </record>
+        <record id="demo_log_02_emp_category" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.employee.category</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.28</field>
+        </record>
+        <record id="demo_log_03_department" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.department</field>
+            <field name="source_count">5</field>
+            <field name="imported_count">5</field>
+            <field name="status">done</field>
+            <field name="duration">0.63</field>
+        </record>
+        <record id="demo_log_04_workcode" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.workcode</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">2</field>
+            <field name="status">done</field>
+            <field name="duration">0.19</field>
+        </record>
+        <record id="demo_log_05_time_schedule" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.time.schedule</field>
+            <field name="source_count">4</field>
+            <field name="imported_count">4</field>
+            <field name="status">done</field>
+            <field name="duration">0.35</field>
+        </record>
+
+        <!-- Phase 1+3, step 6-15: the equipment. A step over a kind of record
+             the site never configured still gets a line: without one, "there
+             was none" and "this step never ran" look the same. -->
+        <record id="demo_log_06_alarm_group" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl.alarm.group</field>
+            <field name="source_count">0</field>
+            <field name="imported_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.12</field>
+        </record>
+        <!-- The emergency-signal groups. One on this site, matched or
+             created like the rest of the foundation. -->
+        <record id="demo_log_07_emergency_group" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl.emergency.group</field>
+            <field name="source_count">1</field>
+            <field name="imported_count">1</field>
+            <field name="status">done</field>
+            <field name="duration">0.22</field>
+        </record>
+        <record id="demo_log_08_webstack" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.webstack</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">2</field>
+            <field name="status">done</field>
+            <field name="duration">0.71</field>
+        </record>
+        <record id="demo_log_09_ctrl" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">1.08</field>
+        </record>
+        <record id="demo_log_10_door" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.door</field>
+            <field name="source_count">6</field>
+            <field name="imported_count">6</field>
+            <field name="status">done</field>
+            <field name="duration">0.94</field>
+        </record>
+        <record id="demo_log_11_reader" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.reader</field>
+            <field name="source_count">9</field>
+            <field name="imported_count">9</field>
+            <field name="status">done</field>
+            <field name="duration">1.16</field>
+        </record>
+        <record id="demo_log_12_input_mask" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl.input.mask</field>
+            <field name="source_count">0</field>
+            <field name="imported_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.09</field>
+        </record>
+        <record id="demo_log_13_output_ts" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl.output.ts</field>
+            <field name="source_count">0</field>
+            <field name="imported_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.08</field>
+        </record>
+        <record id="demo_log_14_alarm" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl.alarm</field>
+            <field name="source_count">0</field>
+            <field name="imported_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.07</field>
+        </record>
+        <record id="demo_log_15_th" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 1+3</field>
+            <field name="model">hr.rfid.ctrl.th</field>
+            <field name="source_count">0</field>
+            <field name="imported_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.07</field>
+        </record>
+
+        <!-- Phase 2: the people. Both boxes for "bring everyone" were ticked,
+             so the counts are the whole tenant and not only whoever happens to
+             hold a card. Users were not created, so that step left no line. -->
+        <record id="demo_log_16_partner" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 2</field>
+            <field name="model">res.partner</field>
+            <field name="source_count">12</field>
+            <field name="imported_count">12</field>
+            <field name="status">done</field>
+            <field name="duration">2.45</field>
+        </record>
+        <record id="demo_log_17_employee" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 2</field>
+            <field name="model">hr.employee</field>
+            <field name="source_count">27</field>
+            <field name="imported_count">27</field>
+            <field name="status">done</field>
+            <field name="duration">6.02</field>
+        </record>
+
+        <!-- Phase 2c: leaves. Only approved balances and absences that were
+             approved or still awaiting approval travel - the refused and
+             cancelled ones of the other system stay there. -->
+        <record id="demo_log_18_leave_type" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 2c</field>
+            <field name="model">hr.leave.type</field>
+            <field name="source_count">6</field>
+            <field name="imported_count">6</field>
+            <field name="status">done</field>
+            <field name="duration">0.44</field>
+        </record>
+        <record id="demo_log_19_leave_allocation" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 2c</field>
+            <field name="model">hr.leave.allocation</field>
+            <field name="source_count">21</field>
+            <field name="imported_count">21</field>
+            <field name="status">done</field>
+            <field name="duration">1.37</field>
+        </record>
+        <record id="demo_log_20_leave" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 2c</field>
+            <field name="model">hr.leave</field>
+            <field name="source_count">58</field>
+            <field name="imported_count">58</field>
+            <field name="status">done</field>
+            <field name="duration">3.88</field>
+        </record>
+
+        <!-- Phase 3b: zones and the people they notify - after People, because
+             a zone's membership and notification lists ARE those people. -->
+        <record id="demo_log_21_zone" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 3b</field>
+            <field name="model">hr.rfid.zone</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">2</field>
+            <field name="status">done</field>
+            <field name="duration">0.33</field>
+        </record>
+        <record id="demo_log_22_notification" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 3b</field>
+            <field name="model">hr.rfid.notification</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.26</field>
+        </record>
+
+        <!-- Phase 3c: the sites, then the second passes that hang the already
+             imported equipment and contacts off them. -->
+        <record id="demo_log_23_site" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 3c</field>
+            <field name="model">hr.rfid.site</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.37</field>
+        </record>
+        <!-- Two modules, three controllers and six doors carried a site. -->
+        <record id="demo_log_24_site_equipment" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 3c</field>
+            <field name="model">hr.rfid.site (equipment)</field>
+            <field name="source_count">11</field>
+            <field name="imported_count">11</field>
+            <field name="status">done</field>
+            <field name="duration">0.52</field>
+        </record>
+        <record id="demo_log_25_site_partners" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 3c</field>
+            <field name="model">res.partner (sites)</field>
+            <field name="source_count">4</field>
+            <field name="imported_count">4</field>
+            <field name="status">done</field>
+            <field name="duration">0.31</field>
+        </record>
+
+        <!-- Phase 4: who may open what. -->
+        <record id="demo_log_26_access_group" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4</field>
+            <field name="model">hr.rfid.access.group</field>
+            <field name="source_count">5</field>
+            <field name="imported_count">5</field>
+            <field name="status">done</field>
+            <field name="duration">0.58</field>
+        </record>
+        <record id="demo_log_27_ag_door_rel" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4</field>
+            <field name="model">hr.rfid.access.group.door.rel</field>
+            <field name="source_count">18</field>
+            <field name="imported_count">18</field>
+            <field name="status">done</field>
+            <field name="duration">1.24</field>
+        </record>
+        <record id="demo_log_28_ag_employee_rel" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4</field>
+            <field name="model">hr.rfid.access.group.employee.rel</field>
+            <field name="source_count">24</field>
+            <field name="imported_count">24</field>
+            <field name="status">done</field>
+            <field name="duration">1.61</field>
+        </record>
+        <record id="demo_log_29_ag_contact_rel" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4</field>
+            <field name="model">hr.rfid.access.group.contact.rel</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.29</field>
+        </record>
+        <record id="demo_log_30_card" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4</field>
+            <field name="model">hr.rfid.card</field>
+            <field name="source_count">31</field>
+            <field name="imported_count">31</field>
+            <field name="status">done</field>
+            <field name="duration">2.73</field>
+        </record>
+        <!-- Counted against the departments that actually name a default
+             access group, not against every department: a department with
+             nothing to set is not a miss. -->
+        <record id="demo_log_31_department_ag_refs" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4</field>
+            <field name="model">hr.department (AG refs)</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">2</field>
+            <field name="status">done</field>
+            <field name="duration">0.21</field>
+        </record>
+
+        <!-- Phase 4b: a site's own access group is restored only after Access,
+             so a site does not build a group beside the one arriving from the
+             other system. -->
+        <record id="demo_log_32_site_own_group" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 4b</field>
+            <field name="model">hr.rfid.site (own group)</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.18</field>
+        </record>
+
+        <!-- Phase 7: the operator left cameras ticked, and the phase itself
+             said no - the other system has no camera module at all. That is a
+             different sentence from "left out", and the two live side by side
+             in this protocol on purpose. -->
+        <record id="demo_log_33_cameras_skipped" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 7</field>
+            <field name="model">Cameras</field>
+            <field name="status">skipped</field>
+            <field name="error_message">The other system does not keep this kind of data.</field>
+        </record>
+
+        <!-- Phase 7c: the door permissions are offered a second time, once the
+             cameras have had their turn. Everything was already here, so every
+             row is Linked and nothing is written again - the model forbids
+             rewriting a permission outright. -->
+        <record id="demo_log_34_ag_door_rel_after_cameras" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 7c</field>
+            <field name="model">hr.rfid.access.group.door.rel</field>
+            <field name="source_count">18</field>
+            <field name="imported_count">0</field>
+            <field name="linked_count">18</field>
+            <field name="status">done</field>
+            <field name="duration">0.86</field>
+        </record>
+
+        <!-- Phase 5: the history. No date was set, so the whole log came
+             across - which is what lets the reconciliation at the end agree
+             with the other system instead of reporting a shortfall. -->
+        <record id="demo_log_35_event_user" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 5</field>
+            <field name="model">hr.rfid.event.user</field>
+            <field name="source_count">8412</field>
+            <field name="imported_count">8412</field>
+            <field name="status">done</field>
+            <field name="duration">41.29</field>
+        </record>
+        <record id="demo_log_36_event_system" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 5</field>
+            <field name="model">hr.rfid.event.system</field>
+            <field name="source_count">1190</field>
+            <field name="imported_count">1190</field>
+            <field name="status">done</field>
+            <field name="duration">7.64</field>
+        </record>
+
+        <!-- Phase 6a: the other system has no vending module, so the wizard
+             switched the option off by itself - hence "left out" rather than
+             "does not keep". -->
+        <record id="demo_log_37_vending_skipped" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 6a</field>
+            <field name="model">Vending</field>
+            <field name="status">skipped</field>
+            <field name="error_message">Left out of this transfer.</field>
+        </record>
+
+        <!-- Phase 6b: working time. The attendances themselves came across;
+             the daily roll-ups could not, because an Odoo 14 site keeps no
+             such model at all - the module only extends the attendances
+             there. Saying so is the whole point of the line: a step that
+             returns nothing without one reads as a step that never ran. -->
+        <record id="demo_log_38_attendance" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 6b</field>
+            <field name="model">hr.attendance</field>
+            <field name="source_count">4268</field>
+            <field name="imported_count">4268</field>
+            <field name="status">done</field>
+            <field name="duration">18.55</field>
+        </record>
+        <record id="demo_log_39_attendance_extra" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 6b</field>
+            <field name="model">hr.attendance.extra</field>
+            <field name="status">skipped</field>
+            <field name="error_message">The other system does not keep daily working-time roll-ups - it only records the attendances themselves, which came across above.</field>
+            <field name="duration">0.14</field>
+        </record>
+
+        <!-- Phase 6c: no service desk on the other side either. -->
+        <record id="demo_log_40_service_skipped" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 6c</field>
+            <field name="model">Service</field>
+            <field name="status">skipped</field>
+            <field name="error_message">Left out of this transfer.</field>
+        </record>
+
+        <!-- Phase 8: the only step that needs the equipment to be reachable.
+             A migrated controller is never "new", so it never volunteers its
+             input/output table - it has to be asked. -->
+        <record id="demo_log_41_io_tables" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 8</field>
+            <field name="model">Controller IO tables</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="skipped_count">0</field>
+            <field name="status">done</field>
+            <field name="error_message">3 controller(s) were asked to send their input/output table. It arrives when they next report in; run this again if any of them were switched off.</field>
+            <field name="duration">0.62</field>
+        </record>
+
+        <!-- Phase 9: does the moved system hold together? Each line is an
+             invariant the running modules rely on, and each names the
+             offenders rather than only counting them. -->
+        <record id="demo_log_42_check_cameras" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Cameras that would drop their events</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.05</field>
+        </record>
+        <record id="demo_log_43_check_ctrl_archived" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Controllers hidden behind an archived module</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.11</field>
+        </record>
+        <record id="demo_log_44_check_doors_off_chain" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Doors attached to no equipment</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.07</field>
+        </record>
+        <record id="demo_log_45_check_doors_no_reader" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Doors that no reader serves</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.06</field>
+        </record>
+        <record id="demo_log_46_check_readers_no_owner" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Readers wired to nothing</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.06</field>
+        </record>
+        <!-- The one finding of the whole check, and the reason it is amber
+             and not red: the other system has exactly the same two readers
+             without a door. It is a real weakness of that installation,
+             carried over as it stands - calling it an error would make a
+             correct transfer read as broken. It is also the ONLY 'partial'
+             line in this protocol, which is what the closing note at the
+             bottom counts. -->
+        <record id="demo_log_47_check_readers_no_door" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Readers without a door</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">0</field>
+            <field name="skipped_count">2</field>
+            <field name="status">partial</field>
+            <field name="error_message">the other system has the same 2 - carried over as it stands, not caused here: reader Loading Bay Reader 2 has no door; reader Warehouse Gate Reader 4 has no door</field>
+            <field name="duration">0.09</field>
+        </record>
+        <record id="demo_log_48_check_chain_company" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Chains that cross companies</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.08</field>
+        </record>
+        <record id="demo_log_49_check_cards_no_owner" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Cards that belong to nobody</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.07</field>
+        </record>
+        <record id="demo_log_50_check_cards_foreign_owner" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Cards held by a person of another company</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.09</field>
+        </record>
+        <record id="demo_log_51_check_door_rels_cross" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 9</field>
+            <field name="model">Door permissions across companies</field>
+            <field name="source_count">0</field>
+            <field name="status">done</field>
+            <field name="duration">0.08</field>
+        </record>
+
+        <!-- Phase 10, and it has to be last: it asks the OTHER system for its
+             own numbers, tenant by tenant, and compares them with what carries
+             this transfer's identity here. Every earlier phase counts only
+             what it moved itself; this is the one line of the protocol that
+             can say "the other system holds more than arrived". Here it agrees
+             everywhere it could compare, and says plainly where it could not. -->
+        <record id="demo_log_52_rec_webstacks" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">communication modules</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">2</field>
+            <field name="status">done</field>
+            <field name="duration">0.13</field>
+        </record>
+        <record id="demo_log_53_rec_controllers" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">controllers</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.14</field>
+        </record>
+        <record id="demo_log_54_rec_doors" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">doors</field>
+            <field name="source_count">6</field>
+            <field name="imported_count">6</field>
+            <field name="status">done</field>
+            <field name="duration">0.15</field>
+        </record>
+        <record id="demo_log_55_rec_readers" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">readers</field>
+            <field name="source_count">9</field>
+            <field name="imported_count">9</field>
+            <field name="status">done</field>
+            <field name="duration">0.16</field>
+        </record>
+        <record id="demo_log_56_rec_time_schedules" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">time schedules</field>
+            <field name="source_count">4</field>
+            <field name="imported_count">4</field>
+            <field name="status">done</field>
+            <field name="duration">0.12</field>
+        </record>
+        <record id="demo_log_57_rec_access_groups" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">access groups</field>
+            <field name="source_count">5</field>
+            <field name="imported_count">5</field>
+            <field name="status">done</field>
+            <field name="duration">0.13</field>
+        </record>
+        <record id="demo_log_58_rec_door_permissions" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">door permissions</field>
+            <field name="source_count">18</field>
+            <field name="imported_count">18</field>
+            <field name="status">done</field>
+            <field name="duration">0.17</field>
+        </record>
+        <record id="demo_log_59_rec_staff_in_groups" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">staff in access groups</field>
+            <field name="source_count">24</field>
+            <field name="imported_count">24</field>
+            <field name="status">done</field>
+            <field name="duration">0.18</field>
+        </record>
+        <record id="demo_log_60_rec_contacts_in_groups" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">contacts in access groups</field>
+            <field name="source_count">3</field>
+            <field name="imported_count">3</field>
+            <field name="status">done</field>
+            <field name="duration">0.12</field>
+        </record>
+        <record id="demo_log_61_rec_cards" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">cards</field>
+            <field name="source_count">31</field>
+            <field name="imported_count">31</field>
+            <field name="status">done</field>
+            <field name="duration">0.21</field>
+        </record>
+        <record id="demo_log_62_rec_people" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">people</field>
+            <field name="source_count">27</field>
+            <field name="imported_count">27</field>
+            <field name="status">done</field>
+            <field name="duration">0.19</field>
+        </record>
+        <record id="demo_log_63_rec_departments" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">departments</field>
+            <field name="source_count">5</field>
+            <field name="imported_count">5</field>
+            <field name="status">done</field>
+            <field name="duration">0.12</field>
+        </record>
+        <record id="demo_log_64_rec_zones" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">zones</field>
+            <field name="source_count">2</field>
+            <field name="imported_count">2</field>
+            <field name="status">done</field>
+            <field name="duration">0.11</field>
+        </record>
+        <record id="demo_log_65_rec_access_events" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">access events</field>
+            <field name="source_count">8412</field>
+            <field name="imported_count">8412</field>
+            <field name="status">done</field>
+            <field name="duration">0.94</field>
+        </record>
+        <record id="demo_log_66_rec_system_events" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">system events</field>
+            <field name="source_count">1190</field>
+            <field name="imported_count">1190</field>
+            <field name="status">done</field>
+            <field name="duration">0.38</field>
+        </record>
+        <record id="demo_log_67_rec_attendances" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">attendances</field>
+            <field name="source_count">4268</field>
+            <field name="imported_count">4268</field>
+            <field name="status">done</field>
+            <field name="duration">0.61</field>
+        </record>
+        <!-- A comparison that did not happen reads exactly like a comparison
+             that agreed, so the four kinds that could not be compared say so
+             in their own words instead of quietly showing zero. -->
+        <record id="demo_log_68_rec_daily_summaries" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">daily working-time summaries</field>
+            <field name="status">skipped</field>
+            <field name="error_message">daily working-time summaries: the other system does not keep that kind of data.</field>
+            <field name="duration">0.07</field>
+        </record>
+        <record id="demo_log_69_rec_vending_balances" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">vending balance entries</field>
+            <field name="status">skipped</field>
+            <field name="error_message">vending balance entries: the other system does not keep that kind of data.</field>
+            <field name="duration">0.06</field>
+        </record>
+        <record id="demo_log_70_rec_vending_sales" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">vending sales</field>
+            <field name="status">skipped</field>
+            <field name="error_message">vending sales: the other system does not keep that kind of data.</field>
+            <field name="duration">0.06</field>
+        </record>
+        <record id="demo_log_71_rec_service_sales" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">service sales</field>
+            <field name="status">skipped</field>
+            <field name="error_message">service sales: the other system does not keep that kind of data.</field>
+            <field name="duration">0.06</field>
+        </record>
+        <record id="demo_log_72_rec_absences" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">absences</field>
+            <field name="source_count">58</field>
+            <field name="imported_count">58</field>
+            <field name="status">done</field>
+            <field name="duration">0.15</field>
+        </record>
+        <record id="demo_log_73_rec_leave_balances" model="hr.rfid.odoo.import.log">
+            <field name="run_id" ref="demo_import_run_v14"/>
+            <field name="phase">Phase 10</field>
+            <field name="model">leave balances</field>
+            <field name="source_count">21</field>
+            <field name="imported_count">21</field>
+            <field name="status">done</field>
+            <field name="duration">0.14</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- The closing note in the chatter                              -->
+        <!-- ============================================================ -->
+        <!--
+            _finish posts exactly this when a transfer ends with parts that
+            came across only in part - here the one amber line above, and the
+            count in the sentence is that of the 'partial' lines in the
+            protocol, nothing else. Without it the chatter on the demo record
+            holds only the automatic creation note, and the one sentence an
+            operator actually reads before deciding whether the job is done
+            would be missing.
+        -->
+        <record id="demo_import_run_v14_finish_note" model="mail.message">
+            <field name="model">hr.rfid.odoo.import.run</field>
+            <field name="res_id" ref="demo_import_run_v14"/>
+            <field name="message_type">notification</field>
+            <field name="subtype_id" ref="mail.mt_note"/>
+            <field name="author_id" ref="base.partner_root"/>
+            <field name="body"><![CDATA[<p>The transfer has finished, but 1 part(s) came across only in part. The list below says which.</p>]]></field>
+        </record>
+
+    </data>
+</odoo>

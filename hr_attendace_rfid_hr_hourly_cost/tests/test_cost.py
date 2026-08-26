@@ -1,6 +1,6 @@
 # Copyright 2026 Polimex Holding Ltd.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 
 from odoo.tests.common import TransactionCase, tagged
 
@@ -34,8 +34,21 @@ class TestAttendanceCostRates(TransactionCase):
         # tests stay inside this module's dependency closure - the previous
         # call to _generate_bg_public_holidays crashed setUpClass on any
         # database without l10n_bg_hr_attendance_overtime_rates installed.
+        # Created only when the day is not already an official day: on a
+        # database where the localisation has filled the year in - every demo
+        # installation, and every customer running the BG modules - a second
+        # record for the same day is refused as an overlapping public holiday
+        # and takes the whole fixture down with it.
         for day, name in ((date(2026, 5, 24), 'Culture Day'),
                           (date(2026, 9, 22), 'Independence Day')):
+            already_there = cls.env['resource.calendar.leaves'].search([
+                ('calendar_id', '=', cls.company.resource_calendar_id.id),
+                ('resource_id', '=', False),
+                ('date_from', '<=', datetime.combine(day, time.max)),
+                ('date_to', '>=', datetime.combine(day, time.min)),
+            ], limit=1)
+            if already_there:
+                continue
             cls.env['resource.calendar.leaves'].create({
                 'name': name,
                 'calendar_id': cls.company.resource_calendar_id.id,
@@ -78,11 +91,33 @@ class TestAttendanceCostRates(TransactionCase):
         self.assertEqual(rec.cost_extra, 120.0)       # 6 * 10 * 2.0
         self.assertEqual(rec.actual_work_time_cost, 120.0)
 
+    def _a_day_nobody_has_declared_yet(self):
+        """A working day in 2026 that carries no official day yet.
+
+        The point of the test below is the SHAPE of the record - a holiday
+        typed into the Public Holidays form binds to no calendar - not the
+        date. Picking one at random from the calendar is what makes it survive
+        a database where the localisation has already declared the whole year;
+        a hardcoded 24 December collides with Christmas Eve and takes the test
+        down for a reason that has nothing to do with what it checks.
+        """
+        Leaves = self.env['resource.calendar.leaves']
+        day = date(2026, 1, 5)
+        while day.year == 2026:
+            if day.weekday() < 5 and not Leaves.search_count([
+                ('date_from', '<=', datetime.combine(day, time.max)),
+                ('date_to', '>=', datetime.combine(day, time.min)),
+            ]):
+                return day
+            day += timedelta(days=1)
+        self.fail("2026 holds no free working day to declare a holiday on")
+
     def test_menu_entered_global_holiday_pays_holiday_rate(self):
         """A holiday typed into Time Off -> Public Holidays binds to NO
         calendar (that form's records are global) - the person working it is
         still paid the holiday rate, not the rest-day one. The strict
         calendar match used before silently downgraded exactly these."""
+        day = self._a_day_nobody_has_declared_yet()
         self.env['resource.calendar.leaves'].create({
             'name': 'Global Holiday (menu form)',
             # No company here on purpose: this IS the calendar-less shape the
@@ -90,11 +125,11 @@ class TestAttendanceCostRates(TransactionCase):
             # whoever is active - which in a test is this module's company.
             'calendar_id': False,
             'resource_id': False,
-            'date_from': datetime.combine(date(2026, 12, 24), time.min),
-            'date_to': datetime.combine(date(2026, 12, 24), time.max),
+            'date_from': datetime.combine(day, time.min),
+            'date_to': datetime.combine(day, time.max),
             'time_type': 'leave',
         })
-        rec = self._mk('2026-12-24', extra_time=6.0)
+        rec = self._mk(day.strftime('%Y-%m-%d'), extra_time=6.0)
         self.assertTrue(rec._is_public_holiday(),
                         "a menu-entered (global) holiday must be recognised")
         self.assertEqual(rec.cost_extra, 120.0)       # 6 * 10 * 2.0
@@ -134,11 +169,24 @@ class TestAttendanceCostRates(TransactionCase):
         self.assertAlmostEqual(rec.actual_work_time_cost, 106.53)
 
     def test_no_rates_falls_back_to_flat(self):
-        """With multipliers missing for a class, premium defaults to base (1.0)."""
-        # Use a code-less scenario: a date before any night rate → no supplement.
-        rec = self._mk('2025-06-02', actual_work_time=8.0, actual_work_time_night=4.0)
-        # night_supplement not effective in 2025 → 0 supplement
-        self.assertEqual(rec.cost_night_supplement, 0.0)
+        """A night worked before any night supplement existed is paid flat.
+
+        The day is taken from BEFORE the earliest night rate on this database
+        rather than hardcoded: which years carry a supplement is a matter of
+        the data an installation holds, and the claim under test - "no
+        multiplier for that class means no premium" - has to hold on all of
+        them.
+        """
+        earliest = self.Rate.search(
+            [('code', '=', 'night_supplement')], order='date_from asc', limit=1)
+        day = (earliest.date_from - timedelta(days=1)) if earliest else date(2000, 1, 1)
+
+        rec = self._mk(day.strftime('%Y-%m-%d'),
+                       actual_work_time=8.0, actual_work_time_night=4.0)
+        self.assertEqual(
+            rec.cost_night_supplement, 0.0,
+            "No night rate applies to that day, so nothing is added for night work",
+        )
         self.assertEqual(rec.actual_work_time_cost, 80.0)
 
     def test_historical_rate_preserved(self):

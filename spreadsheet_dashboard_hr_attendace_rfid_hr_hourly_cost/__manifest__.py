@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Labour Cost Dashboard",
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Human Resources/Dashboard',
     'summary': "Ready-made Dashboards KPI board for RFID labour cost",
     'author': 'Polimex Dev Team',

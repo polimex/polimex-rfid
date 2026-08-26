@@ -140,21 +140,49 @@
                    eval="[(4,ref('hr_rfid.demo_ctrl_icon110'), 0), (4,ref('hr_rfid.demo_ctrl_icon115'), 0)]"/>
         </record>
 
+        <!-- Environment monitoring: the server room behind the iCON115 doors.
+             The Environment menus exist in the app, so the demo needs a sensor
+             for them to show anything; its readings are generated in
+             demo/hr_rfid_demo_generate.xml. -->
+        <record id="demo_th_sensor_server_room" model="hr.rfid.ctrl.th">
+            <field name="name">Server Room T&amp;H</field>
+            <field name="uid">28FF4A2C91150312</field>
+            <field name="internal_number">1</field>
+            <field name="sensor_number">0</field>
+            <field name="controller_id" ref="demo_ctrl_icon115"/>
+            <field name="door_id" ref="demo_ctrl_icon115_D1"/>
+        </record>
+
         <record id="demo_access_group_1" model="hr.rfid.access.group">
             <field name="name">Demo Access Group 1 (Partners)</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="door_ids"
                    eval="[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')})]"/>
         </record>
+        <!-- Employees come in through the main entrance (the iCON110 doors,
+             which is also where attendance is measured) and move on to the
+             interior iCON115 doors. Without the entrance in this group the
+             demo shows staff who badge for attendance at a door their own
+             card was never given rights to. -->
         <record id="demo_access_group_2" model="hr.rfid.access.group">
-            <field name="name">Demo Access Group 1 (Employees)</field>
+            <field name="name">Demo Access Group 2 (Employees)</field>
             <field name="company_id" ref="base.main_company"/>
             <field name="door_ids"
-                   eval="[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon115_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon115_D2')})]"/>
-<!--            <field name="default_department_ids" eval="[(4,ref('hr.dep_management'), 0)]"/>-->
-<!--            <field name="department_ids" eval="[(4,ref('hr.dep_management'), 0)]"/>-->
+                   eval="[(0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon110_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon110_D2')}), (0, 0, {'door_id':ref('hr_rfid.demo_ctrl_icon115_D1')}), (0, 0, {'door_id': ref('hr_rfid.demo_ctrl_icon115_D2')})]"/>
         </record>
+      <!-- An employee may only be put in an access group his department
+           allows (hr_employee.py, check_access_group), so every department
+           whose people carry a demo card has to allow the employee group -
+           otherwise the demo cannot give them one. -->
       <record id="hr.dep_management" model="hr.department">
+          <field name="hr_rfid_default_access_group" ref="demo_access_group_2"/>
+          <field name="hr_rfid_allowed_access_groups" eval="[(4, ref('demo_access_group_2'), 0)]"/>
+      </record>
+      <record id="hr.dep_rd" model="hr.department">
+          <field name="hr_rfid_default_access_group" ref="demo_access_group_2"/>
+          <field name="hr_rfid_allowed_access_groups" eval="[(4, ref('demo_access_group_2'), 0)]"/>
+      </record>
+      <record id="hr.dep_sales" model="hr.department">
           <field name="hr_rfid_default_access_group" ref="demo_access_group_2"/>
           <field name="hr_rfid_allowed_access_groups" eval="[(4, ref('demo_access_group_2'), 0)]"/>
       </record>
@@ -175,6 +203,51 @@
         <record id="demo_access_group_contact_rel_1" model="hr.rfid.access.group.contact.rel">
             <field name="access_group_id" ref="demo_access_group_1"/>
             <field name="contact_id" ref="base.res_partner_address_15"/>
+        </record>
+
+        <!-- Two colleagues nobody's demo sends on leave. Every other carded
+             employee here is used by the leave-block and the Bulgarian
+             leave-form showcases, which suspend their badges on purpose - so
+             without these two the whole demo would show an access-control
+             system in which not one person can open a door. -->
+        <record id="demo_card_employee_ngh" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_ngh"/>
+            <field name="number">0011122240</field>
+            <field name="card_reference">Badge 40</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_employee_chs" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_chs"/>
+            <field name="number">0011122241</field>
+            <field name="card_reference">Badge 41</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- The staff who carry the demo cards are put in the employee group,
+             which is what actually gives their cards door rights. The
+             department default only applies to employees created AFTER this
+             module is installed; the demo staff come from hr's own demo, so
+             nothing would ever attach them and every badge in the showcase
+             would belong to somebody who cannot open a door. -->
+        <record id="demo_access_group_employee_rel_admin" model="hr.rfid.access.group.employee.rel">
+            <field name="access_group_id" ref="demo_access_group_2"/>
+            <field name="employee_id" ref="hr.employee_admin"/>
+        </record>
+        <record id="demo_access_group_employee_rel_al" model="hr.rfid.access.group.employee.rel">
+            <field name="access_group_id" ref="demo_access_group_2"/>
+            <field name="employee_id" ref="hr.employee_al"/>
+        </record>
+        <record id="demo_access_group_employee_rel_qdp" model="hr.rfid.access.group.employee.rel">
+            <field name="access_group_id" ref="demo_access_group_2"/>
+            <field name="employee_id" ref="hr.employee_qdp"/>
+        </record>
+        <record id="demo_access_group_employee_rel_ngh" model="hr.rfid.access.group.employee.rel">
+            <field name="access_group_id" ref="demo_access_group_2"/>
+            <field name="employee_id" ref="hr.employee_ngh"/>
+        </record>
+        <record id="demo_access_group_employee_rel_chs" model="hr.rfid.access.group.employee.rel">
+            <field name="access_group_id" ref="demo_access_group_2"/>
+            <field name="employee_id" ref="hr.employee_chs"/>
         </record>
 
         <record id="demo_zone_APB" model="hr.rfid.zone">

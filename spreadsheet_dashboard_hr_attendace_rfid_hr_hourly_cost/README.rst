@@ -1,6 +1,6 @@
-====================
+=====================
 Labour Cost Dashboard
-====================
+=====================
 
 Adds a ready-made **Labour Cost** board to the standard Odoo *Dashboards*
 application, under the *Human Resources* section. Install the module and the

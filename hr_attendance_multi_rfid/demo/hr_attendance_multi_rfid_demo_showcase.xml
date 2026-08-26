@@ -16,6 +16,17 @@
             <field name="reader_type">1</field>
         </record>
 
+        <!-- When a forgotten stay gets settled, and what is then credited.
+             One question, one place: core's Settings -> Attendances ->
+             Automatic Check Out with its tolerance says WHEN (the person's own
+             working day plus four hours), and Forgotten Badge right under it
+             says WHAT is recorded. -->
+        <record id="base.main_company" model="res.company">
+            <field name="auto_check_out" eval="True"/>
+            <field name="auto_check_out_tolerance">4</field>
+            <field name="forgotten_badge_policy">credit_schedule</field>
+        </record>
+
         <!-- Core config: an attendance-enabled zone over the iCON110 entrance doors.
              This is what turns door events into hr.attendance records. -->
         <record id="demo_zone_attendance" model="hr.rfid.zone">
@@ -23,9 +34,6 @@
             <field name="attendance" eval="True"/>
             <field name="overwrite_check_in" eval="True"/>
             <field name="overwrite_check_out" eval="False"/>
-            <field name="max_time_in_zone">12</field>
-            <field name="auto_close_time_for_zone">7</field>
-            <field name="delete_attendance_if_late_more_than">0</field>
             <field name="door_ids"
                    eval="[
                        (4, ref('hr_rfid.demo_ctrl_icon110_D1'), 0),
@@ -54,9 +62,10 @@
             <field name="in_zone_id" ref="demo_zone_attendance"/>
         </record>
 
-        <!-- Stale open attendance (48h ago, exceeds max_time_in_zone=12h):
-             the record the shipped attendance_autoclose_cron will close to
-             auto_close_time_for_zone=7 worked hours. -->
+        <!-- Forgotten badge (open for 48h, far past the working day plus the
+             tolerance): the record core's "Automatically check-out employees"
+             task settles, crediting the scheduled working day and marking it
+             as forgotten so somebody can ask about it. -->
         <record id="demo_att_qdp_autoclose" model="hr.attendance">
             <field name="employee_id" ref="hr.employee_qdp"/>
             <field name="check_in" eval="(datetime.now()+relativedelta(days=-2))"/>

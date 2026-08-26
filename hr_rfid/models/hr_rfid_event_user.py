@@ -9,6 +9,11 @@ _logger = logging.getLogger(__name__)
 DEMO_EVENT_SEED = 20260716
 DEMO_EVENTS_FLAG = 'hr_rfid.demo_events_generated'
 
+# Events the vending machine reports with no card at all: a purchase paid in
+# cash, and card data it could not read. Both are ordinary operation, so an
+# event of these kinds is not missing a person - it never had one.
+ANONYMOUS_EVENT_ACTIONS = ('47', '-1')
+
 
 action_selection = [
         ('1', 'Card Granted'),
@@ -387,9 +392,16 @@ class HrRfidUserEvent(models.Model):
             if not rec.door_id and rec.reader_id:
                 rec.door_id = rec.reader_id.door_id
 
-            # Validate event has proper associations (except vending events)
-            if not rec.employee_id and not rec.contact_id and rec.event_action != '47':
-                _logger.error('User event without employee, contact and card. FATAL for event id=%s', rec.id)
+            # A user event normally says WHO passed. The vending machine is
+            # the exception: it reports a purchase paid in cash with no card
+            # at all, and rejects unreadable card data the same way. Both are
+            # ordinary operation, so neither is worth a line in the log.
+            if (not rec.employee_id and not rec.contact_id
+                    and rec.event_action not in ANONYMOUS_EVENT_ACTIONS):
+                _logger.warning(
+                    'Event %s carries neither an employee nor a contact, and '
+                    'its card matched nobody. Action %s from controller %s.',
+                    rec.id, rec.event_action, rec.ctrl_addr)
             
             # Process only granted access events for zone tracking
             if rec.event_action != '1':  # '1' == Granted

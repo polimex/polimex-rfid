@@ -17,20 +17,20 @@ class HrRfidVendingRow(models.Model):
     )
 
     item_number1 = fields.Char(
-        string='#', compute='_compute_number_1',
-        help="Label for the first slot in this row, computed from row_num (e.g. 'Item #1:' on row 1, 'Item #5:' on row 2).",
+        string='Slot 1 Number', compute='_compute_number_1',
+        help="Number the buyer presses on the machine keypad for the first slot of this row, computed from row_num (e.g. 'Item #1:' on row 1, 'Item #5:' on row 2).",
     )
     item_number2 = fields.Char(
-        string='#', compute='_compute_number_2',
-        help="Label for the second slot in this row.",
+        string='Slot 2 Number', compute='_compute_number_2',
+        help="Number the buyer presses on the machine keypad for the second slot of this row.",
     )
     item_number3 = fields.Char(
-        string='#', compute='_compute_number_3',
-        help="Label for the third slot in this row.",
+        string='Slot 3 Number', compute='_compute_number_3',
+        help="Number the buyer presses on the machine keypad for the third slot of this row.",
     )
     item_number4 = fields.Char(
-        string='#', compute='_compute_number_4',
-        help="Label for the fourth slot in this row.",
+        string='Slot 4 Number', compute='_compute_number_4',
+        help="Number the buyer presses on the machine keypad for the fourth slot of this row.",
     )
     item1 = fields.Many2one(
         'product.template', string='Item#1',

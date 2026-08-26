@@ -1,6 +1,6 @@
 <odoo>
 <!--    <data noupdate="0">-->
-    <data >
+    <data context="{'no_hardware_commands': True}">
         <!-- Пример за демо камера (Hikvision) -->
         <record id="demo_camera_1" model="cctv.camera">
             <field name="name">ANPR Camera 1</field>

@@ -1,4 +1,13 @@
+import logging
+import random
+from datetime import datetime, time, timedelta
+
 from odoo import fields, models, api, _, SUPERUSER_ID
+
+_logger = logging.getLogger(__name__)
+
+DEMO_TH_SEED = 20260826
+DEMO_TH_READINGS_FLAG = 'hr_rfid.demo_th_readings_generated'
 
 
 class CtrlTemperatureAndHumidity(models.Model):
@@ -118,7 +127,14 @@ class CtrlTemperatureAndHumidity(models.Model):
             update_dict.update({'temperature': vals['temperature']})
         if 'humidity' in vals and vals['humidity'] != self.humidity:
             update_dict.update({'humidity': vals['humidity']})
-        if update_dict and self.sensor_number == 0:
+        # write_log already writes the reading down, with the time the device
+        # reported rather than the moment it reached us - so when it is the
+        # caller, this branch would file the SAME reading a second time under
+        # a wrong timestamp. The branch stays for the other producer: the
+        # 5-minute controller poll (hr_rfid_ctrl.py) writes the values
+        # straight onto the sensor and has nothing else to record them.
+        if (update_dict and self.sensor_number == 0
+                and not self.env.context.get('th_reading_logged')):
             if not ('temperature' in update_dict):
                 update_dict.update({'temperature': self.temperature})
             if not ('humidity' in update_dict):
@@ -141,7 +157,53 @@ class CtrlTemperatureAndHumidity(models.Model):
             update_dict.update({'humidity': values['h']})
 
         if update_dict != {}:
-            self.write(update_dict)
+            self.with_context(th_reading_logged=True).write(update_dict)
             update_dict.update({'th_id': self.id})
             update_dict.update({'event_time': timestamp})
             self.env['hr.rfid.ctrl.th.log'].sudo().create(update_dict)
+
+    @api.model
+    def _demo_generate_th_readings(self):
+        """Fill the shipped demo sensor with two weeks of readings.
+
+        The Environment menus (sensors and their log) are reachable from the
+        app, so a demo that leaves them empty shows a feature that looks
+        unimplemented. The readings go in through write_log - the same entry
+        point the controller uses when it reports - so the demo exercises the
+        real path rather than inserting rows behind it.
+
+        Only invoked from the demo data <function> hook. Idempotent: an
+        ir.config_parameter flag makes a demo reload a no-op. Deterministic:
+        a fixed-seed RNG yields the same curve on every fresh install.
+        """
+        param = self.env['ir.config_parameter'].sudo()
+        if param.get_param(DEMO_TH_READINGS_FLAG):
+            return
+
+        sensor = self.env.ref('hr_rfid.demo_th_sensor_server_room',
+                              raise_if_not_found=False)
+        if not sensor:
+            return
+
+        rng = random.Random(DEMO_TH_SEED)
+        now = fields.Datetime.now()
+        today = now.date()
+        readings = 0
+        # Every two hours for a fortnight: enough for the graph to show the
+        # daily swing of a server room without burying the list view.
+        for day_offset in range(13, -1, -1):
+            day = today - timedelta(days=day_offset)
+            for hour in range(0, 24, 2):
+                stamp = datetime.combine(day, time(hour, 0, 0))
+                if stamp >= now:
+                    continue
+                # Coolest before dawn, warmest mid-afternoon, plus noise.
+                swing = 1.6 * (1 - abs(hour - 15) / 12.0)
+                temperature = round(21.5 + swing + rng.uniform(-0.4, 0.4), 1)
+                humidity = round(43.0 - swing * 2 + rng.uniform(-1.5, 1.5), 1)
+                sensor.write_log(stamp, {'t': temperature, 'h': humidity})
+                readings += 1
+
+        param.set_param(DEMO_TH_READINGS_FLAG, '1')
+        _logger.info('Demo environment readings generated: %d readings over '
+                     '14 days for sensor %s', readings, sensor.name)

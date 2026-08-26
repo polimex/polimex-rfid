@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <!-- Nothing in this file may talk to a camera. Creating a plate relation
+         queues an add_plate command whose post-commit dispatch opens a real
+         ISAPI connection, and an unroutable address does not save you: each
+         blocked connect costs the client's full timeout, which is where 26 of
+         the 26.4 seconds of this module's install time used to go. The guard
+         below is the module's own (models/cctv_camera_rfid_rel.py, pinned by
+         tests/test_import_guards.py) and is set on the whole block, the way
+         core does it in point_of_sale/data/orders_demo.xml. -->
+    <data noupdate="1" context="{'no_hardware_commands': True}">
         <!--
             Showcase demo for polimex_ip_cam.
 
@@ -9,19 +17,19 @@
 
               employee (hr.employee_admin) owns a license plate (demo_plate_1)
                 -> plate is whitelisted on the entrance camera (demo_rel_whitelist_1)
-                -> the module auto-queues an "add_plate" command (cctv.camera.command)
+                -> the module queues an "add_plate" command (cctv.camera.command)
                 -> when the camera reads the plate the ANPR webhook books an event.
 
             A denied van and a time-limited visitor plate round out the
             whitelist / blacklist / validity surface, and a second camera shows
             a non-ANPR integration type and a different connection-health state.
 
-            NOTE: creating a cctv.camera.rfid.rel auto-generates an add_plate
-            command whose post-commit dispatch makes a live ISAPI call to the
-            camera IP. The demo cameras therefore point at the RFC 5737 TEST-NET
-            range (192.0.2.x) so those calls fail fast on a demo database instead
-            of blocking install against a possibly-real host. The resulting
-            command "error" state is itself part of what the queue view shows.
+            NOTE: the addresses stay in the RFC 5737 documentation range
+            (192.0.2.x) so a demo record copied into a live database can never
+            point at somebody's real camera. That is a safety net, not the
+            reason the install is quiet - see the guard on <data> above. The
+            command queue is shown by the two finished commands at the end of
+            this file rather than by errors from failed dispatch.
         -->
 
         <!-- =====================================================================
@@ -116,6 +124,27 @@
             <field name="description">General yard overview camera (IP CCTV, no plate recognition).</field>
             <field name="tz">Europe/Sofia</field>
             <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- =====================================================================
+             7. What the command queue looks like after the plates were sent.
+                In production these rows are written by the module itself when a
+                relation is created; here they are shipped finished, because a
+                demo database must not dispatch anything at a camera.
+             ===================================================================== -->
+        <record id="demo_cmd_add_plate_done" model="cctv.camera.command">
+            <field name="camera_id" ref="demo_camera_1"/>
+            <field name="command_type">add_plate</field>
+            <field name="state">done</field>
+            <field name="execution_time" eval="DateTime.now() - relativedelta(hours=3)"/>
+            <field name="response_data">{"statusCode": 1, "statusString": "OK"}</field>
+        </record>
+        <record id="demo_cmd_add_plate_error" model="cctv.camera.command">
+            <field name="camera_id" ref="demo_camera_2"/>
+            <field name="command_type">add_plate</field>
+            <field name="state">error</field>
+            <field name="execution_time" eval="DateTime.now() - relativedelta(hours=2)"/>
+            <field name="response_data">Camera did not answer within the timeout.</field>
         </record>
     </data>
 </odoo>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'RFID Odoo Data Import',
-    'version': '19.0.3.1.0',
+    'version': '19.0.3.1.1',
     'category': 'HR',
     'summary': 'Import RFID access control data from older Odoo instances (v14-v18)',
     'author': 'Polimex Dev Team',
@@ -16,6 +16,10 @@
         'data/ir_cron.xml',
         'views/import_wizard_views.xml',
         'views/import_run_views.xml',
+    ],
+
+    'demo': [
+        'demo/hr_rfid_odoo_import_demo_showcase.xml',
     ],
 
     'assets': {

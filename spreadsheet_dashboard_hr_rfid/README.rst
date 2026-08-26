@@ -1,6 +1,6 @@
-======================
+========================
 Access Control Dashboard
-======================
+========================
 
 Adds a ready-made **Access Control** board to the standard Odoo *Dashboards*
 application, under the *Human Resources* section. No configuration is needed:
