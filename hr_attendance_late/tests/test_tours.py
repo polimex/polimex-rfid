@@ -2,6 +2,8 @@
 # Part of Polimex Modules. See LICENSE file for full copyright and licensing details.
 from datetime import date
 
+from dateutil.relativedelta import relativedelta
+
 from odoo.tests import HttpCase, tagged
 
 
@@ -36,6 +38,31 @@ class TestAttendanceLateTours(HttpCase):
             "for_date": date(2026, 6, 1),
             "early_leave_time": 0.5,
         })
+        # Fixture for the reporting-period tour. Two people, two roll-ups: one
+        # in the month that has just finished and one six months old. The
+        # report is supposed to open on the former without the latter, so the
+        # pair is what makes the check able to fail. The dates are taken from
+        # today so the fixture keeps working next month.
+        today = date.today()
+        cls.person_last_month = cls.env["hr.employee"].create({
+            "name": "Pivot LastMonth",
+            "company_id": cls.company.id,
+        })
+        cls.person_long_ago = cls.env["hr.employee"].create({
+            "name": "Pivot LongAgo",
+            "company_id": cls.company.id,
+        })
+        cls.extra_last_month = cls.env["hr.attendance.extra"].create({
+            "employee_id": cls.person_last_month.id,
+            "for_date": (today - relativedelta(months=1)).replace(day=15),
+            "actual_work_time": 8.0,
+        })
+        cls.extra_long_ago = cls.env["hr.attendance.extra"].create({
+            "employee_id": cls.person_long_ago.id,
+            "for_date": (today - relativedelta(months=6)).replace(day=15),
+            "actual_work_time": 8.0,
+        })
+
         # Fixture for the legal-rate tour: a dated national rate to override.
         cls.rate = cls.env["hr.legal.rate"].create({
             "code": "zz_tour_rate",
@@ -77,3 +104,26 @@ class TestAttendanceLateTours(HttpCase):
         # The tour is read-only; the meaningful assertion is that the seeded
         # early-departure record is the one the domain surfaces.
         self.assertGreater(self.extra.early_leave_time, 0)
+
+    def test_extra_previous_month_tour(self):
+        """The officer opening Extra calculations gets the month that is over.
+
+        The complaint this answers: on installations with years of daily
+        roll-ups the report used to open on everything ever recorded and took
+        minutes to draw. The period is a starting point, not a restriction -
+        the Date filter widens it - so the test asserts what the officer sees
+        first, and equally that the six-month-old row is NOT dragged in.
+        """
+        self.start_tour(
+            "/odoo/action-hr_attendance_late.hr_attendance_extra_action",
+            "hr_extra_previous_month_tour",
+            login="admin",
+        )
+        # The tour reads the screen; this states what the screen was built
+        # from, so a fixture that stopped covering both sides fails loudly
+        # instead of turning the tour into a tautology.
+        self.assertNotEqual(
+            self.extra_last_month.for_date.month,
+            self.extra_long_ago.for_date.month,
+            "The two roll-ups must sit in different months for the tour to prove anything",
+        )
