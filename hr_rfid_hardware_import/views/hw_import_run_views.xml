@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_run_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.run.list</field>
+            <field name="model">hr.rfid.hw.import.run</field>
+            <field name="arch" type="xml">
+                <list string="Hardware surveys" sample="1">
+                    <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                    <field name="user_id" widget="many2one_avatar_user"/>
+                    <field name="create_date"/>
+                    <field name="module_count"/>
+                    <field name="ctrl_count"/>
+                    <field name="card_count"/>
+                    <field name="current_phase" optional="show"/>
+                    <field name="progress" widget="progressbar"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'done'"
+                           decoration-danger="state == 'failed'"
+                           decoration-info="state in ('discovering', 'reading', 'analysing', 'importing')"
+                           decoration-warning="state in ('naming', 'grouping')"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hw_import_run_search" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.run.search</field>
+            <field name="model">hr.rfid.hw.import.run</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <filter name="mine" string="Started by me" domain="[('user_id', '=', uid)]"/>
+                    <separator/>
+                    <filter name="in_progress" string="In progress" domain="[('state', 'not in', ('done', 'failed'))]"/>
+                    <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                    <group>
+                        <filter name="group_state" string="Step" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="hw_import_run_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.run.form</field>
+            <field name="model">hr.rfid.hw.import.run</field>
+            <field name="arch" type="xml">
+                <form string="Hardware survey">
+                    <header>
+                        <button name="action_discover" type="object" string="Find modules on the network"
+                                class="btn-primary" invisible="state != 'draft' or module_count > 0"/>
+                        <button name="action_discover" type="object" string="Search the network again"
+                                invisible="state != 'draft' or module_count == 0"/>
+                        <button name="action_add_module" type="object" string="Add a module by address"
+                                invisible="state != 'draft'"/>
+                        <button name="action_read" type="object" string="Read the controllers"
+                                class="btn-primary" invisible="state != 'draft' or included_module_count == 0"
+                                confirm="The survey will read the settings and the card table of every controller on the ticked modules. Only read commands are used; nothing on the devices changes. Continue?"/>
+                        <button name="action_refresh" type="object" string="Refresh"
+                                invisible="state not in ('discovering', 'reading', 'analysing', 'importing')"/>
+                        <button name="action_reopen" type="object" string="Reopen the survey"
+                                invisible="state != 'failed'"
+                                confirm="The survey goes back to the step it stopped at, with everything it had read and imported so far kept. Continue?"/>
+                        <button name="action_read_again" type="object" string="Read the failed ones again"
+                                invisible="state not in ('naming', 'grouping') or not has_read_failures"
+                                confirm="The modules and controllers that could not be read will be read again, with read commands only. The analysis is then redone: proposed access groups and generated holders are rebuilt. The names from the file, your decisions on conflicts, your choice of controller for each schedule slot and the names you gave to groups whose cards did not change are kept; merges of groups are undone. Continue?"/>
+                        <button name="action_upload_names" type="object" string="Upload a names file"
+                                class="btn-primary" invisible="state != 'naming'"/>
+                        <button name="action_skip_names" type="object" string="Continue without names"
+                                invisible="state != 'naming' or name_line_ids"/>
+                        <button name="action_to_grouping" type="object" string="Continue to access groups"
+                                invisible="state != 'naming' or not name_line_ids"/>
+                        <button name="action_back_to_naming" type="object" string="Back to names"
+                                invisible="state != 'grouping'"/>
+                        <button name="action_open_import_options" type="object" string="Import..."
+                                class="btn-primary" invisible="state != 'grouping'"/>
+                        <button name="action_point_modules" type="object" string="Point the modules to this server"
+                                invisible="state != 'done'"
+                                confirm="Every module this survey created here will be told to report to THIS server from now on; modules that were already registered here are not touched. This is the only change the survey ever makes on a device. Continue?"/>
+                        <button name="action_download_report" type="object" string="Download the report"
+                                invisible="state in ('draft', 'discovering')"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,reading,naming,grouping,importing,done"/>
+                    </header>
+                    <sheet>
+                        <div class="alert alert-info" role="status"
+                             invisible="state not in ('discovering', 'reading', 'analysing', 'importing')">
+                            The survey runs in the background and carries on if the server restarts; you
+                            can close this page. Press Refresh to see how far it has got.
+                        </div>
+                        <div class="alert alert-warning" role="alert"
+                             invisible="state != 'grouping' or not has_blockers">
+                            <field name="blocker_count" class="fw-bold"/> findings must be resolved before
+                            the import can start - see the Findings, Schedules and People tabs.
+                        </div>
+                        <div class="alert alert-success" role="status" invisible="state != 'done'">
+                            The import finished; nothing was sent to the controllers. To hand a module over,
+                            use "Point to this server" on its row, then "Enable here".
+                        </div>
+                        <div class="alert alert-danger" role="alert" invisible="state != 'failed'">
+                            <field name="last_error" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group string="Survey">
+                                <field name="company_id" groups="base.group_multi_company"
+                                       readonly="state != 'draft' or module_count > 0"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="discovery_broadcast" readonly="state != 'draft'"/>
+                                <field name="discovery_timeout" readonly="state != 'draft'"/>
+                            </group>
+                            <group string="Progress">
+                                <field name="current_phase" readonly="1"/>
+                                <field name="progress" widget="progressbar" readonly="1"/>
+                                <field name="included_module_count" invisible="1"/>
+                                <field name="has_read_failures" invisible="1"/>
+                                <field name="has_blockers" invisible="1"/>
+                                <field name="module_count" invisible="1"/>
+                                <field name="name_line_ids" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Modules" name="modules">
+                                <p class="text-muted">
+                                    The modules found on the network or added by address. Tick the ones to read.
+                                    A module already in this system is left out unless you tick it.
+                                </p>
+                                <field name="module_ids" nolabel="1" readonly="state not in ('draft', 'done')"/>
+                            </page>
+                            <page string="Controllers" name="controllers">
+                                <p class="text-muted">
+                                    Every controller the modules see. Vending machines are listed but never read
+                                    for cards or imported.
+                                </p>
+                                <field name="ctrl_ids" nolabel="1" readonly="state not in ('draft', 'naming', 'grouping')"/>
+                            </page>
+                            <page string="Cards" name="cards">
+                                <p class="text-muted">
+                                    Every card number found, with the doors it opens and who will own it.
+                                </p>
+                                <field name="card_ids" nolabel="1" readonly="state not in ('naming', 'grouping')"/>
+                            </page>
+                            <page string="People" name="people">
+                                <p class="text-muted">
+                                    The card holders: named from the uploaded file, or generated from the card
+                                    number. Change the kind (contact or employee), split merged people, untick
+                                    the ones to leave out.
+                                </p>
+                                <field name="person_ids" nolabel="1" readonly="state not in ('naming', 'grouping')"
+                                       context="{'search_default_to_review': 1}"/>
+                            </page>
+                            <page string="Access groups" name="groups">
+                                <p class="text-muted">
+                                    Doors that always go together form one group; a card belongs to every group
+                                    it holds. Rename groups here, or merge several into one.
+                                </p>
+                                <button name="action_open_group_merge" type="object" string="Merge groups..."
+                                        class="btn-secondary mb-2" icon="fa-compress"
+                                        invisible="state != 'grouping'"/>
+                                <field name="group_ids" nolabel="1" readonly="state != 'grouping'"/>
+                            </page>
+                            <page string="Schedules" name="schedules">
+                                <p class="text-muted">
+                                    The time schedule slots. Where controllers disagree, choose the controller to
+                                    take the schedule from, or keep this company's schedule.
+                                </p>
+                                <field name="ts_slot_ids" nolabel="1" readonly="state not in ('naming', 'grouping')"/>
+                            </page>
+                            <page string="Findings" name="issues">
+                                <p class="text-muted">
+                                    Conflicts with records already here, warnings about what could not be
+                                    represented exactly, and the report of the import.
+                                </p>
+                                <field name="issue_ids" nolabel="1" readonly="state not in ('naming', 'grouping')"/>
+                            </page>
+                            <page string="Names file" name="names" invisible="not name_line_ids">
+                                <p class="text-muted">The lines of the uploaded file and what happened to each.</p>
+                                <field name="names_file_name" invisible="1"/>
+                                <field name="names_file" filename="names_file_name" readonly="1"/>
+                                <field name="name_line_ids" nolabel="1" readonly="1">
+                                    <list limit="200">
+                                        <field name="row_number"/>
+                                        <field name="name_raw"/>
+                                        <field name="number_raw"/>
+                                        <field name="number_norm" optional="hide"/>
+                                        <field name="status" widget="badge"
+                                               decoration-success="status == 'matched'"
+                                               decoration-warning="status in ('unmatched', 'duplicate')"
+                                               decoration-danger="status == 'invalid'"/>
+                                        <field name="person_id" optional="show"/>
+                                        <field name="note" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Command log" name="log">
+                                <p class="text-muted">
+                                    Every command sent to the hardware and its reply. All of them are read commands.
+                                </p>
+                                <field name="cmd_log_ids" nolabel="1" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="hw_import_run_action" model="ir.actions.act_window">
+            <field name="name">Import from Hardware</field>
+            <field name="res_model">hr.rfid.hw.import.run</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="hw_import_run_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hardware survey yet
+                </p>
+                <p>
+                    A survey reads a working access control system - the modules, the controllers,
+                    every card and the doors it opens - without changing anything on the devices.
+                    You then name the card holders from a file, review the access groups the survey
+                    proposes, and import it all into this system.
+                </p>
+                <p>
+                    Press New to start one. Modules on the local network are found automatically;
+                    modules behind a router are added by address.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="hw_import_menu"
+                  name="Import from Hardware"
+                  parent="hr_rfid.hr_rfid_root_menu_hardware_manager"
+                  action="hw_import_run_action"
+                  groups="base.group_system"
+                  sequence="95"/>
+    </data>
+</odoo>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_module_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.module.list</field>
+            <field name="model">hr.rfid.hw.import.module</field>
+            <field name="arch" type="xml">
+                <list string="Modules" editable="bottom" create="0"
+                      decoration-muted="not include" decoration-danger="status == 'unreachable'">
+                    <field name="include" width="40px"/>
+                    <field name="ip" readonly="1"/>
+                    <field name="port" readonly="1" optional="hide"/>
+                    <field name="hostname" readonly="1"/>
+                    <field name="serial" readonly="1"/>
+                    <field name="hw_version" readonly="1" optional="show"/>
+                    <field name="fw_version" readonly="1" optional="hide"/>
+                    <field name="dev_found" readonly="1"/>
+                    <field name="server_url" readonly="1" optional="show"/>
+                    <field name="status" widget="badge" readonly="1"
+                           decoration-success="status == 'new'"
+                           decoration-warning="status == 'known'"
+                           decoration-danger="status == 'unreachable'"/>
+                    <field name="read_state" widget="badge" readonly="1"
+                           decoration-success="read_state == 'done'"
+                           decoration-info="read_state == 'reading'"
+                           decoration-danger="read_state == 'failed'"/>
+                    <field name="source" readonly="1" optional="hide"/>
+                    <field name="webstack_id" readonly="1" optional="show"/>
+                    <field name="existing_webstack_id" column_invisible="1"/>
+                    <field name="pointed_at" readonly="1" optional="hide"/>
+                    <button name="action_probe" type="object" string="Check again" icon="fa-refresh"
+                            title="Ask the module again who it is"/>
+                    <button name="action_point_to_server" type="object" string="Point to this server"
+                            icon="fa-location-arrow" class="btn-warning"
+                            invisible="not webstack_id or pointed_at or existing_webstack_id"
+                            confirm="This tells the module to report to THIS server from now on. It is the only change the survey ever makes on a device. Continue?"/>
+                    <button name="action_enable_module" type="object" string="Enable here"
+                            icon="fa-power-off" invisible="not webstack_id"
+                            confirm="The module becomes active in this system and the access control module starts working with it. Continue?"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hw_import_module_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.module.form</field>
+            <field name="model">hr.rfid.hw.import.module</field>
+            <field name="arch" type="xml">
+                <form string="Module">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="ip" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group string="Identity">
+                                <field name="hostname" readonly="1"/>
+                                <field name="serial" readonly="1"/>
+                                <field name="mac" readonly="1"/>
+                                <field name="hw_version" readonly="1"/>
+                                <field name="fw_version" readonly="1"/>
+                            </group>
+                            <group string="Survey">
+                                <field name="source" readonly="1"/>
+                                <field name="port" readonly="1"/>
+                                <field name="status" readonly="1"/>
+                                <field name="include"/>
+                                <field name="dev_found" readonly="1"/>
+                                <field name="server_url" readonly="1"/>
+                                <field name="read_state" readonly="1"/>
+                                <field name="read_error" readonly="1"/>
+                            </group>
+                            <group string="Access to the module" groups="base.group_system">
+                                <field name="module_username"/>
+                                <field name="module_password" password="True"/>
+                            </group>
+                        </group>
+                        <group string="After the import">
+                            <field name="existing_webstack_id" readonly="1"/>
+                            <field name="webstack_id" readonly="1"/>
+                            <field name="pointed_at" readonly="1"/>
+                            <field name="pointed_by_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Controllers" name="controllers">
+                                <p class="text-muted">The controllers this module sees on its bus.</p>
+                                <field name="ctrl_ids" nolabel="1" readonly="1"/>
+                            </page>
+                            <page string="Configuration read" name="config">
+                                <p class="text-muted">The module configuration as read; keys and passwords are hidden.</p>
+                                <field name="config_json" nolabel="1" readonly="1" class="font-monospace"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

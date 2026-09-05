@@ -1,0 +1,36 @@
+{
+    'name': 'RFID Hardware Import',
+    'version': '19.0.1.0.0',
+    'category': 'HR',
+    'summary': 'Survey a running access control system without changing it and import it',
+    'author': 'Polimex Dev Team',
+    'website': 'https://polimex.co',
+    'license': 'AGPL-3',
+    'depends': ['hr_rfid', 'base_import'],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/hw_import_security.xml',
+        'data/ir_cron.xml',
+        'wizards/hw_import_wizard_views.xml',
+        'views/hw_import_module_views.xml',
+        'views/hw_import_ctrl_views.xml',
+        'views/hw_import_card_views.xml',
+        'views/hw_import_person_views.xml',
+        'views/hw_import_group_views.xml',
+        'views/hw_import_ts_views.xml',
+        'views/hw_import_issue_views.xml',
+        'views/hw_import_cmd_log_views.xml',
+        'views/hw_import_run_views.xml',
+    ],
+    'demo': [
+        'demo/hr_rfid_hardware_import_demo_showcase.xml',
+    ],
+    'assets': {
+        'web.assets_tests': [
+            'hr_rfid_hardware_import/static/tests/tours/**/*.js',
+        ],
+    },
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

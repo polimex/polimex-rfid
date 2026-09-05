@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_issue_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.issue.list</field>
+            <field name="model">hr.rfid.hw.import.issue</field>
+            <field name="arch" type="xml">
+                <list string="Findings" editable="bottom" create="0" limit="200"
+                      decoration-danger="severity == 'blocker' and not resolved"
+                      decoration-warning="severity == 'warning'"
+                      decoration-muted="severity == 'info'">
+                    <field name="severity" widget="badge" readonly="1"
+                           decoration-danger="severity == 'blocker'"
+                           decoration-warning="severity == 'warning'"/>
+                    <field name="kind" readonly="1"/>
+                    <field name="phase" readonly="1" optional="hide"/>
+                    <field name="message" readonly="1"/>
+                    <field name="resolution" readonly="severity != 'blocker'"/>
+                    <field name="resolved" readonly="1" optional="hide"/>
+                    <field name="ctrl_id" readonly="1" optional="hide"/>
+                    <field name="card_id" readonly="1" optional="hide"/>
+                    <field name="person_id" readonly="1" optional="hide"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

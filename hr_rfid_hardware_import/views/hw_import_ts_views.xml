@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_ts_slot_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.ts.slot.list</field>
+            <field name="model">hr.rfid.hw.import.ts.slot</field>
+            <field name="arch" type="xml">
+                <list string="Schedule slots" editable="bottom" create="0"
+                      decoration-danger="state == 'conflict'" decoration-success="state == 'ok'">
+                    <field name="number" readonly="1"/>
+                    <field name="summary" readonly="1"/>
+                    <field name="variant_count" readonly="1"/>
+                    <field name="used_by_rights" readonly="1" optional="show"/>
+                    <field name="existing_ts_id" readonly="1" optional="show"/>
+                    <field name="existing_differs" readonly="1" optional="show"/>
+                    <field name="state" widget="badge" readonly="1"
+                           decoration-success="state == 'ok'"
+                           decoration-danger="state == 'conflict'"
+                           decoration-info="state == 'resolved'"/>
+                    <field name="source_ctrl_id" domain="[('run_id', '=', run_id)]" options="{'no_create': True}"/>
+                    <field name="keep_existing"/>
+                    <field name="decision_note" optional="hide"/>
+                    <field name="run_id" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hw_import_ts_slot_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.ts.slot.form</field>
+            <field name="model">hr.rfid.hw.import.ts.slot</field>
+            <field name="arch" type="xml">
+                <form string="Schedule slot">
+                    <sheet>
+                        <group>
+                            <group string="Slot">
+                                <field name="number" readonly="1"/>
+                                <field name="state" readonly="1"/>
+                                <field name="variant_count" readonly="1"/>
+                                <field name="used_by_rights" readonly="1"/>
+                            </group>
+                            <group string="Decision">
+                                <field name="run_id" invisible="1"/>
+                                <field name="source_ctrl_id" domain="[('run_id', '=', run_id)]"/>
+                                <field name="keep_existing"/>
+                                <field name="existing_ts_id" readonly="1"/>
+                                <field name="existing_differs" readonly="1"/>
+                                <field name="decision_note"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="What each controller holds" name="readings">
+                                <p class="text-muted">The same slot on every controller of the survey.</p>
+                                <field name="ts_ids" nolabel="1" readonly="1">
+                                    <list>
+                                        <field name="ctrl_id"/>
+                                        <field name="summary"/>
+                                        <field name="is_empty"/>
+                                        <field name="week_fingerprint" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

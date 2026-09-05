@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- A survey belongs to one company; every row of it reaches the
+             company through its survey, so one rule per model keeps the
+             evidence of one tenant invisible to another. -->
+        <record id="hw_import_run_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_run"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_module_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey modules: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_module"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_ctrl_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey controllers: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_ctrl"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_card_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey cards: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_card"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_card_record_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey card records: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_card_record"/>
+            <field name="domain_force">[('card_id.run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_ts_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey schedules: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_ts"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_ts_slot_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey schedule slots: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_ts_slot"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_group_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey groups: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_group"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_group_right_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey rights: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_group_right"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_person_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey people: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_person"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_name_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey names: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_name"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_issue_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey findings: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_issue"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="hw_import_cmd_log_comp_rule" model="ir.rule">
+            <field name="name">Hardware survey command log: own company</field>
+            <field name="model_id" ref="model_hr_rfid_hw_import_cmd_log"/>
+            <field name="domain_force">[('run_id.company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>

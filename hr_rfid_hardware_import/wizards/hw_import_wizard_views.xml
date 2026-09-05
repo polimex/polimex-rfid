@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_add_ip_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.add.ip.wiz.form</field>
+            <field name="model">hr.rfid.hw.import.add.ip.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Add a module by address">
+                    <p>
+                        For a module the network search cannot reach - behind a router or on
+                        another network - enter its address. The survey only reads from it;
+                        nothing on the module is changed.
+                    </p>
+                    <group>
+                        <field name="run_id" invisible="1"/>
+                        <field name="ip" placeholder="e.g. 10.20.30.40"/>
+                        <field name="port"/>
+                        <field name="module_username"/>
+                        <field name="module_password" password="True"/>
+                    </group>
+                    <footer>
+                        <button name="action_add" type="object" string="Add and check" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hw_import_names_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.names.wiz.form</field>
+            <field name="model">hr.rfid.hw.import.names.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Upload a names file">
+                    <p>
+                        A CSV or Excel file with two columns: the person's name and the card number.
+                        Cards are matched by number only. The same name on several lines becomes one
+                        person with several cards - those people are marked for review.
+                    </p>
+                    <p class="text-muted">
+                        <i class="fa fa-lightbulb-o" role="img"/>
+                        Tip: uploading a file again starts the names step over; splits made by hand are lost.
+                    </p>
+                    <group>
+                        <field name="run_id" invisible="1"/>
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_load" type="object" string="Load names" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hw_import_options_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.options.wiz.form</field>
+            <field name="model">hr.rfid.hw.import.options.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Import into this system">
+                    <p>
+                        The import creates records here. No command is sent to the controllers, and a
+                        module keeps reporting to its current server until you point it here afterwards.
+                    </p>
+                    <div class="alert alert-warning" role="alert" invisible="blocker_count == 0">
+                        <field name="blocker_count" class="fw-bold"/> findings must be resolved first
+                        (see the Findings tab), or the part they belong to must be left out.
+                    </div>
+                    <group string="What to import">
+                        <field name="run_id" invisible="1"/>
+                        <field name="import_hardware"/>
+                        <field name="import_schedules"/>
+                        <field name="import_people"/>
+                        <field name="import_cards"/>
+                        <field name="import_groups"/>
+                    </group>
+                    <group string="People">
+                        <field name="company_id" invisible="1"/>
+                        <field name="placeholder_owner_type"/>
+                        <field name="employee_count"/>
+                        <field name="contact_count"/>
+                        <field name="default_department_id" required="employee_count > 0 and import_people"
+                               domain="[('company_id', 'in', [company_id, False])]"/>
+                    </group>
+                    <footer>
+                        <button name="action_start" type="object" string="Start the import" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hw_import_group_merge_wiz_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.group.merge.wiz.form</field>
+            <field name="model">hr.rfid.hw.import.group.merge.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Merge proposed access groups">
+                    <p>
+                        The selected groups become one. Every card of the merged group receives every
+                        right of it - read the list below before confirming.
+                    </p>
+                    <group>
+                        <field name="run_id" invisible="1"/>
+                        <field name="group_ids" widget="many2many_tags" domain="[('run_id', '=', run_id)]"/>
+                        <field name="name"/>
+                    </group>
+                    <field name="warning" readonly="1" nolabel="1" class="text-danger"/>
+                    <footer>
+                        <button name="action_merge" type="object" string="Merge" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="hw_import_group_merge_wiz_action" model="ir.actions.act_window">
+            <field name="name">Merge proposed access groups</field>
+            <field name="res_model">hr.rfid.hw.import.group.merge.wiz</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_hr_rfid_hw_import_group"/>
+            <field name="binding_view_types">list</field>
+        </record>
+    </data>
+</odoo>

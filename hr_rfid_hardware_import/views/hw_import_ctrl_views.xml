@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_ctrl_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.ctrl.list</field>
+            <field name="model">hr.rfid.hw.import.ctrl</field>
+            <field name="arch" type="xml">
+                <list string="Controllers" editable="bottom" create="0"
+                      decoration-muted="not include" decoration-danger="read_state == 'failed'">
+                    <field name="include" width="40px" readonly="family == 'vending'"/>
+                    <field name="module_id" readonly="1" optional="show"/>
+                    <field name="address" readonly="1"/>
+                    <field name="hw_name" readonly="1"/>
+                    <field name="family" readonly="1" widget="badge"/>
+                    <field name="serial" readonly="1"/>
+                    <field name="sw_version" readonly="1" optional="hide"/>
+                    <field name="mode" readonly="1" optional="show"/>
+                    <field name="readers" readonly="1" optional="show"/>
+                    <field name="alarm_lines" readonly="1" optional="hide"/>
+                    <field name="card_count_device" readonly="1"/>
+                    <field name="cards_read" readonly="1"/>
+                    <field name="read_state" widget="badge" readonly="1"
+                           decoration-success="read_state == 'done'"
+                           decoration-info="read_state in ('config', 'cards')"
+                           decoration-danger="read_state == 'failed'"
+                           decoration-muted="read_state == 'skipped'"/>
+                    <field name="ctrl_rec_id" readonly="1" optional="show"/>
+                    <field name="imported_without_doors" readonly="1" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hw_import_ctrl_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.ctrl.form</field>
+            <field name="model">hr.rfid.hw.import.ctrl</field>
+            <field name="arch" type="xml">
+                <form string="Controller">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group string="Identity">
+                                <field name="module_id" readonly="1"/>
+                                <field name="address" readonly="1"/>
+                                <field name="hw_code" readonly="1"/>
+                                <field name="family" readonly="1"/>
+                                <field name="serial" readonly="1"/>
+                                <field name="sw_version" readonly="1"/>
+                                <field name="include"/>
+                            </group>
+                            <group string="Capabilities">
+                                <field name="mode" readonly="1"/>
+                                <field name="readers" readonly="1"/>
+                                <field name="inputs" readonly="1"/>
+                                <field name="outputs" readonly="1"/>
+                                <field name="alarm_lines" readonly="1"/>
+                                <field name="time_schedules" readonly="1"/>
+                                <field name="max_cards" readonly="1"/>
+                                <field name="max_events" readonly="1"/>
+                            </group>
+                            <group string="Mode flags">
+                                <field name="external_db" readonly="1"/>
+                                <field name="dual_person" readonly="1"/>
+                                <field name="interlocking" readonly="1"/>
+                                <field name="relay_time_factor" readonly="1"/>
+                            </group>
+                            <group string="Reading">
+                                <field name="read_state" readonly="1"/>
+                                <field name="card_count_device" readonly="1"/>
+                                <field name="cards_read" readonly="1"/>
+                                <field name="read_error" readonly="1"/>
+                                <field name="clock_read" readonly="1"/>
+                                <field name="clock_drift_seconds" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Settings read" name="settings">
+                                <p class="text-muted">What the controller holds, decoded. The raw replies are on the Evidence tab.</p>
+                                <group>
+                                    <group string="Doors and zones">
+                                        <field name="door_map_json" readonly="1"/>
+                                        <field name="zone_map_json" readonly="1"/>
+                                        <field name="apb_bitmap" readonly="1"/>
+                                    </group>
+                                    <group string="Other settings">
+                                        <field name="reader_modes_json" readonly="1"/>
+                                        <field name="input_mask" readonly="1"/>
+                                        <field name="output_relay_mask" readonly="1"/>
+                                        <field name="out_ts_json" readonly="1"/>
+                                        <field name="alarm_setup_json" readonly="1"/>
+                                        <field name="gaps_json" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group string="Status at the time of the survey">
+                                    <field name="status_json" readonly="1" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Time schedules" name="schedules">
+                                <p class="text-muted">The schedule slots as this controller holds them.</p>
+                                <field name="ts_ids" nolabel="1" readonly="1">
+                                    <list>
+                                        <field name="number"/>
+                                        <field name="summary"/>
+                                        <field name="is_empty"/>
+                                        <field name="holiday_ref" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Card records" name="cards">
+                                <p class="text-muted">One line per card stored on this controller.</p>
+                                <field name="card_record_ids" nolabel="1" readonly="1">
+                                    <list limit="200">
+                                        <field name="position"/>
+                                        <field name="card_id"/>
+                                        <field name="pin" optional="hide"/>
+                                        <field name="ts_r1"/>
+                                        <field name="ts_r2"/>
+                                        <field name="ts_r3" optional="hide"/>
+                                        <field name="ts_r4" optional="hide"/>
+                                        <field name="rights"/>
+                                        <field name="alarm_bits" optional="show"/>
+                                        <field name="apb1" optional="hide"/>
+                                        <field name="apb2" optional="hide"/>
+                                        <field name="anomaly" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Evidence" name="evidence">
+                                <p class="text-muted">The raw replies, kept as read.</p>
+                                <group>
+                                    <field name="f0_hex" readonly="1" class="font-monospace"/>
+                                    <field name="f5_hex" readonly="1" class="font-monospace"/>
+                                    <field name="f6_hex" readonly="1" class="font-monospace"/>
+                                    <field name="f8_hex" readonly="1" class="font-monospace"/>
+                                    <field name="fb_hex" readonly="1" class="font-monospace"/>
+                                    <field name="fc_hex" readonly="1" class="font-monospace"/>
+                                    <field name="ff_hex" readonly="1" class="font-monospace"/>
+                                    <field name="b0_hex" readonly="1" class="font-monospace"/>
+                                    <field name="b3_hex" readonly="1" class="font-monospace"/>
+                                    <field name="f7_hex" readonly="1" class="font-monospace"/>
+                                    <field name="f9_hex" readonly="1" class="font-monospace"/>
+                                    <field name="io_table_hex" readonly="1" class="font-monospace"/>
+                                    <field name="holidays_json" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

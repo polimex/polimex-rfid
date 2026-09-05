@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_person_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.person.list</field>
+            <field name="model">hr.rfid.hw.import.person</field>
+            <field name="arch" type="xml">
+                <list string="People" editable="bottom" create="0" limit="200"
+                      decoration-muted="not include"
+                      decoration-warning="review_state == 'review'"
+                      decoration-danger="review_state == 'blocked'">
+                    <field name="include" width="40px"/>
+                    <field name="name"/>
+                    <field name="source" readonly="1" widget="badge"/>
+                    <field name="owner_type"/>
+                    <field name="card_count" readonly="1"/>
+                    <field name="pin" readonly="1" optional="hide"/>
+                    <field name="review_state" widget="badge" readonly="1"
+                           decoration-success="review_state == 'ok'"
+                           decoration-warning="review_state == 'review'"
+                           decoration-danger="review_state == 'blocked'"/>
+                    <field name="rights_differ" readonly="1" optional="show"/>
+                    <field name="ts_conflict" readonly="1" optional="hide"/>
+                    <field name="pin_conflict" readonly="1" optional="hide"/>
+                    <field name="employee_id" readonly="1" optional="hide"/>
+                    <field name="partner_id" readonly="1" optional="hide"/>
+                    <button name="action_split" type="object" string="Split" icon="fa-scissors"
+                            invisible="card_count &lt; 2" title="One person per card"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hw_import_person_search" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.person.search</field>
+            <field name="model">hr.rfid.hw.import.person</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <filter name="to_review" string="Please check" domain="[('review_state', '=', 'review')]"/>
+                    <filter name="blocked" string="Must be resolved" domain="[('review_state', '=', 'blocked')]"/>
+                    <filter name="placeholders" string="Generated names" domain="[('source', '=', 'placeholder')]"/>
+                    <group>
+                        <filter name="group_source" string="Source" context="{'group_by': 'source'}"/>
+                        <filter name="group_owner_type" string="Kind" context="{'group_by': 'owner_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

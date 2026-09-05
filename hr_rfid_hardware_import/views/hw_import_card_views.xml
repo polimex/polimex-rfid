@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_card_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.card.list</field>
+            <field name="model">hr.rfid.hw.import.card</field>
+            <field name="arch" type="xml">
+                <list string="Cards" editable="bottom" create="0" limit="200"
+                      decoration-muted="not include" decoration-warning="anomaly != 'none'">
+                    <field name="include" width="40px"/>
+                    <field name="number_display" readonly="1"/>
+                    <field name="number" readonly="1" optional="hide"/>
+                    <field name="person_id"/>
+                    <field name="door_count" readonly="1"/>
+                    <field name="group_ids" widget="many2many_tags" readonly="1" optional="show"/>
+                    <field name="pin" readonly="1" optional="hide"/>
+                    <field name="anomaly" widget="badge" readonly="1" decoration-warning="anomaly != 'none'"/>
+                    <field name="existing_card_id" readonly="1" optional="hide"/>
+                    <field name="card_rec_id" readonly="1" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="hw_import_card_form" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.card.form</field>
+            <field name="model">hr.rfid.hw.import.card</field>
+            <field name="arch" type="xml">
+                <form string="Card">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="number_display" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group string="Card">
+                                <field name="number" readonly="1"/>
+                                <field name="pin" readonly="1"/>
+                                <field name="pin_mismatch" readonly="1"/>
+                                <field name="anomaly" readonly="1"/>
+                                <field name="include"/>
+                            </group>
+                            <group string="Owner and groups">
+                                <field name="person_id"/>
+                                <field name="group_ids" widget="many2many_tags" readonly="1"/>
+                                <field name="existing_card_id" readonly="1"/>
+                                <field name="card_rec_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Rights" name="rights">
+                                <p class="text-muted">The doors this card opens, derived from the controllers' records.</p>
+                                <field name="door_rights_json" readonly="1" nolabel="1"/>
+                            </page>
+                            <page string="Records" name="records">
+                                <p class="text-muted">The card as each controller holds it.</p>
+                                <field name="record_ids" nolabel="1" readonly="1">
+                                    <list>
+                                        <field name="ctrl_id"/>
+                                        <field name="position"/>
+                                        <field name="pin" optional="hide"/>
+                                        <field name="ts_r1"/>
+                                        <field name="ts_r2"/>
+                                        <field name="ts_r3" optional="hide"/>
+                                        <field name="ts_r4" optional="hide"/>
+                                        <field name="rights"/>
+                                        <field name="alarm_bits"/>
+                                        <field name="raw_hex" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

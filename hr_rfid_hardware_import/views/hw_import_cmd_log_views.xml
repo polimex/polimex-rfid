@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hw_import_cmd_log_list" model="ir.ui.view">
+            <field name="name">hr.rfid.hw.import.cmd.log.list</field>
+            <field name="model">hr.rfid.hw.import.cmd.log</field>
+            <field name="arch" type="xml">
+                <list string="Command log" create="0" delete="0" limit="80"
+                      decoration-danger="e_code not in (0, 14)" decoration-warning="skewed">
+                    <field name="create_date"/>
+                    <field name="module_id"/>
+                    <field name="address"/>
+                    <field name="opcode"/>
+                    <field name="data_sent" optional="show"/>
+                    <field name="e_code"/>
+                    <field name="duration_ms" optional="show"/>
+                    <field name="attempt" optional="hide"/>
+                    <field name="skewed" optional="hide"/>
+                    <field name="response_hex" optional="hide"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

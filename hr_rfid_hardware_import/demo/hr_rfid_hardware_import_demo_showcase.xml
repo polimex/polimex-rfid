@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Showcase demo data: ONE finished hardware survey of a small, invented
+        site, so the "Import from Hardware" list is not empty on a demo
+        database and every tab shows what a real survey tells the operator.
+
+        The survey is 'done' on purpose: the scheduled worker only picks up
+        surveys in a working state, so a finished one is inert and never tries
+        to reach the (non-existent) module below. Every address and number is
+        fabricated; the raw replies were built from the documented reply
+        layouts, not copied from any installation.
+
+        noupdate="1": the survey is a historical record; an operator may delete
+        it once they have seen it.
+    -->
+    <data noupdate="1">
+        <record id="demo_hw_run" model="hr.rfid.hw.import.run">
+            <field name="company_id" ref="base.main_company"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="state">done</field>
+            <field name="discovery_broadcast">True</field>
+            <field name="discovery_timeout">2.0</field>
+            <field name="placeholder_owner_type">contact</field>
+            <field name="import_hardware">True</field>
+            <field name="import_schedules">True</field>
+            <field name="import_people">True</field>
+            <field name="import_cards">True</field>
+            <field name="import_groups">True</field>
+            <field name="phase_done_json">[&quot;cards&quot;, &quot;controllers&quot;, &quot;groups&quot;, &quot;people&quot;, &quot;report&quot;, &quot;schedules&quot;, &quot;webstacks&quot;]</field>
+            <field name="done_count">7</field>
+            <field name="total_count">7</field>
+            <field name="discovered_at">2026-06-01 08:00:00</field>
+            <field name="read_at">2026-06-01 08:20:00</field>
+            <field name="analysed_at">2026-06-01 08:21:00</field>
+            <field name="imported_at">2026-06-01 09:00:00</field>
+        </record>
+        <record id="demo_hw_module" model="hr.rfid.hw.import.module">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="source">broadcast</field>
+            <field name="ip">192.0.2.10</field>
+            <field name="port">80</field>
+            <field name="hostname">polimex-demo-site</field>
+            <field name="mac">02-00-00-00-00-01</field>
+            <field name="serial">4DEMO01</field>
+            <field name="hw_version">100.1</field>
+            <field name="fw_version">1.69</field>
+            <field name="bridge_port">5000</field>
+            <field name="dev_found">3</field>
+            <field name="server_url">http://old-server.example/hr/rfid/event</field>
+            <field name="status">new</field>
+            <field name="include">True</field>
+            <field name="module_username">sdk</field>
+            <field name="read_state">done</field>
+            <field name="config_json">{&quot;convertor&quot;: &quot;4DEMO01&quot;, &quot;sdk&quot;: {&quot;sdkVersion&quot;: &quot;1.69&quot;, &quot;sdkHardware&quot;: &quot;100.1&quot;, &quot;devFound&quot;: 3}, &quot;sdkSettings&quot;: {&quot;Server_URL&quot;: &quot;http://old-server.example/hr/rfid/event&quot;, &quot;server_push_key&quot;: &quot;***&quot;}}</field>
+        </record>
+        <record id="demo_hw_ctrl_a" model="hr.rfid.hw.import.ctrl">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="dev_index">0</field>
+            <field name="hw_code">10</field>
+            <field name="serial">1801</field>
+            <field name="sw_version">748</field>
+            <field name="mode">2</field>
+            <field name="readers">4</field>
+            <field name="inputs">10</field>
+            <field name="outputs">8</field>
+            <field name="time_schedules">15</field>
+            <field name="io_table_lines">28</field>
+            <field name="alarm_lines">4</field>
+            <field name="max_cards">7679</field>
+            <field name="max_events">4094</field>
+            <field name="record_size">20</field>
+            <field name="f0_hex">0100010800010704080001000000080401050208040200070607090004000904</field>
+            <field name="read_state">done</field>
+            <field name="include">True</field>
+            <field name="card_count_device">4</field>
+            <field name="cards_read">4</field>
+            <field name="read_cursor">-1</field>
+            <field name="door_map_json">{&quot;1&quot;: [1, 2], &quot;2&quot;: [3, 4]}</field>
+            <field name="zone_map_json">{&quot;1&quot;: [1, 2], &quot;2&quot;: [3, 4]}</field>
+            <field name="f5_hex">02</field>
+            <field name="fc_hex">01</field>
+            <field name="apb_bitmap">1</field>
+            <field name="b0_hex">01000003</field>
+            <field name="alarm_setup_json">{&quot;alarm_lines_setup&quot;: &quot;000003&quot;, &quot;sensor_events&quot;: false, &quot;disable_readers&quot;: 0, &quot;disable_door_contacts&quot;: 0, &quot;zones_enabled&quot;: 3, &quot;short_form&quot;: false}</field>
+            <field name="f6_hex">010100010100010100010100</field>
+            <field name="reader_modes_json">[{&quot;reader&quot;: 1, &quot;mode&quot;: &quot;01&quot;, &quot;mode_ts&quot;: 1, &quot;ts&quot;: 0}, {&quot;reader&quot;: 2, &quot;mode&quot;: &quot;01&quot;, &quot;mode_ts&quot;: 1, &quot;ts&quot;: 0}, {&quot;reader&quot;: 3, &quot;mode&quot;: &quot;01&quot;, &quot;mode_ts&quot;: 1, &quot;ts&quot;: 0}, {&quot;reader&quot;: 4, &quot;mode&quot;: &quot;01&quot;, &quot;mode_ts&quot;: 1, &quot;ts&quot;: 0}]</field>
+            <field name="clock_read">2026-06-01 08:05:12</field>
+            <field name="clock_drift_seconds">4</field>
+        </record>
+        <record id="demo_hw_ctrl_b" model="hr.rfid.hw.import.ctrl">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">5</field>
+            <field name="dev_index">1</field>
+            <field name="hw_code">6</field>
+            <field name="serial">1101</field>
+            <field name="sw_version">741</field>
+            <field name="mode">1</field>
+            <field name="readers">2</field>
+            <field name="inputs">3</field>
+            <field name="outputs">3</field>
+            <field name="time_schedules">15</field>
+            <field name="io_table_lines">28</field>
+            <field name="alarm_lines">0</field>
+            <field name="max_cards">1526</field>
+            <field name="max_events">3056</field>
+            <field name="record_size">19</field>
+            <field name="f0_hex">0006010100010704010000030000030201050208000100010502060003000506</field>
+            <field name="read_state">done</field>
+            <field name="include">True</field>
+            <field name="card_count_device">3</field>
+            <field name="cards_read">3</field>
+            <field name="read_cursor">-1</field>
+            <field name="door_map_json">{&quot;1&quot;: [1, 2]}</field>
+            <field name="zone_map_json">{}</field>
+            <field name="f5_hex">01</field>
+            <field name="fc_hex">00</field>
+            <field name="apb_bitmap">0</field>
+            <field name="clock_read">2026-06-01 08:07:40</field>
+            <field name="clock_drift_seconds">-9</field>
+        </record>
+        <record id="demo_hw_ctrl_c" model="hr.rfid.hw.import.ctrl">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">40</field>
+            <field name="dev_index">2</field>
+            <field name="hw_code">18</field>
+            <field name="serial">1802</field>
+            <field name="sw_version">720</field>
+            <field name="mode">1</field>
+            <field name="readers">0</field>
+            <field name="inputs">8</field>
+            <field name="outputs">4</field>
+            <field name="time_schedules">0</field>
+            <field name="io_table_lines">24</field>
+            <field name="alarm_lines">0</field>
+            <field name="max_cards">0</field>
+            <field name="max_events">1000</field>
+            <field name="record_size">0</field>
+            <field name="f0_hex">0108010800020702000000080000040000000204000100000000000001000000</field>
+            <field name="read_state">done</field>
+            <field name="include">True</field>
+            <field name="card_count_device">0</field>
+            <field name="cards_read">0</field>
+            <field name="read_cursor">-1</field>
+            <field name="door_map_json">{}</field>
+            <field name="zone_map_json">{}</field>
+            <field name="imported_without_doors">True</field>
+            <field name="gaps_json">[&quot;F6&quot;, &quot;FC&quot;, &quot;FF&quot;, &quot;F3&quot;]</field>
+        </record>
+        <record id="demo_hw_ts_a_1" model="hr.rfid.hw.import.ts">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="number">1</field>
+            <field name="raw_hex">01080018000000000000000000000000000800180000000000000000000000000008001800000000000000000000000000080018000000000000000000000000000800180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+            <field name="week_fingerprint">4d207fe0280c9418f18a64c092870fc1885d6984</field>
+            <field name="holiday_ref">0</field>
+            <field name="is_empty">False</field>
+            <field name="summary">Mon-Fri 08:00-18:00</field>
+        </record>
+        <record id="demo_hw_ts_a_2" model="hr.rfid.hw.import.ts">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="number">2</field>
+            <field name="raw_hex">02070020000000000000000000000000000700200000000000000000000000000007002000000000000000000000000000070020000000000000000000000000000700200000000000000000000000000007002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+            <field name="week_fingerprint">357b208aedb345f68acb91330d820d8f9d1166dd</field>
+            <field name="holiday_ref">0</field>
+            <field name="is_empty">False</field>
+            <field name="summary">Mon-Sat 07:00-20:00</field>
+        </record>
+        <record id="demo_hw_ts_b_1" model="hr.rfid.hw.import.ts">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_b"/>
+            <field name="number">1</field>
+            <field name="raw_hex">01080018000000000000000000000000000800180000000000000000000000000008001800000000000000000000000000080018000000000000000000000000000800180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+            <field name="week_fingerprint">4d207fe0280c9418f18a64c092870fc1885d6984</field>
+            <field name="holiday_ref">0</field>
+            <field name="is_empty">False</field>
+            <field name="summary">Mon-Fri 08:00-18:00</field>
+        </record>
+        <record id="demo_hw_ts_b_2" model="hr.rfid.hw.import.ts">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_b"/>
+            <field name="number">2</field>
+            <field name="raw_hex">02060022000000000000000000000000000600220000000000000000000000000006002200000000000000000000000000060022000000000000000000000000000600220000000000000000000000000006002200000000000000000000000000060022000000000000000000000000000000000000000000000000000000000000</field>
+            <field name="week_fingerprint">9b0c7f98632584967d97c5d881e3756804e985c7</field>
+            <field name="holiday_ref">0</field>
+            <field name="is_empty">False</field>
+            <field name="summary">Mon-Sun 06:00-22:00</field>
+        </record>
+        <record id="demo_hw_slot_1" model="hr.rfid.hw.import.ts.slot">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">1</field>
+            <field name="used_by_rights">True</field>
+            <field name="existing_is_empty">True</field>
+            <field name="existing_differs">False</field>
+            <field name="ts_ids" eval="[(6, 0, [ref('demo_hw_ts_a_1'), ref('demo_hw_ts_b_1')])]"/>
+        </record>
+        <record id="demo_hw_slot_2" model="hr.rfid.hw.import.ts.slot">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">2</field>
+            <field name="used_by_rights">True</field>
+            <field name="existing_is_empty">True</field>
+            <field name="existing_differs">False</field>
+            <field name="source_ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="decision_note">Taken from the main building controller; the gate controller held a wider window.</field>
+            <field name="ts_ids" eval="[(6, 0, [ref('demo_hw_ts_a_2'), ref('demo_hw_ts_b_2')])]"/>
+        </record>
+        <record id="demo_hw_person_1" model="hr.rfid.hw.import.person">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="name">Demo Holder One</field>
+            <field name="name_key">demo holder one</field>
+            <field name="source">file</field>
+            <field name="owner_type">contact</field>
+            <field name="merged">True</field>
+            <field name="include">True</field>
+        </record>
+        <record id="demo_hw_person_2" model="hr.rfid.hw.import.person">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="name">Demo Holder Two</field>
+            <field name="name_key">demo holder two</field>
+            <field name="source">file</field>
+            <field name="owner_type">contact</field>
+            <field name="merged">False</field>
+            <field name="include">True</field>
+        </record>
+        <record id="demo_hw_person_3" model="hr.rfid.hw.import.person">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="name">Demo Holder Three</field>
+            <field name="name_key">demo holder three</field>
+            <field name="source">file</field>
+            <field name="owner_type">contact</field>
+            <field name="merged">False</field>
+            <field name="include">True</field>
+        </record>
+        <record id="demo_hw_person_card_4" model="hr.rfid.hw.import.person">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="name">Card 0000100004</field>
+            <field name="name_key">card:0000100004</field>
+            <field name="source">placeholder</field>
+            <field name="owner_type">contact</field>
+            <field name="include">True</field>
+        </record>
+        <record id="demo_hw_person_card_5" model="hr.rfid.hw.import.person">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="name">Card 0000100005</field>
+            <field name="name_key">card:0000100005</field>
+            <field name="source">placeholder</field>
+            <field name="owner_type">contact</field>
+            <field name="include">True</field>
+        </record>
+        <record id="demo_hw_person_card_6" model="hr.rfid.hw.import.person">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="name">Card 0000100006</field>
+            <field name="name_key">card:0000100006</field>
+            <field name="source">placeholder</field>
+            <field name="owner_type">contact</field>
+            <field name="include">True</field>
+        </record>
+        <record id="demo_hw_card_1" model="hr.rfid.hw.import.card">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">0000100001</field>
+            <field name="number_display">0000100001</field>
+            <field name="pin"></field>
+            <field name="anomaly">none</field>
+            <field name="include">True</field>
+            <field name="person_id" ref="demo_hw_person_1"/>
+            <field name="door_rights_json">[{&quot;ctrl&quot;: &quot;a&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 1, &quot;alarm&quot;: true}, {&quot;ctrl&quot;: &quot;b&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 1, &quot;alarm&quot;: false}]</field>
+            <field name="rights_key">f45b06610b98c3668466b56c13dba69e509142c0</field>
+            <field name="apb_bits_json">{}</field>
+        </record>
+        <record id="demo_hw_card_2" model="hr.rfid.hw.import.card">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">0000100002</field>
+            <field name="number_display">0000100002</field>
+            <field name="pin">1234</field>
+            <field name="anomaly">none</field>
+            <field name="include">True</field>
+            <field name="person_id" ref="demo_hw_person_1"/>
+            <field name="door_rights_json">[{&quot;ctrl&quot;: &quot;a&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 0, &quot;alarm&quot;: true}, {&quot;ctrl&quot;: &quot;a&quot;, &quot;door&quot;: 2, &quot;ts&quot;: 0, &quot;alarm&quot;: true}]</field>
+            <field name="rights_key">6cd8621121c22db72a959570a90db7ff5601bcee</field>
+            <field name="apb_bits_json">{}</field>
+        </record>
+        <record id="demo_hw_card_3" model="hr.rfid.hw.import.card">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">0000100003</field>
+            <field name="number_display">0000100003</field>
+            <field name="pin"></field>
+            <field name="anomaly">none</field>
+            <field name="include">True</field>
+            <field name="person_id" ref="demo_hw_person_2"/>
+            <field name="door_rights_json">[{&quot;ctrl&quot;: &quot;a&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 1, &quot;alarm&quot;: false}, {&quot;ctrl&quot;: &quot;a&quot;, &quot;door&quot;: 2, &quot;ts&quot;: 2, &quot;alarm&quot;: false}]</field>
+            <field name="rights_key">20d074325cbe837e756ff14055aced41f3746318</field>
+            <field name="apb_bits_json">{}</field>
+        </record>
+        <record id="demo_hw_card_4" model="hr.rfid.hw.import.card">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">0000100004</field>
+            <field name="number_display">0000100004</field>
+            <field name="pin"></field>
+            <field name="anomaly">none</field>
+            <field name="include">True</field>
+            <field name="person_id" ref="demo_hw_person_card_4"/>
+            <field name="door_rights_json">[{&quot;ctrl&quot;: &quot;a&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 2, &quot;alarm&quot;: false}]</field>
+            <field name="rights_key">f115cf000fc6fbaecfee694f66ac114ff5337ca1</field>
+            <field name="apb_bits_json">{}</field>
+        </record>
+        <record id="demo_hw_card_5" model="hr.rfid.hw.import.card">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">0000100005</field>
+            <field name="number_display">0000100005</field>
+            <field name="pin"></field>
+            <field name="anomaly">none</field>
+            <field name="include">True</field>
+            <field name="person_id" ref="demo_hw_person_card_5"/>
+            <field name="door_rights_json">[{&quot;ctrl&quot;: &quot;b&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 0, &quot;alarm&quot;: false}]</field>
+            <field name="rights_key">e60eadc1c186c3e4f3f1a3e5da6230f68fb3b1b1</field>
+            <field name="apb_bits_json">{}</field>
+        </record>
+        <record id="demo_hw_card_6" model="hr.rfid.hw.import.card">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="number">0000100006</field>
+            <field name="number_display">0000100006</field>
+            <field name="pin"></field>
+            <field name="anomaly">partial_reader</field>
+            <field name="include">True</field>
+            <field name="person_id" ref="demo_hw_person_card_6"/>
+            <field name="door_rights_json">[{&quot;ctrl&quot;: &quot;b&quot;, &quot;door&quot;: 1, &quot;ts&quot;: 0, &quot;alarm&quot;: false}]</field>
+            <field name="rights_key">e60eadc1c186c3e4f3f1a3e5da6230f68fb3b1b1</field>
+            <field name="apb_bits_json">{}</field>
+        </record>
+        <record id="demo_hw_rec_a_1" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_1"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="position">1</field>
+            <field name="raw_hex">0000000001000000000100000000010100000301</field>
+            <field name="pin"></field>
+            <field name="ts_r1">1</field>
+            <field name="ts_r2">1</field>
+            <field name="ts_r3">0</field>
+            <field name="ts_r4">0</field>
+            <field name="rights">3</field>
+            <field name="alarm_bits">1</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+        </record>
+        <record id="demo_hw_rec_a_2" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_2"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="position">2</field>
+            <field name="raw_hex">0000000001000000000201020304000000000F0F</field>
+            <field name="pin">1234</field>
+            <field name="ts_r1">0</field>
+            <field name="ts_r2">0</field>
+            <field name="ts_r3">0</field>
+            <field name="ts_r4">0</field>
+            <field name="rights">15</field>
+            <field name="alarm_bits">15</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+        </record>
+        <record id="demo_hw_rec_a_3" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_3"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="position">3</field>
+            <field name="raw_hex">0000000001000000000300000000010102020F00</field>
+            <field name="pin"></field>
+            <field name="ts_r1">1</field>
+            <field name="ts_r2">1</field>
+            <field name="ts_r3">2</field>
+            <field name="ts_r4">2</field>
+            <field name="rights">15</field>
+            <field name="alarm_bits">0</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+        </record>
+        <record id="demo_hw_rec_a_4" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_4"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="position">4</field>
+            <field name="raw_hex">0000000001000000000400000000020200000300</field>
+            <field name="pin"></field>
+            <field name="ts_r1">2</field>
+            <field name="ts_r2">2</field>
+            <field name="ts_r3">0</field>
+            <field name="ts_r4">0</field>
+            <field name="rights">3</field>
+            <field name="alarm_bits">0</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+        </record>
+        <record id="demo_hw_rec_b_1" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_1"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_b"/>
+            <field name="position">1</field>
+            <field name="raw_hex">00000000010000000001000000000101000003</field>
+            <field name="pin"></field>
+            <field name="ts_r1">1</field>
+            <field name="ts_r2">1</field>
+            <field name="ts_r3">0</field>
+            <field name="ts_r4">0</field>
+            <field name="rights">3</field>
+            <field name="alarm_bits">0</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+            <field name="anomaly"></field>
+        </record>
+        <record id="demo_hw_rec_b_5" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_5"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_b"/>
+            <field name="position">2</field>
+            <field name="raw_hex">00000000010000000005000000000000000003</field>
+            <field name="pin"></field>
+            <field name="ts_r1">0</field>
+            <field name="ts_r2">0</field>
+            <field name="ts_r3">0</field>
+            <field name="ts_r4">0</field>
+            <field name="rights">3</field>
+            <field name="alarm_bits">0</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+            <field name="anomaly"></field>
+        </record>
+        <record id="demo_hw_rec_b_6" model="hr.rfid.hw.import.card.record">
+            <field name="card_id" ref="demo_hw_card_6"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_b"/>
+            <field name="position">3</field>
+            <field name="raw_hex">00000000010000000006000000000000000001</field>
+            <field name="pin"></field>
+            <field name="ts_r1">0</field>
+            <field name="ts_r2">0</field>
+            <field name="ts_r3">0</field>
+            <field name="ts_r4">0</field>
+            <field name="rights">1</field>
+            <field name="alarm_bits">0</field>
+            <field name="apb1">False</field>
+            <field name="apb2">False</field>
+            <field name="anomaly">partial_reader</field>
+        </record>
+        <record id="demo_hw_group_1" model="hr.rfid.hw.import.group">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="sequence">1</field>
+            <field name="name">Access group 1 - 1 doors</field>
+            <field name="holder_key">bd07374835bd1ec56d431408a818b5a6553370b6</field>
+            <field name="include">True</field>
+            <field name="card_ids" eval="[(6, 0, [ref('demo_hw_card_1'), ref('demo_hw_card_2'), ref('demo_hw_card_3'), ref('demo_hw_card_4')])]"/>
+        </record>
+        <record id="demo_hw_group_1_right_1" model="hr.rfid.hw.import.group.right">
+            <field name="group_id" ref="demo_hw_group_1"/>
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_a"/>
+            <field name="door_number">1</field>
+            <field name="ts_number">1</field>
+            <field name="alarm">False</field>
+        </record>
+        <record id="demo_hw_group_2" model="hr.rfid.hw.import.group">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="sequence">2</field>
+            <field name="name">Access group 2 - 1 doors</field>
+            <field name="holder_key">174d4f74befb2504c8b24cf99942cccb936da72f</field>
+            <field name="include">True</field>
+            <field name="card_ids" eval="[(6, 0, [ref('demo_hw_card_1'), ref('demo_hw_card_5'), ref('demo_hw_card_6')])]"/>
+        </record>
+        <record id="demo_hw_group_2_right_1" model="hr.rfid.hw.import.group.right">
+            <field name="group_id" ref="demo_hw_group_2"/>
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="ctrl_id" ref="demo_hw_ctrl_b"/>
+            <field name="door_number">1</field>
+            <field name="ts_number">0</field>
+            <field name="alarm">False</field>
+        </record>
+        <record id="demo_hw_issue_1" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">report</field>
+            <field name="severity">info</field>
+            <field name="message">Fire panel SN:1802 ID:40 was created with its settings only; its doors and readers could not be derived from the mode it reports.</field>
+            <field name="resolution">none</field>
+            <field name="ctrl_id" ref="demo_hw_ctrl_c"/>
+        </record>
+        <record id="demo_hw_issue_2" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">gap</field>
+            <field name="severity">info</field>
+            <field name="message">Fire panel SN:1802 ID:40 does not support 4 of the read commands; those settings are not part of the survey.</field>
+            <field name="resolution">none</field>
+            <field name="ctrl_id" ref="demo_hw_ctrl_c"/>
+        </record>
+        <record id="demo_hw_issue_3" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">ts_conflict</field>
+            <field name="severity">info</field>
+            <field name="message">Schedule slot 2 differs between controllers: iCON180 SN:1801 ID:15 (Mon-Sat 07:00-20:00), iCON110 SN:1101 ID:5 (Mon-Sun 06:00-22:00). Choose which controller to take it from.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_4" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">decision</field>
+            <field name="severity">info</field>
+            <field name="message">Schedule slot 2 was taken from iCON180 SN:1801 ID:15: Mon-Sat 07:00-20:00.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_5" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">anomaly</field>
+            <field name="severity">warning</field>
+            <field name="message">Card 0000100006 has a right this system cannot hold exactly (Only some readers of a door); it is imported as a right on the whole door with the schedule of the first reader.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_6" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">rights_union</field>
+            <field name="severity">warning</field>
+            <field name="message">Demo Holder One has two cards that open different doors today; after the import both open the union.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_7" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">report</field>
+            <field name="severity">info</field>
+            <field name="message">3 employees and 3 contacts are in place.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_8" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">report</field>
+            <field name="severity">info</field>
+            <field name="message">6 cards were created.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_9" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">report</field>
+            <field name="severity">info</field>
+            <field name="message">2 access groups and 6 memberships are in place.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_issue_10" model="hr.rfid.hw.import.issue">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="kind">report</field>
+            <field name="severity">info</field>
+            <field name="message">Result: 1 modules, 3 controllers, 6 cards, 9 door rights. No command was sent to the hardware.</field>
+            <field name="resolution">none</field>
+        </record>
+        <record id="demo_hw_log_1" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">F0</field>
+            <field name="data_sent"></field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">41</field>
+            <field name="response_hex">0100010800010704080001000000080401050208040200070607090004000904</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_2" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">F5</field>
+            <field name="data_sent"></field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">42</field>
+            <field name="response_hex">02</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_3" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">FC</field>
+            <field name="data_sent"></field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">43</field>
+            <field name="response_hex">01</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_4" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">B0</field>
+            <field name="data_sent">01</field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">44</field>
+            <field name="response_hex">01000003</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_5" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">F3</field>
+            <field name="data_sent">01</field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">45</field>
+            <field name="response_hex">01080018000000000000000000000000000800180000000000000000000000000008001800000000000000000000000000080018000000000000000000000000000800180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_6" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">F2</field>
+            <field name="data_sent">0000000000</field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">46</field>
+            <field name="response_hex">0000000004</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_7" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">15</field>
+            <field name="opcode">F2</field>
+            <field name="data_sent">000000000104</field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">47</field>
+            <field name="response_hex">00000000010000000001000000000101000003010000000001000000000201020304000000000F0F0000000001000000000300000000010102020F000000000001000000000400000000020200000300</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_8" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">5</field>
+            <field name="opcode">F0</field>
+            <field name="data_sent"></field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">48</field>
+            <field name="response_hex">0006010100010704010000030000030201050208000100010502060003000506</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_9" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">5</field>
+            <field name="opcode">F2</field>
+            <field name="data_sent">0000000000</field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">49</field>
+            <field name="response_hex">0000000003</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+        <record id="demo_hw_log_10" model="hr.rfid.hw.import.cmd.log">
+            <field name="run_id" ref="demo_hw_run"/>
+            <field name="module_id" ref="demo_hw_module"/>
+            <field name="address">40</field>
+            <field name="opcode">F0</field>
+            <field name="data_sent"></field>
+            <field name="e_code">0</field>
+            <field name="duration_ms">50</field>
+            <field name="response_hex">0108010800020702000000080000040000000204000100000000000001000000</field>
+            <field name="skewed">False</field>
+            <field name="attempt">1</field>
+        </record>
+    </data>
+</odoo>
