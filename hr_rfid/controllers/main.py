@@ -270,6 +270,27 @@ class WebRfidController(http.Controller):
             if auth_error is not None:
                 return auth_error
 
+            # From here on the device has proved its key, and only from here.
+            #
+            # Why the request needs a user at all: the route is auth='none',
+            # because a controller identifies itself with its own key and not
+            # with an Odoo login. Everything below already escalates per call
+            # with sudo() and works - but the environment of the REQUEST is
+            # also the one Odoo flushes into at the END of it (http.py:
+            # _serve_db -> retrying -> env.cr.flush()). A stored Monetary
+            # column then has to ask its currency how to round, that read goes
+            # through an access check, and the check needs exactly one user
+            # where there is none. update_env re-points
+            # transaction.default_env, which is precisely what flush_all()
+            # uses - the move core makes on its own public routes
+            # (auth_signup/controllers/main.py, web/controllers/home.py).
+            #
+            # Placed AFTER authentication on purpose: an unauthenticated
+            # request - a wrong key, an unknown module, anything a stranger
+            # posts at this open endpoint - parses and is refused with no
+            # elevated rights at all.
+            request.update_env(user=SUPERUSER_ID)
+
             result = {
                 'status': 400
             }

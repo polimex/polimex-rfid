@@ -10,7 +10,7 @@
     'license': 'AGPL-3',
 
     'category': "Human Resources",
-    'version': '19.0.1.3.1',
+    'version': '19.0.1.3.2',
 
     'depends': ['hr_hourly_cost', 'hr_attendance_late'],
 
