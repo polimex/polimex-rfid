@@ -4,10 +4,14 @@
 съществуват.
 
 `first_in` и `last_out` (hr_attendance_extra) се пишат само от преизчислението
-(models/hr_employee.py:341-346). На база, дошла от 18, всеки исторически ред ги
-има празни, а списъчният изглед ги показва по подразбиране
+(models/hr_employee.py:341-346). Двете колони НЕ съществуват в клона 18.0 -
+появяват се в 19.0 линията на модула. Затова празни ги има всеки ред, измерен
+преди версията, която ги въвежда - включително на база, РОДЕНА на 19, която още
+не е стигнала до тази версия. Не е въпрос на идване от 18.
+
+Списъчният изглед ги показва по подразбиране
 (views/hr_attendance_extra.xml:82-83) - тоест колоните стоят празни във всеки
-отчет за минал период. Измерено на клиентска база (urbanpassive, 06.09.2026):
+отчет за минал период. Измерено на клиентска база (клиентски случай, 06.09.2026):
 0 от 3563 реда.
 
 Данните за попълването са налице и непокътнати - изчислява се същото, което
@@ -37,7 +41,7 @@
 """
 import logging
 
-from openupgradelib import openupgrade
+from odoo.tools.sql import column_exists
 
 _logger = logging.getLogger(__name__)
 
@@ -70,29 +74,33 @@ SQL_EMPLOYEE_TZ_LEGACY = """
 
 def _employee_tz_source(cr):
     """Откъде се чете календарът - от hr.version (19) или от hr.employee (18)."""
-    if openupgrade.column_exists(cr, "hr_version", "resource_calendar_id"):
+    if column_exists(cr, "hr_version", "resource_calendar_id"):
         return SQL_EMPLOYEE_TZ_VERSION
     return SQL_EMPLOYEE_TZ_LEGACY
 
 
-def fill_first_in_last_out(env):
+def fill_first_in_last_out(cr):
     """Попълни часа на първото влизане и последното излизане за всеки
     измерен ден, който още няма стойност."""
     for column in ("first_in", "last_out"):
-        if not openupgrade.column_exists(env.cr, "hr_attendance_extra", column):
+        if not column_exists(cr, "hr_attendance_extra", column):
             _logger.warning(
                 "hr_attendance_extra.%s липсва - пропускам попълването", column)
             return
-    if not openupgrade.column_exists(env.cr, "hr_attendance", "in_mode"):
+    if not column_exists(cr, "hr_attendance", "in_mode"):
         _logger.warning("hr_attendance.in_mode липсва - пропускам попълването")
         return
 
-    openupgrade.logged_query(
-        env.cr,
+    cr.execute(
         """
         UPDATE hr_attendance_extra x
-           SET first_in = d.first_in,
-               last_out = d.last_out
+           -- COALESCE, а не пряко присвояване: редът се ИЗБИРА, когато КОЯТО И
+           -- ДА Е от двете колони е празна, но дотук се ПРЕЗАПИСВАХА и двете.
+           -- Ден, чието влизане е записано, а излизането още не е (при
+           -- измерения клиентски случай такива са 5), при повторен прогон би загубил ръчна
+           -- корекция на вече попълнената колона. Пише се само празното.
+           SET first_in = COALESCE(x.first_in, d.first_in),
+               last_out = COALESCE(x.last_out, d.last_out)
           FROM (
                 SELECT b.id,
                        EXTRACT(HOUR   FROM b.fi)
@@ -122,10 +130,12 @@ def fill_first_in_last_out(env):
                ) d
          WHERE d.id = x.id
         """
-        % _employee_tz_source(env.cr),
+        % _employee_tz_source(cr),
     )
+    _logger.info(
+        "hr_attendance_late: %s дни получиха час на влизане/излизане",
+        cr.rowcount)
 
 
-@openupgrade.migrate()
-def migrate(env, version):
-    fill_first_in_last_out(env)
+def migrate(cr, version):
+    fill_first_in_last_out(cr)

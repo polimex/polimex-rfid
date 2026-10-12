@@ -9,7 +9,7 @@
 впише check_out (hr_attendance_multi_rfid 18.0, models/hr_attendance.py:57-61).
 Маркерът оцелява само докато човекът е още вътре, тоест предишният скрипт
 хващаше единствено отворените престои. Измерено на клиентска база
-(urbanpassive, 06.09.2026): 3559 затворени записа - 0 със зона; 2 отворени -
+(клиентски случай, 06.09.2026): 3559 затворени записа - 0 със зона; 2 отворени -
 2 със зона. Скриптът се изпълни коректно и улови точно 2 от 3428.
 
 Маркерът, който НЕ се изтрива, е самото минаване: v18 създава присъствието с
@@ -25,31 +25,35 @@
 маркира всяко минаване с `no_attendance_reason='manual_record'` - тиха
 операция без резултат, която отчита успех.
 
+За кои бази важи: `in_mode` НЕ съществува в клона 18.0 - въведено е в 19.0
+линията. Затова скриптът не е "за база, дошла от 18", а за всяка база под
+версията, която въвежда полето, включително РОДЕНА на 19. Цитатите към v18
+по-горе описват откъде идва поведението, не откъде идва базата.
+
 Идемпотентен: пипа само `in_mode='manual'`; вече поправените са 'rfid'.
 Изпълнява се ВЪТРЕ в ъпгрейда, преди потребител да е докоснал системата, тоест
 не може да прегази ръчна редакция, направена след него.
 """
 import logging
 
-from openupgradelib import openupgrade
+from odoo.tools.sql import column_exists, table_exists
 
 _logger = logging.getLogger(__name__)
 
 
-def stamp_rfid_born_attendance(env):
+def stamp_rfid_born_attendance(cr):
     """Маркирай като RFID-родено всяко "ръчно" присъствие, чието влизане
     съвпада до секундата с минаване през четец на същия човек."""
-    if not openupgrade.column_exists(env.cr, "hr_attendance", "in_mode"):
+    if not column_exists(cr, "hr_attendance", "in_mode"):
         _logger.warning(
             "hr_attendance.in_mode липсва - присъствията остават без произход")
         return
-    if not openupgrade.table_exists(env.cr, "hr_rfid_event_user"):
+    if not table_exists(cr, "hr_rfid_event_user"):
         _logger.warning(
             "hr_rfid_event_user липсва - няма по какво да се разпознае "
             "произходът на присъствията")
         return
-    openupgrade.logged_query(
-        env.cr,
+    cr.execute(
         """
         UPDATE hr_attendance a
            SET in_mode = 'rfid'
@@ -61,8 +65,10 @@ def stamp_rfid_born_attendance(env):
                     AND e.event_time = a.check_in)
         """,
     )
+    _logger.info(
+        "hr_attendance_multi_rfid: %s присъствия маркирани като RFID-родени",
+        cr.rowcount)
 
 
-@openupgrade.migrate()
-def migrate(env, version):
-    stamp_rfid_born_attendance(env)
+def migrate(cr, version):
+    stamp_rfid_born_attendance(cr)
