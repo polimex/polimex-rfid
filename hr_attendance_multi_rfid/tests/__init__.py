@@ -6,3 +6,4 @@ from . import test_recalc_background
 from . import test_recalc_security
 from . import test_recalc_tour
 from . import test_why_not_counted
+from . import test_migration_keeps_operator_days
