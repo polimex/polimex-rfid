@@ -247,7 +247,7 @@ No images, diagrams or screenshots are shipped with this module.
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Candidate entries mined from code comments, git history and past Claude Code sessions. Review before publishing; `<!-- source: ... -->` markers should be removed after vetting.
+Notes collected from code comments and the development history.
 
 ### From `gotchas` (6)
 
