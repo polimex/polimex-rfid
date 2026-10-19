@@ -156,6 +156,31 @@ longest 361 days, and each of them lent its whole length to every day it
 touched. After settling them, 551 records still cross midnight - those are the
 real night shifts, and they were not touched.
 
+## When the hours of a day look wrong
+
+Every attendance shows the hours worked, the extra hours and the regular hours,
+and the regular hours are always the worked hours minus the extra ones.
+
+If a day shows 0 hours worked although the person was in, or regular hours that
+are not worked minus extra, an attendance manager can put it right with
+**Regenerate overtimes** on the overtime ruleset (**Attendances ->
+Configuration -> Overtime Rulesets**, open the ruleset). Know the cost before
+pressing it: it works the overtime of every employee on that ruleset out again
+from the rules, so every decision already taken on an overtime line in that
+period - approved or refused - has to be taken again. The hours of days that
+are already right do not change.
+
+How far back it reaches: to the earliest date from which this ruleset applies
+to anybody (the first contract version that uses it), for every employee on
+the ruleset.
+
+Attendance from before that, typically the history brought over from another
+system, is put right by an administrator: run the transfer again (**RFID
+System -> Hardware Manager -> Import from Odoo**) with only "Import
+attendance" ticked. The transfer touches only the days that are wrong, so the
+decisions on the other days stay; days from before a person's first contract
+version get their hours worked and no overtime.
+
 ## Why a passage was not counted
 
 A person walks through the door, the access is granted, and the attendance

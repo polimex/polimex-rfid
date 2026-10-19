@@ -59,19 +59,19 @@ Configuration
 =============
 
 No special configuration is needed. The module adds a menu entry under
-**RFID -> Import -> Import from Odoo**.
+**RFID System -> Hardware Manager -> Import from Odoo**.
 
 Usage
 =====
 
-1. Go to **RFID -> Import -> Import from Odoo**
+1. Go to **RFID System -> Hardware Manager -> Import from Odoo**
 2. Enter the source Odoo connection details (URL, database, login, password)
 3. Click **Check Connection** to verify connectivity
 4. Select the source company to import
 5. Choose which optional data to include (events, vending, attendance, services)
 6. Click **Start Import** and monitor progress
 7. The transfer opens on its own page and continues in the background. Close it
-   whenever you like; come back to **RFID -> Data Transfers** to see how far it
+   whenever you like; come back to **RFID System -> Hardware Manager -> Data Transfers** to see how far it
    has got and what it moved.
 
 Requirements

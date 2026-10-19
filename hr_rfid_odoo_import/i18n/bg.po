@@ -1,13 +1,10 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_rfid_odoo_import
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-17 11:09+0000\n"
-"PO-Revision-Date: 2026-08-17 14:09\n"
+"PO-Revision-Date: 2026-10-12 18:05\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -31,6 +28,12 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "  ERROR: %s"
 msgstr "  ГРЕШКА: %s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(company)s: %(there)s there, %(here)s here"
+msgstr "%(company)s: %(there)s в другата система, %(here)s тук"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -131,9 +134,16 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "%(first)s and %(more)s more"
 msgstr "%(first)s и още %(more)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(kind)s could not be checked against the other system: %(problem)s"
+msgstr "%(kind)s не можа да бъде сверен с другата система: %(problem)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -146,6 +156,56 @@ msgstr "%(kind)s №%(num)s от другата система няма съот
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%(kind)s: could not be counted"
 msgstr "%(kind)s: не можа да бъде преброено"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: more records are here than the other system holds - %(where)s. "
+"Anything this system works out for itself lands here as well as what came "
+"across."
+msgstr ""
+"%(kind)s: тук има повече записи, отколкото в другата система - %(where)s. "
+"Всичко, което тази система изчислява сама, се добавя тук заедно с "
+"импортираното."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system cannot be asked about this per company, so no "
+"comparison was made."
+msgstr ""
+"%(kind)s: другата система не може да бъде питана за това по фирми, затова не "
+"е направено сравнение."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(kind)s: the other system does not keep that kind of data."
+msgstr "%(kind)s: другата система не съхранява този вид данни."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system holds more than arrived here - %(where)s. Look at "
+"the step that carries them: what these records point at is usually what is "
+"missing."
+msgstr ""
+"%(kind)s: другата система съдържа повече, отколкото е получено тук - "
+"%(where)s. Прегледайте стъпката, която ги пренася: обикновено липсва това, "
+"към което сочат тези записи."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: this system does not keep that kind of data, so there was nothing "
+"to compare."
+msgstr ""
+"%(kind)s: тази система не съхранява този вид данни, затова нямаше какво да "
+"се сравнява."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -179,6 +239,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "%(name)s from %(day)s: %(problem)s"
+msgstr "%(name)s от %(day)s: %(problem)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/hr_employee.py:0
 msgid "%(names)s and %(others)s more"
 msgstr "%(names)s и още %(others)s"
@@ -206,6 +272,12 @@ msgstr "%d конфликта трябва да бъдат разрешени п
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "+%(count)s more"
 msgstr "+%(count)s още"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "+%(count)s more tenant(s)"
+msgstr "+ още %(count)s фирми"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -858,6 +930,18 @@ msgstr ""
 "                                и след това протича самостоятелно."
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"Hours worked could not be worked out for %(records)s attendance(s) of "
+"%(who)s. Put those days right, then run the transfer again with only "
+"\"Import attendance\" ticked."
+msgstr ""
+"Работните часове не можаха да бъдат изчислени за %(records)s присъствие(я) "
+"на %(who)s. Поправете тези дни и пуснете трансфера отново, като отметнете "
+"само „Импорт на присъствия“."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__progress
 msgid "How far along the transfer is."
 msgstr "Колко напреднал е трансферът."
@@ -911,7 +995,6 @@ msgstr "Ако е отметнато, новите съобщения изиск
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е отметнато, някои съобщения имат грешка при доставка."
 
@@ -1683,11 +1766,6 @@ msgid ""
 msgstr ""
 "Текущи суми на стъпките с възможност за възобновяване. Всяко изпълнение "
 "отчита само прочетената от него част; протоколът отразява целия трансфер."
-
-#. module: hr_rfid_odoo_import
-#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Грешка при доставка на SMS"
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__name
@@ -2501,6 +2579,12 @@ msgstr "Помощник"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "Worked Hours"
+msgstr "Работни часове"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "XML-RPC error: %s"
 msgstr "XML-RPC грешка: %s"
@@ -2520,6 +2604,7 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+#: code:addons/hr_rfid_odoo_import/tests/test_protocol_tells_the_truth.py:0
 msgid "Zones"
 msgstr "Зони"
 

@@ -1,13 +1,10 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* hr_rfid_odoo_import
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 17:28+0000\n"
-"PO-Revision-Date: 2026-08-16 20:29\n"
+"PO-Revision-Date: 2026-10-12 18:06\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -34,6 +31,31 @@ msgstr "  ERRORE: %s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(company)s: %(there)s there, %(here)s here"
+msgstr "%(company)s: %(there)s nell'altro sistema, %(here)s qui"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/leave_importer.py:0
+msgid ""
+"%(count)s absence(s) already approved on the other system were not accepted "
+"here: this system requires a balance that covers them, and it does not. Two "
+"ways on, both of them yours to choose: give those people the missing "
+"allocation, or - if that kind of leave never needed a balance over there - "
+"untick \"Requires allocation\" on it here. Then run the transfer again: it "
+"brings exactly the ones still missing."
+msgstr ""
+"%(count)s assenza/e già approvata/e nell'altro sistema non sono state "
+"accettate qui: questo sistema richiede un saldo che le copra, e il saldo non"
+" c'è. Ci sono due possibilità, a vostra scelta: assegnare a queste persone "
+"l'allocazione mancante oppure, se quel tipo di permesso nell'altro sistema "
+"non ha mai richiesto un saldo, deselezionare qui \"Requires allocation\". "
+"Quindi eseguire di nuovo il trasferimento: porterà esattamente quelle ancora"
+" mancanti."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
 msgid ""
 "%(count)s camera(s) arrived without a password and cannot be reached until "
@@ -53,6 +75,17 @@ msgstr ""
 "È stato richiesto a %(count)s controller di inviare la propria tabella di "
 "ingressi/uscite. Arriverà al prossimo contatto; eseguire di nuovo se alcuni "
 "erano spenti."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"%(count)s day(s) had already been worked out here - the figures this system "
+"produced for them are kept, so a day is not counted twice"
+msgstr ""
+"%(count)s giorno/i erano già stati elaborati qui: i valori prodotti da "
+"questo sistema per tali giorni vengono mantenuti, così un giorno non viene "
+"conteggiato due volte"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -104,9 +137,18 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "%(first)s and %(more)s more"
 msgstr "%(first)s e altri %(more)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(kind)s could not be checked against the other system: %(problem)s"
+msgstr ""
+"Non è stato possibile verificare %(kind)s rispetto all'altro sistema: "
+"%(problem)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -119,6 +161,56 @@ msgstr "%(kind)s n°%(num)s dell'altro sistema non ha corrispondenza qui"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%(kind)s: could not be counted"
 msgstr "%(kind)s: impossibile effettuare il conteggio"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: more records are here than the other system holds - %(where)s. "
+"Anything this system works out for itself lands here as well as what came "
+"across."
+msgstr ""
+"%(kind)s: qui ci sono più record di quanti ne contenga l'altro sistema - "
+"%(where)s. Tutto ciò che questo sistema calcola autonomamente si aggiunge "
+"qui, oltre a quanto è stato trasferito."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system cannot be asked about this per company, so no "
+"comparison was made."
+msgstr ""
+"%(kind)s: all'altro sistema non è possibile chiedere questo dato per "
+"azienda, quindi non è stato effettuato alcun confronto."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(kind)s: the other system does not keep that kind of data."
+msgstr "%(kind)s: l'altro sistema non conserva questo tipo di dati."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system holds more than arrived here - %(where)s. Look at"
+" the step that carries them: what these records point at is usually what is "
+"missing."
+msgstr ""
+"%(kind)s: l'altro sistema contiene più record di quanti ne siano arrivati "
+"qui - %(where)s. Controllare il passaggio che li trasferisce: di solito "
+"manca ciò a cui questi record fanno riferimento."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: this system does not keep that kind of data, so there was nothing "
+"to compare."
+msgstr ""
+"%(kind)s: questo sistema non conserva questo tipo di dati, quindi non c'era "
+"nulla da confrontare."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -146,6 +238,12 @@ msgstr ""
 "%(missing)s evento/i di targa riconosciuta non sono stati trasferiti perché "
 "gli eventi sono stati esclusi da questo trasferimento. Eseguirlo di nuovo "
 "con gli eventi attivati per importarli."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "%(name)s from %(day)s: %(problem)s"
+msgstr "%(name)s del %(day)s: %(problem)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -177,6 +275,12 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "+%(count)s more"
 msgstr "+%(count)s altri"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "+%(count)s more tenant(s)"
+msgstr "+%(count)s altro/i tenant"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -758,15 +862,6 @@ msgid "Existing in Target"
 msgstr "Esistente nella destinazione"
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
-msgid ""
-"Existing res.company on this instance to merge the source data into. Leave "
-"empty to create a fresh company with the source name."
-msgstr ""
-"res.company esistente su questa istanza in cui unire i dati di origine. "
-"Lasciare vuoto per creare una nuova azienda con il nome di origine."
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__conflict_field
 msgid ""
 "Field on which the two records collide (typically the unique constraint that"
@@ -830,6 +925,18 @@ msgstr ""
 "                                momento procede in autonomia."
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"Hours worked could not be worked out for %(records)s attendance(s) of "
+"%(who)s. Put those days right, then run the transfer again with only "
+"\"Import attendance\" ticked."
+msgstr ""
+"Non è stato possibile calcolare le ore lavorate per %(records)s presenza/e "
+"di %(who)s. Correggere quei giorni, quindi eseguire di nuovo il "
+"trasferimento selezionando solo \"Importa presenze\"."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__progress
 msgid "How far along the transfer is."
 msgstr "A che punto è il trasferimento."
@@ -885,7 +992,6 @@ msgstr "Se selezionato, i nuovi messaggi richiedono la tua attenzione."
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Se selezionato, alcuni messaggi presentano un errore di consegna."
 
@@ -1672,11 +1778,6 @@ msgstr ""
 "trasferimento."
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Errore di consegna SMS"
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__name
 msgid "Short label of this transfer, built from the source it reads."
 msgstr ""
@@ -2011,6 +2112,16 @@ msgid ""
 msgstr ""
 "L'altro sistema non assegna un gruppo di accesso predefinito ai "
 "dipartimenti, quindi non c'era nulla da riportare."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"The other system does not keep daily working-time roll-ups - it only records"
+" the attendances themselves, which came across above."
+msgstr ""
+"L'altro sistema non conserva i riepiloghi giornalieri dell'orario di lavoro:"
+" registra solo le presenze vere e proprie, già trasferite sopra."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2399,6 +2510,17 @@ msgstr ""
 " la pagina."
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
+msgid ""
+"Which company here receives this tenant's data. It must already exist - "
+"create it first if it does not, or untick Import to leave this tenant "
+"behind."
+msgstr ""
+"Azienda di questo sistema che riceve i dati di questo tenant. Deve già "
+"esistere: crearla prima, se non esiste, oppure deselezionare Importa per "
+"lasciare da parte questo tenant."
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__company_map_json
 msgid "Which company on the other side becomes which here."
 msgstr "Quale azienda dall'altra parte diventa quale qui."
@@ -2454,6 +2576,12 @@ msgstr "Procedura guidata"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "Worked Hours"
+msgstr "Ore lavorate"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "XML-RPC error: %s"
 msgstr "Errore XML-RPC: %s"
@@ -2473,6 +2601,7 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+#: code:addons/hr_rfid_odoo_import/tests/test_protocol_tells_the_truth.py:0
 msgid "Zones"
 msgstr "Zone"
 
@@ -2514,6 +2643,20 @@ msgid ""
 msgstr ""
 "la telecamera %(name)s ha una lista lettori vuota - i suoi riconoscimenti "
 "vengono scartati"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "card %(number)s belongs to a contact who did not come across"
+msgstr ""
+"la tessera %(number)s appartiene a un contatto che non è stato trasferito"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "card %(number)s belongs to a person who did not come across"
+msgstr ""
+"la tessera %(number)s appartiene a una persona che non è stata trasferita"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2748,6 +2891,16 @@ msgstr ""
 "l'indirizzo di notifica di %(count)s telecamera/e è stato reindirizzato dal "
 "vecchio server a questo (%(local)s) - premere Imposta Host HTTP su ciascuna "
 "telecamera per applicarlo"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"the other system has the same %(count)s - carried over as it stands, not "
+"caused here: %(who)s"
+msgstr ""
+"l'altro sistema ha lo stesso %(count)s: riportato così com'è, non causato "
+"qui: %(who)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python

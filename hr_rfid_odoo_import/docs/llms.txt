@@ -38,7 +38,7 @@ arrive, that is reported as a fault, not as a finished step.
 
 ## How to use it
 
-1. Go to **RFID -> Import from Odoo**.
+1. Go to **RFID System -> Hardware Manager -> Import from Odoo**.
 2. Enter the address of the other system and an account that can read it. That
    account needs to be able to see everything you want moved - including the
    camera passwords, if you have cameras.
@@ -62,7 +62,7 @@ arrive, that is reported as a fault, not as a finished step.
    listed for you to decide about; the transfer will not start until you have.
 7. Press **Start Import**. The transfer opens on its own page and continues in
    the background - close the page whenever you like.
-8. Come back to **RFID -> Data Transfers** to see how far it got and, line by
+8. Come back to **RFID System -> Hardware Manager -> Data Transfers** to see how far it got and, line by
    line, what it moved and what it did not.
 
 
@@ -91,6 +91,27 @@ back. People, contacts, departments and access groups keep the details
 corrected here. A list the other system keeps - the departments of an access
 group, the doors a reader serves - is rebuilt from it, so an entry added here
 is taken out again. No record is deleted.
+
+**Transferred attendance shows 0 hours worked - what do I do?** Run the
+transfer again with only "Import attendance" ticked. The attendance of the
+people it brings into this company then gets its hours worked out, whatever
+its date, including attendance an earlier transfer left at 0. The line "Worked
+Hours" in the protocol says how many were put right.
+
+- Days from before a person was set up here (their first contract version)
+  get their hours worked, and no overtime: there is no working schedule for
+  them yet, so nothing can be extra. This is also where Odoo's own
+  "Regenerate overtimes" stops.
+- Days from after that also get their extra and regular hours. Overtime a
+  manager has already approved or refused on another day keeps that decision.
+  A day, or a week under a weekly rule, that holds both a transferred stay and
+  one recorded here is worked out again as a whole, as Odoo does whenever a
+  stay of that day changes.
+- Records already right are not changed.
+
+If the hours of some people cannot be worked out, the same line names them,
+the first day concerned and what the system answered. Put those days right,
+then run the transfer again the same way.
 
 **What if it is interrupted?** It carries on from where it stopped. A transfer
 that has not moved for half an hour is closed automatically and its stored

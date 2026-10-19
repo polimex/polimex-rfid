@@ -303,7 +303,7 @@ class HrRfidOdooImportRun(models.Model):
     def _process_pass(self):
         """Work through as many steps as fit in this pass."""
         self.ensure_one()
-        from .importers.phase import phase_plan, registry
+        from .importers.phase import phase_plan
 
         # Another worker may have taken this job between the search and here.
         if not self.try_lock_for_update():
@@ -343,9 +343,12 @@ class HrRfidOdooImportRun(models.Model):
                                 remaining=len(plan) - len(done_phases),
                                 importer=importer)
 
-            if time.monotonic() > deadline:
-                # Out of time. Whatever is left waits for the next pass; the
-                # external IDs make re-reading safe, so nothing is duplicated.
+            if not complete or time.monotonic() > deadline:
+                # Out of time, or a step stopped part-way for another reason
+                # (rows another process was writing at that moment). Whatever
+                # is left waits for the next pass; the external IDs make
+                # re-reading safe, so nothing is duplicated. Going on instead
+                # would end the run with this phase still unfinished.
                 self._wake_the_worker()
                 return
 

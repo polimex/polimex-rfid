@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 16:07+0000\n"
-"PO-Revision-Date: 2026-08-14 16:07+0000\n"
+"POT-Creation-Date: 2026-10-14 09:17+0000\n"
+"PO-Revision-Date: 2026-10-14 09:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,29 +20,31 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
 "\n"
-"--- %d Conflicts Detected ---"
-msgstr ""
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid ""
-"\n"
 "--- %s: %s ---"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid ""
-"\n"
-"--- Events ---"
+msgid "  ERROR: %s"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "  ERROR: %s"
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(company)s: %(there)s there, %(here)s here"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/leave_importer.py:0
+msgid ""
+"%(count)s absence(s) already approved on the other system were not accepted "
+"here: this system requires a balance that covers them, and it does not. Two "
+"ways on, both of them yours to choose: give those people the missing "
+"allocation, or - if that kind of leave never needed a balance over there - "
+"untick \"Requires allocation\" on it here. Then run the transfer again: it "
+"brings exactly the ones still missing."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -64,10 +66,24 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"%(count)s day(s) had already been worked out here - the figures this system "
+"produced for them are kept, so a day is not counted twice"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
 msgid ""
 "%(count)s door(s) arrived without the kind of card they accept, because that"
 " kind is not here. Set it on each door before the barrier is used again."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(count)s more refused row(s) were not examined one by one"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -80,6 +96,14 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"%(count)s record(s) clash with ones already here - decide about each of them"
+" in the list below before starting."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/site_importer.py:0
 msgid ""
 "%(equipment)s piece(s) of equipment had not arrived yet and %(sites)s "
@@ -88,8 +112,95 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(first)s and %(more)s more"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(kind)s could not be checked against the other system: %(problem)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(kind)s №%(num)s from the other system has no match here"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "%(kind)s: could not be counted"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: more records are here than the other system holds - %(where)s. "
+"Anything this system works out for itself lands here as well as what came "
+"across."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system cannot be asked about this per company, so no "
+"comparison was made."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "%(kind)s: the other system does not keep that kind of data."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system holds more than arrived here - %(where)s. Look at"
+" the step that carries them: what these records point at is usually what is "
+"missing."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: this system does not keep that kind of data, so there was nothing "
+"to compare."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) are waiting for the camera capability."
+" Add it here, then run the transfer again."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
 msgid "%(missing)s recognised plate event(s) did not come across."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"%(missing)s recognised plate event(s) stayed behind because events were left"
+" out of this transfer. Run it again with events switched on to bring them."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "%(name)s from %(day)s: %(problem)s"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -106,8 +217,26 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "%(what)s - %(count)s row(s)"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "%d conflicts need resolution before import can proceed."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "+%(count)s more"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "+%(count)s more tenant(s)"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -140,6 +269,14 @@ msgid ""
 "<i class=\"fa fa-exclamation-triangle\"/> Module "
 "<strong>rfid_service_base</strong> is installed on source but NOT on target."
 " Install it to import service data."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Records that are already here are recognised\n"
+"                                and will not be duplicated."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -182,18 +319,24 @@ msgid "<strong>Worth knowing</strong>"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "=== Import Preview ===\n"
-msgstr ""
-
-#. module: hr_rfid_odoo_import
 #: model_terms:ir.actions.act_window,help:hr_rfid_odoo_import.hr_rfid_odoo_import_run_action
 msgid ""
 "A transfer copies access control data from another Odoo system\n"
 "                    into this one - the equipment, the people, the cards and the\n"
 "                    history. Start one from Import from Odoo; it will appear here\n"
 "                    and keep going in the background."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Access events"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Access groups"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -255,6 +398,12 @@ msgid "Cameras - still to be done"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Cameras that would drop their events"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Cancel"
 msgstr ""
@@ -282,8 +431,38 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Cards"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Cards held by a person of another company"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Cards that belong to nobody"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Chains that cross companies"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "Close"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Communication modules"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -348,8 +527,26 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Contacts"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/core_importer.py:0
 msgid "Controller IO tables"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Controllers"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Controllers hidden behind an archived module"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -480,6 +677,35 @@ msgid "Done Phases Json"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Door permissions across companies"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Doors"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Doors attached to no equipment"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Doors that no reader serves"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_run_form
+msgid "Download the protocol"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__duration
 msgid "Duration (s)"
 msgstr ""
@@ -487,6 +713,12 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model,name:hr_rfid_odoo_import.model_hr_employee
 msgid "Employee"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Employees"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -538,13 +770,6 @@ msgid "Existing in Target"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
-msgid ""
-"Existing res.company on this instance to merge the source data into. Leave "
-"empty to create a fresh company with the source name."
-msgstr ""
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__conflict_field
 msgid ""
 "Field on which the two records collide (typically the unique constraint that"
@@ -589,6 +814,24 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__has_message
 msgid "Has Message"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid ""
+"Here is what the other system holds for the\n"
+"                                companies you picked. Nothing has been touched\n"
+"                                yet - the transfer starts only when you press\n"
+"                                the button below, and then runs on its own."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"Hours worked could not be worked out for %(records)s attendance(s) of "
+"%(who)s. Put those days right, then run the transfer again with only "
+"\"Import attendance\" ticked."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -637,7 +880,6 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_error
-#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -664,11 +906,6 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_people
 msgid "Import People"
-msgstr ""
-
-#. module: hr_rfid_odoo_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
-msgid "Import Preview"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -729,6 +966,11 @@ msgstr ""
 #: model:ir.actions.act_window,name:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_action
 #: model:ir.ui.menu,name:hr_rfid_odoo_import.hr_rfid_odoo_import_menu
 msgid "Import from Odoo"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_leaves
+msgid "Import leaves"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -810,6 +1052,14 @@ msgstr ""
 msgid ""
 "Include hr.rfid.card records, including their owner and access-group "
 "memberships."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__import_leaves
+msgid ""
+"Include leave types, approved allocations and the absences themselves "
+"(approved or awaiting approval). They come across quietly - no approval "
+"emails are sent again."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1245,6 +1495,18 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Readers wired to nothing"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "Readers without a door"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
 "Records from %(existing)s are already here, and this transfer is filed under"
@@ -1281,12 +1543,6 @@ msgid "Resolution Json"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "Review the conflicts table below and choose a resolution for each."
-msgstr ""
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_log__run_id
 msgid "Run"
 msgstr ""
@@ -1304,8 +1560,10 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_odoo_import
-#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__message_has_sms_error
-msgid "SMS Delivery error"
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
+msgid ""
+"Running totals of the resumable steps. A pass counts only the slice it read "
+"itself; the protocol reports the whole transfer."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1505,6 +1763,11 @@ msgid "Status"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
+msgid "Step Totals Json"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__state
 msgid ""
 "Step the wizard is currently on - Connection: enter source URL + creds. "
@@ -1525,6 +1788,12 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields.selection,name:hr_rfid_odoo_import.selection__hr_rfid_odoo_import_run__state__failed
 msgid "Stopped by a problem"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "System events"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1555,6 +1824,12 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_conflict__target_id
 msgid "Target ID"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "Temperature and humidity readings"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1597,6 +1872,14 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"The other system does not keep daily working-time roll-ups - it only records"
+" the attendances themselves, which came across above."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/phase.py:0
 msgid "The other system does not keep this kind of data."
 msgstr ""
@@ -1608,6 +1891,15 @@ msgid ""
 "The other system holds %(count)s record(s) of this kind and none of them "
 "came across. Look at the step before this one - what these records point at "
 "is probably missing."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid ""
+"The other system keeps %(feature)s, but this system cannot take that data "
+"over yet. Add the capability here and run the transfer again to bring it - "
+"or simply continue if there is nothing worth bringing."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1751,8 +2043,9 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid ""
-"This system cannot take over %(feature)s yet. Add that capability here "
-"first, or leave it out of the transfer."
+"This system cannot take over %(feature)s yet. Add that capability here and "
+"run the transfer again to bring that data - or simply continue if there is "
+"none worth bringing."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1892,10 +2185,23 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
+msgid "What will come across"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__state
 msgid ""
 "Where this transfer has got to. It continues on its own; you can close the "
 "page."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_company_line__target_company_id
+msgid ""
+"Which company here receives this tenant's data. It must already exist - "
+"create it first if it does not, or untick Import to leave this tenant "
+"behind."
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1945,6 +2251,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "Worked Hours"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "XML-RPC error: %s"
 msgstr ""
@@ -1961,7 +2273,175 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+#: code:addons/hr_rfid_odoo_import/tests/test_protocol_tells_the_truth.py:0
+msgid "Zones"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "access group №%(src)s from the other system has no match here"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"an existing record here already belongs to a different record of the other "
+"system, so the two were not merged"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "and %(more)s more reason(s)"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"camera %(name)s has an empty reader list - its recognitions are being "
+"dropped"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "card %(number)s belongs to a contact who did not come across"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "card %(number)s belongs to a person who did not come across"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "card %(number)s belongs to nobody"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"card %(number)s of %(company)s is held by %(owner)s of %(owner_company)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "controller %(name)s hangs off archived module %(module)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"door %(door)s is of %(door_company)s while its module belongs to "
+"%(module_company)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "door %(name)s has no readers"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "door %(name)s is attached to no equipment"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to camera \"%(cam)s\" - it is attached "
+"again right after the cameras come across"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" belongs to company \"%(company)s\", which is not "
+"included in this transfer - add that company on the first page to bring its "
+"doors"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer and still did not arrive"
+" - look at the hardware step above"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"door №%(num)s \"%(name)s\" is part of this transfer; a door with the same "
+"name exists here (№%(target)s) but under a different transfer identity, so "
+"they are not recognised as one - send this protocol to support"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "door №%(num)s from the other system has no match here"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "group %(group)s grants door %(door)s of another company"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.employee"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.access.group"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.card"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.ctrl"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.door"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "hr.rfid.zone"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1975,8 +2455,38 @@ msgid "leave empty for a one-off transfer"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "left out by the operator's own choice"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "my_database"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
+msgid "permission %(rel)s: %(what)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "reader %(name)s has no door"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "reader %(name)s is attached to no equipment"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "record(s) %(which)s were refused by the database: %(cause)s"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1987,9 +2497,73 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
+msgid "res.partner"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
 msgid ""
 "res.users ID of the connected source user. Cached after Test Connection."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid "the check itself could not run: %(error)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the event names neither a communication module nor a camera, so there is "
+"nothing here to attach it to"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/camera_importer.py:0
+msgid ""
+"the notification address of %(count)s camera(s) was re-aimed from the old "
+"server to this one (%(local)s) - press Set HTTP Host on each camera to apply"
+" it"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
+msgid ""
+"the other system has the same %(count)s - carried over as it stands, not "
+"caused here: %(who)s"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/event_importer.py:0
+msgid ""
+"the other system holds %(total)s event(s) in the chosen period, but the "
+"transfer's filter matched none of them: %(module)s reach it through a "
+"communication module and %(camera)s through a camera. Numbers that do not "
+"add up mean the events hang off equipment outside the selected companies - "
+"send this protocol to support."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system no longer has door №%(num)s - the permission points at a "
+"door deleted over there"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid ""
+"the other system refused the part of the filter that goes through %(field)s "
+"- records reachable only that way were not read this time"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -2013,4 +2587,10 @@ msgstr ""
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "| UID:"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
+msgid "№%(num)s"
 msgstr ""

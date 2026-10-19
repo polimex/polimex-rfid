@@ -193,6 +193,52 @@ class TestBackgroundRun(TransactionCase):
         self._run(state='queued').action_refresh()
         self.assertTrue(woken, "Чакащо прехвърляне трябва да събуди работника")
 
+    def test_a_step_stopped_part_way_is_returned_to(self):
+        """Стъпка, спряла по средата, се довършва в следващ пас.
+
+        Случай 12.10.2026: часовете на човек, чиито присъствия в момента пише
+        друг процес (събитие от врата), чакат следващия пас. Досега пасът
+        продължаваше към следващите стъпки и прехвърлянето завършваше, без да
+        се върне - часовете на този човек и на всички след него оставаха
+        неизчислени и без нито дума.
+        """
+        from ..models.importers import phase as phase_module
+        ran, woken = [], []
+
+        class StoppedPartWay:
+            PHASE_ID, NAME = 'Phase X', 'Stopped part-way'
+
+            def __init__(self, importer):
+                self.b = importer
+
+            def run(self, wizard):
+                ran.append(self.PHASE_ID)
+                self.b.stopped_early = True
+                return []
+
+        class After(StoppedPartWay):
+            PHASE_ID, NAME = 'Phase Y', 'After'
+
+            def run(self, wizard):
+                ran.append(self.PHASE_ID)
+                return []
+
+        self.patch(phase_module, 'phase_plan',
+                   lambda env, options, modules: [(StoppedPartWay, None), (After, None)])
+        self.patch(self.registry['hr.rfid.odoo.import.run'],
+                   '_wake_the_worker', lambda records: woken.append(True))
+        # The pass makes its progress permanent after every step; in a test
+        # that would end the test's own transaction.
+        self.patch(self.env.cr, 'commit', lambda: None)
+        run = self._run(state='queued')
+
+        run._process_pass()
+
+        self.assertEqual(ran, ['Phase X'], "пасът продължи покрай недовършената стъпка")
+        self.assertTrue(woken, "работникът не е събуден за довършване")
+        self.assertEqual(run.state, 'running', "прехвърлянето приключи с недовършена стъпка")
+        self.assertNotIn('Phase X', json.loads(run.done_phases_json or '[]'))
+
     def test_a_transfer_is_refused_when_nothing_would_ever_run_it(self):
         """Спрян планировчик значи прехвърляне, което чака вечно.
 

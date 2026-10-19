@@ -70,6 +70,48 @@ class HrAttendance(models.Model):
         ondelete={'rfid': 'set default'},
     )
 
+    def _update_overtime(self, attendance_domain=None):
+        """Core's overtime run, made to leave every figure of the day right.
+
+        Two gaps, both found on a customer database (customer case,
+        12.10.2026), and neither is a policy of ours - each makes the record
+        agree with core's own formula:
+
+        * Worked hours never computed. A transfer from an older system writes
+          attendance straight into the table, past the ORM, and leaves
+          worked_hours empty: more than half of the closed stays there read 0
+          hours worked. Core's overtime run reads only check-in and check-out,
+          so it never fills them. They are marked here exactly as the ORM
+          marks a record whose times changed (``modified`` on the two fields
+          _compute_worked_hours depends on - the idiom core uses after its own
+          raw updates, l10n_gcc_invoice/models/account_move.py:61).
+        * Regular hours left behind. expected_hours is stored and equals
+          worked minus overtime (hr_attendance.py, _compute_expected_hours),
+          but the overtime run marked only overtime for recomputation until
+          odoo/odoo 17577a1f9c6 (in 19.0 since 30.03.2026). On a server older
+          than that a day built record by record keeps the regular hours each
+          record had when it was alone - about a third of the records on the
+          same database. Marking it here is what that commit does; on a newer
+          server it is the same mark twice.
+
+        Core's own "Regenerate overtimes" button on the overtime ruleset runs
+        this method, so data from the earliest version that carries the
+        ruleset on is put right from the screen, with no script
+        (hr_attendance_overtime_ruleset.py, _attendances_to_regenerate_for).
+        Older history is not reached by that button; a transfer puts its own
+        history right when it runs again (hr_rfid_odoo_import,
+        _settle_attendance_figures).
+        """
+        if not attendance_domain:
+            attendance_domain = self._get_overtimes_to_update_domain()
+        attendances = self | self.search(attendance_domain)
+        never_figured = attendances.filtered(
+            lambda att: att.check_out and not att.worked_hours)
+        never_figured.modified(['check_in', 'check_out'])
+        result = super()._update_overtime(attendance_domain)
+        self.env.add_to_compute(self._fields['expected_hours'], attendances)
+        return result
+
     def write(self, vals):
         for att in self:
             if vals.get('check_out', False) and not att.check_out and att.in_zone_id:

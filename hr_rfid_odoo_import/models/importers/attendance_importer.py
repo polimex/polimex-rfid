@@ -1,13 +1,48 @@
 # -*- coding: utf-8 -*-
 import logging
 import time
+from datetime import datetime, time as day_start
+
+import psycopg2
+from pytz import timezone, utc
 
 from odoo import fields
+from odoo.exceptions import UserError
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
+from odoo.tools import SQL
+from odoo.tools.misc import format_date
 
-from .base_importer import BaseImporter
+from .base_importer import EXTERNAL_ID_MODULE, IMPORT_CONTEXT
 from .phase import PhaseImporter
 
 _logger = logging.getLogger(__name__)
+
+#: Where the attendance read got to. Working out the figures waits for it.
+ATTENDANCE_CURSOR = 'attendance:hr.attendance'
+#: Where working out the figures got to, and what it found - kept with the
+#: cursors so it survives the pass.
+FIGURES_KEY = 'attendance:figures'
+#: Hours. Regular hours further than this from worked minus extra do not hold
+#: (under two seconds - below what any report rounds to).
+FIGURE_TOLERANCE = 0.0005
+#: Regular hours that are not worked minus extra, on the attendance aliased
+#: ``a`` - one definition for finding a person and for splitting their rows,
+#: so a person found always has rows to put right. Null on a row without
+#: worked hours, which is why it is asked together with that.
+REGULAR_HOURS_DISAGREE = SQL(
+    "abs(COALESCE(a.expected_hours, 0)"
+    " - (a.worked_hours - COALESCE(a.overtime_hours, 0))) > %s",
+    FIGURE_TOLERANCE,
+)
+#: People named in the protocol before "and N more".
+FIGURES_NAMED = 5
+#: What a person's own records can make core's overtime run refuse. Anything
+#: else - a ValueError included - is a fault in the code, and it must show as
+#: one rather than be counted as a problem in somebody's days.
+FIGURES_DATA_ERRORS = (UserError, psycopg2.IntegrityError, psycopg2.DataError)
+#: The two times a row's hours are worked out from (hr_attendance.py,
+#: _compute_worked_hours depends on them alone).
+FIGURES_TIMES = ['check_in', 'check_out']
 
 
 #: What a day of work says: hours worked, day and night, against what was owed,
@@ -29,7 +64,8 @@ EXTRA_OPTIONAL_FIELDS = [
 class AttendanceImporter(PhaseImporter):
     """Phase 6b: Attendance data.
 
-    Steps: hr.attendance (Direct SQL), hr.attendance.extra (Direct SQL).
+    Steps: hr.attendance (Direct SQL), the hours worked of the people it
+    concerns, hr.attendance.extra (Direct SQL).
     """
 
     PHASE_ID = 'Phase 6b'
@@ -57,6 +93,7 @@ class AttendanceImporter(PhaseImporter):
         steps = []
         if self.b.options.get('import_attendance'):
             steps.append(self._import_attendance)
+            steps.append(self._settle_attendance_figures)
         if self.b.options.get('import_attendance_extra'):
             steps.append(self._import_attendance_extra)
         return self.steps(*steps)
@@ -83,7 +120,7 @@ class AttendanceImporter(PhaseImporter):
         # dropping foreign rows in the loop reported the WHOLE source as this
         # company's source_count, so "no attendance for this client" and
         # "every row was dropped" looked identical in the protocol.
-        cursor_key = 'attendance:%s' % model
+        cursor_key = ATTENDANCE_CURSOR
         source_records = self.b._read_all(
             model, self.b._scoped_domain('employee_id'), fields_to_read,
             cursor_key, batch_size=5000)
@@ -160,6 +197,263 @@ class AttendanceImporter(PhaseImporter):
             cursor_key, model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
+
+    def _settle_attendance_figures(self):
+        """Give the transferred attendance the figures the ORM would have.
+
+        The step above inserts with SQL for speed, so nothing computed the
+        stored figures: worked hours stayed empty and core's overtime run
+        never ran. Customer case, 12.10.2026: after a transfer more than half
+        of the closed attendances read 0 hours worked, and about a third had
+        regular hours that were not worked minus extra.
+
+        A step of its own, run once the read is finished: a fault here must
+        not take back attendance that has already landed, and a person's
+        figures are worked out once over all of their rows, not again for
+        every page. Where it got to and what it could not do travel with the
+        cursors, so a pass that runs out of time carries on from there, and a
+        person it could not figure is still named when a later pass re-enters
+        the phase and writes the protocol lines again.
+
+        Whose: the people this source brought across (by their external IDs)
+        into the companies of THIS transfer, and every attendance of theirs
+        whose figures do not hold, whatever its date - a new transfer over an
+        earlier one puts the old rows right too.
+        """
+        if not self.b.read_is_finished(ATTENDANCE_CURSOR):
+            return
+        start = time.time()
+        if not self.b.read_is_finished(FIGURES_KEY):
+            self._settle_people()
+        self.results.append(self._figures_result(time.time() - start))
+
+    def _settle_people(self):
+        """Work through the people whose figures do not hold, as time allows.
+
+        One person at least per pass, then only while the pass has time: the
+        cost of a person is their history, and a pass that overruns is cut
+        off with nothing saved.
+        """
+        Attendance = self.env['hr.attendance'].with_context(**IMPORT_CONTEXT)
+        Employee = self.env['hr.employee'].with_context(active_test=False)
+        settled_one = False
+        while True:
+            employee_id = self._next_person_to_settle(
+                self.b.read_cursors.get(FIGURES_KEY, 0))
+            if not employee_id:
+                self.b.read_cursors[FIGURES_KEY] = self.b.CURSOR_FINISHED
+                return
+            if settled_one and self.b.time_is_up and self.b.time_is_up():
+                self.b.stopped_early = True
+                return
+            if not self._settle_person(Attendance, Employee.browse(employee_id)):
+                # Somebody else is writing this person's attendance right now
+                # - a door event, say. They wait for the next pass instead of
+                # being reported as a problem in their days; the run returns
+                # to an unfinished phase (import_run._process_pass).
+                _logger.info(
+                    "Hours worked of employee %s wait for the next pass: their "
+                    "attendance is being written by another process", employee_id)
+                self.b.stopped_early = True
+                return
+            self.b.read_cursors[FIGURES_KEY] = employee_id
+            settled_one = True
+
+    def _next_person_to_settle(self, after):
+        """The next person of this transfer whose figures do not hold.
+
+        Brought across from this source (external ID) AND in one of the
+        companies this transfer writes into: the same source read earlier for
+        another company is another tenant's transfer, not this one's.
+        """
+        prefix = self.b._xml_id_name('hr_employee', '')
+        companies = sorted({cid for cid in self.b.company_map.values() if cid})
+        self.env.cr.execute(SQL(
+            """
+            SELECT a.employee_id
+              FROM hr_attendance a
+              JOIN hr_employee emp ON emp.id = a.employee_id
+              JOIN ir_model_data d
+                ON d.model = 'hr.employee' AND d.res_id = a.employee_id
+               AND d.module = %(module)s
+               AND left(d.name, %(length)s) = %(prefix)s
+             WHERE a.employee_id > %(after)s
+               AND emp.company_id = ANY(%(companies)s)
+               AND a.check_out IS NOT NULL
+               AND (a.worked_hours IS NULL OR %(disagrees)s)
+             ORDER BY a.employee_id
+             LIMIT 1
+            """,
+            module=EXTERNAL_ID_MODULE, length=len(prefix), prefix=prefix,
+            after=after, companies=companies, disagrees=REGULAR_HOURS_DISAGREE,
+        ))
+        row = self.env.cr.fetchone()
+        return row and row[0]
+
+    def _settle_person(self, Attendance, employee):
+        """Put one person's figures right. False when their rows are busy.
+
+        Core's overtime run deletes and recreates every overtime line in the
+        range it is given, and a recreated line loses the manager's decision
+        on it (hr_attendance.py, _update_overtime; hr_attendance_overtime.py,
+        _compute_status). It also needs the person's schedule, which core has
+        only inside a version (hr_employee.py, _get_version_periods): before
+        the first version it counts the WHOLE day as approved extra time
+        (measured: 08:00-17:00 read 9 extra and -1 regular, also for a day
+        entered by hand). Core's own "Regenerate overtimes" therefore never
+        reaches before the version (hr_attendance_overtime_ruleset.py,
+        _attendances_to_regenerate_for), and on a transferred database the
+        versions begin at the transfer while the history runs years back. So
+        the rows are cured three ways:
+
+        - worked hours present, regular hours disagreeing: only the regular
+          hours are recomputed, and the overtime lines are left alone;
+        - no worked hours, before the first version: the hours are worked out
+          (``modified`` on the two times, the way core marks a record whose
+          times changed, as l10n_gcc_invoice/models/account_move.py:61 does
+          after its own raw update) and nothing else - no rules apply there,
+          exactly as core's button leaves them;
+        - no worked hours, inside a version: the same, and core's overtime run
+          follows, as after every create. It gets one run of such rows at a
+          time, cut at every row that has its hours and at every local week,
+          so a day that was right - approved or refused - between them is
+          never in its range. A day or a week that holds both kinds is worked
+          out again as a whole, as core does whenever a stay of it changes.
+
+        Regular hours are marked in all three, because core marks them in its
+        overtime run only since odoo/odoo 17577a1f9c6 (in 19.0 since
+        30.03.2026), and the transfer target is often an older server. Each
+        unit has its own savepoint, so what one of them refuses costs only
+        that unit.
+        """
+        disagreeing, before, runs = self._figures_to_settle(employee)
+        units = [(disagreeing, False, False)] if disagreeing else []
+        units += [(before, True, False)] if before else []
+        units += [(run, True, True) for run in runs]
+        for rows, mark, regenerate in units:
+            attendances = Attendance.browse(row[0] for row in rows)
+            try:
+                with self.env.cr.savepoint():
+                    if mark:
+                        attendances.modified(FIGURES_TIMES)
+                    if regenerate:
+                        attendances._update_overtime()
+                    self.env.add_to_compute(
+                        Attendance._fields['expected_hours'], attendances)
+                    Attendance.env.flush_all()
+            except PG_CONCURRENCY_EXCEPTIONS_TO_RETRY:
+                return False
+            except FIGURES_DATA_ERRORS as exc:
+                _logger.warning(
+                    "Hours worked of %s attendances of employee %s from %s "
+                    "could not be worked out", len(rows), employee.id,
+                    rows[0][1], exc_info=True)
+                self._note_unfigured(employee, rows, exc)
+                self.b.accumulate(FIGURES_KEY, found=len(rows))
+                continue
+            self.b.accumulate(FIGURES_KEY, found=len(rows), settled=len(rows))
+        return True
+
+    def _figures_to_settle(self, employee):
+        """This person's rows whose figures do not hold, split by their cure.
+
+        Returns ``(disagreeing, before, runs)`` of ``(id, check_in)`` rows:
+        those with worked hours whose regular hours disagree; those without
+        worked hours from before the person's first version; and those without
+        worked hours inside a version, cut into runs - each within one local
+        week (core's weeks, MO-SU in the person's zone), with no row between
+        its first and its last that has its hours.
+        """
+        tz = timezone(employee.sudo()._get_tz())
+        starts = employee.sudo().with_context(active_test=True).version_ids.mapped('date_start')
+        # The first moment core has a schedule for this person.
+        first = tz.localize(datetime.combine(min(starts), day_start.min)).astimezone(
+            utc).replace(tzinfo=None) if starts else None
+        self.env.cr.execute(SQL(
+            """
+            SELECT a.id, a.check_in, a.worked_hours IS NULL, %s
+              FROM hr_attendance a
+             WHERE a.employee_id = %s AND a.check_out IS NOT NULL
+             ORDER BY a.check_in, a.id
+            """, REGULAR_HOURS_DISAGREE, employee.id,
+        ))
+        disagreeing, before, runs, run = [], [], [], []
+        for att_id, check_in, unfigured, disagrees in self.env.cr.fetchall():
+            week = utc.localize(check_in).astimezone(tz).isocalendar()[:2]
+            # A run ends at a row that has its hours, and where the week changes.
+            if run and (not unfigured or week != run[-1][2]):
+                runs.append([row[:2] for row in run])
+                run = []
+            if not unfigured:
+                if disagrees:
+                    disagreeing.append((att_id, check_in))
+            elif first is None or check_in < first:
+                before.append((att_id, check_in))
+            else:
+                run.append((att_id, check_in, week))
+        if run:
+            runs.append([row[:2] for row in run])
+        return disagreeing, before, runs
+
+    def _note_unfigured(self, employee, rows, exc):
+        """Remember, with the cursors, whose figures could not be worked out."""
+        totals = self.b.step_totals.setdefault(FIGURES_KEY, {})
+        # A new dict, not the old one changed: progress_snapshot copies one
+        # level deep, and a step that is undone must get the old one back.
+        failed = dict(totals.get('failed') or {})
+        # Keyed as text: the totals are stored as JSON, whose keys are text.
+        key = str(employee.id)
+        known = failed.get(key) or {}
+        # The day as the person lived it, not the server's UTC date.
+        day = utc.localize(rows[0][1]).astimezone(
+            timezone(employee.sudo()._get_tz())).date().isoformat()
+        # An exception may carry no text at all (a bare ValueError()); its
+        # kind is then the only thing to say, and failing here would lose the
+        # person instead of naming them.
+        said = str(exc).strip().splitlines() or [type(exc).__name__]
+        failed[key] = {
+            'records': known.get('records', 0) + len(rows),
+            'day': min(known.get('day') or day, day),
+            'problem': known.get('problem') or said[0][:160],
+        }
+        totals['failed'] = failed
+
+    def _figures_result(self, duration):
+        """The protocol line for the hours worked, over the whole transfer."""
+        totals = self.b.step_totals.get(FIGURES_KEY, {})
+        found, settled = int(totals.get('found', 0)), int(totals.get('settled', 0))
+        failed = totals.get('failed') or {}
+        label = self.env._("Worked Hours")
+        if not failed:
+            return self.b._make_result(label, found, settled, duration=duration)
+        return self.b._make_result(
+            label, found, settled, duration=duration, status='partial',
+            error=self.env._(
+                "Hours worked could not be worked out for %(records)s "
+                "attendance(s) of %(who)s. Put those days right, then run the "
+                "transfer again with only \"Import attendance\" ticked.",
+                records=sum(entry['records'] for entry in failed.values()),
+                who=self._name_unfigured(failed),
+            ))
+
+    def _name_unfigured(self, failed):
+        """Who, from which day, and what the system said - the first few."""
+        people = self.env['hr.employee'].with_context(active_test=False).browse(
+            int(employee_id) for employee_id in failed)
+        names = {person.id: person.name for person in people.exists()}
+        shown = '; '.join(
+            self.env._(
+                "%(name)s from %(day)s: %(problem)s",
+                name=names.get(int(employee_id)) or '#%s' % employee_id,
+                day=format_date(self.env, entry['day']),
+                problem=entry['problem'],
+            )
+            for employee_id, entry in sorted(failed.items())[:FIGURES_NAMED]
+        )
+        if len(failed) > FIGURES_NAMED:
+            shown = self.env._("%(first)s and %(more)s more", first=shown,
+                               more=len(failed) - FIGURES_NAMED)
+        return shown
 
     def _drop_days_already_summed_here(self, columns, rows, src_ids):
         """Leave out the days this system has already summed up itself.

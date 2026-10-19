@@ -68,7 +68,7 @@ chunking:
 ---
 
 
-# RFID Attendance — `hr_attendance_multi_rfid` v19.0.1.0.0
+# RFID Attendance - `hr_attendance_multi_rfid` v19.0.1.0.0
 
 Manage employee attendance
 
@@ -77,7 +77,7 @@ Manage employee attendance
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_attendance_multi_rfid`
 - **Version**: `19.0.1.0.0`
@@ -364,24 +364,24 @@ Python class `HrAttendance` in `models/hr_attendance.py:7`.  Model.  Inherits: `
 
 #### Notable methods
 
-- **`_compute_checkin_zone(self)`** — decorators: `@api.depends`
-- **`write(self, vals)`** — decorators: —
+- **`_compute_checkin_zone(self)`** - decorators: `@api.depends`
+- **`write(self, vals)`** - decorators: -
   - calls `super() `write``
-- **`needs_autoclose(self)`** — decorators: —
-- **`autoclose_attendance(self, reason)`** — decorators: —
+- **`needs_autoclose(self)`** - decorators: -
+- **`autoclose_attendance(self, reason)`** - decorators: -
   - effects: `write`
-- **`check_for_incomplete_attendances(self)`** — decorators: `@api.model`
+- **`check_for_incomplete_attendances(self)`** - decorators: `@api.model`
 
 ### `hr.employee` <a id='model-hr-employee'></a>
 Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.employee`.
 
 #### Notable methods
 
-- **`attendance_action_change_with_date(self, action_date, zone_id=None)`** — decorators: —
+- **`attendance_action_change_with_date(self, action_date, zone_id=None)`** - decorators: -
   - Check In/Check Out action with support for out-of-order events.
   - effects: `log_warn`, `raise:UserError`, `with_context`
   - touches: `hr.attendance`
-- **`recalc_attendance(self, from_date=None, to_date=None)`** — decorators: —
+- **`recalc_attendance(self, from_date=None, to_date=None)`** - decorators: -
   - Rebuild attendance for this recordset in ONE transaction. Calls
     `_check_recalc_allowed` once (the chokepoint every caller passes through),
     then `_recalc_attendance_one` per employee. Anything larger than a handful
@@ -495,7 +495,7 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:6`.  Model.  Inh
   nothing at all.
 - **`_write_no_attendance(self, reason)`** - the shared write; tolerates the
   empty recordset, so callers need no guard.
-- **`button_show_employee_att_events(self)`** — decorators: —
+- **`button_show_employee_att_events(self)`** - decorators: -
   - effects: `i18n`
 
 Both markers are used by the two machines that turn events into attendance -
@@ -519,16 +519,16 @@ Python class `HrRfidZone` in `models/hr_rfid_zone.py:8`.  Model.  Inherits: `hr.
 
 #### Notable methods
 
-- **`person_entered(self, person, event)`** — decorators: —
-  - super-split (super `person_entered`): pre=— · post=`with_context`
+- **`person_entered(self, person, event)`** - decorators: -
+  - super-split (super `person_entered`): pre=- · post=`with_context`
   - effects: `with_context`
   - touches: `hr.employee`
-- **`person_left(self, person, event=None)`** — decorators: —
+- **`person_left(self, person, event=None)`** - decorators: -
   - Handle person leaving a zone with improved out-of-order event support.
-  - super-split (super `person_left`): pre=— · post=`log_warn`, `with_context`
+  - super-split (super `person_left`): pre=- · post=`log_warn`, `with_context`
   - effects: `log_warn`, `with_context`
   - touches: `hr.attendance`, `hr.employee`
-- **`attendance_for_current_zone(self)`** — decorators: —
+- **`attendance_for_current_zone(self)`** - decorators: -
   - effects: `i18n`
 
 ### `hr.attendance.recalc.wizard` <a id='model-hr-attendance-recalc-wizard'></a>
@@ -672,17 +672,56 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 
 ### Public helpers
 
-- **`RFIDAttendanceTests.setUp(self)`** — `tests/test_functional.py:17`
+- **`RFIDAttendanceTests.setUp(self)`** - `tests/test_functional.py:17`
   - calls `super()`
-- **`RFIDAttendanceTests.test_functionality(self)`** — `tests/test_functional.py:20`
+- **`RFIDAttendanceTests.test_functionality(self)`** - `tests/test_functional.py:20`
   - effects: `log_info`
 
 ### Private helpers
 
-- **`RFIDAttendanceTests._test_attendance_zone(self)`** — `tests/test_functional.py:25`
+- **`RFIDAttendanceTests._test_attendance_zone(self)`** - `tests/test_functional.py:25`
   - effects: `with_context`
   - touches: `hr.rfid.access.group.wizard`, `hr.rfid.zone`
 
+
+## Regenerating overtime keeps the day's figures right <a id='figures'></a>
+
+`hr.attendance._update_overtime` is extended so that core's overtime run leaves
+every figure of the affected days consistent with core's own formulas:
+
+- Attendance written past the ORM (a transfer inserting with SQL) has no
+  `worked_hours`; core's overtime run reads only the times and never fills
+  them. Before calling core, the records with a check-out and no worked hours
+  get `modified(['check_in', 'check_out'])` - the two fields
+  `_compute_worked_hours` depends on, the idiom core uses after its own raw
+  updates (l10n_gcc_invoice/models/account_move.py:61).
+- After core's run, `expected_hours` (stored, worked minus overtime) is
+  marked for recomputation on every attendance of the run. Core does this
+  itself only since odoo/odoo 17577a1f9c6 (in 19.0 since 30.03.2026); on an
+  older server a day built record by record kept stale regular hours. On a
+  newer server it is the same mark twice, which is why the test for this
+  shape passes on this tree with or without the module.
+
+Core's **Regenerate overtimes** button on the ruleset
+(`action_regenerate_overtimes`) runs this method. It reaches from the earliest
+`date_version` of ALL versions that carry the ruleset, for every employee on
+it (`hr_attendance_overtime_ruleset.py`, `_attendances_to_regenerate_for`) -
+not from each employee's own version. Core deletes and recreates every
+overtime line of that period, and a recreated line takes its default status
+(`hr_attendance_overtime.py`, `_compute_status`), so approvals and refusals in
+the period have to be given again - core's behaviour, not changed here. The
+user guide says so before telling anyone to press it. History older than that
+is out of the button's reach by core's design; a transfer repairs its own
+history when it runs again (hr_rfid_odoo_import, "Worked Hours"), hands core
+only the days that are wrong, and gives days before a person's first version
+their hours without overtime.
+
+Customer case (12.10.2026): after a transfer more than half of the closed
+attendances read 0 hours worked, and about a third had regular hours that
+were not worked minus extra.
+
+Tests: `tests/test_regenerate_puts_figures_right.py`
+(tag `rfid_attendance_figures`).
 
 ## Rebuilding attendance: the background job <a id='recalc-run'></a>
 
@@ -759,15 +798,15 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_attendance_calendar_view` | `hr.attendance` | — |  | `views/hr_attendance.xml` |
-| `view_attendance_list_inherit` | `hr.attendance` | — | hr_attendance.view_attendance_tree | `views/hr_attendance.xml` |
-| `hr_attendance_view_filter_inherit` | `hr.attendance` | — | hr_attendance.hr_attendance_view_filter | `views/hr_attendance.xml` |
-| `rfid_hr_employee_view_search` | `hr.employee` | — | hr.view_employee_filter | `views/hr_employee.xml` |
-| `hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_form | `views/hr_rfid_webstack_views.xml` |
-| `hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_list | `views/hr_rfid_webstack_views.xml` |
-| `hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | — | hr_rfid.hr_rfid_zone_view_form | `views/hr_rfid_webstack_views.xml` |
-| `hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | — | hr_rfid.hr_rfid_zone_view_list | `views/hr_rfid_webstack_views.xml` |
-| `hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_search | `views/hr_rfid_webstack_views.xml` |
+| `hr_attendance_calendar_view` | `hr.attendance` | - |  | `views/hr_attendance.xml` |
+| `view_attendance_list_inherit` | `hr.attendance` | - | hr_attendance.view_attendance_tree | `views/hr_attendance.xml` |
+| `hr_attendance_view_filter_inherit` | `hr.attendance` | - | hr_attendance.hr_attendance_view_filter | `views/hr_attendance.xml` |
+| `rfid_hr_employee_view_search` | `hr.employee` | - | hr.view_employee_filter | `views/hr_employee.xml` |
+| `hr_rfid_view_user_ev_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | - | hr_rfid.hr_rfid_user_ev_view_form | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_view_user_ev_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | - | hr_rfid.hr_rfid_user_ev_view_list | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | - | hr_rfid.hr_rfid_zone_view_form | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_view_zone_tree_inherit_hr_attendance_multi_rfid` | `hr.rfid.zone` | - | hr_rfid.hr_rfid_zone_view_list | `views/hr_rfid_webstack_views.xml` |
+| `hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid` | `hr.rfid.event.user` | - | hr_rfid.hr_rfid_user_ev_view_search | `views/hr_rfid_webstack_views.xml` |
 | `hr_attendance_recalc_run_list` | `hr.attendance.recalc.run` | list | | `views/attendance_recalc_run_views.xml` |
 | `hr_attendance_recalc_run_form` | `hr.attendance.recalc.run` | form | | `views/attendance_recalc_run_views.xml` |
 
@@ -891,7 +930,7 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Candidate entries mined from code comments, git history and past Claude Code sessions. Review before publishing; `<!-- source: ... -->` markers should be removed after vetting.
+Notes collected from code comments and the development history.
 
 ### From `code_comments` (3)
 
@@ -918,21 +957,21 @@ Candidate entries mined from code comments, git history and past Claude Code ses
 
 ### From `gotchas` (4)
 
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
+#### Gotcha: `account.account` **НЯМА** `company_id` - ползвай уникални кодове (нап
 <!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
 
 From **Модели и полета** in odoo19-gotchas.md:
 
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
+> `account.account` **НЯМА** `company_id` - ползвай уникални кодове (напр. `411.NRA`)
 
 Matched tokens: `company_id`
 
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
+#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` - само при UI промяна. З
 <!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
 
 From **Модели и полета** in odoo19-gotchas.md:
 
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
+> `@api.onchange` **НЕ** се вика при `create()` - само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
 
 Matched tokens: `_compute`
 
@@ -950,7 +989,7 @@ Matched tokens: `httpcase`
 
 From **Общи** in odoo19-gotchas.md:
 
-> При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted event след grant — симулирай с `event_code=3`
+> При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted event след grant - симулирай с `event_code=3`
 
 Matched tokens: `event_code=3`
 
