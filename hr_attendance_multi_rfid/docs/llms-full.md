@@ -400,11 +400,19 @@ Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.
   - Resolves once what counts as an attendance door: `{'zones', 'doors',
     'in_readers', 'out_readers'}`. Passed to every `_recalc_attendance_one` of
     a run so the same searches are not repeated per person.
-- **`_recalc_window(self, from_date, to_date)`** - decorators: -
-  - The two chosen DAYS as the two naive-UTC MOMENTS bounding them, in the
+- **`_local_tz(self)`** - decorators: -
+  - The zone every day of this person is read in: their own `tz`. The one
+    place the set asks it; see "The day is the person's own" below.
+- **`_local_day(self, moment)`** - decorators: -
+  - The date of this person's calendar a naive-UTC moment falls on.
+- **`_local_days_window(self, from_date, to_date)`** - decorators: -
+  - The chosen DAYS as the two naive-UTC MOMENTS bounding them, in the
     employee's own timezone, last day included whole (bound is "before", not
-    "up to"). Both the events replayed and the attendance deleted are cut to
-    this window, so no day is cleared that is not also replayed.
+    "up to"); each end localized on its own, so a day the clocks change is
+    23 or 25 hours long. Both the events replayed and the attendance deleted
+    are cut to this window, so no day is cleared that is not also replayed;
+    the daily figures, the holiday check and Form 76 read their days through
+    it too.
 - **`_recalc_clear_domain(self, period_start, period_end)`** - decorators: -
   - **Extension point.** Which of this person's attendance a rebuild may
     remove. Default: everything the system made in the window, never what a
@@ -683,6 +691,39 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
   - effects: `with_context`
   - touches: `hr.rfid.access.group.wizard`, `hr.rfid.zone`
 
+
+## The day is the person's own <a id='day'></a>
+
+Every daily figure of the attendance set - the day a stay is filed under, the
+schedule it is judged by, the night hours, an absence, the holiday rate, the
+days of Form 76, the days a rebuild clears - reads the day in the employee's
+own **Timezone** (employee form, *Settings* tab), through one method:
+`hr.employee._local_tz()`.
+
+Why that zone. Core 19 cuts the days of its overtime, and reads the hours a
+day is worth, in the employee's own zone (`hr_attendance.py:686`,
+`_get_localized_times`, whose version zone is the employee's;
+`hr_employee.py:1792`, `_get_expected_attendances`). Odoo 20 removes the zone
+of working hours and reads everything in the employee's zone. The only place
+core 19 differs is the stored date of an attendance record
+(`hr_attendance.py:90`), which goes through `_get_tz()` - the working hours'
+zone first. The two agree unless an employee's zone and their schedule's zone
+are set differently; check that both say the same.
+
+What it changes for people working in Sofia, two or three hours ahead of UTC:
+
+- a stay begun between midnight and 02:00 (03:00 in summer) belongs to that
+  morning, not to the evening before, and is judged by that morning's
+  schedule;
+- night work (22:00-06:00) is counted by the clock of the day worked, also
+  when a winter day is recomputed in summer;
+- a day with no badge is an absence only once it is over for the person;
+- the eve of a public holiday is not paid at the holiday rate;
+- a day the clocks change is 23 or 25 hours long, and its schedule does not
+  borrow an hour of the next day.
+
+Daily rows computed before this rule keep their figures until the day is
+computed again - **Recompute Extra Attendance** for the period does it.
 
 ## Regenerating overtime keeps the day's figures right <a id='figures'></a>
 

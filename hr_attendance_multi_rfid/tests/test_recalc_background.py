@@ -7,16 +7,16 @@ employee not taking the rest down with them, and an interrupted rebuild picking
 up where it stopped instead of starting again.
 """
 import logging
-from datetime import datetime, time, timedelta
+from datetime import timedelta
 from unittest.mock import patch
-
-from pytz import timezone, utc
 
 from odoo import Command, fields
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase, tagged
 
 from odoo.addons.hr_attendance_multi_rfid.models import attendance_recalc_run
+
+from .common import in_sofia
 
 _logger = logging.getLogger(__name__)
 
@@ -25,11 +25,6 @@ _logger = logging.getLogger(__name__)
 #: cannot be watched from end to end - which is said out loud rather than
 #: passed over in silence.
 THE_TRANSFER = 'hr.rfid.odoo.import.run'
-
-#: Somewhere three hours ahead of London in summer, so that "the last day the
-#: operator chose" is a different span of hours depending on where it is
-#: measured - which is the whole point of the tests that use it.
-WHERE_THEY_WORK = timezone('Europe/Sofia')
 
 #: The way out is the last thing a refusal says, so it is the first thing lost
 #: when one is cut short.
@@ -184,8 +179,7 @@ class TestAttendanceRebuildInBackground(TransactionCase):
 
     def _when_they_are(self, day, hour, minute=0):
         """The moment the clock on their wall says, as the database keeps it."""
-        local = WHERE_THEY_WORK.localize(datetime.combine(day, time(hour, minute)))
-        return local.astimezone(utc).replace(tzinfo=None)
+        return in_sofia(day, hour, minute)
 
     def _ask_for_a_rebuild(self, employees=None, start=None, end=None):
         """Press the button the way the operator does. Returns the recorded
@@ -926,7 +920,7 @@ class TestAttendanceRebuildInBackground(TransactionCase):
         nothing else: not manual entries, not kiosk or systray check-ins,
         and nothing outside the chosen period or person.
         """
-        period_start, period_end = self.employee_1._recalc_window(
+        period_start, period_end = self.employee_1._local_days_window(
             self.start_date, self.end_date)
 
         asked_for = self.employee_1._recalc_clear_domain(period_start, period_end)

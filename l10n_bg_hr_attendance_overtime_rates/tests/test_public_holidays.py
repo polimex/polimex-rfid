@@ -2,8 +2,10 @@
 # Part of Polimex Modules. See LICENSE file for full copyright and licensing details.
 from datetime import date
 
-from odoo.tests.common import TransactionCase
+from odoo import fields
 from odoo.tests import tagged
+from odoo.tests.common import TransactionCase
+from pytz import timezone, utc
 
 
 @tagged('post_install', '-at_install', 'l10n_bg_overtime', 'bg_holidays')
@@ -53,13 +55,73 @@ class TestBgPublicHolidays(TransactionCase):
         which is every demo installation, and every customer who ran the
         generator once last year.
         """
+        calendar = self.company.resource_calendar_id
+        # The day of a holiday is the calendar's own day: its first moment is
+        # stored in UTC, which in Sofia is the evening before.
+        tz = timezone(calendar.tz or 'UTC')
         leaves = self.env['resource.calendar.leaves'].search([
+            ('calendar_id', '=', calendar.id),
+            ('resource_id', '=', False),
+            ('date_from', '>=', date(year - 1, 12, 31)),
+            ('date_from', '<', date(year + 1, 1, 1)),
+        ])
+        days = {utc.localize(leave.date_from).astimezone(tz).date() for leave in leaves}
+        return {day for day in days if day.year == year}
+
+    def _liberation_day(self, year):
+        return self.env['resource.calendar.leaves'].search([
             ('calendar_id', '=', self.company.resource_calendar_id.id),
             ('resource_id', '=', False),
-            ('date_from', '>=', date(year, 1, 1)),
-            ('date_from', '<=', date(year, 12, 31)),
+            ('name', '=', 'Liberation Day'),
+            ('date_from', '>=', date(year, 3, 2)),
+            ('date_from', '<', date(year, 3, 4)),
         ])
-        return {leave.date_from.date() for leave in leaves}
+
+    def _assert_the_sofia_day(self, leave, year, who):
+        sofia = timezone('Europe/Sofia')
+        self.assertEqual(len(leave), 1, "3 March %s must be on the calendar once" % year)
+        begins = utc.localize(leave.date_from).astimezone(sofia)
+        ends = utc.localize(leave.date_to).astimezone(sofia)
+        self.assertEqual((begins.date(), begins.hour, begins.minute), (date(year, 3, 3), 0, 0),
+                         "the holiday begins at midnight in Sofia (run by %s)" % who)
+        self.assertEqual((ends.date(), ends.hour, ends.minute), (date(year, 3, 3), 23, 59),
+                         "and ends at the last minute of that day there (run by %s)" % who)
+
+    def test_a_holiday_is_the_whole_day_where_the_company_works(self):
+        """Liberation Day runs from midnight to midnight in Sofia.
+
+        A worker on the night of 2 March is not on holiday, and one on the
+        night of 4 March is not either: the holiday is the third, as the
+        company lives it - whoever fills the year in: an HR officer in Sofia,
+        one in another zone running it again, or the yearly cron, which runs
+        with no zone at all. Handed over as midnight to midnight in UTC, the
+        officer's run made it 02:00 on the third to 01:59 on the fourth in
+        Sofia.
+        """
+        self.company.resource_calendar_id.tz = 'Europe/Sofia'
+        Leaves = self.env['resource.calendar.leaves']
+        # A year nobody has filled in yet, so the days are the ones made here.
+        self.env.user.tz = 'Europe/Sofia'
+        self.company._generate_bg_public_holidays(2031)
+        self._assert_the_sofia_day(self._liberation_day(2031), 2031, 'an officer in Sofia')
+        held = Leaves.search_count([('calendar_id', '=', self.company.resource_calendar_id.id),
+                                    ('resource_id', '=', False)])
+
+        # Run again from another zone: nothing is added and nothing moves.
+        self.env.user.tz = 'America/New_York'
+        self.company._generate_bg_public_holidays(2031)
+        self.assertEqual(
+            Leaves.search_count([('calendar_id', '=', self.company.resource_calendar_id.id),
+                                 ('resource_id', '=', False)]),
+            held, "a second run, from any zone, adds no day twice")
+        self._assert_the_sofia_day(self._liberation_day(2031), 2031, 'a second officer')
+
+        # The yearly cron, as the scheduler runs it: no user zone at all.
+        root = self.env.ref('base.user_root')
+        root.tz = False
+        next_year = fields.Date.today().year + 1
+        self.env['res.company'].with_user(root)._cron_generate_bg_public_holidays()
+        self._assert_the_sofia_day(self._liberation_day(next_year), next_year, 'the cron')
 
     def test_generates_fixed_and_moving_holidays(self):
         """Fixed dates + Orthodox-Easter cluster created as global leaves."""

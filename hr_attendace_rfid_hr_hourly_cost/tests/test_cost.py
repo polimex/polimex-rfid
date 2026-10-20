@@ -2,7 +2,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from datetime import date, datetime, time, timedelta
 
+from pytz import timezone, utc
+
 from odoo.tests.common import TransactionCase, tagged
+
+SOFIA = timezone('Europe/Sofia')
 
 
 @tagged("post_install", "-at_install", "rfid_hourly_cost", "rfid_cost_rates")
@@ -27,10 +31,18 @@ class TestAttendanceCostRates(TransactionCase):
         if not cls.company.resource_calendar_id:
             cls.company.resource_calendar_id = cls.env['resource.calendar'].create(
                 {'name': 'Cost Test Cal', 'company_id': cls.company.id})
+        # Where the company and the person work. Sofia is ahead of UTC, so a
+        # day there and the same date in UTC are different stretches of time -
+        # exactly what tells a holiday from the evening before it.
+        cls.company.resource_calendar_id.tz = 'Europe/Sofia'
+        # ...and the HR officer who enters the holidays sits there too, as
+        # the Public Holidays form takes the day in the user's own zone.
+        cls.env.user.tz = 'Europe/Sofia'
         # Seed known official holidays (2026-05-24 Culture Day - a Sunday,
         # 2026-09-22 Independence Day - a Tuesday) as global leaves on the
-        # company calendar: the exact records Time Off -> Public Holidays
-        # (and the BG localisation seeder) creates. Seeded directly so the
+        # company calendar, in the shape Time Off -> Public Holidays (and the
+        # BG localisation seeder) creates: the whole local day, midnight to
+        # midnight in Sofia, stored in UTC. Seeded directly so the
         # tests stay inside this module's dependency closure - the previous
         # call to _generate_bg_public_holidays crashed setUpClass on any
         # database without l10n_bg_hr_attendance_overtime_rates installed.
@@ -41,11 +53,12 @@ class TestAttendanceCostRates(TransactionCase):
         # and takes the whole fixture down with it.
         for day, name in ((date(2026, 5, 24), 'Culture Day'),
                           (date(2026, 9, 22), 'Independence Day')):
+            day_from, day_to = cls._sofia_day(day)
             already_there = cls.env['resource.calendar.leaves'].search([
                 ('calendar_id', '=', cls.company.resource_calendar_id.id),
                 ('resource_id', '=', False),
-                ('date_from', '<=', datetime.combine(day, time.max)),
-                ('date_to', '>=', datetime.combine(day, time.min)),
+                ('date_from', '<=', day_to),
+                ('date_to', '>=', day_from),
             ], limit=1)
             if already_there:
                 continue
@@ -53,13 +66,22 @@ class TestAttendanceCostRates(TransactionCase):
                 'name': name,
                 'calendar_id': cls.company.resource_calendar_id.id,
                 'resource_id': False,
-                'date_from': datetime.combine(day, time.min),
-                'date_to': datetime.combine(day, time.max),
+                'date_from': day_from,
+                'date_to': day_to,
                 'time_type': 'leave',
             })
         cls.emp = cls.env['hr.employee'].create({
             'name': 'Cost Rate Emp', 'company_id': cls.company.id, 'hourly_cost': 10.0,
+            'tz': 'Europe/Sofia',
         })
+
+    @staticmethod
+    def _sofia_day(day):
+        """A Sofia day as the database stores it: its first and last moment in UTC."""
+        start = SOFIA.localize(datetime.combine(day, time.min))
+        stop = SOFIA.localize(datetime.combine(day, time.max))
+        return (start.astimezone(utc).replace(tzinfo=None),
+                stop.astimezone(utc).replace(tzinfo=None))
 
     @classmethod
     def _ensure_rate(cls, code, date_from, value):
@@ -91,6 +113,46 @@ class TestAttendanceCostRates(TransactionCase):
         self.assertEqual(rec.cost_extra, 120.0)       # 6 * 10 * 2.0
         self.assertEqual(rec.actual_work_time_cost, 120.0)
 
+    def test_the_days_around_a_holiday_are_not_holidays(self):
+        """Saturday before Culture Day is paid as a rest day, not a holiday.
+
+        Culture Day 2026 is a Sunday. The Saturday before it is a rest day:
+        six hours worked there are paid at the rest-day rate (1.75), and the
+        Monday after is an ordinary day. The holiday begins at midnight in
+        Sofia - 21:00 UTC on Saturday - and a day read in UTC ran into it,
+        paying the whole Saturday at the holiday rate.
+        """
+        saturday = self._mk('2026-05-23', extra_time=6.0)
+        self.assertFalse(saturday._is_public_holiday(),
+                         "the eve of a holiday is not the holiday")
+        self.assertAlmostEqual(saturday.cost_extra, 105.0,
+                               msg="6 * 10 * 1.75, the rest-day rate")
+        monday = self._mk('2026-05-25', extra_time=6.0)
+        self.assertFalse(monday._is_public_holiday(),
+                         "nor is the day after it")
+        self.assertTrue(self._mk('2026-05-24', extra_time=6.0)._is_public_holiday(),
+                        "while the day itself is")
+
+    def test_a_holiday_ending_at_midnight_leaves_the_next_day_alone(self):
+        """A holiday entered as 00:00 to 00:00 next day covers its own day only.
+
+        Typed in the Public Holidays form as midnight to midnight, a holiday
+        ends at the very moment the next day begins; that day is ordinary.
+        """
+        day = self._a_day_nobody_has_declared_yet()
+        self.env['resource.calendar.leaves'].create({
+            'name': 'Midnight to midnight (test)',
+            'calendar_id': self.company.resource_calendar_id.id,
+            'resource_id': False,
+            'date_from': self._sofia_day(day)[0],
+            'date_to': self._sofia_day(day + timedelta(days=1))[0],
+            'time_type': 'leave',
+        })
+        self.assertTrue(self._mk(day.strftime('%Y-%m-%d'))._is_public_holiday())
+        after = day + timedelta(days=1)
+        self.assertFalse(self._mk(after.strftime('%Y-%m-%d'))._is_public_holiday(),
+                         "the day the holiday ends at is not part of it")
+
     def _a_day_nobody_has_declared_yet(self):
         """A working day in 2026 that carries no official day yet.
 
@@ -104,9 +166,10 @@ class TestAttendanceCostRates(TransactionCase):
         Leaves = self.env['resource.calendar.leaves']
         day = date(2026, 1, 5)
         while day.year == 2026:
+            day_from, day_to = self._sofia_day(day)
             if day.weekday() < 5 and not Leaves.search_count([
-                ('date_from', '<=', datetime.combine(day, time.max)),
-                ('date_to', '>=', datetime.combine(day, time.min)),
+                ('date_from', '<=', day_to),
+                ('date_to', '>=', day_from),
             ]):
                 return day
             day += timedelta(days=1)
@@ -118,6 +181,7 @@ class TestAttendanceCostRates(TransactionCase):
         still paid the holiday rate, not the rest-day one. The strict
         calendar match used before silently downgraded exactly these."""
         day = self._a_day_nobody_has_declared_yet()
+        day_from, day_to = self._sofia_day(day)
         self.env['resource.calendar.leaves'].create({
             'name': 'Global Holiday (menu form)',
             # No company here on purpose: this IS the calendar-less shape the
@@ -125,8 +189,8 @@ class TestAttendanceCostRates(TransactionCase):
             # whoever is active - which in a test is this module's company.
             'calendar_id': False,
             'resource_id': False,
-            'date_from': datetime.combine(day, time.min),
-            'date_to': datetime.combine(day, time.max),
+            'date_from': day_from,
+            'date_to': day_to,
             'time_type': 'leave',
         })
         rec = self._mk(day.strftime('%Y-%m-%d'), extra_time=6.0)
@@ -138,6 +202,7 @@ class TestAttendanceCostRates(TransactionCase):
         """NEGATIVE: a holiday declared by ANOTHER company does not raise
         this employee's pay - a day off is the company's to declare."""
         other = self.env['res.company'].create({'name': 'Other Cost Co'})
+        day_from, day_to = self._sofia_day(date(2026, 12, 27))
         self.env['resource.calendar.leaves'].create({
             'name': 'Their Holiday',
             # Their working schedule is what makes it theirs: company_id on a
@@ -146,8 +211,8 @@ class TestAttendanceCostRates(TransactionCase):
             # on whichever company happens to be active.
             'calendar_id': other.resource_calendar_id.id,
             'resource_id': False,
-            'date_from': datetime.combine(date(2026, 12, 27), time.min),
-            'date_to': datetime.combine(date(2026, 12, 27), time.max),
+            'date_from': day_from,
+            'date_to': day_to,
             'time_type': 'leave',
         })
         rec = self._mk('2026-12-27', extra_time=6.0)  # a Sunday elsewhere off

@@ -13,9 +13,10 @@ and 13:00-17:00, so 08:00-17:00 is 8 hours worked and 08:00-18:00 is 9 worked,
 1 extra and 8 regular under a daily rule over the scheduled day.
 """
 import unittest
-from datetime import datetime
+from datetime import date, datetime
 from unittest.mock import patch
 
+from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
@@ -25,6 +26,11 @@ from ..models.importers.attendance_importer import (
 )
 from ..models.importers.base_importer import BaseImporter
 from .test_company_scope import _FakeSource
+
+# A night stay in Sofia, as the database stores it: 00:30 to 08:30 on
+# 15 September there is 21:30 on the 14th to 05:30 on the 15th in UTC.
+NIGHT_STAY_IN = fields.Datetime.to_datetime("2026-09-14 21:30:00")
+NIGHT_STAY_OUT = fields.Datetime.to_datetime("2026-09-15 05:30:00")
 
 
 class _WritingSource(_FakeSource):
@@ -328,6 +334,91 @@ class TestTransferredAttendanceHasHours(TransactionCase):
             self.assertIn(part, line['error'])
         self.assertFalse([r for r in results if r.get('status') == 'error'],
                          "the attendance itself arrived - nothing may read as lost")
+
+    def _works_in_sofia(self):
+        """The person works in Sofia, two or three hours ahead of UTC."""
+        calendar = self.env.ref('resource.resource_calendar_std').copy(
+            {'tz': 'Europe/Sofia'})
+        self.person.write({'tz': 'Europe/Sofia', 'resource_calendar_id': calendar.id})
+
+    def test_a_night_stay_lands_under_the_morning_it_began_on(self):
+        """A guard who came in at 00:30 on 15 September reads the 15th.
+
+        In UTC that moment is 21:30 on the 14th. The carried record must read
+        the date a record made by the doors here would read, from the moment
+        it lands - also when this pass could not work out the person's hours
+        and leaves the record as it arrived.
+        """
+        self._works_in_sofia()
+        source = self._source([{
+            'id': 501,
+            'employee_id': [77, 'Transferred Person'],
+            'check_in': '2026-09-14 21:30:00',
+            'check_out': '2026-09-15 05:30:00',
+        }])
+        with patch.object(type(self.env['hr.attendance']), '_update_overtime',
+                          side_effect=UserError("Refused for the test")):
+            self._run(source)
+
+        landed = self._landed(source, 501)
+        landed.invalidate_recordset()
+        made_here = self.env['hr.attendance'].new({
+            'employee_id': self.person.id,
+            'check_in': NIGHT_STAY_IN,
+        })
+        self.assertEqual(landed.date, made_here.date,
+                         "a carried record is dated as one made here")
+        self.assertEqual(landed.date, date(2026, 9, 15),
+                         "the morning the stay began on")
+
+    def test_the_carried_date_is_cores_when_the_zones_differ(self):
+        """Schedule kept in Sofia, person in UTC: the record reads core's date.
+
+        Core dates an attendance in the zone of the working hours first
+        (hr_attendance.py:90, _compute_date); the person's own zone - UTC
+        here - would file the same stay a day earlier. A carried record must
+        read exactly like one the doors made, whatever the daily figures do.
+        """
+        calendar = self.env.ref('resource.resource_calendar_std').copy(
+            {'tz': 'Europe/Sofia'})
+        self.person.write({'resource_calendar_id': calendar.id})
+        self.person.tz = 'UTC'
+        source = self._source([{
+            'id': 502,
+            'employee_id': [77, 'Transferred Person'],
+            'check_in': '2026-09-14 21:30:00',
+            'check_out': '2026-09-15 05:30:00',
+        }])
+        with patch.object(type(self.env['hr.attendance']), '_update_overtime',
+                          side_effect=UserError("Refused for the test")):
+            self._run(source)
+
+        landed = self._landed(source, 502)
+        landed.invalidate_recordset()
+        made_here = self.env['hr.attendance'].new({
+            'employee_id': self.person.id,
+            'check_in': NIGHT_STAY_IN,
+        })
+        self.assertEqual(landed.date, made_here.date,
+                         "a carried record is dated as one made here")
+        self.assertEqual(landed.date, date(2026, 9, 15),
+                         "core reads the day in the schedule's zone, Sofia")
+
+    def test_an_older_transfers_wrong_date_is_put_right_by_the_next_one(self):
+        """A night stay an older transfer filed under the evening before moves to its morning."""
+        self._works_in_sofia()
+        self.env.flush_all()
+        self.env.cr.execute(
+            "INSERT INTO hr_attendance (employee_id, check_in, check_out, in_mode, date)"
+            " VALUES (%s, %s, %s, 'rfid', %s) RETURNING id",
+            (self.person.id, NIGHT_STAY_IN, NIGHT_STAY_OUT,
+             '2026-09-14'))
+        older = self.env['hr.attendance'].browse(self.env.cr.fetchone()[0])
+
+        self._run(self._source())
+
+        older.invalidate_recordset()
+        self.assertEqual(older.date, date(2026, 9, 15))
 
     def test_a_refusal_without_words_still_names_the_person(self):
         """When the system refuses without saying why, the person is still named."""

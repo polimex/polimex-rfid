@@ -8,3 +8,4 @@ from . import test_recalc_tour
 from . import test_why_not_counted
 from . import test_migration_keeps_operator_days
 from . import test_regenerate_puts_figures_right
+from . import test_the_day_of_a_stay

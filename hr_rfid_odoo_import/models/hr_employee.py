@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Attendance that arrived with a transfer is never rebuilt here.
 
 A transferred attendance record is a transcript of what the other system
@@ -19,6 +18,8 @@ it.
 """
 import logging
 from datetime import datetime, time, timedelta
+
+from pytz import timezone, utc
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -130,39 +131,46 @@ class HrEmployee(models.Model):
         the two chosen DAYS into the two MOMENTS it clears between, and a day
         is only a day somewhere - it ends when midnight passes for the person,
         not in London (hr_attendance_multi_rfid/models/hr_employee.py,
-        _recalc_window). People are therefore grouped by their timezone, which
-        keeps this to one query however many of them there are.
+        _local_days_window, in the person's own zone, _local_tz). People are
+        therefore grouped by that same zone, which keeps this to one query
+        however many of them there are.
         """
+        today = fields.Date.context_today(self)
         if start_date is None:
-            start_date = fields.Date.today() - timedelta(days=DEFAULT_LOOKBACK_DAYS)
+            start_date = today - timedelta(days=DEFAULT_LOOKBACK_DAYS)
         if end_date is None:
-            end_date = fields.Date.today()
+            end_date = today
 
-        by_tz = {}
-        for employee in self:
-            by_tz.setdefault(employee.tz, self.env[self._name])
-            by_tz[employee.tz] |= employee
+        # The zone and the window both come with the rebuild
+        # (hr_attendance_multi_rfid), when it is installed; each group's window
+        # is taken from its first person, so the group is keyed by exactly the
+        # zone that window is read in.
+        rebuild_here = hasattr(self, '_local_days_window')
+        by_zone = self.grouped(
+            lambda employee: employee._local_tz() if rebuild_here
+            else employee.tz or 'UTC')
 
         periods = []
-        for employees in by_tz.values():
-            first = employees[0]
-            if hasattr(first, '_recalc_window'):
-                window = first._recalc_window(start_date, end_date)
+        for zone, employees in by_zone.items():
+            if rebuild_here:
+                start, end = employees[0]._local_days_window(start_date, end_date)
             else:
                 # The rebuild is not part of this installation; nothing can
                 # call this from there, but the period still has to be right
                 # for anything that asks directly.
-                window = self._plain_window(start_date, end_date)
-            periods.append((employees, window[0], window[1]))
+                start, end = self._plain_window(start_date, end_date, zone)
+            periods.append((employees, start, end))
         return periods
 
     @staticmethod
-    def _plain_window(start_date, end_date):
-        """The two chosen days as moments, the last one included whole."""
-        start = fields.Date.to_date(start_date)
-        end = fields.Date.to_date(end_date)
-        return (datetime.combine(start, time.min),
-                datetime.combine(end + timedelta(days=1), time.min))
+    def _plain_window(start_date, end_date, zone):
+        """The two chosen days as moments in that zone, the last one whole."""
+        tz = timezone(zone)
+        start = tz.localize(datetime.combine(fields.Date.to_date(start_date), time.min))
+        end = tz.localize(datetime.combine(
+            fields.Date.to_date(end_date) + timedelta(days=1), time.min))
+        return (start.astimezone(utc).replace(tzinfo=None),
+                end.astimezone(utc).replace(tzinfo=None))
 
     # ── Wording ───────────────────────────────────────────────
 

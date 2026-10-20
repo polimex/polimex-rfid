@@ -1,5 +1,5 @@
 from odoo import fields, models
-from datetime import datetime, timedelta, date, time
+from datetime import datetime, date, time
 import pytz
 
 
@@ -24,9 +24,12 @@ class HrEmployee(models.Model):
         elif not isinstance(specific_date, date):
             raise ValueError("specific_date must be a string 'YYYY-MM-DD' or datetime.date")
 
-        user_tz = pytz.timezone(employee_resource.tz or 'UTC')
-        start_dt = user_tz.localize(datetime.combine(specific_date, time.min))
-        end_dt = start_dt + timedelta(days=1) - timedelta(seconds=1)
+        # The day in the person's own zone, the one the daily figures are
+        # filed under (hr.employee._local_tz), each end localized on its own
+        # so a day the clocks change keeps its real length.
+        tz = pytz.timezone(self._local_tz())
+        start_dt = tz.localize(datetime.combine(specific_date, time.min))
+        end_dt = tz.localize(datetime.combine(specific_date, time.max))
 
         cal = employee_resource.calendar_id
         intervals = cal._attendance_intervals_batch(start_dt, end_dt)[False]

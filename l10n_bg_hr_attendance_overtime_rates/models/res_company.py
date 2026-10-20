@@ -4,6 +4,7 @@ import logging
 from datetime import date, datetime, time, timedelta
 
 from dateutil.easter import easter, EASTER_ORTHODOX
+from pytz import timezone, utc
 
 from odoo import api, fields, models
 
@@ -26,6 +27,14 @@ BG_FIXED_HOLIDAYS = [
 ]
 
 
+def _day_bounds(day, tz):
+    """A whole day in that zone, its first and last moment, as stored (naive UTC)."""
+    start = tz.localize(datetime.combine(day, time.min))
+    stop = tz.localize(datetime.combine(day, time.max))
+    return (start.astimezone(utc).replace(tzinfo=None),
+            stop.astimezone(utc).replace(tzinfo=None))
+
+
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
@@ -43,6 +52,7 @@ class ResCompany(models.Model):
         """
         Leave = self.env['resource.calendar.leaves']
         created = Leave.browse()
+        user_tz = timezone(self.env.user.tz) if self.env.user.tz else utc
         for company in self:
             calendar = company.resource_calendar_id
             if not calendar:
@@ -60,10 +70,25 @@ class ResCompany(models.Model):
                 (easter_sunday + timedelta(days=1), "Easter Monday"),
             ]
 
+            # A holiday is a whole day where the calendar works, midnight to
+            # midnight in its zone - what every daily figure reads. It is
+            # handed over the way Time Off -> Public Holidays hands it over:
+            # as the day in the user's own zone, which core then moves to the
+            # calendar's zone (hr_holidays/models/resource.py,
+            # _prepare_public_holidays_values). So it is the calendar's day
+            # whoever runs this - an office in Sofia, or the yearly cron that
+            # has no zone at all. Handed over as UTC midnight, the day of a
+            # user in Sofia ran from 02:00 (03:00 in summer) to the same hour
+            # next morning.
+            calendar_tz = timezone(calendar.tz or 'UTC')
+
             # Prefetch the global leaves overlapping the target year once, so
             # the idempotency check is in-memory instead of one query per day.
-            year_from = datetime(year, 1, 1, 0, 0, 0)
-            year_to = datetime(year, 12, 31, 23, 59, 59)
+            # Stored holidays are in the calendar's zone, so they are compared
+            # there - a day handed over in another zone would overlap its
+            # neighbour and be skipped.
+            year_from = _day_bounds(date(year, 1, 1), calendar_tz)[0]
+            year_to = _day_bounds(date(year, 12, 31), calendar_tz)[1]
             existing = Leave.search([
                 ('calendar_id', '=', calendar.id),
                 ('resource_id', '=', False),
@@ -74,13 +99,13 @@ class ResCompany(models.Model):
 
             vals_list = []
             for day, name in days:
-                date_from = datetime.combine(day, time.min)
-                date_to = datetime.combine(day, time.max)
+                held_from, held_to = _day_bounds(day, calendar_tz)
                 # Day already covered by an existing global leave: skip.
-                if any(start <= date_to and stop >= date_from
+                if any(start <= held_to and stop >= held_from
                        for start, stop in existing_intervals):
                     continue
-                existing_intervals.append((date_from, date_to))
+                existing_intervals.append((held_from, held_to))
+                date_from, date_to = _day_bounds(day, user_tz)
                 vals_list.append({
                     'name': name,
                     'calendar_id': calendar.id,

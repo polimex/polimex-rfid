@@ -80,6 +80,14 @@ Technical overview — module identity, license, dependencies and entry points. 
 - **Depends on**: `hr_attendance_late`, `hr_holidays`
 
 
+## Which days Form 76 marks
+
+Leave is marked on the days it was asked for. Non-working days ("Н") are
+the days of the employee's schedule as they live them, in their own
+**Timezone** (employee form, *Settings* tab) - the same days the worked
+hours in the form are filed under. A night shift that begins at midnight
+is therefore marked on its own day, not on the evening before.
+
 ## Installation & Configuration <a id='install'></a>
 
 Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.

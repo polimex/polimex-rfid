@@ -156,6 +156,19 @@ longest 361 days, and each of them lent its whole length to every day it
 touched. After settling them, 551 records still cross midnight - those are the
 real night shifts, and they were not touched.
 
+## Which day a stay belongs to
+
+A stay belongs, whole, to the day it began on, as the person lived it: in the
+employee's own **Timezone** (employee form, *Settings* tab). In Sofia,
+someone who badges in at 00:30 on Tuesday worked Tuesday, and is judged by
+Tuesday's schedule - although the database stores that moment with Monday's
+date. Night hours, absences, the holiday rate and Form 76 read the day the
+same way.
+
+Keep each employee's Timezone and the timezone of their working schedule the
+same. Days computed before this rule keep their figures until they are
+computed again with **Recompute Extra Attendance**.
+
 ## When the hours of a day look wrong
 
 Every attendance shows the hours worked, the extra hours and the regular hours,

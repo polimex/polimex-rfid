@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
-from datetime import datetime, timedelta, time, date
+from datetime import datetime, timedelta, time
 from pytz import timezone, UTC
 import logging
 
@@ -61,7 +61,9 @@ class HrEmployee(models.Model):
 
         * lunch rows (``day_period='lunch'``) are excluded - an 8-12 / 12-13
           break / 13-17 calendar plans 8 hours, not 9;
-        * two-week calendars and the calendar timezone are honoured.
+        * two-week calendars are honoured, and the day is read in the zone
+          given - the person's own (hr.employee._local_tz), as core reads
+          the hours a day is worth.
 
         Two questions are asked of the same day, and they are NOT the same:
 
@@ -82,7 +84,7 @@ class HrEmployee(models.Model):
 
         :param calendar: resource.calendar to read (may be empty)
         :param for_date: the local calendar day (date)
-        :param tz: pytz timezone of that calendar
+        :param tz: pytz timezone the day is read in - the person's own
         :param owed: also take this person's own validated time off off the
                      day (what they owed), instead of only the company-wide
                      holidays (whether it is a working day at all)
@@ -136,10 +138,15 @@ class HrEmployee(models.Model):
         :param to_datetime: End date for calculation (defaults to from_datetime)
         :param overwrite_existing: Whether to recalculate existing records
         """
-        def convert_day_period_to_utc(day_period, tz):
-            """Convert local day/night period times to UTC."""
-            start_time_local = datetime.combine(date.today(), day_period[0])
-            end_time_local = datetime.combine(date.today(), day_period[1])
+        def convert_day_period_to_utc(day_period, tz, for_date):
+            """Convert local day/night period times to UTC, as on that day.
+
+            The offset is the one of the day measured, not of today: a winter
+            day recomputed in summer would otherwise move the 22:00 night
+            boundary by an hour.
+            """
+            start_time_local = datetime.combine(for_date, day_period[0])
+            end_time_local = datetime.combine(for_date, day_period[1])
 
             start_time_utc = tz.localize(start_time_local).astimezone(UTC)
             end_time_utc = tz.localize(end_time_local).astimezone(UTC)
@@ -154,7 +161,10 @@ class HrEmployee(models.Model):
             # The employee's own working calendar, falling back to the company
             # one - the same resolution core hr uses for scheduling.
             calendar = e.resource_calendar_id or e.company_id.resource_calendar_id
-            tz = timezone(calendar.tz) if calendar.tz else UTC
+            # The person's own zone (_local_tz): the schedule, the day and the
+            # night boundary are all read in it, as core reads the hours a
+            # day is worth (hr_employee.py, _get_expected_attendances).
+            tz = timezone(e._local_tz())
             # A flexible-hours calendar plans no rows at all: measured against
             # it every day reads "unscheduled" and the whole presence lands in
             # extra_time at the rest-day/holiday premium. There is nothing to
@@ -179,9 +189,12 @@ class HrEmployee(models.Model):
                 # other half of the same mistake: eight hours worked showed as
                 # sixteen, and a record that had been left open for months
                 # lent its whole length to every day it touched.
-                # (Owner's decision, 24.08.2026.)
-                current_date_start = datetime.combine(current_date, datetime.min.time())
-                current_date_end = datetime.combine(current_date, datetime.max.time())
+                # (Owner's decision, 24.08.2026.) The day is the person's own
+                # (_local_days_window): cut at UTC midnight, a stay begun
+                # between 00:00 and 03:00 in Sofia was filed under the day
+                # before, against that day's schedule.
+                current_date_start, current_date_end = e._local_days_window(
+                    current_date, current_date)
 
                 attendances = self.env['hr.attendance'].search([
                     ('employee_id', '=', e.id),
@@ -194,7 +207,7 @@ class HrEmployee(models.Model):
                     # absence branch that should have fired instead.
                     ('in_mode', '!=', 'technical'),
                     ('check_in', '>=', current_date_start),
-                    ('check_in', '<=', current_date_end),
+                    ('check_in', '<', current_date_end),
                 ], order='check_in')
                 
                 # Process attendances, including those without check_out
@@ -253,7 +266,8 @@ class HrEmployee(models.Model):
                     # counted directly: theoretical_work_time > 0 and
                     # actual_work_time = 0. Non-working days stay rowless.
                     planned_time = (self._total_time(owed_ranges) / 3600.0) if owed_ranges else 0.0
-                    if planned_time > 0 and current_date < fields.Date.today():
+                    # Only a day that is over for the person can be missed.
+                    if planned_time > 0 and current_date < e._local_day(now):
                         absence_vals = {
                             'theoretical_work_time': planned_time,
                             'actual_work_time': 0, 'actual_work_time_day': 0,
@@ -297,7 +311,8 @@ class HrEmployee(models.Model):
                         work_time_ranges=work_time_ranges,
                         owed_ranges=owed_ranges,
                         attendance_ranges=attendance_ranges,
-                        day_period=convert_day_period_to_utc((time(6, 0), time(22, 0)), tz)
+                        day_period=convert_day_period_to_utc(
+                            (time(6, 0), time(22, 0)), tz, current_date)
                     )
                 except Exception as ex:
                     _logger.error('ERROR in Attendance extra calculation for %s on %s: %s', 
@@ -640,7 +655,7 @@ class HrEmployee(models.Model):
         """
         self.ensure_one()
         cal = self.resource_calendar_id
-        tz = timezone(cal.tz) if cal.tz else UTC
+        tz = timezone(self._local_tz())
         lines = cal.attendance_ids.filtered(
             lambda l: l.dayofweek == str(day.weekday()))
         if not lines:
@@ -708,8 +723,7 @@ class HrEmployee(models.Model):
                     # employees -> drives extra_time and the rest-day cost tier.
                     if (emp.resource_calendar_id and emp_index < 2
                             and day.weekday() == 5 and day_offset % 2 == 0):
-                        tz = (timezone(emp.resource_calendar_id.tz)
-                              if emp.resource_calendar_id.tz else UTC)
+                        tz = timezone(emp._local_tz())
                         check_in = tz.localize(datetime.combine(
                             day, time(9, 0))).astimezone(UTC).replace(tzinfo=None)
                         check_out = tz.localize(datetime.combine(

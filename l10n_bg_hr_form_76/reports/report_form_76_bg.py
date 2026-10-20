@@ -28,7 +28,7 @@ class ReportForm76(models.AbstractModel):
         # Flush ORM cache to ensure DB consistency
         self.env['hr.employee'].flush_model(['name', 'active', 'corporate_internal_number'])
         self.env['hr.version'].flush_model(['department_id', 'job_title', 'employee_id'])
-        self.env['hr.leave'].flush_model(['employee_id', 'date_from', 'date_to', 'state', 'holiday_status_id'])
+        self.env['hr.leave'].flush_model(['employee_id', 'request_date_from', 'request_date_to', 'date_from', 'date_to', 'state', 'holiday_status_id'])
 
         # Dynamic day columns with parameterized precision
         q_dates = ','.join([
@@ -63,7 +63,11 @@ class ReportForm76(models.AbstractModel):
             LEFT JOIN hr_attendance_extra att
                 ON dates.for_date = att.for_date AND emp.id = att.employee_id
             LEFT JOIN hr_leave lv
-                ON dates.for_date BETWEEN lv.date_from::date AND lv.date_to::date
+                -- The days the leave was asked for, as the person counts
+                -- them; date_from::date is the UTC date of a moment, kept
+                -- only for a leave that carries no asked-for days.
+                ON dates.for_date BETWEEN COALESCE(lv.request_date_from, lv.date_from::date)
+                                      AND COALESCE(lv.request_date_to, lv.date_to::date)
                 AND emp.id = lv.employee_id
                 AND lv.state = 'validate'
             LEFT JOIN hr_leave_type lt ON lv.holiday_status_id = lt.id
@@ -85,20 +89,18 @@ class ReportForm76(models.AbstractModel):
         employees = self.env['hr.employee'].browse(employee_ids)
         result = {}
 
-        # Group employees by calendar for batch processing
-        calendars = {}
-        for emp in employees:
-            cal = emp.resource_id.calendar_id
-            if cal not in calendars:
-                calendars[cal] = []
-            calendars[cal].append(emp)
+        # Group employees by calendar for batch processing - and by the zone
+        # their days are read in (hr.employee._local_tz, the one the daily
+        # figures in the same report are filed under).
+        groups = employees.grouped(
+            lambda emp: (emp.resource_id.calendar_id, emp._local_tz()))
 
-        for cal, emps in calendars.items():
-            tz = pytz.timezone(cal.tz or 'UTC')
+        for (cal, zone), emps in groups.items():
+            tz = pytz.timezone(zone)
             start_dt = tz.localize(datetime.combine(date_from, time.min))
             end_dt = tz.localize(datetime.combine(date_to, time.max))
 
-            resources = self.env['resource.resource'].concat(*(e.resource_id for e in emps))
+            resources = emps.resource_id
 
             # Batch calls — ONE per calendar, not per employee per day
             attendance_intervals = cal._attendance_intervals_batch(start_dt, end_dt, resources)

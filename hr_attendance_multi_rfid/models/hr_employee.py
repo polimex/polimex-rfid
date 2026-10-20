@@ -119,31 +119,74 @@ class HrEmployee(models.Model):
               'by human resources.') % {'empl_name': self.name}
         )
 
-    def _recalc_window(self, from_date, to_date):
-        """The two days the operator chose, as the moments that bound them.
+    def _local_tz(self):
+        """The zone this person's days are read in: their own.
+
+        Core 19 is of two minds here. It dates an attendance record in the
+        zone of the working hours first (hr_attendance.py:90, _compute_date
+        through _get_tz), but cuts the days of its overtime, and reads the
+        hours a day is worth, in the person's own zone (hr_attendance.py:686,
+        _get_localized_times, whose version.tz is the employee's;
+        hr_employee.py:1792, _get_expected_attendances). Odoo 20 settles it
+        on the person's own zone everywhere - working hours lose their zone
+        (odoo20 hr/models/hr_employee.py:1991, _get_tz). Every daily figure
+        of the set reads the day that way.
+        """
+        self.ensure_one()
+        return self.tz or 'UTC'
+
+    def _local_day(self, moment):
+        """The day of this person's calendar a moment falls on.
+
+        Every daily figure of the set - the day a stay belongs to, the day a
+        rebuild clears, the day a holiday falls on - asks this one question,
+        in this person's own zone (_local_tz). A stay that begins at 00:30 in
+        Sofia is 21:30 UTC of the day before; read off the stored moment
+        directly, it would be filed under a day the person never worked.
+
+        :param moment: naive UTC datetime, as stored in the database
+        :return: date
+        """
+        self.ensure_one()
+        return utc.localize(moment).astimezone(timezone(self._local_tz())).date()
+
+    def _local_days_window(self, from_date, to_date):
+        """These days of this person's calendar, as the moments that bound them.
 
         The operator picks days; door events and attendance records are
         moments. A day is only a day somewhere, so it is measured where the
         person works: their last day ends when midnight passes for them, not
-        when it passes in London. Core reads an employee's day off their own
-        timezone the same way
-        (odoo/addons/hr_attendance/models/hr_attendance.py:273), and turns a
-        chosen day into a moment the same way
-        (odoo/addons/hr_holidays/wizard/hr_leave_generate_multi_wizard.py:77-78).
+        when it passes in London (_local_tz). Core turns a chosen day into a
+        moment the same way
+        (odoo/addons/hr_holidays/wizard/hr_leave_generate_multi_wizard.py:77-78),
+        each end localized on its own, so a day on which the clocks change is
+        23 or 25 hours long, as it was lived.
 
-        The chosen last day is included whole, so the window ends where the
-        next day begins and the bound is "before", not "up to".
+        The last day is included whole, so the window ends where the next day
+        begins and the bound is "before", not "up to".
 
         :return: (start, end) - naive UTC datetimes, as stored in the database
         """
         self.ensure_one()
-        from_date = fields.Date.to_date(from_date) or fields.Date.today()
-        to_date = fields.Date.to_date(to_date) or fields.Date.today()
-        tz = timezone(self.tz or self.env.user.tz or 'UTC')
-        start = tz.localize(datetime.combine(from_date, time.min))
-        end = tz.localize(datetime.combine(to_date + timedelta(days=1), time.min))
+        today = self._local_day(fields.Datetime.now())
+        start, end = self._local_days_bounds(
+            fields.Date.to_date(from_date) or today,
+            fields.Date.to_date(to_date) or today)
         return (start.astimezone(utc).replace(tzinfo=None),
                 end.astimezone(utc).replace(tzinfo=None))
+
+    def _local_days_bounds(self, from_date, to_date):
+        """The same days, as moments in this person's own zone.
+
+        What core's calendar methods take: they read the day off the bounds'
+        own date (hr_employee.py:1791, _get_expected_attendances), so a bound
+        in UTC would hand them the day before. Each end is localized on its
+        own (see _local_days_window).
+        """
+        self.ensure_one()
+        tz = timezone(self._local_tz())
+        return (tz.localize(datetime.combine(from_date, time.min)),
+                tz.localize(datetime.combine(to_date + timedelta(days=1), time.min)))
 
     def _recalc_clear_domain(self, period_start, period_end):
         """Which of this person's attendance a rebuild is asking to remove.
@@ -199,9 +242,12 @@ class HrEmployee(models.Model):
         :param from_date: Start date for recalculation (default: 30 days ago)
         :param to_date: End date for recalculation (default: today)
         """
+        # "Today" of the operator who asks, as core defaults a chosen day
+        # (fields.Date.context_today), not of the server's UTC clock.
+        today = fields.Date.context_today(self)
         if from_date is None:
-            from_date = fields.Date.today() - timedelta(days=30)
-        to_date = to_date or fields.Date.today()
+            from_date = today - timedelta(days=30)
+        to_date = to_date or today
 
         # The real chokepoint: every caller passes through here, so this is
         # where a module that forbids rebuilding gets its say. The hook itself
@@ -260,7 +306,7 @@ class HrEmployee(models.Model):
         # events replayed and the attendance deleted are cut to the same two
         # moments: anything else would delete a day it never replays, or
         # replay a day it never cleared.
-        period_start, period_end = self._recalc_window(from_date, to_date)
+        period_start, period_end = self._local_days_window(from_date, to_date)
 
         # Get all relevant events for this employee
         event_ids = self.env['hr.rfid.event.user'].search([

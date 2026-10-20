@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from odoo import api, fields, models
+from odoo import fields, models
 from datetime import datetime, timedelta, time
 
 class HrAttendanceExtra(models.Model):
@@ -223,16 +223,19 @@ class HrAttendanceExtra(models.Model):
         max_date = max(dates)
         employee_ids = valid_records.mapped('employee_id').ids
 
+        # A day either side: the days are each person's own, and in UTC they
+        # begin hours before or after midnight. The day of each record is
+        # then read the way the daily figures read it (_local_day).
         all_attendances = self.env['hr.attendance'].search([
             ('employee_id', 'in', employee_ids),
-            ('check_in', '>=', datetime.combine(min_date, time(0, 0))),
-            ('check_in', '<', datetime.combine(max_date + timedelta(days=1), time(0, 0)))
+            ('check_in', '>=', datetime.combine(min_date - timedelta(days=1), time(0, 0))),
+            ('check_in', '<', datetime.combine(max_date + timedelta(days=2), time(0, 0)))
         ])
 
         # Group by (employee_id, date) in memory - O(N) complexity
         counts = defaultdict(int)
         for att in all_attendances:
-            att_date = att.check_in.date()
+            att_date = att.employee_id._local_day(att.check_in)
             key = (att.employee_id.id, att_date)
             counts[key] += 1
 
@@ -247,10 +250,12 @@ class HrAttendanceExtra(models.Model):
 
     def open_attendance_logs(self):
         self.ensure_one()
+        day_start, day_end = self.employee_id._local_days_window(
+            self.for_date, self.for_date)
         domain = [
             ('employee_id', '=', self.employee_id.id),
-            ('check_in', '>=', datetime.combine(self.for_date, time(0, 0))),
-            ('check_in', '<=', datetime.combine(self.for_date, time(0, 0)) + timedelta(days=1))
+            ('check_in', '>=', day_start),
+            ('check_in', '<', day_end),
         ]
         res = self.env['ir.actions.act_window']._for_xml_id('hr_attendance.hr_attendance_action')
         res.update(

@@ -1,4 +1,5 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
+
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase, tagged
 
@@ -385,6 +386,46 @@ class TestReportForm76(TestForm76Common):
         day_2 = emp_row[6]  # March 2 (Monday)
         self.assertEqual(day_2, 'О',
                          "Approved regular leave should show 'О' code")
+
+    def test_leave_of_a_night_shift_is_on_the_day_asked_for(self):
+        """Leave asked for Tuesday shows on Tuesday, not on Monday.
+
+        A night worker whose shift starts at midnight asks for Tuesday
+        10 March off. The leave begins at 00:00 on Tuesday in Sofia, which
+        is 22:00 on Monday in UTC; Form 76 must mark Tuesday, and the Monday
+        before it - worked or not - must not read as leave.
+        """
+        night = self.env['resource.calendar'].create({
+            'name': 'Night 00-08 (test)',
+            'company_id': self.company.id,
+            'tz': 'Europe/Sofia',
+            'hours_per_day': 8.0,
+            'attendance_ids': [
+                (0, 0, {'name': 'Night %s' % day, 'dayofweek': day,
+                        'hour_from': 0, 'hour_to': 8, 'day_period': 'morning'})
+                for day in '01234'
+            ],
+        })
+        self.employee_1.write({'resource_calendar_id': night.id,
+                               'tz': 'Europe/Sofia'})
+        leave = self.env['hr.leave'].create({
+            'employee_id': self.employee_1.id,
+            'holiday_status_id': self.leave_type_regular.id,
+            'request_date_from': '2026-03-10',
+            'request_date_to': '2026-03-10',
+        })
+        leave.action_approve()
+        self.assertEqual(
+            leave.date_from.date(), date(2026, 3, 9),
+            "the fixture must build the shape under test: a leave whose "
+            "first moment carries Monday's date in UTC")
+
+        _, rows = self.env['report.l10n_bg_hr_form_76.report_form_76'] \
+            ._get_attendance_data(self._get_report_data())
+        row = next(row for row in rows if row[0] == self.employee_1.id)
+        # Day N of the month is column 4 + N.
+        self.assertEqual(row[14], 'О', "Tuesday 10 March is the leave day")
+        self.assertNotEqual(row[13], 'О', "Monday 9 March is not leave")
 
     def test_vertical_text(self):
         """vertical_text should join characters with <br/>."""

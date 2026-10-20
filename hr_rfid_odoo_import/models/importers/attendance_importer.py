@@ -150,6 +150,7 @@ class AttendanceImporter(PhaseImporter):
 
         rows = []
         src_ids = []
+        zones = {}
         for rec in source_records:
             emp_target = self.b._map_m2o('hr.employee', rec.get('employee_id'))
             if not emp_target:
@@ -165,9 +166,7 @@ class AttendanceImporter(PhaseImporter):
             if stamps_origin:
                 row.append('rfid')
             if has_date_col:
-                # Compute date from check_in (UTC → date, simplified)
-                # check_in is a string like '2025-08-28 11:59:46'
-                row.append(check_in[:10] if check_in else None)
+                row.append(self._attendance_date(emp_target, check_in, zones))
             if 'in_zone_id' in columns:
                 zone_target = self.b._map_m2o('hr.rfid.zone', rec.get('in_zone_id'))
                 row.append(zone_target or None)
@@ -197,6 +196,38 @@ class AttendanceImporter(PhaseImporter):
             cursor_key, model, len(source_records), imported, already, skipped,
             duration=time.time() - start, rejected_count=rejected,
         ))
+
+    @staticmethod
+    def _person_tz(employee):
+        """The zone core cuts this person's overtime days and weeks in.
+
+        The person's own (hr_attendance.py:273, _get_overtimes_to_update_domain;
+        :686, _get_localized_times), and so the zone of every day the set
+        reads (hr_attendance_multi_rfid, hr.employee._local_tz) - which this
+        module cannot call, as it does not depend on it.
+        """
+        return timezone(employee.sudo().tz or 'UTC')
+
+    def _attendance_date(self, employee_id, check_in, zones):
+        """The date core gives an attendance that began at this moment.
+
+        The column is core's own, so it is filled by core's rule for it
+        (odoo/addons/hr_attendance/models/hr_attendance.py:90, _compute_date:
+        the check-in read in ``employee._get_tz()``), and a record carried
+        over reads exactly like one the doors made. The UTC date written here
+        before filed a stay begun between 00:00 and 03:00 in Sofia under the
+        day before.
+
+        :param zones: {employee id: timezone}, filled as people come up, so a
+                      page of thousands of rows asks once per person
+        """
+        if not check_in:
+            return None
+        if employee_id not in zones:
+            zones[employee_id] = timezone(
+                self.env['hr.employee'].browse(employee_id).sudo()._get_tz())
+        moment = fields.Datetime.to_datetime(check_in)
+        return utc.localize(moment).astimezone(zones[employee_id]).date()
 
     def _settle_attendance_figures(self):
         """Give the transferred attendance the figures the ORM would have.
@@ -364,11 +395,19 @@ class AttendanceImporter(PhaseImporter):
         week (core's weeks, MO-SU in the person's zone), with no row between
         its first and its last that has its hours.
         """
-        tz = timezone(employee.sudo()._get_tz())
-        starts = employee.sudo().with_context(active_test=True).version_ids.mapped('date_start')
-        # The first moment core has a schedule for this person.
-        first = tz.localize(datetime.combine(min(starts), day_start.min)).astimezone(
-            utc).replace(tzinfo=None) if starts else None
+        tz = self._person_tz(employee)
+        earliest = employee.sudo().with_context(active_test=True).version_ids.sorted('date_start')[:1]
+        first = None
+        if earliest:
+            # The first moment core has a schedule for this person: midnight of
+            # the first version's start in that version's working hours, or in
+            # the person's own zone without them (hr_employee.py:1627-1628,
+            # _get_version_periods) - not the zone of the weeks below.
+            version_tz = timezone(earliest.resource_calendar_id.tz
+                                  if earliest.resource_calendar_id
+                                  else earliest.employee_id.resource_id.tz or 'UTC')
+            first = version_tz.localize(datetime.combine(
+                earliest.date_start, day_start.min)).astimezone(utc).replace(tzinfo=None)
         self.env.cr.execute(SQL(
             """
             SELECT a.id, a.check_in, a.worked_hours IS NULL, %s
@@ -406,7 +445,7 @@ class AttendanceImporter(PhaseImporter):
         known = failed.get(key) or {}
         # The day as the person lived it, not the server's UTC date.
         day = utc.localize(rows[0][1]).astimezone(
-            timezone(employee.sudo()._get_tz())).date().isoformat()
+            self._person_tz(employee)).date().isoformat()
         # An exception may carry no text at all (a bare ValueError()); its
         # kind is then the only thing to say, and failing here would lose the
         # person instead of naming them.

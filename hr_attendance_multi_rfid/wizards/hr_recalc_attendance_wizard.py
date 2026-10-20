@@ -1,4 +1,4 @@
-from odoo import Command, fields, models, api
+from odoo import Command, fields, models
 from odoo.exceptions import RedirectWarning, UserError
 from datetime import timedelta
 
@@ -17,13 +17,13 @@ class WizardHrRecalcAttendanceEmployee(models.TransientModel):
         if self.env.context.get('active_model') == 'hr.attendance.extra':
             return self.env['hr.attendance.extra'].browse(self.env.context.get('active_id')).for_date
         else:
-            return fields.Date.today() - timedelta(days=30)
+            return fields.Date.context_today(self) - timedelta(days=30)
 
     def _get_default_to(self):
         if self.env.context.get('active_model') == 'hr.attendance.extra':
             return self.env['hr.attendance.extra'].browse(self.env.context.get('active_id')).for_date
         else:
-            return fields.Date.today()
+            return fields.Date.context_today(self)
 
     employee_ids = fields.Many2many(
         comodel_name="hr.employee",

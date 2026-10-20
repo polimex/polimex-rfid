@@ -1,5 +1,4 @@
 from odoo import api, fields, models
-from datetime import datetime, time
 
 # Legal-rate codes resolved per worked day from hr.legal.rate (dated).
 RATE_OVERTIME_WORKDAY = 'overtime_workday'   # multiplier, e.g. 1.5
@@ -95,15 +94,20 @@ class HrAttendanceExtraCost(models.Model):
                     or self.employee_id.company_id.resource_calendar_id)
         if not calendar:
             return False
-        dt_from = datetime.combine(self.for_date, time.min)
-        dt_to = datetime.combine(self.for_date, time.max)
+        # The person's own day (hr.employee._local_days_window). A holiday is
+        # stored from its local midnight, which is the evening before in UTC:
+        # a UTC day overlapped it, and the eve of every holiday was paid at
+        # the holiday rate. Both ends are open - a holiday that ends where
+        # the day begins is the day before's.
+        dt_from, dt_to = self.employee_id._local_days_window(
+            self.for_date, self.for_date)
         return bool(self.env['resource.calendar.leaves'].search_count([
             ('calendar_id', 'in', [False, calendar.id]),
             ('company_id', 'in', [False, self.employee_id.company_id.id]),
             ('resource_id', '=', False),
             ('time_type', '=', 'leave'),
-            ('date_from', '<=', dt_to),
-            ('date_to', '>=', dt_from),
+            ('date_from', '<', dt_to),
+            ('date_to', '>', dt_from),
         ], limit=1))
 
     @api.depends('actual_work_time', 'actual_work_time_night', 'overtime',

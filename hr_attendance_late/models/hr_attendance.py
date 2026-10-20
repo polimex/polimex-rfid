@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from odoo import api, fields, models
+from odoo import api, models
 
 
 class HrAttendance(models.Model):
@@ -38,13 +38,17 @@ class HrAttendance(models.Model):
             dict: {employee: set(date1, date2, ...)}
 
         Pattern: Similar to hr.attendance._get_attendances_dates()
+
+        The days are the person's own (hr.employee._local_day), the ones the
+        daily figures are filed under - not the UTC dates of the two moments.
         """
         employee_dates = defaultdict(set)
         for attendance in attendances:
+            employee = attendance.employee_id
             if attendance.check_in:
-                employee_dates[attendance.employee_id].add(attendance.check_in.date())
-            if attendance.check_out and attendance.check_out.date() != attendance.check_in.date():
-                employee_dates[attendance.employee_id].add(attendance.check_out.date())
+                employee_dates[employee].add(employee._local_day(attendance.check_in))
+            if attendance.check_out:
+                employee_dates[employee].add(employee._local_day(attendance.check_out))
         return employee_dates
 
     def _batch_update_extra_attendance(self, employee_dates):

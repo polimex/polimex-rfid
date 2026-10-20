@@ -16,20 +16,20 @@
 
 Данните за попълването са налице и непокътнати - изчислява се същото, което
 преизчислението би изчислило, по същите три правила:
-  * денят се взема по UTC границите на `for_date`, защото точно така ги взема
-    и кодът (hr_employee.py:183-184 сравнява наивни UTC времена с датата) -
-    смяна върху локални граници тук би дала стойности, които следващото
-    преизчисление после ще промени;
+  * денят е денят на служителя - от неговата полунощ до следващата, в
+    неговата собствена зона, точно както го взема кодът
+    (hr.employee._local_days_window в hr_attendance_multi_rfid). Други
+    граници тук биха дали стойности, които следващото преизчисление после ще
+    промени;
   * `in_mode='technical'` се изключва - това е едносекундният запис, който
     ядрото поставя за отсъствен ден (hr_employee.py:186-195);
   * стойността е ЧАСОВНИКЪТ в часовата зона на служителя, не отстояние от
     началото на деня: смяна, приключила на следващата сутрин в 07:24, дава
     7.4153, точно както го смята кодът.
 
-Часовата зона се резолвва като в hr_employee.py:156-157 - собственият календар
-на служителя, иначе фирменият, иначе UTC. В v19 календарът живее на hr.version
-(делегация hr.employee._inherits, hr 19.0.1.1); за база, дошла от по-стара
-версия, се пада обратно към колоната на hr_employee.
+Часовата зона е собствената зона на служителя (hr.employee._local_tz в
+hr_attendance_multi_rfid) - зоната на ресурса му, иначе UTC. Тя стои на
+resource_resource и в 18, и в 19.
 
 Не се измисля стойност, която кодът не би дал: ден без нито едно присъствие
 (отсъствие) остава празен по двете полета, а ден само с незатворен престой
@@ -45,38 +45,15 @@ from odoo.tools.sql import column_exists
 
 _logger = logging.getLogger(__name__)
 
-#: Часовата зона на служителя - собствен календар, иначе фирмен, иначе UTC.
-#: Вариантът за v19, където календарът е на hr.version.
-SQL_EMPLOYEE_TZ_VERSION = """
+#: Собствената часова зона на служителя - тази на ресурса му, иначе UTC.
+SQL_EMPLOYEE_TZ = """
 (
     SELECT e.id AS employee_id,
-           COALESCE(ecal.tz, ccal.tz, 'UTC') AS tz
+           COALESCE(r.tz, 'UTC') AS tz
       FROM hr_employee e
-      LEFT JOIN hr_version v ON v.id = e.current_version_id
-      LEFT JOIN resource_calendar ecal ON ecal.id = v.resource_calendar_id
-      LEFT JOIN res_company c ON c.id = e.company_id
-      LEFT JOIN resource_calendar ccal ON ccal.id = c.resource_calendar_id
+      LEFT JOIN resource_resource r ON r.id = e.resource_id
 ) t
 """
-
-#: Същото, когато календарът още стои директно на служителя (до v18).
-SQL_EMPLOYEE_TZ_LEGACY = """
-(
-    SELECT e.id AS employee_id,
-           COALESCE(ecal.tz, ccal.tz, 'UTC') AS tz
-      FROM hr_employee e
-      LEFT JOIN resource_calendar ecal ON ecal.id = e.resource_calendar_id
-      LEFT JOIN res_company c ON c.id = e.company_id
-      LEFT JOIN resource_calendar ccal ON ccal.id = c.resource_calendar_id
-) t
-"""
-
-
-def _employee_tz_source(cr):
-    """Откъде се чете календарът - от hr.version (19) или от hr.employee (18)."""
-    if column_exists(cr, "hr_version", "resource_calendar_id"):
-        return SQL_EMPLOYEE_TZ_VERSION
-    return SQL_EMPLOYEE_TZ_LEGACY
 
 
 def fill_first_in_last_out(cr):
@@ -120,9 +97,14 @@ def fill_first_in_last_out(cr):
                           JOIN hr_attendance a
                                 ON a.employee_id = x2.employee_id
                                AND a.in_mode IS DISTINCT FROM 'technical'
-                               AND a.check_in >= x2.for_date::timestamp
-                               AND a.check_in <  x2.for_date::timestamp
-                                                 + interval '1 day'
+                               -- полунощ до полунощ в зоната на служителя,
+                               -- всеки край поотделно (ден от 23/25 часа)
+                               AND a.check_in >= (x2.for_date::timestamp
+                                                  AT TIME ZONE t.tz)
+                                                 AT TIME ZONE 'UTC'
+                               AND a.check_in <  ((x2.for_date + 1)::timestamp
+                                                  AT TIME ZONE t.tz)
+                                                 AT TIME ZONE 'UTC'
                          WHERE x2.first_in IS NULL
                             OR x2.last_out IS NULL
                          GROUP BY x2.id, t.tz
@@ -130,7 +112,7 @@ def fill_first_in_last_out(cr):
                ) d
          WHERE d.id = x.id
         """
-        % _employee_tz_source(cr),
+        % SQL_EMPLOYEE_TZ,
     )
     _logger.info(
         "hr_attendance_late: %s дни получиха час на влизане/излизане",

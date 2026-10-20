@@ -181,7 +181,7 @@ Configure in Settings → Technical → Resource Calendar:
 - Set exact work hours
 - Define break times
 - Configure holidays
-- Set timezone
+- Set each employee's **Timezone** (employee form, *Settings* tab): every daily figure is read in it. A stay belongs, whole, to the day it began on there; night work (22:00-06:00) is counted by that day's own clock; a day with no badge is an absence only once it is over for the person
 
 ##### 📖 Usage
 
@@ -303,7 +303,7 @@ class HrAttendance(models.Model):
 
 1. **Late not calculated**
    - Check work schedule configuration
-   - Verify timezone settings
+   - Verify the employee's **Timezone** (Settings tab): it decides which day a stay belongs to
    - Ensure calendar is assigned to employee
 
 2. **Wrong late minutes**
@@ -374,6 +374,20 @@ This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 
 For more information, visit [polimex.co](https://polimex.co)
 
+
+## Which day a figure belongs to
+
+Every daily row is the day as the employee lived it, in their own
+**Timezone** (employee form, *Settings* tab). A stay belongs, whole, to the
+day it began on there: in Sofia, a stay begun at 00:30 on Tuesday is
+Tuesday's, measured against Tuesday's schedule, although the database
+stores that moment with Monday's date. Night work (22:00-06:00) is counted
+by the clock of the day worked, also when a winter day is recomputed in
+summer, and a day with no badge becomes an absence only once it is over
+for the person.
+
+Rows computed before this rule keep their figures until their day is
+computed again (**Recompute Extra Attendance** for those days).
 
 ## Installation & Configuration <a id='install'></a>
 

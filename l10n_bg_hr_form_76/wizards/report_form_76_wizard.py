@@ -15,7 +15,7 @@ class WizardHrForm76(models.TransientModel):
     report_year = fields.Integer(
         "Calendar Year",
         required=True,
-        default=lambda self: fields.Date.today().year,
+        default=lambda self: fields.Date.context_today(self).year,
         help="Календарна година за която се генерира Форма 76. Приема стойности от 2020 нататък.",
     )
     report_month = fields.Selection(
@@ -33,7 +33,7 @@ class WizardHrForm76(models.TransientModel):
             ('11', 'November'),
             ('12', 'December'),
         ],
-        default=lambda self: str(fields.Date.today().month),
+        default=lambda self: str(fields.Date.context_today(self).month),
         required=True,
         help="Месец, за който се генерира Форма 76 в комбинация с годината по-горе.",
     )
@@ -53,7 +53,7 @@ class WizardHrForm76(models.TransientModel):
     def _prepare_report_data(self):
         """Prepare data dict for report rendering."""
         self.ensure_one()
-        current_year = fields.Date.today().year
+        current_year = fields.Date.context_today(self).year
         if self.report_year < 2020 or self.report_year > current_year:
             raise UserError(_('The year is not valid %d') % self.report_year)
 

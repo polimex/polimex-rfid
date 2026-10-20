@@ -1,7 +1,5 @@
 import logging
-from datetime import datetime, time, timedelta
-
-import pytz
+from datetime import timedelta
 
 from odoo import api, fields, models
 from odoo.tools.date_utils import sum_intervals
@@ -154,11 +152,11 @@ class HrAttendance(models.Model):
         """
         self.ensure_one()
         employee = self.employee_id
-        tz = pytz.timezone(employee.tz or 'UTC')
-        day_start = tz.localize(datetime.combine(
-            self.check_in.replace(tzinfo=pytz.utc).astimezone(tz).date(), time.min))
+        # The day the stay belongs to, handed to core in the person's own
+        # zone (hr.employee._local_days_bounds).
+        day = employee._local_day(self.check_in)
         intervals = list(employee._get_expected_attendances(
-            day_start, day_start + timedelta(days=1)))
+            *employee._local_days_bounds(day, day)))
         if not intervals:
             return 0.0, 0.0
         hours = sum_intervals(intervals)

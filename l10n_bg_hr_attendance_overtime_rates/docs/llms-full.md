@@ -129,6 +129,14 @@ Bulgarian localisation seed for the attendance cost layer: statutory overtime co
 **Polimex Holding Ltd.** — https://polimex.co
 
 
+## The holidays it creates
+
+Each generated public holiday is the whole day, midnight to midnight, in
+the timezone of the company's working schedule - whoever generates the
+year: an HR officer, or the yearly scheduled action, which has no
+timezone of its own. This is the shape **Time Off -> Configuration -> Public Holidays**
+creates, so the days it makes and the days typed in by hand read alike.
+
 ## Installation & Configuration <a id='install'></a>
 
 Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.

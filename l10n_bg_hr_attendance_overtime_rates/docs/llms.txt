@@ -24,6 +24,14 @@ Bulgarian statutory overtime/night coefficients and public holidays.
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
 
 
+## The holidays it creates
+
+Each generated public holiday is the whole day, midnight to midnight, in
+the timezone of the company's working schedule - whoever generates the
+year: an HR officer, or the yearly scheduled action, which has no
+timezone of its own. This is the shape **Time Off -> Configuration -> Public Holidays**
+creates, so the days it makes and the days typed in by hand read alike.
+
 ## How to use it
 
 ### Bulgaria — Attendance Overtime Rates & Public Holidays
