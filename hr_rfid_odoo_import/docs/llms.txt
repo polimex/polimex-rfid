@@ -41,7 +41,9 @@ arrive, that is reported as a fault, not as a finished step.
 1. Go to **RFID System -> Hardware Manager -> Import from Odoo**.
 2. Enter the address of the other system and an account that can read it. That
    account needs to be able to see everything you want moved - including the
-   camera passwords, if you have cameras.
+   camera passwords, if you have cameras. The address can be typed as in a
+   browser: `192.168.1.10:8069` becomes `http://192.168.1.10:8069`. A server
+   reached over https needs `https://` typed in front.
    - **Source identity** on the same page is normally left empty: the transfer
      then files everything under the name of the database it read, which is
      right for a one-off move. Fill it in when you read the SAME system from

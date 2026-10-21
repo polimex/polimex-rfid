@@ -26,3 +26,4 @@ from . import test_older_source_shapes
 from . import test_reconcile_with_the_source
 from . import test_every_read_can_be_resumed
 from . import test_transferred_attendance_has_hours
+from . import test_source_address

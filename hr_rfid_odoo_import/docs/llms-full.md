@@ -297,7 +297,7 @@ Python class `HrRfidOdooImportWiz` in `models/import_wizard.py:13`.  TransientMo
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `state` | Selection | State | ✓ | ✓ | Step the wizard is currently on - Connection: enter source URL + creds. Configur |
-| `source_url` | Char | Source URL | ✓ | ✓ | Full URL of the source Odoo server, e.g. https://erp.example.com |
+| `source_url` | Char | Source URL | ✓ | ✓ | Full URL of the source Odoo server, e.g. https://erp.example.com. An address typed without a scheme is completed with http:// on create/write (`source_address()`, as the web client completes a link) |
 | `source_db` | Char | Source Database |  | ✓ | Leave empty if the source server hosts a single database - it will be auto-detec |
 | `source_slug` | Char | Source Identity |  | ✓ | Which system the records come from, inside their external IDs. Empty = the source database name. Set it when the SAME system is read from two places (backup, then live) - both transfers must carry the same value or everything arrives twice. See "Identity of a transferred record". |
 | `source_login` | Char | Username | ✓ | ✓ | Login of an admin-level user on the source Odoo instance - the user must have re |

@@ -12,6 +12,23 @@ from odoo.exceptions import RedirectWarning, UserError, ValidationError
 _logger = logging.getLogger(__name__)
 
 
+def source_address(value):
+    """The address of the other server, as the connection needs it.
+
+    People type it the way they type an address in the browser bar - an IP
+    address or a host name, often with a port - and the browser fills in the
+    http:// itself. The XML-RPC client does not: without a scheme it refuses
+    with "unsupported XML-RPC protocol". It is completed the way the web
+    client completes a link typed without one
+    (odoo/addons/web/static/src/views/fields/url/url_field.js:29), and a
+    trailing slash is dropped so the paths added to it stay valid.
+    """
+    value = (value or '').strip()
+    if value and '://' not in value:
+        value = 'http://' + value
+    return value.rstrip('/')
+
+
 class HrRfidOdooImportWiz(models.TransientModel):
     _name = 'hr.rfid.odoo.import.wiz'
     _description = 'Import RFID Data from Odoo'
@@ -642,6 +659,18 @@ class HrRfidOdooImportWiz(models.TransientModel):
     # ══════════════════════════════════════════════════════════
     # Actions
     # ══════════════════════════════════════════════════════════
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('source_url'):
+                vals['source_url'] = source_address(vals['source_url'])
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get('source_url'):
+            vals = dict(vals, source_url=source_address(vals['source_url']))
+        return super().write(vals)
 
     def _keep_open(self):
         return {
