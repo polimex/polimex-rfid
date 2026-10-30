@@ -94,6 +94,18 @@ corrected here. A list the other system keeps - the departments of an access
 group, the doors a reader serves - is rebuilt from it, so an entry added here
 is taken out again. No record is deleted.
 
+**What if a person already has attendance here for the same time?** The
+attendance from the other system is not brought over - a day is never counted
+twice. If it is exactly the same, it is counted as already here. If it is
+different, the attendance recorded here stays as it is, and the transfer's
+summary names the people; the downloaded protocol lists every such case with
+both times, so the people who keep the records can look at them. A later
+transfer checks again, so once the record here is put right, the next run
+brings the other system's attendance across.
+
+**What language is the summary in?** The language of the person who started
+the transfer.
+
 **Transferred attendance shows 0 hours worked - what do I do?** Run the
 transfer again with only "Import attendance" ticked. The attendance of the
 people it brings into this company then gets its hours worked out, whatever

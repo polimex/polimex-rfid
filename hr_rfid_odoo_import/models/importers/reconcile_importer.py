@@ -22,6 +22,7 @@ Two rules make it trustworthy rather than reassuring:
   not keep, a source that refuses the read). A comparison that did not happen
   reads exactly like a comparison that agreed, and silence is not agreement.
 """
+import json
 import logging
 import time
 
@@ -122,7 +123,7 @@ class ReconcileImporter(PhaseImporter):
 
         short = []          # tenants where fewer records are here
         surplus = []        # tenants where MORE are here than over there
-        source_total = arrived_total = 0
+        source_total = arrived_total = kept_total = 0
         for source_company, target_company in sorted(
                 (self.b.company_map or {}).items(),
                 key=lambda pair: pair[0]):
@@ -139,12 +140,15 @@ class ReconcileImporter(PhaseImporter):
                         "per company, so no comparison was made.", kind=label))
             here = self._count_that_arrived(model, path, source_company,
                                             target_company)
+            kept = self._kept_here_on_purpose(model, target_company)
+            held = here + kept
             source_total += there
             arrived_total += here
-            if here < there:
-                short.append((target_company, there, here))
-            elif here > there:
-                surplus.append((target_company, there, here))
+            kept_total += kept
+            if held < there:
+                short.append((target_company, there, held))
+            elif held > there:
+                surplus.append((target_company, there, held))
 
         status, note = 'done', ''
         if short:
@@ -165,10 +169,52 @@ class ReconcileImporter(PhaseImporter):
                 "here as well as what came across.",
                 kind=label, where=self._name_them(surplus))
         return self.b._make_result(
-            label, source_total, arrived_total,
+            label, source_total, arrived_total, linked_count=kept_total,
             duration=time.time() - start, status=status, error=note)
 
     # ── the two numbers ───────────────────────────────────────
+
+    def _kept_here_on_purpose(self, model, target_company):
+        """Records of that tenant the transfer left out because this system has its own.
+
+        Only stays so far: one the same to the second is already here, and one
+        that differs keeps the stay recorded here (the attendance step says
+        which). Neither is a loss, and counting them as one would turn every
+        transfer over a working system into a failed one. Counted by the
+        transfer itself as it went, because nothing on the record links them.
+        """
+        if model != 'hr.attendance':
+            return 0
+        from .attendance_importer import DIFFERS_KEY, SAME_HERE_KEY
+        verdicts = self._attendance_verdicts()
+        same = sum(1 for company in (verdicts.get(SAME_HERE_KEY) or {}).values()
+                   if company == target_company)
+        differ = sum(1 for entry in (verdicts.get(DIFFERS_KEY) or {}).values()
+                     if entry[1] == target_company)
+        return same + differ
+
+    def _attendance_verdicts(self):
+        """What the attendance step decided, as far as this check can know it.
+
+        This transfer's own when it carried attendance. Otherwise those of the
+        latest earlier transfer of the same system that did: this check
+        compares every kind whatever was ticked, and a later transfer of the
+        cards alone read the stays an earlier one had kept here on purpose as
+        lost, and ended as a failed transfer.
+        """
+        from .attendance_importer import ATTENDANCE_CURSOR
+        from .base_importer import normalise_source_slug
+        if ATTENDANCE_CURSOR in self.b.step_totals:
+            return self.b.step_totals[ATTENDANCE_CURSOR]
+        runs = self.env['hr.rfid.odoo.import.run'].sudo().search_read(
+            [], ['source_slug', 'source_db', 'step_totals_json'], order='id desc')
+        for run in runs:
+            if normalise_source_slug(run['source_slug'] or run['source_db']) != self.b.source_slug:
+                continue
+            verdicts = json.loads(run['step_totals_json'] or '{}').get(ATTENDANCE_CURSOR)
+            if verdicts:
+                return verdicts
+        return {}
 
     def _count_on_the_source(self, model, path, source_company, extra=()):
         """How many the OTHER system holds for that tenant.

@@ -34,8 +34,8 @@ REGULAR_HOURS_DISAGREE = SQL(
     " - (a.worked_hours - COALESCE(a.overtime_hours, 0))) > %s",
     FIGURE_TOLERANCE,
 )
-#: People named in the protocol before "and N more".
-FIGURES_NAMED = 5
+#: People named in a protocol line before "and N more".
+PEOPLE_NAMED = 5
 #: What a person's own records can make core's overtime run refuse. Anything
 #: else - a ValueError included - is a fault in the code, and it must show as
 #: one rather than be counted as a problem in somebody's days.
@@ -43,6 +43,54 @@ FIGURES_DATA_ERRORS = (UserError, psycopg2.IntegrityError, psycopg2.DataError)
 #: The two times a row's hours are worked out from (hr_attendance.py,
 #: _compute_worked_hours depends on them alone).
 FIGURES_TIMES = ['check_in', 'check_out']
+#: Kept with the attendance cursor's totals, by source id - so a page read a
+#: second time (after a write that failed) changes nothing: stays of the other
+#: system this system already holds, to the second - {source id: company}.
+SAME_HERE_KEY = 'same_here'
+#: Kept the same way: stays left out because a DIFFERENT stay of the person is
+#: recorded here at that time - {source id: [person here, company, check-in,
+#: check-out, the check-in and check-out recorded here]}.
+DIFFERS_KEY = 'differs'
+
+
+def refused_beside(start, stop, other_start, other_stop):
+    """Whether core refuses a stay of a person beside another of theirs.
+
+    hr.attendance._check_validity (odoo/addons/hr_attendance/models/
+    hr_attendance.py:206-246), asked of the new stay AND of an open one at the
+    moment somebody closes it:
+
+    * two open stays (no check-out) may not sit side by side (:224-234);
+    * a stay may not begin while another is running (:219);
+    * a closed stay may not have another begin inside it (:238-246).
+
+    An open stay runs until somebody closes it, so it holds all the time from
+    its check-in on. Core lets a closed stay be written after an open one has
+    begun, and then refuses to close the open one (:238-246) - or, where the
+    check is bypassed, counts that time twice. So here the open stay is taken
+    for what it will become: a closed stay may not begin after it, and it may
+    not begin before a stay that ends after it.
+    """
+    if stop is None and other_stop is None:
+        return True
+    if stop is None:
+        return start < other_stop
+    if other_stop is None:
+        return other_start < stop
+    return other_start <= start < other_stop or start < other_start < stop
+
+
+def people_by_id(env, ids):
+    """{id: employee} for the protocol: archived people included, deleted ones left out.
+
+    Read as superuser. A transfer writes into several companies, and the
+    operator downloading its protocol has one of them selected: read with
+    their rights, one person of another tenant (hr.employee's company rule)
+    stopped the whole download. Only the name and the time zone are used, and
+    the names are in the protocol lines already.
+    """
+    people = env['hr.employee'].sudo().with_context(active_test=False).browse(sorted(ids))
+    return {person.id: person for person in people.exists()}
 
 
 #: What a day of work says: hours worked, day and night, against what was owed,
@@ -177,6 +225,10 @@ class AttendanceImporter(PhaseImporter):
             rows.append(tuple(row))
             src_ids.append(rec['id'])
 
+        page_ids = list(src_ids)
+        rows, src_ids, same, differs = self._leave_out_stays_recorded_here(
+            columns, rows, src_ids)
+
         if rows:
             try:
                 with self.env.cr.savepoint():
@@ -192,10 +244,170 @@ class AttendanceImporter(PhaseImporter):
                 ))
                 return
 
+        # Only now that the page has landed, as accumulate() asks.
+        self._remember_left_out(page_ids, same, differs)
+        note = self._differs_note()
         self.results.append(self.b.accumulated_result(
-            cursor_key, model, len(source_records), imported, already, skipped,
+            cursor_key, model, len(source_records), imported,
+            already + len(same), skipped + len(differs),
             duration=time.time() - start, rejected_count=rejected,
+            # Partly, never "none of it came across": stays kept here on
+            # purpose are not records that fell through.
+            status='partial' if note else 'done', error=note,
         ))
+
+    def _leave_out_stays_recorded_here(self, columns, rows, src_ids):
+        """Leave out every stay core would refuse beside what is recorded here.
+
+        The rows go in with SQL, past core's own guard against two stays of a
+        person at one time (hr.attendance._check_validity), and nothing in the
+        table refuses them. Customer case, 23.10.2026: a second transfer from
+        an older copy of the other system would have laid 11 116 of its stays
+        over the ones this system had rebuilt from the door events for the
+        same months - 9 808 of them the same to the second, every one a day
+        counted twice in hours and pay.
+
+        What is recorded here stays as it is (owner's decision, 23.10.2026):
+        the record here is what people have been working with since. A stay
+        the same to the second is already here, and is counted so. A stay that
+        differs is left out and remembered, with both times, for the people
+        who keep the records to look at. A row this transfer brought over
+        before is not looked at: it is already here as itself.
+
+        Stays of the same read are held to the same rule against each other,
+        in the order the other system recorded them: two of its own that
+        overlap would otherwise both arrive.
+
+        Returns the rows and source ids to insert, then the stays already here
+        and the stays left out, both by source id as kept under SAME_HERE_KEY
+        and DIFFERS_KEY.
+        """
+        done = self.b.already_imported('hr.attendance', src_ids)
+        emp_at = columns.index('employee_id')
+        in_at = columns.index('check_in')
+        out_at = columns.index('check_out')
+        to_datetime = fields.Datetime.to_datetime
+        to_string = fields.Datetime.to_string
+        pending = [(row, sid, to_datetime(row[in_at]), to_datetime(row[out_at]))
+                   for row, sid in zip(rows, src_ids, strict=True) if sid not in done]
+        if not pending:
+            return rows, src_ids, {}, {}
+        people = sorted({row[emp_at] for row, *_rest in pending})
+        here = self._stays_recorded_here(people, pending)
+        companies = self._companies_of(people)
+        taken = {}
+        same, differs = {}, {}
+        for row, sid, start, stop in pending:
+            person = row[emp_at]
+            company = companies.get(person) or 0
+            others = here.get(person, []) + taken.get(person, [])
+            # Keyed as text: the totals are stored as JSON, whose keys are text.
+            if (start, stop) in others:
+                # Asked before the rule: a stay that begins and ends at one
+                # moment collides with nothing, not even with its own twin.
+                same[str(sid)] = company
+                continue
+            clash = [other for other in others if refused_beside(start, stop, *other)]
+            if not clash:
+                taken.setdefault(person, []).append((start, stop))
+                continue
+            other_start, other_stop = clash[0]
+            differs[str(sid)] = [
+                person, company,
+                to_string(start), stop and to_string(stop),
+                to_string(other_start), other_stop and to_string(other_stop),
+            ]
+        if not same and not differs:
+            return rows, src_ids, same, differs
+        kept = [(row, sid) for row, sid in zip(rows, src_ids, strict=True)
+                if str(sid) not in same and str(sid) not in differs]
+        return [row for row, _sid in kept], [sid for _row, sid in kept], same, differs
+
+    def _stays_recorded_here(self, people, pending):
+        """{person: [(check-in, check-out)]} of what this system holds near them.
+
+        Every stay of those people that can collide with a row of the page,
+        earliest first: one that ends after the page's earliest moment and
+        begins before its latest, and every open one, wherever it began. A
+        page that holds an open stay has no latest moment - that stay holds
+        all the time after it. A row whose check-out is before its check-in
+        (old data) is counted by both of its moments.
+        """
+        earliest = min(min(start, stop) if stop else start
+                       for _row, _sid, start, stop in pending)
+        ends = [max(start, stop) if stop else None
+                for _row, _sid, start, stop in pending]
+        before_the_latest = (SQL("") if None in ends
+                             else SQL("AND check_in <= %s", max(ends)))
+        self.env['hr.attendance'].flush_model(['employee_id', 'check_in', 'check_out'])
+        self.env.cr.execute(SQL(
+            """
+            SELECT employee_id, check_in, check_out
+              FROM hr_attendance
+             WHERE employee_id = ANY(%s)
+               AND (check_out IS NULL OR (check_out >= %s %s))
+             ORDER BY check_in, id
+            """, people, earliest, before_the_latest,
+        ))
+        here = {}
+        for person, start, stop in self.env.cr.fetchall():
+            here.setdefault(person, []).append((start, stop))
+        return here
+
+    def _companies_of(self, people):
+        """{person: company} here, read once for a page."""
+        self.env.cr.execute(SQL(
+            "SELECT id, company_id FROM hr_employee WHERE id = ANY(%s)", people))
+        return dict(self.env.cr.fetchall())
+
+    def _remember_left_out(self, page_ids, same, differs):
+        """Put a landed page's verdicts into the transfer's running totals.
+
+        By source id, and every id of the page loses its earlier verdict
+        first: a page read again - after a write that failed, which sends the
+        read back to the start - replaces what it said the first time instead
+        of saying it twice, and a stay that arrives now is no longer listed.
+        """
+        totals = self.b.step_totals.setdefault(ATTENDANCE_CURSOR, {})
+        judged = {str(sid) for sid in page_ids}
+        # New objects, not the old ones changed: progress_snapshot copies one
+        # level deep, and a step that is undone must get the old ones back.
+        for key, verdicts in ((SAME_HERE_KEY, same), (DIFFERS_KEY, differs)):
+            earlier = totals.get(key) or {}
+            if verdicts or judged & earlier.keys():
+                totals[key] = {**{sid: value for sid, value in earlier.items()
+                                  if sid not in judged}, **verdicts}
+
+    def _differs_note(self):
+        """The protocol's word on the stays left out, over the whole transfer."""
+        differs = self.b.step_totals.get(ATTENDANCE_CURSOR, {}).get(DIFFERS_KEY)
+        if not differs:
+            return ''
+        first = {}
+        for person, _company, check_in, *_rest in differs.values():
+            first[person] = min(first.get(person) or check_in, check_in)
+        known = people_by_id(self.env, first)
+
+        def named(person):
+            """Name and first day, the day as the person lived it."""
+            employee = known.get(person)
+            moment = utc.localize(fields.Datetime.to_datetime(first[person]))
+            tz = self._person_tz(employee) if employee else utc
+            return self.env._(
+                "%(name)s from %(day)s",
+                name=employee.name if employee else '#%s' % person,
+                day=format_date(self.env, moment.astimezone(tz).date()),
+            )
+
+        shown = self.b.first_few(sorted(first), named, PEOPLE_NAMED)
+        return self.env._(
+            "%(count)s stay(s) of the other system were not brought over: this "
+            "system already has a different stay recorded for the same person "
+            "at that time, and that one stays as it is. %(who)s. The "
+            "downloaded protocol lists every one of them with both times, to "
+            "be looked at.",
+            count=len(differs), who=shown,
+        )
 
     @staticmethod
     def _person_tz(employee):
@@ -477,22 +689,19 @@ class AttendanceImporter(PhaseImporter):
 
     def _name_unfigured(self, failed):
         """Who, from which day, and what the system said - the first few."""
-        people = self.env['hr.employee'].with_context(active_test=False).browse(
-            int(employee_id) for employee_id in failed)
-        names = {person.id: person.name for person in people.exists()}
-        shown = '; '.join(
-            self.env._(
+        known = people_by_id(self.env, (int(employee_id) for employee_id in failed))
+
+        def said(item):
+            employee_id, entry = item
+            person = known.get(int(employee_id))
+            return self.env._(
                 "%(name)s from %(day)s: %(problem)s",
-                name=names.get(int(employee_id)) or '#%s' % employee_id,
+                name=person.name if person else '#%s' % employee_id,
                 day=format_date(self.env, entry['day']),
                 problem=entry['problem'],
             )
-            for employee_id, entry in sorted(failed.items())[:FIGURES_NAMED]
-        )
-        if len(failed) > FIGURES_NAMED:
-            shown = self.env._("%(first)s and %(more)s more", first=shown,
-                               more=len(failed) - FIGURES_NAMED)
-        return shown
+
+        return self.b.first_few(sorted(failed.items()), said, PEOPLE_NAMED)
 
     def _drop_days_already_summed_here(self, columns, rows, src_ids):
         """Leave out the days this system has already summed up itself.

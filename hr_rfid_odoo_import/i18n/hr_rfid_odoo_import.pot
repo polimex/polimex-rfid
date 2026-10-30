@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 09:17+0000\n"
-"PO-Revision-Date: 2026-10-14 09:17+0000\n"
+"POT-Creation-Date: 2026-10-30 11:39+0000\n"
+"PO-Revision-Date: 2026-10-30 11:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -104,6 +104,16 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"%(count)s stay(s) of the other system were not brought over: this system "
+"already has a different stay recorded for the same person at that time, and "
+"that one stays as it is. %(who)s. The downloaded protocol lists every one of"
+" them with both times, to be looked at."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/site_importer.py:0
 msgid ""
 "%(equipment)s piece(s) of equipment had not arrived yet and %(sites)s "
@@ -112,7 +122,6 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "%(first)s and %(more)s more"
 msgstr ""
@@ -195,6 +204,12 @@ msgstr ""
 msgid ""
 "%(missing)s recognised plate event(s) stayed behind because events were left"
 " out of this transfer. Run it again with events switched on to bring them."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "%(name)s from %(day)s"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
@@ -1763,6 +1778,14 @@ msgid "Status"
 msgstr ""
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"Stays of the other system not brought over: a different stay is recorded "
+"here for the same person at that time, and it stays as it is (%(count)s)"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
 msgid "Step Totals Json"
 msgstr ""
@@ -2473,6 +2496,12 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid "person | other system: in - out | recorded here: in - out"
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "reader %(name)s has no door"
 msgstr ""
@@ -2506,6 +2535,13 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
 msgid ""
 "res.users ID of the connected source user. Cached after Test Connection."
+msgstr ""
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+#: code:addons/hr_rfid_odoo_import/tests/test_a_stay_recorded_here_is_kept.py:0
+msgid "still open"
 msgstr ""
 
 #. module: hr_rfid_odoo_import

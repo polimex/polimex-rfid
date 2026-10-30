@@ -309,6 +309,8 @@ class TestCompanyScope(TransactionCase):
         vanished while the protocol printed source_count = 0 - identical to
         a client that never had a vending machine.
         """
+        if 'hr.rfid.vending.event' not in self.env:
+            self.skipTest('vending is not part of this installation')
         base = self._importer({'hr.rfid.vending.event': [
             {'id': 41, 'event_time': '2026-01-02 03:04:05', 'door_id': False,
              'reader_id': [3, 'R'], 'controller_id': [1, 'C'],
@@ -371,6 +373,8 @@ class TestCompanyScope(TransactionCase):
 
     # -------------------------------------------------------- service sales
     def test_service_sale_writes_the_columns_that_exist(self):
+        if 'rfid.service.sale' not in self.env:
+            self.skipTest('service sales are not part of this installation')
         base = self._importer({'rfid.service.sale': [
             {'id': 51, 'service_id': [2, 'Svc'], 'partner_id': False,
              'card_id': False, 'create_date': '2026-01-02 03:04:05',

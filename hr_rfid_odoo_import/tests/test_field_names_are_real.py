@@ -35,6 +35,9 @@ from ..models.importers.vending_importer import (
     AUTO_REFILL_OPTIONAL_FIELDS, EMPLOYEE_VENDING_FIELDS,
 )
 
+#: Controller fields the vending add-on adds (hr_rfid_vending/models/hr_rfid_ctrl.py).
+VENDING_CTRL_FIELDS = ('cash_contained',)
+
 
 @tagged('post_install', '-at_install', 'rfid_odoo_import', 'rfid_import_fields')
 class TestFieldNamesAreReal(TransactionCase):
@@ -51,12 +54,20 @@ class TestFieldNamesAreReal(TransactionCase):
         )
 
     def test_controller_capacities_and_settings(self):
-        self._assert_real('hr.rfid.ctrl', CTRL_OPTIONAL_FIELDS)
+        names = list(CTRL_OPTIONAL_FIELDS)
+        if 'hr.rfid.vending.event' not in self.env:
+            # Kept on the controller by the vending add-on alone; a site
+            # without vending machines has no such field, and the transfer
+            # leaves it behind on purpose.
+            names = [n for n in names if n not in VENDING_CTRL_FIELDS]
+        self._assert_real('hr.rfid.ctrl', names)
 
     def test_the_numbers_of_a_working_day(self):
         self._assert_real('hr.attendance.extra', EXTRA_OPTIONAL_FIELDS)
 
     def test_the_vending_profile_of_a_person(self):
+        if 'hr.rfid.vending.event' not in self.env:
+            self.skipTest('vending is not part of this installation')
         self._assert_real('hr.employee', EMPLOYEE_VENDING_FIELDS)
 
     def test_what_a_refill_run_records(self):

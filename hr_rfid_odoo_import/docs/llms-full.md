@@ -140,8 +140,18 @@ Features
 * **Conflict detection** - a record that would break an existing unique
   constraint is reported for the operator to decide, never merged silently
 * **Direct SQL batch insert** for large datasets (events, attendance, balance history)
+* **A stay is never recorded twice** - an attendance of the other system that
+  would overlap one already recorded here is not brought over, by the same rule
+  Odoo itself applies to two stays of one person. One that is the same to the
+  second is counted as already here. One that differs is left out, and what is
+  recorded here stays as it is; the protocol names the people, and the
+  downloaded protocol lists every such stay with both times, in the person's
+  own time zone, for the people who keep the records to look at. A later run
+  checks again, so a stay left out today arrives once nothing here collides
+  with it any more.
 * **An account of what happened** - one line per step, including what was left
-  behind and why
+  behind and why, written in the language of the person who started the
+  transfer
 
 Configuration
 =============
@@ -1008,6 +1018,63 @@ attendance carrying this transfer's external ID.
 Tests: `tests/test_recalc_guard.py` - refused at the wizard button with nothing
 queued, and a run driven through `_cron_process` ending `refused` with the
 attendance AND its `ir.model.data` row untouched.
+
+## A stay already recorded here is kept
+
+The attendance step inserts with SQL, past core's `hr.attendance._check_validity`
+(`hr_attendance.py:206-246`), so before the insert
+`AttendanceImporter._leave_out_stays_recorded_here` holds every row not yet
+carried by this transfer (its source id has no external ID) to that rule:
+
+- `refused_beside(start, stop, other_start, other_stop)` is core's check asked
+  of the new stay AND of an open one at the moment it is closed: two open stays
+  side by side; a stay beginning while another runs; another beginning inside a
+  closed one. An open stay holds all the time from its check-in on - core
+  accepts a closed stay begun after it, then refuses to close the open one (or,
+  with the check bypassed, counts the time twice). The test asks core's own
+  method, called directly, for every shape, and again after closing the open
+  stay of the shape.
+- The same stay to the second is asked first, before the rule: a stay that
+  begins and ends at one moment collides with nothing, not even its twin.
+- Compared with what is recorded here (`_stays_recorded_here`, one query per
+  page, earliest first; a page with an open stay has no upper bound) and with
+  the rows of the same read accepted before it, in source order.
+- The same to the second: counted as already here (`linked`), under
+  `SAME_HERE_KEY` as `{source id: company}`. Different: left out (`skipped`),
+  under `DIFFERS_KEY` as `{source id: [person, company, check-in, check-out,
+  check-in here, check-out here]}`. By source id, and every id of a page loses
+  its earlier verdict first: a write that fails sends the read back to the
+  start, and the page read again replaces what it said instead of saying it
+  twice. The line is `partial`, names the first people with the first local
+  day (`BaseImporter.first_few`), and
+  `hr.rfid.odoo.import.run._protocol_stays_left_out` adds the whole list to the
+  downloaded protocol, both times in the person's zone (`format_datetime`,
+  `short`); the people are read as superuser (`people_by_id`), because the
+  operator downloading it has one tenant selected.
+- Both live in the step totals of `attendance:hr.attendance`, so they survive
+  the passes and are undone with the rows. The reconciliation counts them as
+  accounted for (`ReconcileImporter._kept_here_on_purpose`), not as lost; a
+  transfer that carried no attendance takes them from the latest earlier
+  transfer of the same system that did (`_attendance_verdicts`), since the
+  check compares every kind whatever was ticked.
+- Nothing links a left-out row to the record here, so every run checks again:
+  a stay that collides today arrives on the run after the stay here is put
+  right.
+
+Customer case, 23.10.2026: a second transfer from an older copy of the other
+system would have laid 11 116 stays over the ones rebuilt here from the door
+events, 9 808 of them the same to the second. Rehearsed on a copy of that
+database: 8 824 arrived (the three months the system had no attendance for),
+9 808 counted as already here, 1 327 listed, no new overlap, and a second run
+changed nothing.
+
+The background worker writes the protocol in the language of the person who
+started the transfer (`_in_starters_language`, used by `_cron_process`, its
+failure path and `_abandon_stalled_runs`), not in the scheduler's - only when
+that person has a language, as core does (`mail_activity.py:422-424`).
+
+Tests: `tests/test_a_stay_recorded_here_is_kept.py`,
+`tests/test_background_run.py::test_the_protocol_is_written_in_the_language_of_who_started_it`.
 
 ## Reference data vs migrated data
 

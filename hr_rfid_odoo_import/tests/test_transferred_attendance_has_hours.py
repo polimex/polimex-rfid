@@ -61,7 +61,17 @@ class TestTransferredAttendanceHasHours(TransactionCase):
         if 'hr.attendance.overtime.ruleset' not in cls.env:
             raise unittest.SkipTest("attendance is not installed on this database")
         cls.company = cls.env.company
-        calendar = cls.env.ref('resource.resource_calendar_std')
+        # The schedule the figures below are written against, made here from
+        # core's own default (resource_calendar.py, _get_default_attendance_ids):
+        # the shared standard schedule is the customer's to change, and on a
+        # copy of a real site it runs 09:00-17:00 in Sofia without a lunch
+        # break - a test reading it would measure the site, not the transfer.
+        cls.calendar = cls.env['resource.calendar'].create({
+            'name': 'Standard schedule (test)',
+            'tz': 'UTC',
+            'attendance_ids': cls.env['resource.calendar']._get_default_attendance_ids(),
+        })
+        calendar = cls.calendar
         ruleset = cls.env['hr.attendance.overtime.ruleset'].create({
             'name': 'Daily over schedule (test)',
         })
@@ -337,7 +347,7 @@ class TestTransferredAttendanceHasHours(TransactionCase):
 
     def _works_in_sofia(self):
         """The person works in Sofia, two or three hours ahead of UTC."""
-        calendar = self.env.ref('resource.resource_calendar_std').copy(
+        calendar = self.calendar.copy(
             {'tz': 'Europe/Sofia'})
         self.person.write({'tz': 'Europe/Sofia', 'resource_calendar_id': calendar.id})
 
@@ -379,7 +389,7 @@ class TestTransferredAttendanceHasHours(TransactionCase):
         here - would file the same stay a day earlier. A carried record must
         read exactly like one the doors made, whatever the daily figures do.
         """
-        calendar = self.env.ref('resource.resource_calendar_std').copy(
+        calendar = self.calendar.copy(
             {'tz': 'Europe/Sofia'})
         self.person.write({'resource_calendar_id': calendar.id})
         self.person.tz = 'UTC'
@@ -494,7 +504,7 @@ class TestTransferredAttendanceHasHours(TransactionCase):
         other_company = self.env['res.company'].create({'name': 'Other Tenant (test)'})
         neighbour = self.env['hr.employee'].create({
             'name': 'Other Tenant Person (test)', 'tz': 'UTC',
-            'resource_calendar_id': self.env.ref('resource.resource_calendar_std').id,
+            'resource_calendar_id': self.calendar.id,
             'company_id': other_company.id})
         source = self._source()
         source.link_existing('hr.employee', 79, neighbour.id)

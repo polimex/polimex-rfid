@@ -990,11 +990,8 @@ class BaseImporter:
                 _logger.warning("Could not probe refused %s row %s",
                                 model, sid, exc_info=True)
         for cause, sids in by_cause.items():
-            shown = ', '.join(self.env._("№%(num)s", num=x) for x in sids[:3])
-            if len(sids) > 3:
-                shown = self.env._(
-                    "%(first)s and %(more)s more", first=shown,
-                    more=len(sids) - 3)
+            shown = self.first_few(
+                sids, lambda x: self.env._("№%(num)s", num=x), 3, separator=', ')
             self.note_skip_reason(self.env._(
                 "record(s) %(which)s were refused by the database: %(cause)s",
                 which=shown, cause=cause,
@@ -1420,6 +1417,18 @@ class BaseImporter:
         if more > 0:
             parts.append(self.env._("and %(more)s more reason(s)", more=more))
         return "; ".join(parts)
+
+    def first_few(self, items, describe, limit, separator='; '):
+        """``items`` described one by one up to ``limit``, then "and N more".
+
+        One shape for every protocol line that names records: only the first
+        ``limit`` are described, so a long list costs no more than a short one.
+        """
+        shown = separator.join(describe(item) for item in items[:limit])
+        if len(items) > limit:
+            shown = self.env._("%(first)s and %(more)s more", first=shown,
+                               more=len(items) - limit)
+        return shown
 
     def _make_result(self, model, source_count, imported_count, linked_count=0,
                      skipped_count=0, duration=0, status='done', error='',

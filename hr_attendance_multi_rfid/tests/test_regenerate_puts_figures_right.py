@@ -24,7 +24,14 @@ class TestRegeneratePutsFiguresRight(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        calendar = cls.env.ref('resource.resource_calendar_std')
+        # Core's own default schedule, made here (resource_calendar.py,
+        # _get_default_attendance_ids): the shared standard one is the
+        # customer's to change, and a test reading it measures the site.
+        calendar = cls.env['resource.calendar'].create({
+            'name': 'Standard schedule (test)',
+            'tz': 'UTC',
+            'attendance_ids': cls.env['resource.calendar']._get_default_attendance_ids(),
+        })
         cls.employee = cls.env['hr.employee'].create({
             'name': 'Figures Person (test)',
             'resource_calendar_id': calendar.id,

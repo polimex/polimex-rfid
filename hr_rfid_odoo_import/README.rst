@@ -52,8 +52,18 @@ Features
 * **Conflict detection** - a record that would break an existing unique
   constraint is reported for the operator to decide, never merged silently
 * **Direct SQL batch insert** for large datasets (events, attendance, balance history)
+* **A stay is never recorded twice** - an attendance of the other system that
+  would overlap one already recorded here is not brought over, by the same rule
+  Odoo itself applies to two stays of one person. One that is the same to the
+  second is counted as already here. One that differs is left out, and what is
+  recorded here stays as it is; the protocol names the people, and the
+  downloaded protocol lists every such stay with both times, in the person's
+  own time zone, for the people who keep the records to look at. A later run
+  checks again, so a stay left out today arrives once nothing here collides
+  with it any more.
 * **An account of what happened** - one line per step, including what was left
-  behind and why
+  behind and why, written in the language of the person who started the
+  transfer
 
 Configuration
 =============

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from unittest.mock import patch
 
 from odoo.tests import TransactionCase, tagged
 
@@ -103,6 +104,10 @@ class TestBackgroundRun(TransactionCase):
         Изключен крон не тръгва дори когато го събудим - условието за
         готовност изисква active, и провалът е напълно безмълвен.
         """
+        if self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized'):
+            # A neutralized copy has every job switched off on purpose (core
+            # marks it, ir_cron.py:725) - the delivered state is not here.
+            self.skipTest('a neutralized copy keeps every scheduled job off')
         cron = self.env.ref('hr_rfid_odoo_import.ir_cron_import_run')
         self.assertTrue(cron.active, "Кронът е изключен и няма да тръгне никога")
 
@@ -238,6 +243,69 @@ class TestBackgroundRun(TransactionCase):
         self.assertTrue(woken, "работникът не е събуден за довършване")
         self.assertEqual(run.state, 'running', "прехвърлянето приключи с недовършена стъпка")
         self.assertNotIn('Phase X', json.loads(run.done_phases_json or '[]'))
+
+    def test_the_protocol_is_written_in_the_language_of_who_started_it(self):
+        """The operator reads the account of a background transfer in their language.
+
+        Customer case, 21.08.2026: on a Bulgarian site the transfer ended with
+        "The transfer stopped with ..." - the scheduler, not the operator, was
+        the one speaking. The twin with an English operator proves the check
+        tells the two apart.
+        """
+        from odoo.tools.translate import code_translations
+
+        from ..models.importers import phase as phase_module
+
+        self.env['res.lang']._activate_lang('bg_BG')
+        catalog = code_translations.get_python_translations('hr_rfid_odoo_import', 'bg_BG')
+        finished = 'The transfer has finished.'
+        broke = ("The transfer stopped because of a problem outside the steps "
+                 "themselves: %(problem)s")
+        stalled = ("This transfer stopped without finishing and has been closed. "
+                   "The access details it held have been cleared. Start a new one "
+                   "when you are ready - what already came across will not be "
+                   "brought over twice.")
+        for line in (finished, broke, stalled):
+            self.assertNotEqual(catalog.get(line, line), line,
+                                'the Bulgarian catalog lost: %s' % line)
+        # The worker takes the oldest waiting transfer of the whole database;
+        # one left waiting on a copy of a real site would be taken instead.
+        self.env['hr.rfid.odoo.import.run'].search(
+            [('state', 'in', ('queued', 'running'))]).write({'state': 'done'})
+        self.patch(phase_module, 'phase_plan', lambda env, options, modules: [])
+        self.patch(self.env.cr, 'commit', lambda: None)
+        self.patch(self.env.cr, 'rollback', lambda: None)
+
+        def falls_over(run):
+            raise ValueError('the other system went away')
+
+        for lang, translated in (('bg_BG', catalog.get), ('en_US', lambda line: line)):
+            operator = self.env['res.users'].create({
+                'name': 'Operator %s (test)' % lang,
+                'login': 'operator_%s_test' % lang,
+                'lang': lang,
+            })
+            with self.subTest(lang=lang, ending='finished'):
+                run = self._run(user_id=operator.id)
+                self.env['hr.rfid.odoo.import.run']._cron_process()
+
+                self.assertEqual(run.state, 'done')
+                self.assertIn(translated(finished), run.message_ids[:1].body)
+            with self.subTest(lang=lang, ending='broke'):
+                run = self._run(user_id=operator.id)
+                with patch.object(type(run), '_process_pass', falls_over):
+                    self.env['hr.rfid.odoo.import.run']._cron_process()
+
+                self.assertEqual(run.state, 'failed')
+                self.assertIn(translated(broke).split('%(problem)s')[0].strip(),
+                              run.message_ids[:1].body)
+            with self.subTest(lang=lang, ending='abandoned'):
+                run = self._run(user_id=operator.id, state='running')
+                with patch.object(import_run, 'STALLED_MINUTES', -1):
+                    self.env['hr.rfid.odoo.import.run']._abandon_stalled_runs()
+
+                self.assertEqual(run.state, 'failed')
+                self.assertIn(translated(stalled)[:40], run.message_ids[:1].body)
 
     def test_a_transfer_is_refused_when_nothing_would_ever_run_it(self):
         """Спрян планировчик значи прехвърляне, което чака вечно.

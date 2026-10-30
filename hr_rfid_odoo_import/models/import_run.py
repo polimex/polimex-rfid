@@ -20,6 +20,7 @@ from datetime import timedelta
 
 from odoo import api, fields, models
 from odoo.http import request
+from odoo.tools.misc import format_datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -195,6 +196,7 @@ class HrRfidOdooImportRun(models.Model):
             )
             for l in self.log_ids.sorted('id')
         ]
+        rows += self._protocol_stays_left_out()
         attachment = self.env['ir.attachment'].create({
             'name': 'transfer-%s-protocol.txt' % self.id,
             'raw': '\n'.join(header + rows).encode('utf-8'),
@@ -207,6 +209,66 @@ class HrRfidOdooImportRun(models.Model):
             'url': '/web/content/%s?download=true' % attachment.id,
             'target': 'self',
         }
+
+    def _protocol_stays_left_out(self):
+        """The stays not brought over beside a different one recorded here.
+
+        The protocol line names only the first few people; this is the whole
+        list, for the people who keep the records to compare. The other system
+        may be gone by the time they look, so both times travel in the file,
+        in the person's own zone - the day as they lived it.
+        """
+        from .importers.attendance_importer import (
+            ATTENDANCE_CURSOR,
+            DIFFERS_KEY,
+            AttendanceImporter,
+            people_by_id,
+        )
+        totals = json.loads(self.step_totals_json or '{}')
+        differs = (totals.get(ATTENDANCE_CURSOR) or {}).get(DIFFERS_KEY) or {}
+        if not differs:
+            return []
+        known = people_by_id(self.env, {entry[0] for entry in differs.values()})
+
+        def shown(value, tz):
+            if not value:
+                return self.env._("still open")
+            return format_datetime(self.env, value, tz=tz, dt_format='short')
+
+        lines = [
+            '',
+            '-' * 78,
+            self.env._(
+                "Stays of the other system not brought over: a different stay is "
+                "recorded here for the same person at that time, and it stays as "
+                "it is (%(count)s)", count=len(differs)),
+            '-' * 78,
+            self.env._("person | other system: in - out | recorded here: in - out"),
+        ]
+        for person, _company, check_in, check_out, here_in, here_out in sorted(
+                differs.values(), key=lambda entry: (entry[0], entry[2])):
+            employee = known.get(person)
+            # The zone's NAME: core's formatter falls back to UTC, silently,
+            # for anything it cannot look up by name (tools/misc.py:1500-1506).
+            tz = AttendanceImporter._person_tz(employee).zone if employee else 'UTC'
+            lines.append('%s | %s - %s | %s - %s' % (
+                employee.name if employee else '#%s' % person,
+                shown(check_in, tz), shown(check_out, tz),
+                shown(here_in, tz), shown(here_out, tz)))
+        return lines
+
+    def _in_starters_language(self):
+        """This transfer, speaking the language of the person who started it.
+
+        Its protocol is read by them, so it is written in their language - not
+        in the scheduler's, which made a Bulgarian site's protocol come out in
+        English. As core writes a notification for its recipient: only when
+        that person has a language at all (mail/models/mail_activity.py:422-424).
+        """
+        self.ensure_one()
+        if not self.user_id.lang:
+            return self
+        return self.with_context(lang=self.user_id.lang)
 
     def _wake_the_worker(self):
         cron = self.env.ref('hr_rfid_odoo_import.ir_cron_import_run',
@@ -254,6 +316,7 @@ class HrRfidOdooImportRun(models.Model):
                           order='create_date asc', limit=1)
         if not run:
             return
+        run = run._in_starters_language()
         try:
             run._process_pass()
         except Exception as exc:
@@ -264,7 +327,7 @@ class HrRfidOdooImportRun(models.Model):
             _logger.error("Transfer %s could not be worked on: %s",
                           run.id, exc, exc_info=True)
             self.env.cr.rollback()
-            run._finish('failed', self.env._(
+            run._finish('failed', run.env._(
                 "The transfer stopped because of a problem outside the steps "
                 "themselves: %(problem)s", problem=str(exc)[:300],
             ))
@@ -292,7 +355,8 @@ class HrRfidOdooImportRun(models.Model):
             _logger.warning(
                 "Transfer %s has not moved since %s - abandoning it and "
                 "clearing the stored credentials", run.id, run.write_date)
-            run._finish('failed', self.env._(
+            run = run._in_starters_language()
+            run._finish('failed', run.env._(
                 "This transfer stopped without finishing and has been closed. "
                 "The access details it held have been cleared. Start a new one "
                 "when you are ready - what already came across will not be "
