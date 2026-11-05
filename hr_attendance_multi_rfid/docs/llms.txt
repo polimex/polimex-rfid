@@ -137,14 +137,50 @@ Right under it, **Forgotten badge** decides WHAT is then recorded:
 | Credit the scheduled day, minus a penalty | The same, less the hours set beside it - for companies that treat a forgotten badge as time off site. |
 | Count nothing for that day | No working time at all. The stay is marked as a forgotten badge and the real hours have to be entered by hand - which is the point: the person has to say why they forgot. |
 
-Nothing is settled at all where Automatic Check-Out is off, or on a day the
-person was not scheduled to work: there is no working day to measure against,
-and a made-up duration would land in somebody's hours. The log says so.
+Nothing is settled at all where Automatic Check-Out is off, or where not even
+the person's calendar says how long a working day is: there is nothing to
+measure against, and a made-up duration would land in somebody's hours. The
+log says so. On a day off, their calendar's ordinary working day stands in.
 
 A record the system settled reads **Automatically Checked-Out**, is marked as
 a **Forgotten Badge**, and - where a check-out was already there and had to be
 moved - keeps in its chatter what it used to say. A number nobody can explain
 is worse than a number somebody changed on purpose.
+
+### When the person comes in again
+
+The scheduled task settles forgotten stays as it passes, and the next entry
+does not wait for it. An entry that finds a stay already past the limit settles
+it the same way, and the entry begins a new stay. Tuesday stands on its own,
+whatever Monday forgot. Coming back through the door inside the limit changes
+nothing: the passage says "Already inside".
+
+The limit and the credit are for the day, not for one stay. Somebody who badged
+from eight to twelve, came back at one and forgot is credited until five, so the
+day is worth the eight hours it was supposed to hold.
+
+Where nothing is credited (**Count nothing for that day**, or a penalty larger
+than what is left of the day), the stay ends where it began, worth no hours and
+marked. The real hours are entered on it by hand, as for any forgotten badge.
+
+A rebuild follows the same rule, so the same doors tell the same story whichever
+of the two read them. Rebuilding a period also takes apart a stay that ran across
+several days under the old behaviour, provided it was not entered or corrected
+by hand. An entry whose stay would run into a record typed in by hand gets no
+record of its own: the person's record stands, and the passage says so.
+
+### When an operator enters the real hours
+
+The check-out somebody types is their word on when the person left. The stay
+stops reading as a forgotten badge, its hours count in full in the daily figures,
+and neither the scheduled task nor a rebuild moves it, however long it is.
+
+### Overlapping attendance
+
+An operator cannot enter a stay that overlaps another stay of the same person:
+the form refuses it with Odoo's own message. An overlap breaks Odoo's overtime
+calculation for that whole day, so it is stopped where it is typed. Door
+passages are never refused because of this.
 
 Earlier versions kept a second pair of hours on each zone (Maximum Hours in
 Zone, Auto-close Worked Hours) that answered the same question with a
@@ -207,7 +243,7 @@ the search panel, so the whole list can be narrowed to one reason at a time):
 
 | What it says | What happened |
 |---|---|
-| Already inside | The person was already checked in, and this zone keeps the first entry of the day. Ordinary. |
+| Already inside | The person was already checked in, inside the limit of their working day, and this zone keeps the first entry of the day. Ordinary. |
 | Not tracked in this zone | The zone follows only certain departments or tags, and this person is not one of them. |
 | Nothing open to close | An exit arrived with no attendance open, and this zone does not reopen the previous one. |
 | Covered by a manual record | The moment falls inside attendance somebody typed in by hand, which is never overwritten. |
@@ -316,12 +352,10 @@ operator can see it:
 - **Counts as attendance** - passages at this zone's doors make attendance.
 - **Overwrite check-in** - off (the usual setting) means a SECOND entry while
   the person is already inside changes nothing: the first entry of the day
-  stands. The passage says "Already inside" in Why Not Counted.
+  stands. The passage says "Already inside" in Why Not Counted. An entry after
+  the limit of the working day is a new day - see "A forgotten badge".
 - **Overwrite check-out** - off means an exit with no attendance open changes
   nothing; it says "Nothing open to close".
-- **Maximum Hours in Zone** / **Auto-close Worked Hours** - how long anybody
-  may be inside, and what a forgotten stay is credited when the system settles
-  it.
 
 The tolerances that swallow small deviations (a few minutes late, a few
 minutes of overtime) are on the DEPARTMENT, not here - see hr_attendance_late.
@@ -391,7 +425,8 @@ class CustomZone(models.Model):
 2. **Duplicate entries**
    - A second badge while the person is already inside creates nothing when
      the zone's "Overwrite check-in" is off - the passage says "Already
-     inside" in Why Not Counted. If duplicates DO appear, that switch is on.
+     inside" in Why Not Counted. If duplicates DO appear, that switch is on,
+     or the entry came after the limit of the working day and began a new one.
    - Check whether the door belongs to more than one attendance zone: each
      zone counting the same door opens its own attendance for the same day.
    - Review the event list, filtered by Why Not Counted.

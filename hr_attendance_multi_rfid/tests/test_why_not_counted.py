@@ -18,6 +18,8 @@ from datetime import timedelta
 from odoo import Command, fields
 from odoo.tests.common import TransactionCase, tagged
 
+from .common import one_door, passage
+
 
 @tagged('post_install', '-at_install', 'rfid_attendance_reason')
 class TestWhyAPassageWasNotCounted(TransactionCase):
@@ -28,32 +30,7 @@ class TestWhyAPassageWasNotCounted(TransactionCase):
         cls.company = cls.env.company
         # One door with an entry and an exit reader, in a zone that counts
         # towards attendance. Same shape as test_recalc_background.
-        cls.webstack = cls.env['hr.rfid.webstack'].create({
-            'name': 'Reason WS', 'serial': '884501', 'key': '1234',
-            'hw_version': '100.1', 'version': '1.44', 'active': True,
-            'tz': 'Europe/Sofia', 'company_id': cls.company.id})
-        cls.ctrl = cls.env['hr.rfid.ctrl'].create({
-            'name': 'Reason CTRL', 'ctrl_id': 11, 'serial_number': '8845',
-            'webstack_id': cls.webstack.id, 'hw_version': '9', 'sw_version': '740',
-            'max_cards_count': 100, 'max_events_count': 100, 'readers': 2,
-            'mode': 2, 'inputs': 0, 'outputs': 0, 'input_states': 0,
-            'output_states': 0, 'alarm_lines': 0, 'io_table_lines': 0,
-            'io_table': ''})
-        card_type = cls.env.ref('hr_rfid.hr_rfid_card_type_def')
-        cls.door = cls.env['hr.rfid.door'].with_context(
-            no_hardware_commands=True).create({
-                'name': 'Reason Door', 'number': 1,
-                'controller_id': cls.ctrl.id, 'card_type': card_type.id})
-        cls.reader_in = cls.env['hr.rfid.reader'].with_context(
-            no_hardware_commands=True).create({
-                'name': 'Reason Reader In', 'number': 1, 'reader_type': '0',
-                'controller_id': cls.ctrl.id,
-                'door_ids': [Command.link(cls.door.id)]})
-        cls.reader_out = cls.env['hr.rfid.reader'].with_context(
-            no_hardware_commands=True).create({
-                'name': 'Reason Reader Out', 'number': 2, 'reader_type': '1',
-                'controller_id': cls.ctrl.id,
-                'door_ids': [Command.link(cls.door.id)]})
+        cls.door, cls.reader_in, cls.reader_out = one_door(cls.env, 'Reason', 8845, 11)
         # The customer's setting exactly: the zone counts attendance and keeps
         # the first entry of the day (it does not move the check-in when
         # somebody badges again).
@@ -75,14 +52,7 @@ class TestWhyAPassageWasNotCounted(TransactionCase):
     # ── helpers ───────────────────────────────────────────────
 
     def _passage(self, reader, moment, employee=None):
-        """Somebody walks through the door and is let in."""
-        return self.env['hr.rfid.event.user'].create({
-            'employee_id': (employee or self.employee).id,
-            'door_id': self.door.id,
-            'reader_id': reader.id,
-            'event_time': moment,
-            'event_action': '1',  # granted
-        })
+        return passage(employee or self.employee, self.door, reader, moment)
 
     def _attendance_of(self, employee=None):
         return self.env['hr.attendance'].search([

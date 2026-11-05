@@ -247,7 +247,8 @@ class CustomZone(models.Model):
 2. **Duplicate entries**
    - A second badge while the person is already inside creates nothing when
      the zone's "Overwrite check-in" is off - the passage says "Already
-     inside" in Why Not Counted. If duplicates DO appear, that switch is on.
+     inside" in Why Not Counted. If duplicates DO appear, that switch is on,
+     or the entry came after the limit of the working day and began a new one.
    - Check whether the door belongs to more than one attendance zone: each
      zone counting the same door opens its own attendance for the same day.
    - Review the event list, filtered by Why Not Counted.
@@ -446,16 +447,50 @@ switch in Settings -> Attendances.
   scheduled, and then nothing is ever settled.
 - **`_settled_check_out(self)`** - when the stay is taken to have ended:
   check-in + the SPAN of the scheduled day (break included, so a settled day
-  is worth a normal one), less the penalty where the policy sets one;
-  `False` for `ignore` or when nothing can be said.
-- **`stay_is_not_credible(self)`** - open or closed, the same question:
-  does it run past `_max_allowed_stay_hours`? Honours the
-  `attendance_calc_time` context, the module's own clock seam.
-- **`check_for_incomplete_attendances(self)`** - settles both shapes. The
+  is worth a normal one), or, after an earlier stay that day, what is left of
+  the day's hours (`_hours_earlier_that_day`); less the penalty where the policy
+  sets one, and never past `_latest_end_of_stay` (the moment judged, or the
+  person's next stay, core's absence marks included, because its overtime engine
+  refuses a record across one); `False` when nothing is to be credited.
+- **`stay_is_not_credible(self)`** - does the stay run past
+  `_max_allowed_stay_hours`? An OPEN stay counts the earlier stays of that day,
+  as core's check-out rule does. A CLOSED stay with `in_mode='manual'` is an
+  operator's word and is never judged. Honours the `attendance_calc_time`
+  context, the module's own clock seam. The comparison itself is the
+  module-level `stay_outlasts`, which the rebuild also uses for a stay that has
+  no record yet.
+- **`autoclose_attendance(self)`** - settles one stay and raises on failure.
+  With nothing to credit, an open stay ends at its own check-in and a closed one
+  only gets the mark. Writes with `no_validity_check`: the credited end stops at
+  the next stay.
+- **`_settle_before_new_entry(self, moment)`** - the door's wrapper, called by
+  `hr.rfid.zone.person_entered`. Past the limit it settles the stay and returns
+  True, and the entry begins a new one. Runs with `from_event` (no zone list or
+  anti-passback change), in a savepoint. `SETTLING_REFUSED` (data failures only)
+  returns False and the passage stays "Already inside"; concurrency errors reach
+  Odoo's retry, for which `hr_rfid/controllers/main.py` passes them on. The
+  rebuild calls `autoclose_attendance` directly, so a failure lands on the person
+  in `_run_one_employee`.
+- **`check_for_incomplete_attendances(self)`** - settles both shapes, oldest
+  first, committing each record inside the task (`ir.cron._commit_progress`). The
   over-long CLOSED ones are found by a raw-SQL span query, NOT by
   `worked_hours`: that field is paid time with the unpaid break already
   deducted, so it reads under the limit for a record that spans more than it
-  (measured: 1827 real cases, `worked_hours > 24` matched none of them).
+  (measured: 1827 real cases, `worked_hours > 24` matched none of them). History
+  brought over from another system is settled the same way (owner's decision,
+  05.11.2026).
+- **`_cron_auto_check_out(self)`** - core's scheduled task, running this sweep and
+  NOT core's rule (owner's decision, 05.11.2026): core's rule reads no schedule on
+  a day off and closes a person at work after the bare tolerance, credits the
+  working day plus the tolerance whatever the Forgotten Badge setting says, and
+  writes all its records in one unprotected loop.
+- **`write`** - closing a stay with a zone calls `person_left` with
+  `stay_being_closed`, which keeps only the zone list and anti-passback part, and
+  only when no other stay of the person is open in that zone. A person's write of
+  the times clears `forgotten_badge`.
+- **`_check_validity`** - core's overlap check, skipped under
+  `no_validity_check` (door passages, the rebuild, settling). The override repeats
+  `@api.constrains`: without it Odoo does not run the check at all.
 
 `hr.employee._recompute_daily_figures(from_date, to_date)` - hook called by
 `_recalc_attendance_one` on every path, including the early return when there

@@ -59,8 +59,14 @@ class HrRfidZone(models.Model):
             if not zone._check_employee_permit(person):
                 event._mark_no_attendance('not_tracked_here')
                 continue
-            check = person._last_open_checkin(
-                zone.id, before_dt=event.event_time or None)
+            before_dt = event.event_time or None
+            moment = before_dt or fields.Datetime.now()
+            check = person._last_open_checkin(zone.id, before_dt=before_dt)
+            # A stay that has already outlived the person's day is a badge-out
+            # that never happened: it is settled, and this entry begins a new
+            # stay. More than one can stand open on data from before this rule.
+            while check and check._settle_before_new_entry(moment):
+                check = person._last_open_checkin(zone.id, before_dt=before_dt)
 
             if check and not zone.overwrite_check_in:
                 # Already checked in and this zone keeps the first entry -
@@ -189,17 +195,17 @@ class HrRfidZone(models.Model):
                     # An exit with nothing open, and this zone does not reopen
                     # the previous record. The commonest silent discard there is.
                     event._mark_no_attendance('nothing_to_close')
-            else:
+            elif not self.env.context.get('stay_being_closed'):
                 # Real-time event (no specific event time)
                 # Use the standard logic for finding open attendance
                 checkin = person._last_open_checkin(zone.id)
                 if checkin:
-                    checkin.with_context(from_event=True).write({
+                    checkin.with_context(from_event=True, no_validity_check=True).write({
                         'check_out': fields.Datetime.now()
                     })
                 elif zone.overwrite_check_out and person.last_attendance_id:
                     # Update the last attendance if zone allows it
-                    person.last_attendance_id.with_context(from_event=True).write({
+                    person.last_attendance_id.with_context(from_event=True, no_validity_check=True).write({
                         'check_out': fields.Datetime.now()
                     })
                     

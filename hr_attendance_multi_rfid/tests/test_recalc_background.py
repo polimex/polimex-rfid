@@ -16,7 +16,7 @@ from odoo.tests.common import TransactionCase, tagged
 
 from odoo.addons.hr_attendance_multi_rfid.models import attendance_recalc_run
 
-from .common import in_sofia
+from .common import in_sofia, one_door, passage
 
 _logger = logging.getLogger(__name__)
 
@@ -78,35 +78,9 @@ class TestAttendanceRebuildInBackground(TransactionCase):
         cls.env['res.lang']._activate_lang('en_US')
         cls.env.user.lang = 'en_US'
         # Minimum hardware a rebuild needs: one door with an entry and an exit
-        # reader, in a zone that counts towards attendance. Shape copied from
-        # hr_rfid/tests/test_system_event_dedup.py.
-        cls.webstack = cls.env['hr.rfid.webstack'].create({
-            'name': 'Rebuild WS', 'serial': '884401', 'key': '1234',
-            'hw_version': '100.1', 'version': '1.44', 'active': True,
-            'tz': 'Europe/Sofia', 'company_id': cls.company.id})
-        cls.ctrl = cls.env['hr.rfid.ctrl'].create({
-            'name': 'Rebuild CTRL', 'ctrl_id': 9, 'serial_number': '8844',
-            'webstack_id': cls.webstack.id, 'hw_version': '9', 'sw_version': '740',
-            'max_cards_count': 100, 'max_events_count': 100, 'readers': 2,
-            'mode': 2, 'inputs': 0, 'outputs': 0, 'input_states': 0,
-            'output_states': 0, 'alarm_lines': 0, 'io_table_lines': 0,
-            'io_table': ''})
-        card_type = cls.env.ref('hr_rfid.hr_rfid_card_type_def')
-        cls.door = cls.env['hr.rfid.door'].with_context(
-            no_hardware_commands=True).create({
-                'name': 'Rebuild Door', 'number': 1,
-                'controller_id': cls.ctrl.id, 'card_type': card_type.id})
-        cls.reader_in = cls.env['hr.rfid.reader'].with_context(
-            no_hardware_commands=True).create({
-                'name': 'Rebuild Reader In', 'number': 1, 'reader_type': '0',
-                'controller_id': cls.ctrl.id,
-                'door_ids': [Command.link(cls.door.id)]})
-        cls.reader_out = cls.env['hr.rfid.reader'].with_context(
-            no_hardware_commands=True).create({
-                'name': 'Rebuild Reader Out', 'number': 2, 'reader_type': '1',
-                'controller_id': cls.ctrl.id,
-                'door_ids': [Command.link(cls.door.id)]})
-        cls.zone = cls.env['hr.rfid.zone'].create({
+        # reader, in a zone that counts towards attendance.
+        cls.door, cls.reader_in, cls.reader_out = one_door(cls.env, 'Rebuild', 8844, 9)
+        cls.zone =cls.env['hr.rfid.zone'].create({
             'name': 'Rebuild Zone', 'company_id': cls.company.id,
             'attendance': True,
             'door_ids': [Command.link(cls.door.id)]})
@@ -145,13 +119,7 @@ class TestAttendanceRebuildInBackground(TransactionCase):
     # ── helpers ───────────────────────────────────────────────
 
     def _door_event(self, employee, reader, moment):
-        return self.env['hr.rfid.event.user'].create({
-            'employee_id': employee.id,
-            'door_id': self.door.id,
-            'reader_id': reader.id,
-            'event_time': moment,
-            'event_action': '1',  # granted
-        })
+        return passage(employee, self.door, reader, moment)
 
     def _a_normal_working_day(self, employee, day_offset=0):
         """Entry in the morning, exit in the evening - one whole day."""
@@ -1323,13 +1291,7 @@ class TestAnOperatorsWordSurvivesTheRebuild(TransactionCase):
             hour=0, minute=0, second=0, microsecond=0)
 
     def _door_event(self, reader, moment):
-        return self.env['hr.rfid.event.user'].create({
-            'employee_id': self.employee.id,
-            'door_id': reader.door_id.id,
-            'reader_id': reader.id,
-            'event_action': '1',
-            'event_time': moment,
-        })
+        return passage(self.employee, reader.door_id, reader, moment)
 
     def _day_records(self):
         return self.env['hr.attendance'].search([
@@ -1502,10 +1464,10 @@ class TestAnOperatorsWordSurvivesTheRebuild(TransactionCase):
         self.assertEqual(typed_in.in_mode, 'manual',
                          "and a row that was already theirs is untouched")
 
-    def test_the_core_calendar_close_leaves_the_record_rebuildable(self):
-        """NEGATIVE: core's own calendar-based check-out closes a forgotten
-        record too - and that is still the machine talking, so the record
-        keeps its origin and a later rebuild may replay it."""
+    def test_the_automatic_close_leaves_the_record_rebuildable(self):
+        """NEGATIVE: the scheduled task closes a forgotten record, and that is
+        still the machine talking, so the record keeps its origin and a later
+        rebuild may replay it."""
         self.env.company.auto_check_out = True
         self.env['hr.attendance'].with_context(
             rfid_machinery_write=True).create({

@@ -5,6 +5,8 @@ from pytz import timezone, utc
 
 import logging
 
+from .hr_attendance import stay_outlasts
+
 _logger = logging.getLogger(__name__)
 
 # An attendance without a check-out has not ended yet: for the rebuild's
@@ -277,6 +279,34 @@ class HrEmployee(models.Model):
         """
         return
 
+    def _replayed_stay(self, check_in, check_out, zone):
+        """A record of the rebuild.
+
+        Old passages bypass the overlap check the way live ones do: an open
+        check-in inserted into the past would otherwise be refused.
+        """
+        self.ensure_one()
+        return self.env['hr.attendance'].with_context(no_validity_check=True).create({
+            'check_in': check_in,
+            'check_out': check_out,
+            'employee_id': self.id,
+            'in_zone_id': zone.id,
+            'in_mode': 'rfid',
+        })
+
+    def _outlived_its_day(self, check_in, moment, limits):
+        """hr.attendance.stay_is_not_credible, for an open stay with no record yet.
+
+        :param limits: {check_in: (allowed hours, earlier hours)}, kept by the
+                       caller for the length of the replay
+        """
+        self.ensure_one()
+        if check_in not in limits:
+            stay = self.env['hr.attendance'].new({'employee_id': self.id, 'check_in': check_in})
+            limits[check_in] = (stay._max_allowed_stay_hours(), stay._hours_earlier_that_day())
+        allowed, earlier = limits[check_in]
+        return stay_outlasts(check_in, moment, allowed, earlier)
+
     def _recalc_attendance_one(self, from_date, to_date, ctx):
         """Rebuild attendance for ONE employee, from the events in the period.
 
@@ -395,6 +425,11 @@ class HrEmployee(models.Model):
             return att_zone_ids.filtered(
                 lambda z: event.door_id in z.door_ids)[:1]
 
+        # Asked once per stay, not per passage: repeated entries are the
+        # commonest passage there is, and the person's day is the same for all
+        # of them.
+        stay_limits = {}
+
         # Process events to create attendance records
         presence = [None, None]  # [check_in, check_out]
         in_zone = self.env['hr.rfid.zone']
@@ -422,6 +457,23 @@ class HrEmployee(models.Model):
 
             # Handle check-in events (entry readers)
             if e.reader_id.id in in_reader_ids:
+                # The same rule a live entry follows: a stay that has outlived
+                # the person's day is settled, and this entry begins a new one.
+                # A failure here is the whole person's: the rebuild undoes them
+                # and reports it (hr.attendance.recalc.run._run_one_employee).
+                if presence[0] and self._outlived_its_day(presence[0], e.event_time, stay_limits):
+                    if collides_with_a_person(presence[0], e.event_time):
+                        # The same answer as a pair that straddles their record:
+                        # their statement stands, the machine writes nothing
+                        # around it.
+                        checkin_event._rewrite_no_attendance('manual_record')
+                    else:
+                        previous_attendance_id = self._replayed_stay(presence[0], False, in_zone)
+                        previous_attendance_id._at_new_entry(e.event_time).autoclose_attendance()
+                        attendance_count += 1
+                    presence = [None, None]
+                    checkin_event = self.env['hr.rfid.event.user']
+
                 # Create new check-in or override existing based on zone settings
                 if not presence[0] or in_zone.overwrite_check_in:
                     # A later entry replaces this one; the earlier passage no
@@ -477,21 +529,12 @@ class HrEmployee(models.Model):
                     presence = [None, None]
                     checkin_event = self.env['hr.rfid.event.user']
                     continue
-                previous_attendance_id = self.env['hr.attendance'].with_context(no_validity_check=True).create({
-                    'check_in': presence[0],
-                    'check_out': presence[1],
-                    'employee_id': employee_id.id,
-                    'in_zone_id': in_zone and in_zone.id,
-                    'in_mode': 'rfid',
-                })
+                previous_attendance_id = self._replayed_stay(presence[0], presence[1], in_zone)
                 attendance_count += 1
                 presence = [None, None]
                 checkin_event = self.env['hr.rfid.event.user']
 
-        # Handle last open attendance (check-in without check-out). Replayed
-        # historical events bypass validity the same way the paired-create
-        # above does - an open check-in inserted into the past would
-        # otherwise be refused.
+        # Handle last open attendance (check-in without check-out).
         if presence[0] and not presence[1]:
             if collides_with_a_person(presence[0], None):
                 # The last entry runs into attendance a person entered by
@@ -499,12 +542,7 @@ class HrEmployee(models.Model):
                 # ending the day as an unexplained blank.
                 checkin_event._rewrite_no_attendance('manual_record')
             else:
-                self.env['hr.attendance'].with_context(no_validity_check=True).create({
-                    'check_in': presence[0],
-                    'in_zone_id': in_zone and in_zone.id,
-                    'employee_id': employee_id.id,
-                    'in_mode': 'rfid',
-                })
+                self._replayed_stay(presence[0], False, in_zone)
                 attendance_count += 1
 
         if without_direction:

@@ -106,17 +106,19 @@ class TestZoneAutoClose(TransactionCase):
     def test_the_company_can_count_nothing_at_all(self):
         """Others want the person to come and explain.
 
-        Nothing is credited and the times are left exactly as they are: the
-        stay is only MARKED as a forgotten badge, so it can be found, and the
-        real hours have to be entered by hand.
+        Nothing is credited: the stay ends where it began, worth no hours, so
+        that nothing else can close it for hours nobody credited. It is MARKED
+        as a forgotten badge, so it can be found, and the real hours have to be
+        entered by hand.
         """
         self.company.write({'forgotten_badge_policy': 'ignore'})
         attendance = self._open_attendance(hours_ago=20, zone=self.zone)
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
-        self.assertFalse(attendance.check_out,
-                         "nothing was credited, so nothing was closed")
+        self.assertEqual(attendance.check_out, attendance.check_in,
+                         "nothing was credited")
+        self.assertEqual(attendance.worked_hours, 0.0)
         self.assertTrue(attendance.forgotten_badge,
                         "but it is marked, or nobody would ever find it")
 
@@ -206,9 +208,8 @@ class TestZoneAutoClose(TransactionCase):
         """One task closes forgotten attendance, not one per rule.
 
         Core already schedules "Automatically check-out employees" and our
-        sweep runs from that same task - it covers what core leaves behind,
-        the records closed long after the person left. One clock, one setting,
-        and no second cron to fall out of step with the first.
+        sweep runs from that same task. One clock, one setting, and no second
+        cron to fall out of step with the first.
         """
         attendance = self._open_attendance(hours_ago=20, zone=self.zone)
 
@@ -264,11 +265,13 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
             'resource_calendar_id': cls.calendar.id})
 
     def _stay(self, start, hours):
+        """Closed by the machinery. What an operator typed is left alone."""
         return self.env['hr.attendance'].with_context(
             no_validity_check=True).create({
                 'employee_id': self.employee.id,
                 'check_in': start,
                 'check_out': start + timedelta(hours=hours),
+                'in_mode': 'rfid',
             })
 
     def test_a_night_shift_is_left_alone(self):

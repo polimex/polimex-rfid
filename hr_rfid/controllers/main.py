@@ -8,6 +8,7 @@ from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo import http, fields, exceptions, _, SUPERUSER_ID
 from odoo.http import request, Response
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 from odoo.tools import consteq
 from odoo.addons.hr_rfid.controllers import polimex
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import action_selection as system_action_selection
@@ -313,6 +314,12 @@ class WebRfidController(http.Controller):
             result = webstack_id._ws_provision_payload(result)
             webstack_id._touch_from_device(_ws_db_update_dict())
             return self._make_response(result)
+        except (*PG_CONCURRENCY_EXCEPTIONS_TO_RETRY, exceptions.ConcurrencyError):
+            # Odoo replays the whole request (odoo/service/model.py, retrying),
+            # and only if this reaches it. Answered here, the passage would be
+            # committed without what it was meant to change, and the device's
+            # second attempt would be dropped as a duplicate.
+            raise
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
                 exceptions.MissingError, exceptions.ValidationError,
                 psycopg2.DataError, ValueError) as e:

@@ -30,3 +30,4 @@ from . import test_recalc_hook
 from . import test_one_door_two_schedules
 from . import test_unknown_device_payload
 from . import test_environment_readings
+from . import test_a_lost_race_is_retried

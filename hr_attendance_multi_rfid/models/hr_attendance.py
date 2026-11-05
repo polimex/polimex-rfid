@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 from odoo.tools.date_utils import sum_intervals
 from odoo.tools.float_utils import float_compare
 
@@ -19,6 +20,32 @@ _logger = logging.getLogger(__name__)
 # from - and neither the operator nor the code could say which one was in
 # force. Those fields are gone; the migration carries what they said onto the
 # company. Crossing midnight is never the criterion: it is ordinary work.
+
+# Why old data can make a settling write fail: core's overlap check (a
+# ValidationError, which is a UserError), or its overtime engine on a day with
+# overlapping stays ("Expected singleton", a ValueError). Concurrency errors must
+# stay out of this list: Odoo retries the request or the task only if they reach
+# it (odoo/service/model.py, retrying), and a passage or a stay absorbed here
+# would simply be lost.
+SETTLING_REFUSED = (UserError, ValueError)
+
+
+def stay_outlasts(start, end, allowed, earlier=0.0):
+    """Whether a stay from start to end ran past what the person's day allows.
+
+    The one comparison behind every verdict on a stay: the record the sweep
+    looks at, the passage that finds a stay still open, and the replay of old
+    passages, which has no record yet.
+
+    :param allowed: hr.attendance._max_allowed_stay_hours(); 0.0 means nothing
+                    here can call this stay forgotten
+    :param earlier: hours the person's earlier stays of that day already took
+                    from it, as core's own check-out rule counts them
+    """
+    if float_compare(allowed, 0.0, precision_digits=2) <= 0:
+        return False
+    stayed = (end - start).total_seconds() / 3600.0 + earlier
+    return float_compare(stayed, allowed, precision_digits=2) > 0
 
 
 class HrAttendance(models.Model):
@@ -113,8 +140,18 @@ class HrAttendance(models.Model):
     def write(self, vals):
         for att in self:
             if vals.get('check_out', False) and not att.check_out and att.in_zone_id:
-                if self.env.context.get('from_event', None) is None:
-                    att.in_zone_id.person_left(att.employee_id)
+                if self.env.context.get('from_event', None) is None and not self.search_count([
+                    ('employee_id', '=', att.employee_id.id),
+                    ('check_out', '=', False),
+                    ('in_zone_id', '=', att.in_zone_id.id),
+                    ('id', '!=', att.id),
+                ], limit=1):
+                    # THIS record is being closed, by this very write: the zone
+                    # only has to take the person off its list, and only when
+                    # no other stay of theirs is still open there. It must not
+                    # look for "the open stay" itself: that would be the newest
+                    # one, closed at the current time.
+                    att.in_zone_id.with_context(stay_being_closed=True).person_left(att.employee_id)
                 vals['in_zone_id'] = False
 
         # A person editing the times of a machine-born record takes it over:
@@ -130,7 +167,11 @@ class HrAttendance(models.Model):
                            or self.env.context.get('from_event'))
         taken_over = self.browse()
         if touched_times and by_a_person and 'in_mode' not in vals:
-            taken_over = self.filtered(lambda a: a.in_mode == 'rfid')
+            taken_over = self.filtered(lambda a: a.in_mode in ('rfid', False))
+        if touched_times and by_a_person:
+            # Their hours replace the guess: the mark says the system settled
+            # this stay, and the measurement caps a marked stay at that.
+            vals['forgotten_badge'] = False
 
         res = super(HrAttendance, self).write(vals)
         if taken_over:
@@ -210,10 +251,31 @@ class HrAttendance(models.Model):
         company = self.employee_id.company_id
         if not company.auto_check_out:
             return 0.0
-        working_day, _span = self._working_day_of_the_person()
+        working_day, span = self._working_day_of_the_person()
         if float_compare(working_day, 0.0, precision_digits=2) <= 0:
             return 0.0
-        return working_day + company.auto_check_out_tolerance
+        # Not before the working day itself is over, its break included: with a
+        # tolerance smaller than the break, an ordinary day would read as forgotten.
+        return max(working_day + company.auto_check_out_tolerance, span)
+
+    def _hours_earlier_that_day(self):
+        """What the person's earlier stays of the same day are worth already.
+
+        Core's check-out rule counts them too (hr_attendance.py,
+        _cron_auto_check_out): back from lunch, the day is not starting over.
+        """
+        self.ensure_one()
+        employee = self.employee_id
+        day = employee._local_day(self.check_in)
+        start, _end = employee._local_days_window(day, day)
+        return sum(self.search([
+            ('employee_id', '=', employee.id),
+            ('check_in', '>=', start),
+            ('check_in', '<', self.check_in),
+            ('check_out', '!=', False),
+            # Core's absence bookkeeping is no stay of the person's.
+            ('in_mode', '!=', 'technical'),
+        ]).mapped('worked_hours'))
 
     def _settled_check_out(self):
         """When a settled stay is taken to have ended - the company's policy.
@@ -232,8 +294,18 @@ class HrAttendance(models.Model):
         schedule had ended - is credited a working day too, instead of
         nothing.
 
+        After an earlier stay the same day, only what is left of the day's
+        hours is credited: a day is worth what a normal one is worth, however
+        many stays it took. Somebody in from eight to twelve who came back at
+        one and forgot is credited until five.
+
         The penalty option takes its hours off that, for companies that treat
         a forgotten badge as time off site. The third credits nothing at all.
+
+        A stay never ends after the moment it is judged at, nor after the
+        person's next stay began: with a small tolerance the limit can pass
+        before the working day, break included, is over, and a credited day
+        must not run into the next entry.
 
         :return: a naive UTC datetime, or False when nothing is to be
                  credited: no schedule that day, the policy says count
@@ -243,35 +315,62 @@ class HrAttendance(models.Model):
         company = self.employee_id.company_id
         if company.forgotten_badge_policy == 'ignore':
             return False
-        _hours, span = self._working_day_of_the_person()
+        hours, span = self._working_day_of_the_person()
         if float_compare(span, 0.0, precision_digits=2) <= 0:
             return False
+        earlier = self._hours_earlier_that_day()
+        credit = hours - earlier if earlier else span
         if company.forgotten_badge_policy == 'penalty':
-            span -= company.forgotten_badge_penalty_hours or 0.0
-        if float_compare(span, 0.0, precision_digits=2) <= 0:
+            credit -= company.forgotten_badge_penalty_hours or 0.0
+        if float_compare(credit, 0.0, precision_digits=2) <= 0:
             return False
-        return self.check_in + timedelta(hours=span)
+        return min(self.check_in + timedelta(hours=credit), self._latest_end_of_stay())
+
+    def _judged_at(self):
+        """The moment an open stay is judged at.
+
+        The same seam the day calculation uses to drive the clock, so a test -
+        and a rebuild of a past period - judges the stay by the moment it is
+        measuring, not by today.
+        """
+        return self.env.context.get('attendance_calc_time') or fields.Datetime.now()
+
+    def _latest_end_of_stay(self):
+        """The last moment this stay can be said to have ended.
+
+        Core's absence mark counts as a next stay here too: its overtime engine
+        refuses a record across one (Expected singleton), so a stay credited
+        past the mark could never be closed at all.
+        """
+        self.ensure_one()
+        latest = self.check_out or self._judged_at()
+        following = self.search([
+            ('employee_id', '=', self.employee_id.id),
+            ('check_in', '>', self.check_in),
+        ], order='check_in', limit=1)
+        return min(latest, following.check_in) if following else latest
 
     def stay_is_not_credible(self):
         """Whether this record is a badge that never happened.
 
         One criterion for both shapes: the point at which the installation
         would have closed the stay by itself. An OPEN record that has already
-        passed it, and a CLOSED one that spans more than it - whoever closed
+        passed it, counted with the person's earlier stays of that day as core
+        counts them. And a CLOSED one that spans more than it: whoever closed
         that one did so long after the person left, and until it is settled it
         lends its whole length to the day it belongs to.
+
+        A check-out an operator entered is not that. It is their word on when
+        the person left, however long the stay (in_mode 'manual', see write).
         """
         self.ensure_one()
-        allowed = self._max_allowed_stay_hours()
-        if float_compare(allowed, 0.0, precision_digits=2) <= 0:
+        if not self.check_out:
+            return stay_outlasts(self.check_in, self._judged_at(),
+                                 self._max_allowed_stay_hours(),
+                                 self._hours_earlier_that_day())
+        if self.in_mode == 'manual':
             return False
-        # The same seam the day calculation uses to drive the clock, so a
-        # test - and a rebuild of a past period - judges the stay by the
-        # moment it is measuring, not by today.
-        now = self.env.context.get('attendance_calc_time') or fields.Datetime.now()
-        end = self.check_out or now
-        stayed = (end - self.check_in).total_seconds() / 3600.0
-        return float_compare(stayed, allowed, precision_digits=2) > 0
+        return stay_outlasts(self.check_in, self.check_out, self._max_allowed_stay_hours())
 
     def needs_autoclose(self):
         """Kept under its old name for callers outside this module."""
@@ -288,39 +387,35 @@ class HrAttendance(models.Model):
         A record that was already closed - far too late - is moved back the
         same way, and the chatter keeps what it used to say: a number nobody
         can explain is worse than a number somebody changed on purpose.
+
+        Nothing to credit (Count nothing, or a penalty larger than what is left
+        of the day) still has to end an open stay: core keeps one open stay per
+        person, refuses to close an open stay behind a later one, and would
+        close this one itself for hours nobody credited. It ends where it
+        began, worth no hours, and the operator enters the real check-out. A
+        record already closed under Count nothing keeps its times and only gets
+        the mark, so the day reads as unworked and the record can be found.
         """
         self.ensure_one()
-        policy = self.employee_id.company_id.forgotten_badge_policy
-        if policy == 'ignore':
-            # The company counts nothing for such a day on purpose: the person
-            # has to come and have the real hours entered. The times are left
-            # exactly as they are - only the mark is added, so the day reads as
-            # unworked and the record can be found.
-            self.with_context(rfid_machinery_write=True).write(
-                {'forgotten_badge': True})
-            return
-        settled = self._settled_check_out()
-        if not settled:
-            _logger.warning(
-                "Attendance %s of %s runs from %s to %s and cannot be settled: "
-                "the employee has no working schedule for that day to credit. "
-                "Set one, or correct the record by hand.",
-                self.id, self.employee_id.display_name, self.check_in,
-                self.check_out or "(still open)")
-            return
-        hours = (settled - self.check_in).total_seconds() / 3600.0
         was = self.check_out
+        settled = self._settled_check_out()
+        # The credited end stops at the person's next stay, so there is nothing
+        # new here for the overlap check to refuse, and old data around the
+        # record must not stop it being put right.
+        stay = self.with_context(rfid_machinery_write=True, no_validity_check=True)
+        if was and self.employee_id.company_id.forgotten_badge_policy == 'ignore':
+            stay.write({'forgotten_badge': True})
+            return
         # Stamped with core's own "Automatic Check-Out" mode: the operator's
         # existing filter (hr_attendance_view.xml, "Automatically Checked-Out")
         # then lists these for free, and a record closed by the zone rule is
-        # never mistaken for a person's real badge-out. Core's calendar-based
-        # cron and this zone sweep work the same pool of open records - either
-        # may close first, the other then finds check_out set and moves on.
-        self.with_context(rfid_machinery_write=True).write({
-            'check_out': settled,
+        # never mistaken for a person's real badge-out.
+        stay.write({
+            'check_out': settled or self.check_in,
             'out_mode': 'auto_check_out',
             'forgotten_badge': True,
         })
+        hours = (self.check_out - self.check_in).total_seconds() / 3600.0
         if was:
             # Only the already-closed case leaves a note: an open record being
             # closed is the ordinary end of a stay, while MOVING a check-out
@@ -332,31 +427,80 @@ class HrAttendance(models.Model):
                 "%(hours).2f hours.",
                 new=self.check_out, start=self.check_in, old=was, hours=hours))
 
+    def _at_new_entry(self, moment):
+        """This stay, as judged and written when the person badges in again.
+
+        from_event: this is not the person leaving, so neither the zone's list
+        nor anti-passback on the doors may change because of it.
+        """
+        return self.with_context(attendance_calc_time=moment, from_event=True)
+
+    def _settle_before_new_entry(self, moment):
+        """The person badged in at a door while this stay still stands open.
+
+        Inside the person's day nothing happens: they simply came back through
+        the door. Past it, the badge-out never happened, and the stay is
+        settled the way the company says, so that this entry can begin the new
+        day. Without it the new day has no record of its own, and the next exit
+        closes one stay across both days. A rebuild follows the same rule.
+
+        A door passage is never refused because of old data, so a stay that
+        cannot be settled here leaves things as they were.
+
+        :param moment: when the person came in, naive UTC
+        :return: True when the stay is out of the way
+        """
+        self.ensure_one()
+        stay = self._at_new_entry(moment)
+        if not stay.stay_is_not_credible():
+            return False
+        # cr.savepoint() flushes before the savepoint exists: somebody else's
+        # pending write must fail here, not inside the guard below.
+        self.env.cr.flush()
+        try:
+            with self.env.cr.savepoint():
+                stay.autoclose_attendance()
+        except SETTLING_REFUSED:
+            _logger.warning(
+                "Could not settle attendance %s of %s (from %s) when the person "
+                "came in again at %s; the passage is kept as already inside.",
+                self.id, self.employee_id.display_name, self.check_in, moment,
+                exc_info=True)
+            return False
+        return True
+
     @api.model
     def _cron_auto_check_out(self):
-        """Ride core's own check-out task instead of keeping a second one.
+        """Core's own check-out task, with the rule this module settles by.
 
-        Core already schedules "Attendance: Automatically check-out
-        employees" (hr_attendance/data/hr_attendance_data.xml) for exactly
-        this business need - closing forgotten open attendance. The zone
-        sweep is the same job judged by a different rule (the zone's stay
-        limit instead of the calendar), so it runs on the same clock: one
-        scheduled task, both rules. The check-out each rule writes is
-        computed from check-in, never from the moment the task happens to
-        run, so sharing the slower core schedule changes no recorded hours.
+        Core schedules "Attendance: Automatically check-out employees"
+        (hr_attendance/data/hr_attendance_data.xml) for this business need, and
+        the task stays. Core's rule does not run: the owner's decision of
+        05.11.2026, a deliberate departure from reuse. check_for_incomplete_attendances
+        applies the same measure on a working day, and differs where core's rule
+        harms the customer:
+
+        * Core reads no schedule on a day off, so a person at work on a Sunday
+          is closed after the bare tolerance while still in the building.
+        * Core credits the working day plus the tolerance, whatever the company's
+          Forgotten Badge setting says.
+        * Core writes all its records in one unprotected loop, so one it cannot
+          close stops it for every person of every company.
         """
-        machinery = self.with_context(rfid_machinery_write=True)
-        super(HrAttendance, machinery)._cron_auto_check_out()
-        machinery.check_for_incomplete_attendances()
+        self.with_context(rfid_machinery_write=True).check_for_incomplete_attendances()
 
     @api.model
     def check_for_incomplete_attendances(self):
         """Settle every forgotten stay - the open ones and the over-long ones.
 
-        Run from core's check-out task (see _cron_auto_check_out above).
-        Core settles the OPEN ones on its own rule; this covers the same rule
-        applied to records that were closed long after the person left, which
-        core never looks at again.
+        Run from core's check-out task (see _cron_auto_check_out above). It also
+        covers records that were closed long after the person left, history
+        brought over from another system included (owner's decision, 05.11.2026).
+
+        Inside the task every settled record is committed: a long first run
+        holds no row of attendance against the doors, and what it did survives
+        the task's time limit. The scheduler runs the task again while work is
+        left (ir.cron, _commit_progress).
         """
         # The shortest day anybody could be held to, plus the smallest
         # tolerance in use. Nothing shorter than that can be over ANY person's
@@ -375,9 +519,7 @@ class HrAttendance(models.Model):
         if float_compare(shortest, 0.0, precision_digits=2) <= 0:
             return
 
-        # Still open. Core's own task closes these too, on the same rule; this
-        # catches the ones it skips (no working schedule version, a flexible
-        # calendar it steps over) and the run where it has not come round yet.
+        # Still open.
         #
         # Records already judged are left out of both searches: a stay that
         # was settled is within its limit anyway, and one that could NOT be
@@ -406,17 +548,26 @@ class HrAttendance(models.Model):
             (shortest,),
         )
         forgotten |= self.browse(row[0] for row in self.env.cr.fetchall())
-        for att in forgotten.filtered(lambda a: a.stay_is_not_credible()):
+        to_settle = forgotten.filtered(lambda a: a.stay_is_not_credible()).sorted('check_in').ids
+        in_the_task = bool(self.env.context.get('ir_cron_progress_id'))
+        cron = self.env['ir.cron']
+        if in_the_task:
+            cron._commit_progress(remaining=len(to_settle))
+        # Browsed one at a time: a commit empties the cache, and walking a
+        # recordset across it reads the whole remainder again each time.
+        for att_id in to_settle:
+            att = self.browse(att_id)
             # One record that cannot be settled must not cost all the others.
             # Real cause seen on a customer database: two attendances of the
             # same person overlapping on one day, which core's own overtime
             # engine refuses (Expected singleton) the moment either is
             # written. That is the customer's data to put right - and until
             # they do, the rest of the sweep still has to run.
+            self.env.cr.flush()
             try:
                 with self.env.cr.savepoint():
                     att.autoclose_attendance()
-            except Exception:
+            except SETTLING_REFUSED:
                 _logger.warning(
                     "Could not settle attendance %s of %s (%s to %s); it is "
                     "marked as a forgotten badge for somebody to correct by "
@@ -429,8 +580,15 @@ class HrAttendance(models.Model):
                 # again.
                 att.with_context(rfid_machinery_write=True).write(
                     {'forgotten_badge': True})
+            if in_the_task and cron._commit_progress(processed=1) <= 0:
+                return
 
-    # bypass validity if old events processed
+    # Core's check that a person's stays do not overlap, skipped where the
+    # machinery writes (no_validity_check): a door passage is never refused. The
+    # decorator is repeated on purpose: an override without it is no constraint
+    # at all, because Odoo collects constraints from the final class member
+    # (odoo/orm/models.py:519-535, _constraint_methods).
+    @api.constrains('check_in', 'check_out', 'employee_id')
     def _check_validity(self):
         if self.env.context.get('no_validity_check', None) is None:
-            super(HrAttendance, self)._check_validity()
+            super()._check_validity()

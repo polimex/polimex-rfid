@@ -19,6 +19,8 @@ from odoo import Command, fields
 from odoo.tests.common import TransactionCase, tagged
 from odoo.tools import file_path
 
+from .common import one_door, passage
+
 
 def _upgrade_step():
     spec = importlib.util.spec_from_file_location(
@@ -35,41 +37,18 @@ class TestUpgradeKeepsOperatorDays(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        company = cls.env.company
         # A door with an entry and an exit reader and NO attendance zone: the
         # passages are recorded, the attendance is written by the test.
-        webstack = cls.env['hr.rfid.webstack'].create({
-            'name': 'Upgrade WS', 'serial': '884601', 'key': '1234',
-            'hw_version': '100.1', 'version': '1.44', 'active': True,
-            'tz': 'Europe/Sofia', 'company_id': company.id})
-        ctrl = cls.env['hr.rfid.ctrl'].create({
-            'name': 'Upgrade CTRL', 'ctrl_id': 12, 'serial_number': '8846',
-            'webstack_id': webstack.id, 'hw_version': '9', 'sw_version': '740',
-            'max_cards_count': 100, 'max_events_count': 100, 'readers': 2,
-            'mode': 2, 'inputs': 0, 'outputs': 0, 'input_states': 0,
-            'output_states': 0, 'alarm_lines': 0, 'io_table_lines': 0,
-            'io_table': ''})
-        card_type = cls.env.ref('hr_rfid.hr_rfid_card_type_def')
-        cls.door = cls.env['hr.rfid.door'].with_context(no_hardware_commands=True).create({
-            'name': 'Upgrade Door', 'number': 1, 'controller_id': ctrl.id,
-            'card_type': card_type.id})
-        cls.reader_in = cls.env['hr.rfid.reader'].with_context(no_hardware_commands=True).create({
-            'name': 'Upgrade In', 'number': 1, 'reader_type': '0',
-            'controller_id': ctrl.id, 'door_ids': [Command.link(cls.door.id)]})
-        cls.reader_out = cls.env['hr.rfid.reader'].with_context(no_hardware_commands=True).create({
-            'name': 'Upgrade Out', 'number': 2, 'reader_type': '1',
-            'controller_id': ctrl.id, 'door_ids': [Command.link(cls.door.id)]})
+        cls.door, cls.reader_in, cls.reader_out = one_door(cls.env, 'Upgrade', 8846, 12)
         cls.employee = cls.env['hr.employee'].create({
-            'name': 'Upgrade Employee (test)', 'company_id': company.id})
+            'name': 'Upgrade Employee (test)', 'company_id': cls.env.company.id})
         yesterday = fields.Datetime.now() - timedelta(days=1)
         cls.came = yesterday.replace(hour=6, minute=0, second=17, microsecond=0)
         cls.left = cls.came + timedelta(hours=8, minutes=3, seconds=11)
         cls.stamp = staticmethod(_upgrade_step())
 
     def _passage(self, reader, moment):
-        self.env['hr.rfid.event.user'].create({
-            'employee_id': self.employee.id, 'door_id': self.door.id,
-            'reader_id': reader.id, 'event_time': moment, 'event_action': '1'})
+        passage(self.employee, self.door, reader, moment)
 
     def _left_as_manual(self, check_in, check_out=None):
         """A record the way an older version left it: 'manual', whoever made it."""
