@@ -2,7 +2,7 @@
 id: hr_rfid_hardware_import
 title: RFID Hardware Import
 module: hr_rfid_hardware_import
-module_version: 19.0.1.0.0
+module_version: 19.0.1.0.1
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -81,6 +81,9 @@ not part of this repository.
 
 ## Recent changes
 
+* 19.0.1.0.1 - the vending firmwares 20 (Executive only) and 21 (MDB) are
+  surveyed as vending machines, not alarm panels; the vending family follows
+  `hr_rfid`'s list of vending codes.
 * 19.0.1.0.0 - first version: discovery, reading, analysis, names file,
   proposed groups, schedule decisions, conflict reporting, background import,
   explicit hand-over of modules.

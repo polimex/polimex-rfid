@@ -201,6 +201,14 @@ class TestFamiliesAgainstTheCore(TransactionCase):
             if Ctrl.is_turnstile_ctrl(hw_version=code):
                 self.assertEqual(family, 'access', code)
 
+    def test_every_vending_firmware_is_surveyed_as_a_vending_machine(self):
+        """The iCON180 vending board reports 16, 20 or 21 by firmware; a survey
+        must not take the last two for alarm panels and import their cards as
+        door cards."""
+        for code in ('16', '20', '21'):
+            self.assertEqual(codecs.family_of(code), 'vending', code)
+        self.assertEqual(codecs.family_of('27'), 'alarm', "the alarm codes keep their family")
+
     def test_a_clock_that_is_not_a_date_is_refused_not_zeroed(self):
         for reply in ('00' * 7, 'FF' * 7, '00000099000000'):
             with self.assertRaises(codecs.DecodeError, msg=reply):

@@ -2,7 +2,7 @@
 id: hr_rfid
 title: RFID Access Control
 module: hr_rfid
-module_version: 19.0.2.32.0
+module_version: 19.0.2.33.4
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage employee access control
-last_updated: '2026-08-26'
-source_digest: sha256:bfab40bc1cfdb3403bf012bf5a0430bfb6d4596ac391cee94607bed4b739ad8c
+last_updated: '2026-11-09'
+source_digest: sha256:8fae63ae5f5fdba8a7d7220c4629c62c3c8431043cc7cba8a1f624338cfaa506
 depends:
 - hr
 - contacts
@@ -20,8 +20,9 @@ depends:
 - onboarding
 - polimex_ws
 entities:
-  primary: balloon.mixin
+  primary: hr.rfid.ctrl
   related:
+  - balloon.mixin
   - digest.digest
   - hr.department
   - hr.department.acc.grs
@@ -35,13 +36,12 @@ entities:
   - hr.rfid.access.group.employee.rel
   - hr.rfid.access.group.contact.rel
   - hr.rfid.access.group.wizard
-  - hr.rfid.card
 keywords:
 - acc
 - access
 - balloon
 - control
-- def
+- ctrl
 - department
 - digest
 - employee
@@ -111,7 +111,7 @@ chunking:
 ---
 
 
-# RFID Access Control - `hr_rfid` v19.0.2.32.0
+# RFID Access Control - `hr_rfid` v19.0.2.33.4
 
 Manage employee access control
 
@@ -123,7 +123,7 @@ Manage employee access control
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid`
-- **Version**: `19.0.2.32.0`
+- **Version**: `19.0.2.33.4`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -407,7 +407,7 @@ Python class `AliasMixin` in `models/balloon_mixin.py:4`.  AbstractModel.  Descr
 - **`balloon_danger(self, title, message, links=None, sticky=False)`** - decorators: `@api.model`
 - **`balloon_danger_sticky(self, title, message, links=None)`** - decorators: `@api.model`
 - **`balloon(self, title, message, links=None, type='success', sticky=False)`** - decorators: `@api.model`
-  - Return action for message in balloon.
+  - Return action for message in balloon. Required: title, message Optional: links like: [{'label': cmd_id.name, 'model': 'hr.rfid.command', 'res_id': cmd.id, 'action': 'hr_rfid.hr_rfid_command_action'…
 
 ### `digest.digest` <a id='model-digest-digest'></a>
 Python class `Digest` in `models/digest.py:8`.  Model.  Inherits: `digest.digest`.
@@ -421,11 +421,11 @@ Python class `Digest` in `models/digest.py:8`.  Model.  Inherits: `digest.digest
 | `kpi_hr_rfid_system` | Boolean | System Events |  | ✓ | Include a 'Count of system events' KPI (controller power loss, tamper, etc.) in  |
 | `kpi_hr_rfid_command` | Boolean | Commands executed |  | ✓ | Include a 'Count of commands sent to controllers' KPI in the digest email — usef |
 | `kpi_hr_rfid_card` | Boolean | Active cards |  | ✓ | Include a 'Count of cards created this period' KPI in the digest email. |
-| `kpi_hr_rfid_denied_value` | Integer |  |  | - | Live count of denied access events during the digest window. |
-| `kpi_hr_rfid_granted_value` | Integer |  |  | - | Live count of granted access events during the digest window. |
-| `kpi_hr_rfid_system_value` | Integer |  |  | - | Live count of system events during the digest window. |
-| `kpi_hr_rfid_command_value` | Integer |  |  | - | Live count of commands executed against controllers during the digest window. |
-| `kpi_hr_rfid_card_value` | Integer |  |  | - | Live count of new cards created during the digest window. |
+| `kpi_hr_rfid_denied_value` | Integer | Kpi Hr Rfid Denied Value |  | - | Live count of denied access events during the digest window. |
+| `kpi_hr_rfid_granted_value` | Integer | Kpi Hr Rfid Granted Value |  | - | Live count of granted access events during the digest window. |
+| `kpi_hr_rfid_system_value` | Integer | Kpi Hr Rfid System Value |  | - | Live count of system events during the digest window. |
+| `kpi_hr_rfid_command_value` | Integer | Kpi Hr Rfid Command Value |  | - | Live count of commands executed against controllers during the digest window. |
+| `kpi_hr_rfid_card_value` | Integer | Kpi Hr Rfid Card Value |  | - | Live count of new cards created during the digest window. |
 
 ### `hr.department` <a id='model-hr-department'></a>
 Python class `HrDepartment` in `models/hr_department.py:8`.  Model.  Inherits: `hr.department`.
@@ -563,7 +563,7 @@ Python class `HrRfidAccessGroup` in `models/hr_rfid_access_group.py:15`.  Model.
 |---|---|---|---|---|---|
 | `name` | Char | Name |  | ✓ | A descriptive name for this access group. This helps you identify and organize d |
 | `company_id` | Many2one → \`res.company\` | Company |  | ✓ | The company this access group belongs to. In multi-company environments, access  |
-| `delay_between_events` | Integer |  |  | ✓ | Anti-passback feature: Sets the minimum time (in seconds) that must pass between |
+| `delay_between_events` | Integer | Delay Between Events |  | ✓ | Anti-passback feature: Sets the minimum time (in seconds) that must pass between |
 | `employee_ids` | One2many → \`hr.rfid.access.group.employee.rel\` | Users |  | ✓ | Employees who are directly assigned to this access group. Each employee can have |
 | `contact_ids` | One2many → \`hr.rfid.access.group.contact.rel\` | Contacts |  | ✓ | External contacts (visitors, contractors, service providers) who are assigned to |
 | `door_ids` | One2many → \`hr.rfid.access.group.door.rel\` | Doors |  | ✓ | The physical doors that members of this access group can open. Each door can hav |
@@ -627,14 +627,14 @@ Python class `HrRfidAccessGroupDoorRel` in `models/hr_rfid_access_group.py:453`.
 |---|---|---|---|---|---|
 | `access_group_id` | Many2one → \`hr.rfid.access.group\` | Access Group | ✓ | ✓ | The access group that defines which doors can be accessed. This links doors to u |
 | `door_id` | Many2one → \`hr.rfid.door\` | Door | ✓ | ✓ | The physical door or access point that members of this access group can open. Ea |
-| `card_type` | Many2one → \`hr.rfid.card.type\` |  |  | - | The type of RFID card required for this door (automatically determined by the do |
+| `card_type` | Many2one → \`hr.rfid.card.type\` | *from door_id.card_type* |  | - | The type of RFID card required for this door (automatically determined by the do |
 | `time_schedule_id` | Many2one → \`hr.rfid.time.schedule\` | Time schedule | ✓ | ✓ | Defines when this door can be accessed by this group. For example: "Monday-Frida |
-| `alarm_rights` | Boolean |  | ✓ | ✓ | Allow users in this group to arm/disarm the door's alarm system. This is typical |
+| `alarm_rights` | Boolean | Alarm Rights | ✓ | ✓ | Allow users in this group to arm/disarm the door's alarm system. This is typical |
 
 #### Notable methods
 
 - **`_check_shared_module_grant(self)`** - decorators: `@api.constrains`
-  - A company the module is shared with may include its doors in its
+  - A company the module is shared with may include its doors in its own access groups, but only with the unrestricted schedule: the controller's schedule slots belong to the owner company, and writing a…
   - effects: `raise:ValidationError`
 - **`check_for_ts_inconsistencies(self, rels1, rels2)`** - decorators: `@api.model`
   - effects: `raise:ValidationError`
@@ -655,7 +655,7 @@ Python class `HrRfidAccessGroupRelations` in `models/hr_rfid_access_group.py:577
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `state` | Boolean | Active |  | ✓ | Indicates if this access group assignment is currently active. Automatically cal |
-| `internal_state` | Boolean |  |  | ✓ | Internal field used to track state changes and trigger card updates. This is man |
+| `internal_state` | Boolean | Internal State |  | ✓ | Internal field used to track state changes and trigger card updates. This is man |
 | `access_group_id` | Many2one → \`hr.rfid.access.group\` | Access Group | ✓ | ✓ | The access group that provides door permissions to the employee or contact. Mult |
 | `activate_on` | Datetime | Activation Date |  | ✓ | The date and time when this access group becomes active for the user. Access wil |
 | `expiration` | Datetime | Expiration Date |  | ✓ | The date and time when this access group expires and access is revoked. Leave em |
@@ -666,7 +666,7 @@ Python class `HrRfidAccessGroupRelations` in `models/hr_rfid_access_group.py:577
 #### Notable methods
 
 - **`active_for_visits(self)`** - decorators: -
-  - Whether every relation in ``self`` still grants access from the
+  - Whether every relation in ``self`` still grants access from the visits standpoint: counting disabled, unlimited (``permitted_visits`` <= 0) or visits remaining (``visits_counter < permitted_visits``).
 - **`inc_visits(self)`** - decorators: -
 - **`_compute_state(self)`** - decorators: `@api.depends`
 - **`_check_expirations(self)`** - decorators: `@api.model`
@@ -744,10 +744,10 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:17`.  Model.  Inherits: `ma
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | - | Display name of the card - shows either the card reference or card number |
-| `internal_number` | Char |  |  | ✓ | Internal representation of the card number used by the system. This is automatic |
+| `name` | Char | Name |  | - | Display name of the card - shows either the card reference or card number |
+| `internal_number` | Char | Internal Number |  | ✓ | Internal representation of the card number used by the system. This is automatic |
 | `number` | Char | Card Number | ✓ | ✓ | The unique 10-digit number printed on or associated with the RFID card. This is  |
-| `card_input_type` | Selection |  |  | ✓ | Technical format of how the card number is encoded. Wiegand 34 bit (5d+5d) split |
+| `card_input_type` | Selection | Card Input Type |  | ✓ | Technical format of how the card number is encoded. Wiegand 34 bit (5d+5d) split |
 | `card_reference` | Char | Card reference |  | ✓ | A friendly name or ID for this card, such as a badge number printed on the physi |
 | `company_id` | Many2one → \`res.company\` | Company |  | ✓ | The company this card belongs to. Cards are isolated between companies for secur |
 | `card_type` | Many2one → \`hr.rfid.card.type\` | Card type |  | ✓ | Defines what kind of card this is (e.g., Employee Card, Visitor Card, Service Ca |
@@ -760,9 +760,9 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:17`.  Model.  Inherits: `ma
 | `door_rel_ids` | One2many → \`hr.rfid.card.door.rel\` | Door list |  | ✓ | Technical field linking this card to doors. The actual door access is determined |
 | `door_ids` | Many2many → \`hr.rfid.door\` | Doors |  | - | List of all doors this card currently has access to, based on the owner's access |
 | `door_count` | Char | Door Count |  | - | Total number of doors this card can open. Shown as a statistic on the card form. |
-| `pin_code` | Char |  |  | - | The PIN code associated with this card's owner. Used for doors that require both |
-| `barcode_number` | Char |  |  | - | Hexadecimal representation of the card number, used for barcode printing and sca |
-| `is_barcode` | Boolean |  |  | - | Indicates if this card is configured as a barcode card type. |
+| `pin_code` | Char | Pin Code |  | - | The PIN code associated with this card's owner. Used for doors that require both |
+| `barcode_number` | Char | Barcode Number |  | - | Hexadecimal representation of the card number, used for barcode printing and sca |
+| `is_barcode` | Boolean | Is Barcode |  | - | Indicates if this card is configured as a barcode card type. |
 
 #### Notable methods
 
@@ -801,6 +801,7 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:17`.  Model.  Inherits: `ma
   - touches: `hr.rfid.card`
 - **`_update_cards(self)`** - decorators: `@api.model`
   - touches: `hr.rfid.card`
+- *2 more not listed*
 
 ### `hr.rfid.card.type` <a id='model-hr-rfid-card-type'></a>
 Python class `HrRfidCardType` in `models/hr_rfid_card.py:466`.  Model.  Inherits: `mail.thread`.  Description: *Card Type*.
@@ -829,14 +830,14 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inheri
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | - | User-friendly name combining command code and description |
+| `name` | Char | Name |  | - | User-friendly name combining command code and description |
 | `webstack_id` | Many2one → \`hr.rfid.webstack\` | Module | ✓ | ✓ | The communication module (webstack) that connects to the physical controller. Th |
 | `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller | ✓ | ✓ | The physical RFID controller device that manages card readers and access control |
 | `cmd` | Selection | Command | ✓ | ✓ | The type of operation to perform on the controller. Commands starting with "F" r |
 | `cmd_data` | Char | Command data |  | ✓ | Additional parameters or values sent with the command. This might include card n |
 | `status` | Selection | Status |  | ✓ | Current execution state of the command: • Wait: Command is queued and waiting to |
 | `error` | Selection | Error |  | ✓ | Detailed error information when a command fails. Common errors include: • Commun |
-| `create_date` | Datetime |  |  | ✓ |  |
+| `create_date` | Datetime | Create Date |  | ✓ |  |
 | `ex_timestamp` | Datetime | Execution Time |  | ✓ | The exact date and time when the controller completed processing this command an |
 | `request` | Char | Request |  | ✓ | Technical details: The raw JSON data sent to the module. This is mainly used for |
 | `response` | Char | Response |  | ✓ | Technical details: The raw JSON response received from the module. Contains the  |
@@ -887,6 +888,7 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inheri
 - **`_update_commands(self)`** - decorators: `@api.model`
 - **`_sync_clocks(self)`** - decorators: `@api.model`
   - touches: `hr.rfid.webstack`
+- *9 more not listed*
 
 ### `hr.rfid.command` <a id='model-hr-rfid-command'></a>
 Python class `HrRfidCommandWs` in `models/hr_rfid_command_ws.py:29`.  Model.  Inherits: `hr.rfid.command`.
@@ -908,11 +910,11 @@ Python class `HrRfidControllerOutputTS` in `models/hr_rfid_ctrl.py:11`.  Model. 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `output_number` | Integer | Output number | ✓ | ✓ | Physical output number on the controller (1, 2, 3, etc.). Each output can contro |
-| `time_schedule_id` | Many2one → \`hr.rfid.time.schedule\` |  | ✓ | ✓ | Time schedule that controls when this output will be active. The output will aut |
-| `controller_id` | Many2one → \`hr.rfid.ctrl\` |  | ✓ | ✓ | Controller that owns this output-to-time-schedule binding. Cascade on delete — t |
-| `output_count` | Integer |  |  | - | Number of physical outputs reported by the controller. Used to validate that out |
-| `max_ts` | Integer |  |  | - | Highest time-schedule slot the controller supports. Used to validate that the as |
-| `time_schedule_number` | Integer |  |  | - | Numeric slot of the linked time schedule, shown for quick reference in lists. |
+| `time_schedule_id` | Many2one → \`hr.rfid.time.schedule\` | Time Schedule | ✓ | ✓ | Time schedule that controls when this output will be active. The output will aut |
+| `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller | ✓ | ✓ | Controller that owns this output-to-time-schedule binding. Cascade on delete — t |
+| `output_count` | Integer | *from controller_id.outputs* |  | - | Number of physical outputs reported by the controller. Used to validate that out |
+| `max_ts` | Integer | *from controller_id.time_schedules* |  | - | Highest time-schedule slot the controller supports. Used to validate that the as |
+| `time_schedule_number` | Integer | *from time_schedule_id.number* |  | - | Numeric slot of the linked time schedule, shown for quick reference in lists. |
 
 #### Notable methods
 
@@ -929,8 +931,8 @@ Python class `HrRfidCtrlInputMask` in `models/hr_rfid_ctrl.py:67`.  Model.  Desc
 |---|---|---|---|---|---|
 | `i_number` | Integer | Number | ✓ | ✓ | Physical input number on the controller. Each input can monitor different sensor |
 | `i_mask` | Boolean | Mask (NC/NO) | ✓ | ✓ | Input type configuration: Checked = Normally Closed (NC), Unchecked = Normally O |
-| `controller_id` | Many2one → \`hr.rfid.ctrl\` |  | ✓ | ✓ | Controller that owns this input-mask row. Cascade on delete — the row disappears |
-| `input_count` | Integer |  |  | - | Total number of physical inputs on the controller — used to display only the mas |
+| `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller | ✓ | ✓ | Controller that owns this input-mask row. Cascade on delete — the row disappears |
+| `input_count` | Integer | *from controller_id.inputs* |  | - | Total number of physical inputs on the controller — used to display only the mas |
 
 #### Notable methods
 
@@ -952,23 +954,23 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 | `serial_number` | Char | Serial |  | ✓ | Factory-assigned unique serial number. This 4-character code is used for hardwar |
 | `sw_version` | Char | Version |  | ✓ | Firmware version running on the controller. Format: X.YZ where X is major versio |
 | `inputs` | Integer | Inputs |  | ✓ | Number of physical input connections available on this controller. Inputs are us |
-| `inputs_mask` | Integer |  |  | ✓ | Binary mask that defines the type of each input (NC/NO). Each bit represents one |
+| `inputs_mask` | Integer | Inputs Mask |  | ✓ | Binary mask that defines the type of each input (NC/NO). Each bit represents one |
 | `input_mask_ids` | One2many → \`hr.rfid.ctrl.input.mask\` | Input Masks |  | ✓ | Per-input NC/NO configuration. One row per physical input. Toggling a row sends  |
-| `input_states` | Integer |  |  | ✓ | Current state of all inputs as a binary value. Each bit represents one input: 1  |
+| `input_states` | Integer | Input States |  | ✓ | Current state of all inputs as a binary value. Each bit represents one input: 1  |
 | `outputs` | Integer | Outputs |  | ✓ | Number of physical output connections (relays) available on this controller. Out |
-| `output_states` | Integer |  |  | ✓ | Current state of all outputs as a binary value. Each bit represents one output:  |
+| `output_states` | Integer | Output States |  | ✓ | Current state of all outputs as a binary value. Each bit represents one output:  |
 | `output_ts_ids` | One2many → \`hr.rfid.ctrl.output.ts\` | Output's Time schedules |  | ✓ | Control the Output's Time schedules of the controller. You can add PLC-like logi |
-| `relay_output_mask` | Boolean |  |  | ✓ | Relay output configuration for relay controllers. When enabled, relay outputs op |
+| `relay_output_mask` | Boolean | Relay Output Mask |  | ✓ | Relay output configuration for relay controllers. When enabled, relay outputs op |
 | `readers` | Integer | Readers |  | ✓ | Number of RFID card readers that can be connected to this controller. Each reade |
 | `time_schedules` | Integer | Time Schedules |  | ✓ | Maximum number of time schedules this controller can store. Time schedules defin |
 | `io_table_lines` | Integer | IO Table Lines |  | ✓ | Number of programmable logic lines in the I/O table. Each line can contain rules |
 | `alarm_lines` | Integer | Alarm Lines |  | ✓ | Number of dedicated alarm zone inputs on this controller. Each zone can monitor  |
 | `alarm_line_states` | Char | Alarm Line States |  | ✓ | Real-time status of each alarm zone as hexadecimal values. Shows if zones are ar |
-| `alarm_lines_setup` | Char |  |  | ✓ | Configuration data for alarm zones in hexadecimal format. Defines which zones ar |
+| `alarm_lines_setup` | Char | Alarm Lines Setup |  | ✓ | Configuration data for alarm zones in hexadecimal format. Defines which zones ar |
 | `alarm_sensor_events` | Boolean | Alarm Sensor Events |  | ✓ | When enabled, the controller reports all sensor state changes as events, even wh |
-| `siren_state` | Boolean |  |  | - | Current state of the alarm siren. True = Siren is active/sounding, False = Siren |
-| `emergency_group_id` | Many2one → \`hr.rfid.ctrl.emergency.group\` |  |  | ✓ | Emergency group this controller belongs to. When any controller in the group ent |
-| `emergency_state` | Selection |  |  | - | Emergency mode status: - No Emergency: Normal operation - Group Emergency: Activ |
+| `siren_state` | Boolean | Siren State |  | - | Current state of the alarm siren. True = Siren is active/sounding, False = Siren |
+| `emergency_group_id` | Many2one → \`hr.rfid.ctrl.emergency.group\` | Emergency Group |  | ✓ | Emergency group this controller belongs to. When any controller in the group ent |
+| `emergency_state` | Selection | Emergency State |  | - | Emergency mode status: - No Emergency: Normal operation - Group Emergency: Activ |
 | `mode` | Integer | Controller Mode |  | ✓ | Operating mode that defines how many doors/devices this controller manages and h |
 | `mode_selection` | Selection | Controller mode | ✓ | - | Door control mode for standard access controllers. One door mode uses all resour |
 | `mode_selection_4` | Selection | Doors mode | ✓ | - | Door control mode for advanced access controllers that support up to 4 doors. Ea |
@@ -978,7 +980,7 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 | `dual_person_mode` | Boolean | Dual Person Mode |  | ✓ | Security feature requiring two authorized persons to badge within a time window  |
 | `interlocking_mode` | Boolean | Interlocking Mode |  | ✓ | Interlocking (mantrap): only one of the controller's doors may be open at a time |
 | `max_cards_count` | Integer | Maximum Cards |  | ✓ | Maximum number of access cards this controller can store in its internal memory. |
-| `cards_count` | Integer |  |  | ✓ | Current number of access cards stored in the controller's memory. When this appr |
+| `cards_count` | Integer | Cards Count |  | ✓ | Current number of access cards stored in the controller's memory. When this appr |
 | `max_events_count` | Integer | Maximum Events |  | ✓ | Maximum number of access events (card swipes, door openings, alarms) the control |
 | `hotel_readers` | Integer | Hotel readers |  | ✓ | Number of hotel-style card readers connected. These readers support card inserti |
 | `hotel_readers_card_presence` | Integer | Hotel readers card presence |  | ✓ | Binary representation of which hotel readers currently have a card inserted. Eac |
@@ -992,10 +994,10 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 | `sensor_ids` | One2many → \`hr.rfid.ctrl.th\` | Sensors |  | ✓ | Temperature and humidity sensors connected to this controller. Used for environm |
 | `temperature` | Float | Temperature |  | ✓ | Current temperature reading from the controller's internal or primary external s |
 | `humidity` | Float | Humidity |  | ✓ | Current relative humidity percentage from the controller's internal or primary e |
-| `event_interval` | Integer |  |  | - | Interval in minutes for automatic temperature/humidity event reporting. Set to 0 |
-| `high_temperature` | Float |  |  | ✓ | Upper temperature threshold in Celsius. When exceeded, the controller triggers a |
-| `low_temperature` | Float |  |  | ✓ | Lower temperature threshold in Celsius. When temperature drops below this value, |
-| `hysteresis` | Float |  |  | ✓ | Temperature hysteresis (dead band) in Celsius to prevent alarm flickering. The t |
+| `event_interval` | Integer | Event Interval |  | - | Interval in minutes for automatic temperature/humidity event reporting. Set to 0 |
+| `high_temperature` | Float | High Temperature |  | ✓ | Upper temperature threshold in Celsius. When exceeded, the controller triggers a |
+| `low_temperature` | Float | Low Temperature |  | ✓ | Lower temperature threshold in Celsius. When temperature drops below this value, |
+| `hysteresis` | Float | Hysteresis |  | ✓ | Temperature hysteresis (dead band) in Celsius to prevent alarm flickering. The t |
 | `system_voltage` | Float | System Voltage |  | ✓ | Current voltage level of the controller's internal power supply in VDC. Normal r |
 | `input_voltage` | Float | Input Voltage |  | ✓ | Voltage level supplied to the controller from the external power source in VDC.  |
 | `last_f0_read` | Datetime | Last System Information Update |  | ✓ | Date and time when the controller's system information (hardware details, capabi |
@@ -1005,7 +1007,7 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 | `readers_count` | Char | Readers count |  | - | Number of card readers configured for this controller. Typically matches the num |
 | `doors_count` | Char | Doors count |  | - | Number of doors managed by this controller. Depends on the controller mode: sing |
 | `alarm_line_count` | Char | Alarm line count |  | - | Number of alarm zones configured for this controller. Each zone can monitor diff |
-| `default_io_table` | Char |  |  | - | Factory default I/O table configuration for this controller model and mode. Used |
+| `default_io_table` | Char | Default Io Table |  | - | Factory default I/O table configuration for this controller model and mode. Used |
 
 #### Notable methods
 
@@ -1041,6 +1043,7 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 - **`is_relay_ctrl(self, hw_version=None)`** - decorators: -
 - **`is_vending_ctrl(self, hw_version=None)`** - decorators: -
 - **`is_turnstile_ctrl(self, hw_version=None)`** - decorators: -
+- *40 more not listed*
 
 ### `hr.rfid.ctrl.alarm` <a id='model-hr-rfid-ctrl-alarm'></a>
 Python class `HrRfidCtrlAlarm` in `models/hr_rfid_ctrl_alarm.py:6`.  Model.  Inherits: `mail.thread`, `balloon.mixin`.  Description: *Controller Alarm Lines*.  Default order: `controller_id, line_number`.
@@ -1049,20 +1052,20 @@ Python class `HrRfidCtrlAlarm` in `models/hr_rfid_ctrl_alarm.py:6`.  Model.  Inh
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  | ✓ | ✓ | Enter a descriptive name for this alarm sensor (e.g., 'Main Entrance Motion Dete |
-| `line_number` | Integer |  |  | ✓ | The physical input number on the controller where this sensor is connected (1-16 |
-| `state` | Selection |  |  | - | Current status of the alarm sensor: • Unknown - Communication lost with sensor • |
-| `armed` | Selection |  |  | ✓ | Security status of this alarm line: • No Alarm functionality - This line is not  |
+| `name` | Char | Name | ✓ | ✓ | Enter a descriptive name for this alarm sensor (e.g., 'Main Entrance Motion Dete |
+| `line_number` | Integer | Line Number |  | ✓ | The physical input number on the controller where this sensor is connected (1-16 |
+| `state` | Selection | State |  | - | Current status of the alarm sensor: • Unknown - Communication lost with sensor • |
+| `armed` | Selection | Armed |  | ✓ | Security status of this alarm line: • No Alarm functionality - This line is not  |
 | `enableAC` | Boolean | Integrate with Access control |  | ✓ | When enabled, this alarm line will work together with door access control: • Aut |
 | `enableDC` | Boolean | Include Door contact |  | ✓ | Monitor the door's open/closed status as part of this alarm: • When armed, an op |
-| `enabled` | Boolean |  |  | ✓ | Master switch for this alarm line: • ON - The sensor is active and can trigger a |
-| `siren_state` | Boolean |  |  | - | Shows whether the alarm siren is currently sounding: • ON - Siren is active (lou |
+| `enabled` | Boolean | Enabled |  | ✓ | Master switch for this alarm line: • ON - The sensor is active and can trigger a |
+| `siren_state` | Boolean | *from controller_id.siren_state* |  | - | Shows whether the alarm siren is currently sounding: • ON - Siren is active (lou |
 | `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller | ✓ | ✓ | The RFID controller device that monitors this alarm sensor. Each controller can  |
-| `control_output` | Integer |  |  | ✓ | Technical field: The output number used to arm/disarm this line remotely |
-| `door_id` | Many2one → \`hr.rfid.door\` |  |  | ✓ | Link this alarm to a specific door for integrated security: • The alarm can auto |
-| `user_event_count` | Integer |  |  | - | Number of alarm events triggered by user actions (e.g., motion detected, door op |
-| `system_event_count` | Integer |  |  | - | Number of technical events for this alarm line (e.g., sensor faults, communicati |
-| `alarm_group_id` | Many2one → \`hr.rfid.ctrl.alarm.group\` |  |  | ✓ | Assign this alarm to a group for easier management: • Arm/disarm multiple alarms |
+| `control_output` | Integer | Control Output |  | ✓ | Technical field: The output number used to arm/disarm this line remotely |
+| `door_id` | Many2one → \`hr.rfid.door\` | Door |  | ✓ | Link this alarm to a specific door for integrated security: • The alarm can auto |
+| `user_event_count` | Integer | User Event Count |  | - | Number of alarm events triggered by user actions (e.g., motion detected, door op |
+| `system_event_count` | Integer | System Event Count |  | - | Number of technical events for this alarm line (e.g., sensor faults, communicati |
+| `alarm_group_id` | Many2one → \`hr.rfid.ctrl.alarm.group\` | Alarm Group |  | ✓ | Assign this alarm to a group for easier management: • Arm/disarm multiple alarms |
 
 #### Notable methods
 
@@ -1084,13 +1087,13 @@ Python class `HrRfidCtrlAlarmGroup` in `models/hr_rfid_ctrl_alarm_group.py:4`.  
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  | ✓ | ✓ | Enter a descriptive name for this alarm group (e.g., 'First Floor Alarms', 'Ware |
+| `name` | Char | Name | ✓ | ✓ | Enter a descriptive name for this alarm group (e.g., 'First Floor Alarms', 'Ware |
 | `color` | Integer | Color Index |  | ✓ | Choose a color to visually distinguish this group in the hierarchy view. This he |
 | `company_id` | Many2one → \`res.company\` | Company |  | ✓ | The company that owns this alarm group. Used in multi-company setups to separate |
-| `state` | Selection |  |  | ✓ | Overall security status of all alarms in this group: • No Alarm functionality -  |
-| `parent_id` | Many2one → \`hr.rfid.ctrl.alarm.group\` |  |  | ✓ | Parent group for creating hierarchical alarm structures. For example: • Building |
-| `child_ids` | One2many → \`hr.rfid.ctrl.alarm.group\` |  |  | ✓ | Sub-groups under this group. When you arm/disarm this group, all child groups wi |
-| `alarm_line_ids` | One2many → \`hr.rfid.ctrl.alarm\` |  | ✓ | ✓ | Individual alarm sensors that belong to this group. You can: • Add multiple sens |
+| `state` | Selection | State |  | ✓ | Overall security status of all alarms in this group: • No Alarm functionality -  |
+| `parent_id` | Many2one → \`hr.rfid.ctrl.alarm.group\` | Parent |  | ✓ | Parent group for creating hierarchical alarm structures. For example: • Building |
+| `child_ids` | One2many → \`hr.rfid.ctrl.alarm.group\` | Child |  | ✓ | Sub-groups under this group. When you arm/disarm this group, all child groups wi |
+| `alarm_line_ids` | One2many → \`hr.rfid.ctrl.alarm\` | Alarm Line | ✓ | ✓ | Individual alarm sensors that belong to this group. You can: • Add multiple sens |
 
 #### Notable methods
 
@@ -1107,10 +1110,10 @@ Python class `EmergencyGroup` in `models/hr_rfid_ctrl_emergency_group.py:4`.  Mo
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | ✓ | Name of the emergency group (e.g., 'Emergency Floor 1', 'Building A Emergency'). |
+| `name` | Char | Name |  | ✓ | Name of the emergency group (e.g., 'Emergency Floor 1', 'Building A Emergency'). |
 | `company_id` | Many2one → \`res.company\` | Company |  | ✓ | Company that owns this emergency group. Used to separate emergency groups betwee |
-| `controller_ids` | One2many → \`hr.rfid.ctrl\` |  |  | ✓ | List of controllers that belong to this emergency group. When emergency mode is  |
-| `state` | Selection |  |  | - | Current state of the emergency group: • Normal: All controllers operating normal |
+| `controller_ids` | One2many → \`hr.rfid.ctrl\` | Controller |  | ✓ | List of controllers that belong to this emergency group. When emergency mode is  |
+| `state` | Selection | State |  | - | Current state of the emergency group: • Normal: All controllers operating normal |
 
 #### Notable methods
 
@@ -1142,9 +1145,9 @@ Python class `HrRfidCtrlIoTableWiz` in `models/hr_rfid_ctrl_iotable.py:83`.  Tra
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `controller_id` | Many2one → \`hr.rfid.ctrl\` |  | ✓ | ✓ | Controller being edited. Set automatically from the active record when the wizar |
+| `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller | ✓ | ✓ | Controller being edited. Set automatically from the active record when the wizar |
 | `io_row_ids` | Many2many → \`hr.rfid.ctrl.io.table.row\` | IO Table |  | ✓ | One row per event code (Duress, Card OK, etc.) with the values written to each o |
-| `outs` | Integer |  |  | ✓ | Number of output columns shown in the table (4 for relay controllers, otherwise  |
+| `outs` | Integer | Outs |  | ✓ | Number of output columns shown in the table (4 for relay controllers, otherwise  |
 
 #### Notable methods
 
@@ -1193,7 +1196,7 @@ Python class `CtrlTemperatureAndHumidity` in `models/hr_rfid_ctrl_th.py:13`.  Mo
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `active` | Boolean |  |  | ✓ | When unchecked, this sensor will be hidden and stop recording data. You can reac |
+| `active` | Boolean | Active |  | ✓ | When unchecked, this sensor will be hidden and stop recording data. You can reac |
 | `name` | Char | Sensor Name | ✓ | ✓ | Give this sensor a descriptive name (e.g., "Server Room Temperature", "Warehouse |
 | `uid` | Char | Serial Number |  | ✓ | The unique serial number of this temperature/humidity sensor. This is set by the |
 | `internal_number` | Char | Internal ID |  | ✓ | The internal identification number assigned by the controller. This is used for  |
@@ -1245,10 +1248,10 @@ Python class `HrRfidTimeSchedule` in `models/hr_rfid_ctrl_time_schedule.py:17`. 
 | `name` | Char | Name | ✓ | ✓ | Give this time schedule a descriptive name that helps identify when it's used. F |
 | `number` | Integer | TS Number | ✓ | ✓ | System-assigned time schedule number (0-15). TS 0 is reserved for "Not using TS" |
 | `company_id` | Many2one → \`res.company\` | Company |  | ✓ | The company this time schedule belongs to. Time schedules are company-specific a |
-| `is_empty` | Boolean |  |  | - | Indicates whether this time schedule has any active time periods defined. Empty  |
-| `ts_data` | Char |  |  | ✓ | Internal representation of the time schedule data in hexadecimal format. Contain |
+| `is_empty` | Boolean | Is Empty |  | - | Indicates whether this time schedule has any active time periods defined. Empty  |
+| `ts_data` | Char | Ts Data |  | ✓ | Internal representation of the time schedule data in hexadecimal format. Contain |
 | `access_group_door_ids` | One2many → \`hr.rfid.access.group.door.rel\` | Access Group/Door Combinations |  | ✓ | Shows all doors and access groups that use this time schedule. This helps you un |
-| `controller_ids` | Many2many → \`hr.rfid.ctrl\` |  |  | ✓ | RFID controllers that have this time schedule programmed. The schedule is automa |
+| `controller_ids` | Many2many → \`hr.rfid.ctrl\` | Controller |  | ✓ | RFID controllers that have this time schedule programmed. The schedule is automa |
 
 #### Notable methods
 
@@ -1270,13 +1273,13 @@ Python class `HrRfidTimeScheduleWizDayLine` in `models/hr_rfid_ctrl_time_schedul
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `display_name` | Char |  |  | - | Display name showing the day and interval number for easy identification. |
-| `begin` | Float |  |  | ✓ | Start time for this access period. Enter in 24-hour format (e.g., 8.5 for 8:30 A |
-| `end` | Float |  |  | ✓ | End time for this access period. Enter in 24-hour format (e.g., 17.5 for 5:30 PM |
-| `number` | Integer |  |  | ✓ | Interval number (1-4). Each day can have up to 4 separate access periods. For ex |
-| `day_number` | Integer |  |  | ✓ | Internal day number (0-7) used for data processing. |
+| `display_name` | Char | Display Name |  | - | Display name showing the day and interval number for easy identification. |
+| `begin` | Float | Begin |  | ✓ | Start time for this access period. Enter in 24-hour format (e.g., 8.5 for 8:30 A |
+| `end` | Float | End |  | ✓ | End time for this access period. Enter in 24-hour format (e.g., 17.5 for 5:30 PM |
+| `number` | Integer | Number |  | ✓ | Interval number (1-4). Each day can have up to 4 separate access periods. For ex |
+| `day_number` | Integer | Day Number |  | ✓ | Internal day number (0-7) used for data processing. |
 | `day` | Selection | Day |  | ✓ | Day of the week or Holiday. The Holiday setting applies to all dates marked as h |
-| `week_id` | Many2one → \`hr.rfid.ctrl.ts.week.wiz\` |  |  | ✓ | Reference to the parent time schedule week wizard. |
+| `week_id` | Many2one → \`hr.rfid.ctrl.ts.week.wiz\` | Week |  | ✓ | Reference to the parent time schedule week wizard. |
 
 #### Notable methods
 
@@ -1295,7 +1298,7 @@ Python class `HrRfidTimeScheduleWizWeek` in `models/hr_rfid_ctrl_time_schedule.p
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `ts_id` | Many2one → \`hr.rfid.time.schedule\` | Time Schedule |  | ✓ | The time schedule being edited. This wizard allows you to configure when access  |
-| `interval_ids` | One2many → \`hr.rfid.ctrl.ts.line\` |  |  | ✓ | Define up to 4 time periods per day when access is allowed. The schedule works a |
+| `interval_ids` | One2many → \`hr.rfid.ctrl.ts.line\` | Interval |  | ✓ | Define up to 4 time periods per day when access is allowed. The schedule works a |
 
 #### Notable methods
 
@@ -1319,7 +1322,7 @@ Python class `HrRfidDoor` in `models/hr_rfid_door.py:15`.  Model.  Inherits: `ma
 | `card_type` | Many2one → \`hr.rfid.card.type\` | Card type |  | ✓ | Select which type of RFID cards can open this door (e.g. Employee cards, Visitor |
 | `apb_mode` | Boolean | APB Mode |  | ✓ | Enable Anti-Passback (APB) mode to prevent card sharing. When active, a person m |
 | `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller |  | ✓ | The physical RFID controller device that manages this door. This is set automati |
-| `hotel_readers` | Integer |  |  | - | Number of hotel-mode readers connected to the controller. Used for hotel room ma |
+| `hotel_readers` | Integer | *from controller_id.hotel_readers* |  | - | Number of hotel-mode readers connected to the controller. Used for hotel room ma |
 | `access_group_ids` | One2many → \`hr.rfid.access.group.door.rel\` | Door Access Groups |  | ✓ | Access groups that include this door. Members of these groups will have access t |
 | `reader_ids` | Many2many → \`hr.rfid.reader\` | Readers |  | ✓ | RFID card readers that control this door. Typically includes one reader on each  |
 | `card_rel_ids` | One2many → \`hr.rfid.card.door.rel\` | Cards |  | ✓ | All RFID cards that currently have access to this door. This list is automatical |
@@ -1367,7 +1370,7 @@ Python class `HrRfidDoor` in `models/hr_rfid_door.py:15`.  Model.  Inherits: `ma
 - **`siren_off(self)`** - decorators: -
 - **`siren_on(self)`** - decorators: -
 - **`log_door_change(self, action, time, cmd=False)`** - decorators: -
-  - :param action: 1 for door open, 0 for door close
+  - :param action: 1 for door open, 0 for door close :param time: Range: [0, 99] :param cmd: If the command was created instead of
   - effects: `message_post`
 - **`write(self, vals)`** - decorators: -
   - calls `super() `write``
@@ -1408,15 +1411,15 @@ Python class `HrRfidCardDoorRel` in `models/hr_rfid_door.py:670`.  Model.  Descr
 
 - **`get_ts_code_string(self)`** - decorators: -
 - **`update_card_rels(self, card_id, access_group=None)`** - decorators: `@api.model`
-  - Checks all card-door relations and updates them
+  - Checks all card-door relations and updates them :param card_id: Card for which the relations to be checked :param access_group: Which access groups to go through when searching for the doors. If None…
 - **`update_door_rels(self, door_id, access_group=None)`** - decorators: `@api.model`
-  - Checks all card-door relations and updates them
+  - Checks all card-door relations and updates them :param door_id: Door for which the relations to be checked :param access_group: Which access groups to go through when searching for the cards. If None…
 - **`reload_door_rels(self, door_id)`** - decorators: `@api.model`
 - **`check_relevance_slow(self, card_id, door_id, ts_id=None)`** - decorators: `@api.model`
-  - Check if card has access to door. If it does, create relation or do nothing if it exists,
+  - Check if card has access to door. If it does, create relation or do nothing if it exists, and if not remove relation or do nothing if it does not exist. :param card_id: Recordset containing a single…
   - effects: `create`, `raise:ValidationError`
 - **`check_relevance_fast(self, card_id, door_id, ts_id=None, alarm_right=False)`** - decorators: `@api.model`
-  - Check if card is compatible with the door. If it is, create relation or do nothing if it exists,
+  - Check if card is compatible with the door. If it is, create relation or do nothing if it exists, and if not remove relation or do nothing if it does not exist. :param card_id: Recordset containing a…
   - effects: `create`
 - **`create_rel(self, card_id, door_id, ts_id=None, alarm_right=False)`** - decorators: `@api.model`
   - effects: `create`, `raise:ValidationError`
@@ -1429,7 +1432,7 @@ Python class `HrRfidCardDoorRel` in `models/hr_rfid_door.py:670`.  Model.  Descr
 - **`_door_constrains(self)`** - decorators: `@api.constrains`
   - effects: `raise:ValidationError`
 - **`_check_shared_module_card_collision(self)`** - decorators: `@api.constrains`
-  - On a module shared between companies the controller stores bare
+  - On a module shared between companies the controller stores bare card numbers with no company attached, so two granted cards carrying the same number would make events impossible to attribute. Block…
   - effects: `raise:ValidationError`, `sudo`
 - **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
   - calls `super() `create``
@@ -1453,12 +1456,12 @@ Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:76`.  Model.
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | - | Auto-generated system event description combining event type and location |
+| `name` | Char | Name |  | - | Auto-generated system event description combining event type and location |
 | `webstack_id` | Many2one → \`hr.rfid.webstack\` | Module |  | ✓ | The RFID webstack module (network interface) where this system event occurred. W |
 | `controller_id` | Many2one → \`hr.rfid.ctrl\` | Controller |  | ✓ | The RFID controller device that generated this system event. Controllers manage  |
 | `door_id` | Many2one → \`hr.rfid.door\` | Door |  | ✓ | The specific door involved in this system event (e.g., forced open, overtime). M |
 | `alarm_line_id` | Many2one → \`hr.rfid.ctrl.alarm\` | Alarm line |  | ✓ | The alarm input/output line that triggered this event. Used for security sensors |
-| `siren` | Boolean |  |  | ✓ | Indicates whether the siren/alarm is currently active. True = Siren ON (alarm co |
+| `siren` | Boolean | Siren |  | ✓ | Indicates whether the siren/alarm is currently active. True = Siren ON (alarm co |
 | `timestamp` | Datetime | Timestamp | ✓ | ✓ | Exact date and time when this system event was detected. Critical for security a |
 | `occurrences` | Integer | Occurrences |  | ✓ | Count of how many times this identical event has occurred. System groups repeate |
 | `last_occurrence` | Datetime | Last occurrence |  | ✓ | Date and time of the most recent occurrence when the same event happened multipl |
@@ -1466,7 +1469,7 @@ Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:76`.  Model.
 | `error_description` | Char | Description |  | ✓ | Detailed explanation of the error or event condition. Provides context for troub |
 | `card_number` | Char | Card number from this event |  | ✓ | RFID card number that triggered this system event. Only populated for card-relat |
 | `input_js` | Char | Input JSON |  | ✓ | Raw JSON data received from the controller. Contains technical details for debug |
-| `is_card_event` | Boolean |  |  | - | Indicates if this system event is related to an unknown/denied card, allowing ca |
+| `is_card_event` | Boolean | Is Card Event |  | - | Indicates if this system event is related to an unknown/denied card, allowing ca |
 
 #### Notable methods
 
@@ -1514,7 +1517,7 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:35`.  Model.  In
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | - | Auto-generated event description combining person name, action, and location |
+| `name` | Char | Name |  | - | Auto-generated event description combining person name, action, and location |
 | `ctrl_addr` | Integer | Controller ID |  | ✓ | Unique identifier for the controller within its webstack network. Used for inter |
 | `workcode` | Char | Workcode (Raw) |  | ✓ | Raw workcode number received from the RFID reader. This appears when the workcod |
 | `workcode_id` | Many2one → \`hr.rfid.workcode\` | Workcode |  | ✓ | Associated workcode defining the type of work activity (e.g., start work, break, |
@@ -1529,7 +1532,7 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:35`.  Model.  In
 | `command_id` | Many2one → \`hr.rfid.command\` | Response |  | ✓ | System command sent in response to this event (e.g., open door, deny access). Us |
 | `event_time` | Datetime | Timestamp | ✓ | ✓ | Exact date and time when the access event occurred at the reader. Used for atten |
 | `event_action` | Selection | Action | ✓ | ✓ | The type of access event: • Card Granted: Access allowed • Card Denied: Access b |
-| `action_string` | Char |  |  | - | Human-readable description of the event action for display purposes. |
+| `action_string` | Char | Action String |  | - | Human-readable description of the event action for display purposes. |
 | `more_json` | Char | More info about event in JSON |  | ✓ | Additional technical details about the event in JSON format. Used for debugging  |
 
 #### Notable methods
@@ -1566,14 +1569,14 @@ Python class `RFIDNotification` in `models/hr_rfid_notification.py:11`.  Model. 
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | - | Computed display label combining the event type and notification channel (e.g. ' |
+| `name` | Char | Name |  | - | Computed display label combining the event type and notification channel (e.g. ' |
 | `zone_id` | Many2one → \`hr.rfid.zone\` | Zone | ✓ | ✓ | The zone or area where this notification rule applies. When events occur in this |
 | `company_id` | Many2one → \`res.company\` | Company | ✓ | - | Company that owns this notification. Automatically set based on the selected zon |
-| `notification_type` | Selection |  |  | ✓ | How to send the notification: • System Chat: Send instant message through Odoo's |
+| `notification_type` | Selection | Notification Type |  | ✓ | How to send the notification: • System Chat: Send instant message through Odoo's |
 | `user_event` | Selection | User Event |  | ✓ | Select a user-related event that will trigger this notification. Examples: Acces |
 | `system_event` | Selection | System Event |  | ✓ | Select a system-related event that will trigger this notification. Examples: Con |
 | `notify_followers` | Boolean | Notify Followers |  | ✓ | Send notifications to all users who follow this zone. This is useful for securit |
-| `notify_partner_ids` | Many2many → \`res.partner\` |  |  | ✓ | Specific people to notify when this event occurs. You can add multiple recipient |
+| `notify_partner_ids` | Many2many → \`res.partner\` | Notify Partner |  | ✓ | Specific people to notify when this event occurs. You can add multiple recipient |
 
 #### Notable methods
 
@@ -1631,7 +1634,7 @@ Python class `HrRfidWebstack` in `models/hr_rfid_webstack.py:72`.  Model.  Inher
 | `shared_company_ids` | Many2many → \`res.company\` | Shared With |  | ✓ | Other companies that use this module together with the owner company. They can s |
 | `tz` | Selection | Timezone |  | ✓ | Select the timezone where this module is physically located. This ensures accura |
 | `tz_offset` | Char | Timezone offset |  | - | Automatically calculated timezone offset from UTC (e.g., +0200 for UTC+2). Used  |
-| `time_format` | Char |  |  | - | Time format used by this module based on its hardware version. Automatically det |
+| `time_format` | Char | Time Format |  | - | Time format used by this module based on its hardware version. Automatically det |
 | `serial` | Char | Serial number |  | ✓ | Unique 6-digit serial number printed on the module hardware. This is automatical |
 | `active` | Boolean | Active |  | ✓ | Enable this to allow the module to communicate with Odoo. When disabled, the mod |
 | `version` | Char | Version |  | ✓ | Firmware version running on the module. This is automatically detected. Contact  |
@@ -1640,7 +1643,7 @@ Python class `HrRfidWebstack` in `models/hr_rfid_webstack.py:72`.  Model.  Inher
 | `last_ip` | Char | Last IP |  | ✓ | The IP address the module last connected from. For modules behind NAT, this is t |
 | `updated_at` | Datetime | Last Update |  | ✓ | Last time this module communicated with Odoo. If this is more than 10 minutes ag |
 | `controllers` | One2many → \`hr.rfid.ctrl\` | Controllers |  | ✓ | List of access control devices connected to this module. Each controller manages |
-| `http_link` | Char |  |  | - | Direct web interface link to the module. Only available when "Behind NAT" is dis |
+| `http_link` | Char | Http Link |  | - | Direct web interface link to the module. Only available when "Behind NAT" is dis |
 | `module_username` | Selection | Module Username |  | ✓ | Username for accessing the module's web interface. Use "admin" for full access o |
 | `module_password` | Char | Module Password |  | ✓ | Password for the module's web interface. Must match the password configured in t |
 | `available` | Selection | Available? |  | ✓ | Connection status indicator: • Available (green): Module is online and respondin |
@@ -1690,14 +1693,15 @@ Python class `HrRfidWebstack` in `models/hr_rfid_webstack.py:72`.  Model.  Inher
 - **`unlink(self)`** - decorators: -
   - calls `super() `unlink``
 - **`sys_log(self, error_description, input_json=None)`** - decorators: -
-  - :param error_description: (str) Description of the error that occurred.
+  - :param error_description: (str) Description of the error that occurred. :param input_json: (str) JSON input for the logs. :return: None
   - effects: `sudo`
   - touches: `hr.rfid.event.system`
 - **`sync_all_clocks(self)`** - decorators: `@api.model`
   - touches: `hr.rfid.webstack`
 - **`direct_execute(self, cmd, command_id=None)`** - decorators: -
-  - :param cmd: A dictionary that contains the command to be executed.
+  - :param cmd: A dictionary that contains the command to be executed. :param command_id: (optional) A model instance representing a stored command. :return: The response from the command execution.
   - effects: `log_error`
+- *14 more not listed*
 
 ### `hr.rfid.webstack.discovery.row` <a id='model-hr-rfid-webstack-discovery-row'></a>
 Python class `HrRfidWebstackDiscoveryRow` in `models/hr_rfid_webstack_discovery.py:8`.  TransientModel (wizard).  Description: *Webstack discovery rows*.
@@ -1706,13 +1710,13 @@ Python class `HrRfidWebstackDiscoveryRow` in `models/hr_rfid_webstack_discovery.
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  |  | ✓ | Module name as reported in the UDP discovery beacon. |
-| `last_ip` | Char |  |  | ✓ | IP address from which the module's discovery beacon was received. |
-| `version` | Char |  |  | ✓ | Firmware/software version reported by the discovered module. |
-| `hw_version` | Char |  |  | ✓ | Hardware version reported by the discovered module. |
-| `serial` | Char |  |  | ✓ | Serial number reported by the discovered module — used as the unique key when ad |
-| `behind_nat` | Boolean |  |  | ✓ | Discovery flag indicating whether the module sits behind a NAT and must initiate |
-| `discovery_id` | Many2one → \`hr.rfid.webstack.discovery\` |  |  | ✓ | Discovery wizard run that found this module. |
+| `name` | Char | Name |  | ✓ | Module name as reported in the UDP discovery beacon. |
+| `last_ip` | Char | Last Ip |  | ✓ | IP address from which the module's discovery beacon was received. |
+| `version` | Char | Version |  | ✓ | Firmware/software version reported by the discovered module. |
+| `hw_version` | Char | Hw Version |  | ✓ | Hardware version reported by the discovered module. |
+| `serial` | Char | Serial |  | ✓ | Serial number reported by the discovered module — used as the unique key when ad |
+| `behind_nat` | Boolean | Behind Nat |  | ✓ | Discovery flag indicating whether the module sits behind a NAT and must initiate |
+| `discovery_id` | Many2one → \`hr.rfid.webstack.discovery\` | Discovery |  | ✓ | Discovery wizard run that found this module. |
 
 ### `hr.rfid.webstack.discovery` <a id='model-hr-rfid-webstack-discovery'></a>
 Python class `HrRfidWebstackDiscovery` in `models/hr_rfid_webstack_discovery.py:41`.  TransientModel (wizard).  Description: *Webstack discovery*.
@@ -1722,7 +1726,7 @@ Python class `HrRfidWebstackDiscovery` in `models/hr_rfid_webstack_discovery.py:
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `found_webstacks` | One2many → \`hr.rfid.webstack.discovery.row\` | Found modules |  | ✓ | Modules that were just found during the discovery process |
-| `what_to_do` | Selection |  | ✓ | ✓ | What happens when you click Setup — Add as Inactive: register the module but do  |
+| `what_to_do` | Selection | What To Do | ✓ | ✓ | What happens when you click Setup — Add as Inactive: register the module but do  |
 
 #### Notable methods
 
@@ -1739,8 +1743,8 @@ Python class `HrRfidWebstackManualCreate` in `models/hr_rfid_webstack_discovery.
 |---|---|---|---|---|---|
 | `webstack_name` | Char | Module Name |  | ✓ | Friendly name for the module (e.g. 'Warehouse Gate Module'). Auto-filled from th |
 | `webstack_serial` | Char | Serial Number | ✓ | ✓ | Serial number printed on the module's label. Must be unique across the database; |
-| `behind_nat` | Boolean |  |  | ✓ | Check if the module sits behind a NAT and Odoo cannot reach its IP directly. In  |
-| `local_ip_address` | Char |  |  | ✓ | Required when Behind NAT is off — the LAN IP at which Odoo can reach the module  |
+| `behind_nat` | Boolean | Behind Nat |  | ✓ | Check if the module sits behind a NAT and Odoo cannot reach its IP directly. In  |
+| `local_ip_address` | Char | Local Ip Address |  | ✓ | Required when Behind NAT is off — the LAN IP at which Odoo can reach the module  |
 
 #### Notable methods
 
@@ -1758,12 +1762,12 @@ Python class `HrRfidWebstackReplaceWiz` in `models/hr_rfid_webstack_replace_wiz.
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `source_webstack_id` | Many2one → \`hr.rfid.webstack\` |  |  | ✓ | Old webstack being replaced. Inactive modules are included to allow swap-in of p |
-| `destination_webstack_id` | Many2one → \`hr.rfid.webstack\` |  |  | ✓ | New webstack that will take over the controllers. Inactive modules are included  |
-| `source_controller_ids` | Many2many → \`hr.rfid.ctrl\` |  |  | ✓ | Controllers attached to the source webstack — these will be moved to the destina |
-| `destination_controller_ids` | One2many → \`hr.rfid.ctrl\` |  |  | - | Controllers currently attached to the destination webstack — shown for reference |
-| `replace_existing` | Boolean |  |  | ✓ | Replace existing controllers in destination module.  This will remove the existi |
-| `destination_active_state` | Boolean |  |  | ✓ | The Active state of the destination module. |
+| `source_webstack_id` | Many2one → \`hr.rfid.webstack\` | Source Webstack |  | ✓ | Old webstack being replaced. Inactive modules are included to allow swap-in of p |
+| `destination_webstack_id` | Many2one → \`hr.rfid.webstack\` | Destination Webstack |  | ✓ | New webstack that will take over the controllers. Inactive modules are included  |
+| `source_controller_ids` | Many2many → \`hr.rfid.ctrl\` | Source Controller |  | ✓ | Controllers attached to the source webstack — these will be moved to the destina |
+| `destination_controller_ids` | One2many → \`hr.rfid.ctrl\` | *from destination_webstack_id.controllers* |  | - | Controllers currently attached to the destination webstack — shown for reference |
+| `replace_existing` | Boolean | Replace Existing |  | ✓ | Replace existing controllers in destination module.  This will remove the existi |
+| `destination_active_state` | Boolean | Destination Active State |  | ✓ | The Active state of the destination module. |
 
 #### Notable methods
 
@@ -1810,11 +1814,11 @@ Python class `HrRfidWsDedup` in `models/hr_rfid_ws_dedup.py:24`.  Model.  Descri
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `webstack_id` | Many2one → \`hr.rfid.webstack\` |  | ✓ | ✓ |  |
-| `ctrl_id_num` | Integer |  | ✓ | ✓ |  |
-| `bos` | Integer |  | ✓ | ✓ |  |
-| `ev_ts` | Char |  | ✓ | ✓ | Controller date+time string of the event. |
-| `create_date` | Datetime |  |  | ✓ |  |
+| `webstack_id` | Many2one → \`hr.rfid.webstack\` | Webstack | ✓ | ✓ |  |
+| `ctrl_id_num` | Integer | Ctrl Id Num | ✓ | ✓ |  |
+| `bos` | Integer | Bos | ✓ | ✓ |  |
+| `ev_ts` | Char | Ev Ts | ✓ | ✓ | Controller date+time string of the event. |
+| `create_date` | Datetime | Create Date |  | ✓ |  |
 
 #### Notable methods
 
@@ -1822,7 +1826,7 @@ Python class `HrRfidWsDedup` in `models/hr_rfid_ws_dedup.py:24`.  Model.  Descri
   - True when this event key was already successfully processed.
   - effects: `sudo`
 - **`_claim(self, webstack, ctrl_id_num, bos, ev_ts)`** - decorators: `@api.model`
-  - Record a SUCCESSFULLY processed event key (claim only on success:
+  - Record a SUCCESSFULLY processed event key (claim only on success: an event answered with a non-200 status stays unclaimed so its re-send gets processed - mirrors the HTTP path where a non-200…
   - effects: `sudo`
 
 ### `hr.rfid.zone` <a id='model-hr-rfid-zone'></a>
@@ -1842,8 +1846,8 @@ Python class `HrRfidZone` in `models/hr_rfid_zone.py:12`.  Model.  Inherits: `ma
 | `employee_ids` | Many2many → \`hr.employee\` | Employees |  | ✓ | Real-time list of employees currently present in this zone. This field is automa |
 | `contact_ids` | Many2many → \`res.partner\` | Contacts |  | ✓ | Real-time list of external contacts (visitors, contractors, vendors) currently i |
 | `notification_ids` | One2many → \`hr.rfid.notification\` | Notifications |  | ✓ | Configure automatic notifications for zone events. You can set up alerts for: •  |
-| `employee_count` | Char |  |  | - | Current number of employees in this zone. Automatically calculated based on entr |
-| `contact_count` | Char |  |  | - | Current number of external contacts (visitors) in this zone. Automatically calcu |
+| `employee_count` | Char | Employee Count |  | - | Current number of employees in this zone. Automatically calculated based on entr |
+| `contact_count` | Char | Contact Count |  | - | Current number of external contacts (visitors) in this zone. Automatically calcu |
 
 #### Notable methods
 
@@ -1924,7 +1928,7 @@ Python class `ResCompany` in `models/res_company.py:4`.  Model.  Inherits: `res.
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `event_lifetime` | Integer | Event life time |  | ✓ | Enter event lifetime. Older events will be deleted |
-| `card_input_type` | Selection |  |  | ✓ | Format readers in this company report card numbers in — Wiegand 34 (5d+5d): faci |
+| `card_input_type` | Selection | Card Input Type |  | ✓ | Format readers in this company report card numbers in — Wiegand 34 (5d+5d): faci |
 
 #### Notable methods
 
@@ -1939,12 +1943,12 @@ Python class `ResPartner` in `models/res_partner.py:8`.  Model.  Inherits: `res.
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `company_id` | Many2one → \`res.company\` |  |  | ✓ |  |
+| `company_id` | Many2one → \`res.company\` | Company |  | ✓ |  |
 | `hr_rfid_pin_code` | Char | RFID PIN Code |  | ✓ | 4-digit PIN code for secure door access. Use this along with an RFID card for hi |
 | `hr_rfid_access_group_ids` | One2many → \`hr.rfid.access.group.contact.rel\` | Access Groups |  | ✓ | Door access permissions for this contact. Each group defines which doors they ca |
 | `hr_rfid_card_ids` | One2many → \`hr.rfid.card\` | RFID Cards |  | ✓ | All RFID cards assigned to this contact. A person can have multiple cards (e.g., |
 | `hr_rfid_event_ids` | One2many → \`hr.rfid.event.user\` | Access History |  | ✓ | Complete history of door access attempts by this contact. Includes successful en |
-| `is_employee` | Boolean |  |  | - |  |
+| `is_employee` | Boolean | Is Employee |  | - |  |
 | `partner_event_count` | Char | Total Events |  | - | Total number of access events recorded for this contact. |
 | `partner_doors_count` | Char | Accessible Doors |  | - | Number of doors this contact can currently access based on their access groups. |
 
@@ -1978,16 +1982,16 @@ Python class `ResPartner` in `models/res_partner.py:8`.  Model.  Inherits: `res.
   - effects: `write`
   - touches: `hr.rfid.card`
 - **`generate_partner(self, name, parent_id=None, card_number=None, unlink_card_if_exsist=True, access_group_id=None)`** - decorators: `@api.model`
-  - Require:
+  - Require: name Optional: parent_id: int - res.partner.id card_number: str unlink_card_if_exsist:bool access_group_id: hr.rfid.access.group.id Context: activate_on: datetime deactivate_on: datetime
   - effects: `with_context`
   - touches: `hr.rfid.card`, `res.partner`
 - **`add_access_group(self, access_group_id, activate_on=None, expire_on=None, visits=0)`** - decorators: -
   - Adding access group
 - **`add_card_number(self, card_number, activate_on=None, expire_on=None, card_input_type=None)`** - decorators: -
 - **`action_send_badge_email(self, template_xml_id=None)`** - decorators: -
-  - Open a window to compose an email, with the template - 'card_badge'
+  - Open a window to compose an email, with the template - 'card_badge' message loaded by default
 - **`decode_mrz(self, mrz_string)`** - decorators: `@api.model`
-  - This function receives a string containing the Machine Readable Zone (MRZ) data of a personal document,
+  - This function receives a string containing the Machine Readable Zone (MRZ) data of a personal document, decodes the MRZ data and returns it as a dictionary. The function also performs basic…
 
 ### `res.partner.mass.wiz` <a id='model-res-partner-mass-wiz'></a>
 Python class `HrPartnerMassAccGrsWiz` in `models/res_partner.py:465`.  TransientModel (wizard).  Description: *Bulk Access Group Management for Contacts*.
@@ -2017,9 +2021,10 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 - **`MAX_DIRECT_EXECUTE`** *(scalar)* = `10`  - line 3
 - **`MAX_DIRECT_EXECUTE_TIME`** *(scalar)* = `5`  - line 4
-- **`HW_TYPES`** *(collection)* = `[('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'), ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'), ('9', 'Turnstile'), ('10', 'iCON180'), ('11', 'iCON115'), ('12', 'iCON50'), ('13', 'FireControl  # ...truncated`  - line 7
-- **`DEFAULT_IO_TABLES`** *(collection)* = `[[6, 2, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   # ...truncated`  - line 21
-- **`READ_CARDS_BLOCK_SIZE`** *(scalar)* = `5`  - line 514
+- **`HW_TYPES`** *(collection)* = `[('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'), ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'), ('9', 'Turnstile'), ('10', 'iCON180'), ('11', 'iCON115'), ('12', 'iCON50'), ('13', 'iCON115 hot  # ...truncated`  - line 7
+- **`VENDING_HW_VERSIONS`** *(collection)* = `('16', '20', '21')`  - line 24
+- **`DEFAULT_IO_TABLES`** *(collection)* = `[[6, 2, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   # ...truncated`  - line 25
+- **`READ_CARDS_BLOCK_SIZE`** *(scalar)* = `5`  - line 518
 
 ### `models/hr_rfid_command_ws.py`
 
@@ -2064,34 +2069,6 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 - **`WS_DEDUP_RETENTION_DAYS`** *(scalar)* = `7`  - line 20
 - **`GC_UNLINK_LIMIT`** *(scalar)* = `1000`  - line 21
 
-### `tests/common.py`
-
-- **`_TIMEOUT`** *(scalar)* = `500`  - line 15
-
-### `tests/test_onboarding_panel_errors.py`
-
-- **`BANNER_LOG`** *(scalar)* = `'odoo.addons.hr_rfid.models.onboarding_onboarding'`  - line 22
-
-### `tests/test_one_door_two_schedules.py`
-
-- **`DUPLICATE_DOOR_LOGGER`** *(scalar)* = `'odoo.addons.hr_rfid.models.hr_rfid_access_group'`  - line 29
-
-### `tests/test_recalc_hook.py`
-
-- **`COMMON_ANCESTOR`** *(scalar)* = `'odoo.addons.hr_rfid.models.hr_employee'`  - line 23
-
-### `tests/test_sot_denied.py`
-
-- **`_TIMEOUT`** *(scalar)* = `30`  - line 27
-
-### `tests/test_unknown_device_payload.py`
-
-- **`_TIMEOUT`** *(scalar)* = `30`  - line 18
-
-### `tests/test_ws_dispatch.py`
-
-- **`F0_ICON110`** *(scalar)* = `'0006000400000704000000030000030201050208000200010502060003000506'`  - line 25
-
 ### `tools/odoo_bus_device_sim.py`
 
 - **`PROTO`** *(scalar)* = `1`  - line 37
@@ -2104,20 +2081,20 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 
 ### Public helpers
 
-- **`WebRfidController.post_barcode(self, **post)`** (`@http.route`) - `controllers/main.py:53`
-  - :param post: Dictionary of parameters sent in the POST request.
+- **`WebRfidController.post_barcode(self, **post)`** (`@http.route`) - `controllers/main.py:54`
+  - :param post: Dictionary of parameters sent in the POST request. :return: List of dictionaries with barcode data.
   - effects: `log_info`
-- **`WebRfidController.post_event(self, **post)`** (`@http.route`) - `controllers/main.py:239`
+- **`WebRfidController.post_event(self, **post)`** (`@http.route`) - `controllers/main.py:240`
   - This method handles the POST request to the '/hr/rfid/event' route. It processes the received data from the request and performs necessary actions based on the data.
   - effects: `log_error`, `log_info`, `sudo`
   - touches: `hr.rfid.event.system`, `hr.rfid.webstack`
-- **`WebRfidController.vending_request_for_balance(self)`** - `controllers/main.py:366`
-- **`get_default_io_table(hw_version, mode, as_string=True)`** - `controllers/polimex.py:517`
-- **`bytes_to_num(data, start, digits)`** - `controllers/polimex.py:526`
-- **`str_hex_to_array(str)`** - `controllers/polimex.py:536`
-- **`str_dec_to_array(str)`** - `controllers/polimex.py:538`
-- **`get_temperature(h, l, precision=0.5)`** - `controllers/polimex.py:541`
-- **`get_reverse_temperature(temp)`** - `controllers/polimex.py:549`
+- **`WebRfidController.vending_request_for_balance(self)`** - `controllers/main.py:394`
+- **`get_default_io_table(hw_version, mode, as_string=True)`** - `controllers/polimex.py:521`
+- **`bytes_to_num(data, start, digits)`** - `controllers/polimex.py:530`
+- **`str_hex_to_array(str)`** - `controllers/polimex.py:540`
+- **`str_dec_to_array(str)`** - `controllers/polimex.py:542`
+- **`get_temperature(h, l, precision=0.5)`** - `controllers/polimex.py:545`
+- **`get_reverse_temperature(temp)`** - `controllers/polimex.py:553`
 - **`simulate_event()`** - `controllers/simulate_event.py:9`
   - effects: `http_post`
 - **`BaseImporter.connect_to_old_odoo(self)`** - `manual_import.py:34`
@@ -2157,889 +2134,6 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 - **`migrate(cr, version)`** - `migrations/19.0.2.24.1/pre-migrate.py:8`
 - **`get_local_ip()`** - `models/hr_rfid_webstack.py:42`
   - Return the IP address of the machine running the code.
-- **`RFIDAppCase.setUpClass(cls)`** (`@classmethod`) - `tests/common.py:21`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `hr.department`, `hr.employee`, `hr.employee.category`, `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`, `hr.rfid.card`, `hr.rfid.webstack`, `res.company`, … (+1)
-- **`RFIDAppCase.setUp(self)`** - `tests/common.py:135`
-  - calls `super()`
-- **`RFIDHttpCase.setUpClass(cls)`** (`@classmethod`) - `tests/common.py:612`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `hr.department`, `hr.employee`, `hr.employee.category`, `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`, `hr.rfid.card`, `hr.rfid.webstack`, `res.company`, … (+1)
-- **`RFIDController.setUpClass(cls)`** (`@classmethod`) - `tests/controller.py:15`
-  - calls `super()`
-- **`RFIDController.setUp(self)`** - `tests/controller.py:42`
-  - calls `super()`
-- **`TestAddDoorsTimeSchedule.setUpClass(cls)`** (`@classmethod`) - `tests/test_access_group_add_doors.py:22`
-  - calls `super()`
-  - touches: `hr.rfid.time.schedule`, `res.company`
-- **`TestAddDoorsTimeSchedule.test_schedule_never_belongs_to_another_company(self)`** - `tests/test_access_group_add_doors.py:40`
-  - Избраното работно време е на фирмата на групата, или е общо.
-  - touches: `res.company`
-- **`TestAddDoorsTimeSchedule.test_missing_schedule_says_what_is_missing(self)`** - `tests/test_access_group_add_doors.py:65`
-  - Липсващо работно време казва какво липсва.
-- **`TestAddDoorsTimeSchedule.test_global_schedule_is_acceptable(self)`** - `tests/test_access_group_add_doors.py:84`
-  - График без фирма важи за всички - не бива да се отхвърля.
-  - touches: `res.company`
-- **`TestAccessGroupBasic.test_create_access_group(self)`** - `tests/test_access_groups.py:20`
-  - Test creating a basic access group.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupBasic.test_access_group_company_isolation(self)`** - `tests/test_access_groups.py:29`
-  - Test access groups belong to specific company.
-- **`TestAccessGroupBasic.test_access_group_delay_default(self)`** - `tests/test_access_groups.py:35`
-  - Test delay_between_events defaults to 0.
-- **`TestAccessGroupBasic.test_access_group_set_delay(self)`** - `tests/test_access_groups.py:40`
-  - Test setting delay_between_events.
-- **`TestAccessGroupBasic.test_access_group_unlink(self)`** - `tests/test_access_groups.py:46`
-  - Test deleting an access group.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupBasic.test_delay_zero_means_disabled(self)`** - `tests/test_access_groups.py:58`
-  - delay_between_events=0 must disable the anti-passback window.
-  - touches: `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.event.user`, `hr.rfid.reader`
-- **`TestAccessGroupInheritance.test_simple_inheritance(self)`** - `tests/test_access_groups.py:110`
-  - Test basic parent→child inheritance.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupInheritance.test_circular_reference_raises(self)`** - `tests/test_access_groups.py:124`
-  - Test circular inheritance raises ValidationError.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupInheritance.test_deep_circular_reference_raises(self)`** - `tests/test_access_groups.py:138`
-  - Test deep circular inheritance (A→B→C→A) raises ValidationError.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupEmployeeRel.test_create_employee_rel(self)`** - `tests/test_access_groups.py:162`
-  - Test creating employee ↔ AG relationship.
-  - touches: `hr.rfid.access.group.employee.rel`
-- **`TestAccessGroupEmployeeRel.test_employee_rel_future_activation(self)`** - `tests/test_access_groups.py:170`
-  - Test employee rel with future activation date.
-  - touches: `hr.rfid.access.group.employee.rel`
-- **`TestAccessGroupEmployeeRel.test_employee_rel_expired(self)`** - `tests/test_access_groups.py:180`
-  - Test employee rel with past expiration.
-  - touches: `hr.rfid.access.group.employee.rel`
-- **`TestAccessGroupEmployeeRel.test_employee_rel_visits_counting(self)`** - `tests/test_access_groups.py:191`
-  - Test visits counting on employee AG relationship.
-  - touches: `hr.rfid.access.group.employee.rel`
-- **`TestAccessGroupEmployeeRel.test_employee_ag_must_be_in_department_allowed(self)`** - `tests/test_access_groups.py:203`
-  - Test AG must be in department's allowed access groups.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.employee.rel`
-- **`TestAccessGroupContactRel.test_create_contact_rel(self)`** - `tests/test_access_groups.py:221`
-  - Test creating contact ↔ AG relationship.
-- **`TestAccessGroupContactRel.test_contact_rel_with_different_ag(self)`** - `tests/test_access_groups.py:229`
-  - Test creating contact rel with a different access group.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`
-- **`TestAccessGroupContactRel.test_contact_rel_visits_counting(self)`** - `tests/test_access_groups.py:241`
-  - Test visits counting on contact AG relationship.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`
-- **`TestAlarmLineStateParse.test_non_hex_state_returns_unknown_without_raising(self)`** - `tests/test_alarm_line_state.py:29`
-- **`TestAlarmLineStateParse.test_too_short_state_returns_unknown_without_raising(self)`** - `tests/test_alarm_line_state.py:33`
-- **`TestAlarmLineStateParse.test_empty_state_returns_unknown(self)`** - `tests/test_alarm_line_state.py:37`
-- **`TestAlarmLineStateParse.test_valid_state_still_parses(self)`** - `tests/test_alarm_line_state.py:42`
-- **`TestZoneCreation.test_create_zone(self)`** - `tests/test_apb_zones.py:17`
-  - Test creating a basic zone.
-  - touches: `hr.rfid.zone`
-- **`TestZoneCreation.test_create_apb_zone(self)`** - `tests/test_apb_zones.py:26`
-  - Test creating anti-passback zone.
-  - touches: `hr.rfid.zone`
-- **`TestZoneCreation.test_zone_add_doors(self)`** - `tests/test_apb_zones.py:35`
-  - Test adding doors to a zone.
-  - touches: `hr.rfid.zone`
-- **`TestZoneCreation.test_zone_department_filter(self)`** - `tests/test_apb_zones.py:46`
-  - Test zone with department filter.
-  - touches: `hr.rfid.zone`
-- **`TestZoneCreation.test_zone_tag_filter(self)`** - `tests/test_apb_zones.py:55`
-  - Test zone with employee tag filter.
-  - touches: `hr.rfid.zone`
-- **`TestAntiPassback.test_apb_zone_creation_generates_commands(self)`** - `tests/test_apb_zones.py:125`
-  - Test that creating APB zone generates APB flag commands.
-  - touches: `hr.rfid.zone`
-- **`TestAntiPassback.test_apb_entry_event_updates_flags(self)`** - `tests/test_apb_zones.py:157`
-  - Test APB entry event generates flag update commands.
-  - touches: `hr.rfid.zone`
-- **`TestAntiPassback.test_apb_zone_tracks_employees(self)`** - `tests/test_apb_zones.py:197`
-  - Test APB zone tracks employees inside.
-  - touches: `hr.rfid.zone`
-- **`TestBarcodeNumber.test_w34_card_barcode_matches_hardware_hex(self)`** - `tests/test_barcode_qr.py:40`
-  - Card in 5+5 dec format: barcode_number == hex of the same hex pair.
-  - touches: `hr.rfid.card`
-- **`TestBarcodeNumber.test_w34s_card_barcode_matches_hardware_hex(self)`** - `tests/test_barcode_qr.py:53`
-  - Regression: w34s (10d single decimal) card encodes correctly.
-  - touches: `hr.rfid.card`
-- **`TestBarcodeNumber.test_barcode_number_recomputes_when_input_type_changes(self)`** - `tests/test_barcode_qr.py:77`
-  - Customer-reported flow: changing card_input_type must invalidate QR.
-- **`TestBarcodeNumber.test_helpers_are_inverse_on_internal_number(self)`** - `tests/test_barcode_qr.py:103`
-  - w34_to_hex and hex_to_w34 are inverses on the canonical 5+5 form.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_create_card_w34_format(self)`** - `tests/test_card_lifecycle.py:21`
-  - Test creating a card with Wiegand 34 bit format.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_create_card_w34s_format(self)`** - `tests/test_card_lifecycle.py:33`
-  - Test creating a card with Wiegand 34 swapped format.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_card_name_from_reference(self)`** - `tests/test_card_lifecycle.py:44`
-  - Test card name defaults to card_reference when set.
-- **`TestCardCreation.test_card_name_from_number(self)`** - `tests/test_card_lifecycle.py:49`
-  - Test card name falls back to number when no reference.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_duplicate_card_number_same_company_raises(self)`** - `tests/test_card_lifecycle.py:60`
-  - Test that duplicate card number in same company raises error.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_card_number_padding(self)`** - `tests/test_card_lifecycle.py:70`
-  - Test that short card numbers are padded with leading zeros.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_card_number_digits_only(self)`** - `tests/test_card_lifecycle.py:83`
-  - Test that non-numeric card number raises ValidationError.
-  - touches: `hr.rfid.card`
-- **`TestCardCreation.test_card_both_employee_and_contact_raises(self)`** - `tests/test_card_lifecycle.py:93`
-  - Test that setting both employee and contact raises error.
-  - touches: `hr.rfid.card`
-- **`TestCardActivation.test_card_ready_no_dates(self)`** - `tests/test_card_lifecycle.py:109`
-  - Test card_ready() returns True when no activation dates set.
-- **`TestCardActivation.test_card_ready_active_window(self)`** - `tests/test_card_lifecycle.py:114`
-  - Test card_ready() within valid activation window.
-- **`TestCardActivation.test_card_not_ready_future_activation(self)`** - `tests/test_card_lifecycle.py:123`
-  - Test card_ready() returns False before activation date.
-- **`TestCardActivation.test_card_not_ready_past_deactivation(self)`** - `tests/test_card_lifecycle.py:131`
-  - Test card_ready() returns False after deactivation date.
-- **`TestCardActivation.test_card_door_compatible(self)`** - `tests/test_card_lifecycle.py:140`
-  - Test card door compatibility check based on card type.
-- **`TestCardOwnerChange.test_card_employee_assignment(self)`** - `tests/test_card_lifecycle.py:151`
-  - Test card is properly assigned to employee.
-- **`TestCardOwnerChange.test_card_contact_assignment(self)`** - `tests/test_card_lifecycle.py:157`
-  - Test card is properly assigned to contact.
-- **`TestCardOwnerChange.test_card_pin_code_from_owner(self)`** - `tests/test_card_lifecycle.py:163`
-  - Test card PIN code is computed from owner.
-- **`TestCardOwnerChange.test_card_internal_number_w34(self)`** - `tests/test_card_lifecycle.py:170`
-  - Test internal number calculation for w34 format.
-- **`TestPlateNumberEntry.test_convertible_input_is_fixed_without_a_word(self)`** - `tests/test_card_lifecycle.py:194`
-  - Кирилски двойници, малки букви и разделители се поправят тихо -
-- **`TestPlateNumberEntry.test_junk_is_refused_out_loud_naming_the_character(self)`** - `tests/test_card_lifecycle.py:201`
-  - Символ без съответствие на табела не се изтрива тихо - до днес
-- **`TestPlateNumberEntry.test_the_round_trip_is_the_point(self)`** - `tests/test_card_lifecycle.py:211`
-  - Въведеното с двойници се намира от събитието на камерата -
-  - effects: `with_context`
-  - touches: `hr.rfid.card`
-- **`TestPlateNumberEntry.test_ordinary_cards_keep_their_own_rules(self)`** - `tests/test_card_lifecycle.py:223`
-  - touches: `hr.rfid.card`
-- **`TestCommandQueue.test_command_created_on_controller_init(self)`** - `tests/test_commands.py:17`
-  - Test that F0 command is created when controller requests info.
-  - touches: `hr.rfid.command`, `hr.rfid.ctrl`
-- **`TestCommandQueue.test_command_status_lifecycle(self)`** - `tests/test_commands.py:31`
-  - Test command goes from Wait → Process → Success.
-  - touches: `hr.rfid.command`
-- **`TestCommandQueue.test_card_add_generates_d1_command(self)`** - `tests/test_commands.py:43`
-  - Test adding card to AG generates D1 command.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.employee.rel`
-- **`TestCommandQueue.test_command_order(self)`** - `tests/test_commands.py:66`
-  - Test commands are ordered by create_date desc.
-  - touches: `hr.rfid.command`
-- **`TestCommandQueue.test_no_commands_clean_state(self)`** - `tests/test_commands.py:76`
-  - Test no pending commands after full controller init.
-- **`TestCommandQueue.test_heartbeat_returns_pending_command(self)`** - `tests/test_commands.py:81`
-  - Test heartbeat returns pending command when one exists.
-  - touches: `hr.rfid.ctrl`
-- **`TestCardConstraints.test_card_number_unique_per_type(self)`** - `tests/test_constraints.py:17`
-  - Test card number must be unique per card type and company.
-  - touches: `hr.rfid.card`
-- **`TestCardConstraints.test_card_number_padding(self)`** - `tests/test_constraints.py:28`
-  - Test that short card numbers are padded to 10 digits.
-  - touches: `hr.rfid.card`
-- **`TestCardConstraints.test_card_number_digits_only(self)`** - `tests/test_constraints.py:41`
-  - Test card number must contain only digits.
-  - touches: `hr.rfid.card`
-- **`TestCardConstraints.test_card_owner_xor(self)`** - `tests/test_constraints.py:51`
-  - Test card must have employee XOR contact, not both.
-  - touches: `hr.rfid.card`
-- **`TestCardConstraints.test_card_number_10_digits_valid(self)`** - `tests/test_constraints.py:62`
-  - Test valid 10-digit card number.
-  - touches: `hr.rfid.card`
-- **`TestWorkcodeConstraints.test_workcode_exactly_4_chars(self)`** - `tests/test_constraints.py:78`
-  - Test workcode must be exactly 4 characters.
-  - touches: `hr.rfid.workcode`
-- **`TestWorkcodeConstraints.test_workcode_digits_only(self)`** - `tests/test_constraints.py:87`
-  - Test workcode must contain only digits.
-  - touches: `hr.rfid.workcode`
-- **`TestWorkcodeConstraints.test_workcode_valid(self)`** - `tests/test_constraints.py:96`
-  - Test valid workcode creation.
-  - touches: `hr.rfid.workcode`
-- **`TestWorkcodeConstraints.test_workcode_unique(self)`** - `tests/test_constraints.py:105`
-  - Test workcode uniqueness SQL constraint.
-  - touches: `hr.rfid.workcode`
-- **`TestEmployeeConstraints.test_employee_pin_exactly_4_digits(self)`** - `tests/test_constraints.py:124`
-  - Test employee PIN code must be exactly 4 digits.
-- **`TestEmployeeConstraints.test_employee_pin_digits_only(self)`** - `tests/test_constraints.py:129`
-  - Test employee PIN code must contain only digits.
-- **`TestEmployeeConstraints.test_employee_pin_valid(self)`** - `tests/test_constraints.py:134`
-  - Test valid employee PIN code.
-- **`TestEmployeeConstraints.test_employee_ag_must_be_in_department(self)`** - `tests/test_constraints.py:139`
-  - Test employee AG must be in department's allowed list.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.employee.rel`
-- **`TestPartnerConstraints.test_partner_pin_exactly_4_digits(self)`** - `tests/test_constraints.py:156`
-  - Test partner PIN code must be exactly 4 digits.
-- **`TestPartnerConstraints.test_partner_pin_digits_only(self)`** - `tests/test_constraints.py:161`
-  - Test partner PIN code must contain only digits.
-- **`TestPartnerConstraints.test_partner_pin_valid(self)`** - `tests/test_constraints.py:166`
-  - Test valid partner PIN code.
-- **`TestDepartmentConstraints.test_default_ag_must_be_in_allowed(self)`** - `tests/test_constraints.py:176`
-  - Test default access group must be in allowed access groups list.
-  - touches: `hr.rfid.access.group`
-- **`TestDepartmentConstraints.test_default_ag_valid(self)`** - `tests/test_constraints.py:185`
-  - Test valid default access group setting.
-- **`TestDepartmentConstraints.test_add_allowed_ag(self)`** - `tests/test_constraints.py:192`
-  - Test adding an access group to allowed list.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupConstraints.test_circular_inheritance_direct(self)`** - `tests/test_constraints.py:208`
-  - Test direct circular inheritance raises error.
-  - touches: `hr.rfid.access.group`
-- **`TestAccessGroupConstraints.test_self_inheritance_raises(self)`** - `tests/test_constraints.py:222`
-  - Test self-inheritance raises error.
-  - touches: `hr.rfid.access.group`
-- **`TestEnvironmentReadings.setUpClass(cls)`** (`@classmethod`) - `tests/test_environment_readings.py:20`
-  - calls `super()`
-  - touches: `hr.rfid.ctrl`, `hr.rfid.ctrl.th`, `hr.rfid.webstack`
-- **`TestEnvironmentReadings.test_a_reported_reading_is_written_down_once(self)`** - `tests/test_environment_readings.py:41`
-  - A reading the device reports lands in the history once, at ITS time.
-  - touches: `hr.rfid.ctrl.th.log`
-- **`TestEnvironmentReadings.test_a_polled_reading_is_still_written_down(self)`** - `tests/test_environment_readings.py:60`
-  - The other way readings arrive must keep being recorded.
-  - touches: `hr.rfid.ctrl.th.log`
-- **`TestEnvironmentReadings.test_an_unchanged_reading_adds_no_row(self)`** - `tests/test_environment_readings.py:78`
-  - Repeating the same value is not new information.
-  - touches: `hr.rfid.ctrl.th.log`
-- **`TestUserEventsICON50.test_reader_events_3_to_6(self)`** - `tests/test_events.py:21`
-  - Test reader events 3 (granted), 4 (denied no access), 5 (denied ts), 6 (denied APB).
-- **`TestUserEventsICON50.test_unknown_card_creates_system_event(self)`** - `tests/test_events.py:32`
-  - Test unknown card generates system event instead of user event.
-- **`TestUserEventsICON50.test_duress_events(self)`** - `tests/test_events.py:40`
-  - Test duress events (1, 2) on all readers.
-- **`TestUserEventsICON50.test_all_reader_events(self)`** - `tests/test_events.py:45`
-  - Test complete reader event sequence on iCON50.
-- **`TestUserEventsICON110.test_reader1_events(self)`** - `tests/test_events.py:56`
-  - Test events on reader 1.
-- **`TestUserEventsICON110.test_reader2_events(self)`** - `tests/test_events.py:61`
-  - Test events on reader 2.
-- **`TestUserEventsICON110.test_duress_both_readers(self)`** - `tests/test_events.py:66`
-  - Test duress events on both readers.
-- **`TestUserEventsICON130.test_all_four_readers(self)`** - `tests/test_events.py:77`
-  - Test events on all 4 readers.
-- **`TestSystemEvents.test_emergency_events(self)`** - `tests/test_events.py:88`
-  - Test emergency events (event 19) on reader 1, 1+64 (off), and 0 (hardware).
-- **`TestSystemEvents.test_exit_button_events(self)`** - `tests/test_events.py:93`
-  - Test exit button events (event 21) on all doors.
-- **`TestSystemEvents.test_door_overtime_events(self)`** - `tests/test_events.py:98`
-  - Test door overtime events (event 25) with command generation.
-- **`TestSystemEvents.test_force_door_open_events(self)`** - `tests/test_events.py:103`
-  - Test force door open events (event 26).
-- **`TestSystemEvents.test_power_on_event(self)`** - `tests/test_events.py:108`
-  - Test power on event (event 30) triggers time sync command.
-- **`TestSystemEvents.test_external_control_event(self)`** - `tests/test_events.py:113`
-  - Test external control event (event 29).
-- **`TestSystemEvents.test_all_system_events(self)`** - `tests/test_events.py:118`
-  - Test full system events sequence on iCON50.
-- **`TestEvent64CloudCard.test_ev64_icon50(self)`** - `tests/test_events.py:134`
-  - Test external DB card request on iCON50.
-- **`TestEvent64CloudCard.test_ev64_icon110(self)`** - `tests/test_events.py:140`
-  - Test external DB card request on iCON110.
-- **`TestEvent64CloudCard.test_ev64_icon115(self)`** - `tests/test_events.py:146`
-  - Test external DB card request on iCON115.
-- **`TestEvent64CloudCard.test_ev64_icon130(self)`** - `tests/test_events.py:152`
-  - Test external DB card request on iCON130.
-- **`TestEvent64CloudCard.test_ev64_icon180(self)`** - `tests/test_events.py:158`
-  - Test external DB card request on iCON180.
-- **`TestTurnstileSpecialEvents.test_turnstile_reader_events(self)`** - `tests/test_events.py:170`
-  - Test events on turnstile readers 1 and 2.
-- **`TestTurnstileSpecialEvents.test_turnstile_reader_65(self)`** - `tests/test_events.py:175`
-  - Test special reader 65 events on turnstile.
-- **`RFIDTests.setUp(self)`** - `tests/test_functional.py:18`
-  - calls `super()`
-- **`RFIDTests.test_functionality(self)`** - `tests/test_functional.py:21`
-  - effects: `log_info`
-- **`RFIDTests.setUp(self)`** - `tests/test_functional_old.py:20`
-  - calls `super()`
-- **`RFIDTests.test_functionality(self)`** - `tests/test_functional_old.py:23`
-  - effects: `log_info`
-- **`TestiCON50Init.test_icon50_init_sequence(self)`** - `tests/test_hardware_init.py:16`
-  - Test full iCON50 initialization: F0 → D7 → DC → DC → F6 → F9 → FB → FF → B3.
-- **`TestiCON50Init.test_icon50_hw_version(self)`** - `tests/test_hardware_init.py:22`
-  - Test iCON50 hardware version is correctly parsed from F0 response.
-- **`TestiCON50Init.test_icon50_single_reader(self)`** - `tests/test_hardware_init.py:28`
-  - Test iCON50 has exactly 1 reader and 1 door.
-- **`TestiCON50Init.test_icon50_io_table(self)`** - `tests/test_hardware_init.py:35`
-  - Test iCON50 IO table is properly initialized.
-- **`TestiCON50Init.test_icon50_serial_number(self)`** - `tests/test_hardware_init.py:43`
-  - Test iCON50 serial number is parsed from F0.
-- **`TestiCON50Init.test_icon50_mode(self)`** - `tests/test_hardware_init.py:49`
-  - Test iCON50 mode is set after initialization.
-- **`TestiCON50Init.test_icon50_max_cards(self)`** - `tests/test_hardware_init.py:55`
-  - Test iCON50 max cards count is parsed.
-- **`TestiCON110Init.test_icon110_init_sequence(self)`** - `tests/test_hardware_init.py:67`
-  - Test full iCON110 initialization.
-- **`TestiCON110Init.test_icon110_hw_version(self)`** - `tests/test_hardware_init.py:73`
-  - Test iCON110 hardware version is correctly parsed.
-- **`TestiCON110Init.test_icon110_two_readers(self)`** - `tests/test_hardware_init.py:79`
-  - Test iCON110 has 2 readers and 2 doors in default mode.
-- **`TestiCON110Init.test_icon110_io_table(self)`** - `tests/test_hardware_init.py:86`
-  - Test iCON110 IO table matches default.
-- **`TestiCON115Init.test_icon115_init_sequence(self)`** - `tests/test_hardware_init.py:98`
-  - Test full iCON115 initialization including B0 alarm line protocol.
-- **`TestiCON115Init.test_icon115_hw_version(self)`** - `tests/test_hardware_init.py:104`
-  - Test iCON115 hardware version.
-- **`TestiCON115Init.test_icon115_two_readers(self)`** - `tests/test_hardware_init.py:110`
-  - Test iCON115 has 2 readers.
-- **`TestiCON130Init.test_icon130_init_sequence(self)`** - `tests/test_hardware_init.py:122`
-  - Test full iCON130 initialization.
-- **`TestiCON130Init.test_icon130_hw_version(self)`** - `tests/test_hardware_init.py:128`
-  - Test iCON130 hardware version.
-- **`TestiCON130Init.test_icon130_four_readers(self)`** - `tests/test_hardware_init.py:134`
-  - Test iCON130 has 4 readers and appropriate doors.
-- **`TestiCON180Init.test_icon180_init_sequence(self)`** - `tests/test_hardware_init.py:147`
-  - Test full iCON180 initialization.
-- **`TestiCON180Init.test_icon180_four_readers(self)`** - `tests/test_hardware_init.py:153`
-  - Test iCON180 has 4 readers.
-- **`TestRelayControllerInit.test_relay_init_sequence(self)`** - `tests/test_hardware_init.py:165`
-  - Test full Relay controller initialization.
-- **`TestRelayControllerInit.test_relay_hw_version(self)`** - `tests/test_hardware_init.py:171`
-  - Test Relay controller hardware version.
-- **`TestRelayControllerInit.test_relay_is_relay(self)`** - `tests/test_hardware_init.py:177`
-  - Test is_relay_ctrl() returns True for relay controller.
-- **`TestRelayControllerInit.test_relay_readers(self)`** - `tests/test_hardware_init.py:182`
-  - Test Relay controller has 2 readers.
-- **`TestTurnstileInit.test_turnstile_init_sequence(self)`** - `tests/test_hardware_init.py:194`
-  - Test full Turnstile initialization including FC anti-passback read.
-- **`TestTurnstileInit.test_turnstile_hw_version(self)`** - `tests/test_hardware_init.py:199`
-  - Test Turnstile hardware version.
-- **`TestTurnstileInit.test_turnstile_readers(self)`** - `tests/test_hardware_init.py:205`
-  - Test Turnstile has 2 readers.
-- **`TestTemperatureInit.test_temperature_init_sequence(self)`** - `tests/test_hardware_init.py:217`
-  - Test full Temperature controller init including sensor reading (F2/B1).
-- **`TestTemperatureInit.test_temperature_sensors_created(self)`** - `tests/test_hardware_init.py:222`
-  - Test that temperature sensors are created during init.
-- **`TestTemperatureInit.test_temperature_cards_count(self)`** - `tests/test_hardware_init.py:230`
-  - Test cards count (sensors) is parsed from F2 response.
-- **`TestTemperatureInit.test_temperature_hw_version(self)`** - `tests/test_hardware_init.py:236`
-  - Test Temperature controller hardware version.
-- **`TestVendingInit.test_vending_init_sequence(self)`** - `tests/test_hardware_init.py:248`
-  - Test full Vending controller initialization.
-- **`TestVendingInit.test_vending_hw_version(self)`** - `tests/test_hardware_init.py:253`
-  - Test Vending controller hardware version.
-- **`TestInterlockingMode.test_decode_reads_interlocking_bit(self)`** - `tests/test_interlocking_mode.py:30`
-  - Hardware reports bit 4 set in contr_mode -> Odoo stores it.
-- **`TestInterlockingMode.test_encode_includes_interlocking_bit(self)`** - `tests/test_interlocking_mode.py:53`
-  - Enabling interlocking -> the D5 mode byte carries bit 0x10.
-- **`TestInterlockingMode.test_default_has_no_interlocking_bit(self)`** - `tests/test_interlocking_mode.py:61`
-  - A plain mode write leaves bit 4 clear.
-- **`TestInterlockingMode.test_mode_write_preserves_interlocking(self)`** - `tests/test_interlocking_mode.py:67`
-  - THE BUGFIX: changing another mode flag must NOT zero bit 4.
-  - touches: `hr.rfid.command`
-- **`TestInterlockingMode.test_write_triggers_hardware_command(self)`** - `tests/test_interlocking_mode.py:89`
-  - Setting interlocking_mode from Odoo pushes a D5 to the controller.
-- **`TestInterlockingMode.test_field_gated_to_supporting_controllers(self)`** - `tests/test_interlocking_mode.py:98`
-  - UI: interlocking_mode is hidden unless hw is iCON115/iCON130.
-  - touches: `hr.rfid.ctrl`
-- **`TestMultiCompanySharedRecords.setUpClass(cls)`** (`@classmethod`) - `tests/test_multi_company_rules.py:50`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `hr.rfid.ctrl`, `hr.rfid.webstack`, `res.company`
-- **`TestMultiCompanySharedRecords.test_workcode_global_visible(self)`** - `tests/test_multi_company_rules.py:108`
-  - A workcode with company_id=False is shared — must be visible.
-  - touches: `hr.rfid.workcode`
-- **`TestMultiCompanySharedRecords.test_workcode_other_company_hidden(self)`** - `tests/test_multi_company_rules.py:122`
-  - Tolerating False must NOT leak other companies' workcodes.
-  - touches: `hr.rfid.workcode`
-- **`TestMultiCompanySharedRecords.test_door_without_webstack_visible(self)`** - `tests/test_multi_company_rules.py:138`
-  - A door with no controller/webstack computes company_id=False —
-  - touches: `hr.rfid.door`
-- **`TestMultiCompanySharedRecords.test_door_other_company_hidden(self)`** - `tests/test_multi_company_rules.py:154`
-  - A door wired to a company-B controller must stay hidden.
-  - touches: `hr.rfid.door`
-- **`TestMultiCompanySharedRecords.test_reader_without_controller_visible(self)`** - `tests/test_multi_company_rules.py:172`
-  - A reader with controller_id=False has webstack_id=False (related
-  - touches: `hr.rfid.reader`
-- **`TestMultiCompanySharedRecords.test_reader_other_company_hidden(self)`** - `tests/test_multi_company_rules.py:192`
-  - A reader on a company-B controller must stay hidden.
-  - touches: `hr.rfid.reader`
-- **`TestMultiCompanySharedRecords.test_event_system_controller_less_visible(self)`** - `tests/test_multi_company_rules.py:210`
-  - PRODUCTION BUG CASE: a system event created without controller_id
-  - touches: `hr.rfid.event.system`
-- **`TestMultiCompanySharedRecords.test_event_system_other_company_hidden(self)`** - `tests/test_multi_company_rules.py:255`
-  - A system event of a company-B controller must stay hidden.
-  - touches: `hr.rfid.event.system`
-- **`TestOrphanUserEventVisibility.setUpClass(cls)`** (`@classmethod`) - `tests/test_multi_company_rules.py:281`
-  - super-split (super): pre=- · post=`sql`
-  - effects: `sql`
-  - touches: `hr.employee`, `hr.rfid.ctrl`, `hr.rfid.event.user`, `hr.rfid.reader`, `hr.rfid.webstack`, `res.company`
-- **`TestOrphanUserEventVisibility.test_orphan_visible_to_door_owner(self)`** - `tests/test_multi_company_rules.py:431`
-  - The security officer of the company operating a door must see
-- **`TestOrphanUserEventVisibility.test_orphan_hidden_from_other_company(self)`** - `tests/test_multi_company_rules.py:445`
-  - NEGATIVE: another company's officer must NOT see an unknown
-- **`TestOrphanUserEventVisibility.test_orphan_on_shared_module_visible_to_sharing_company(self)`** - `tests/test_multi_company_rules.py:463`
-  - Two companies sharing one entrance both guard it: the sharing
-- **`TestOrphanUserEventVisibility.test_orphan_without_reader_stays_visible(self)`** - `tests/test_multi_company_rules.py:481`
-  - A legacy imported event with NO reader resolves to no company;
-- **`TestOrphanUserEventVisibility.test_orphan_broken_chain_stays_visible(self)`** - `tests/test_multi_company_rules.py:496`
-  - A chain that stops before naming a company (reader with no
-- **`TestOrphanUserEventVisibility.test_identified_event_ignores_hardware_chain(self)`** - `tests/test_multi_company_rules.py:520`
-  - An event that DOES name a person is governed by that person's
-- **`TestOrphanUserEventVisibility.test_foreign_identified_event_stays_hidden(self)`** - `tests/test_multi_company_rules.py:541`
-  - Company A must not see another company's employee events at
-- **`TestOnboardingPanel.setUp(self)`** - `tests/test_onboarding.py:15`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `onboarding.onboarding`, `onboarding.progress`, `onboarding.progress.step`
-- **`TestOnboardingPanel.test_panel_html_renders_core_markup(self)`** - `tests/test_onboarding.py:35`
-  - touches: `onboarding.onboarding`
-- **`TestOnboardingPanel.test_panel_html_unknown_route_is_false(self)`** - `tests/test_onboarding.py:48`
-  - touches: `onboarding.onboarding`
-- **`TestOnboardingPanel.test_panel_html_hidden_after_close(self)`** - `tests/test_onboarding.py:54`
-  - touches: `onboarding.onboarding`
-- **`TestOnboardingPanelFirstLoadRace.setUp(self)`** - `tests/test_onboarding.py:84`
-  - calls `super()`
-  - touches: `onboarding.onboarding`
-- **`TestOnboardingPanelFirstLoadRace.test_panel_still_shown_when_another_request_wins_the_first_load(self)`** - `tests/test_onboarding.py:104`
-  - Losing the first-load race must not cost the user the banner.
-  - touches: `onboarding.progress`, `onboarding.progress.step`
-- **`TestOnboardingPanelFirstLoadRace.test_first_load_starts_tracking_exactly_once(self)`** - `tests/test_onboarding.py:132`
-  - The winning request tracks progress, and a reload does not duplicate it.
-- **`TestOnboardingPanelFailures.setUp(self)`** - `tests/test_onboarding_panel_errors.py:28`
-  - calls `super()`
-  - touches: `onboarding.onboarding`
-- **`TestOnboardingPanelFailures.test_two_visitors_changing_the_same_thing_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:55`
-- **`TestOnboardingPanelFailures.test_a_row_that_could_not_be_locked_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:58`
-- **`TestOnboardingPanelFailures.test_a_deadlock_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:61`
-- **`TestOnboardingPanelFailures.test_odoos_own_signal_to_run_the_request_again_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:64`
-- **`TestOnboardingPanelFailures.test_a_column_the_database_does_not_know_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:69`
-- **`TestOnboardingPanelFailures.test_a_value_the_database_will_not_accept_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:74`
-- **`TestOnboardingPanelFailures.test_work_attempted_after_the_transaction_died_is_passed_on(self)`** - `tests/test_onboarding_panel_errors.py:79`
-- **`TestOnboardingPanelFailures.test_anything_else_only_costs_the_banner(self)`** - `tests/test_onboarding_panel_errors.py:86`
-- **`TestOnboardingPanelFailures.test_a_missing_template_only_costs_the_banner(self)`** - `tests/test_onboarding_panel_errors.py:95`
-- **`TestOnboardingPanelFailures.test_the_hidden_banner_is_named_in_the_log(self)`** - `tests/test_onboarding_panel_errors.py:104`
-  - Whoever reads the log can tell which help panel went missing.
-- **`TestOneDoorTwoSchedules.setUp(self)`** - `tests/test_one_door_two_schedules.py:35`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.reader`, `hr.rfid.time.schedule`, `ir.config_parameter`
-- **`TestOneDoorTwoSchedules.test_a_contact_cannot_hold_one_door_on_two_schedules(self)`** - `tests/test_one_door_two_schedules.py:102`
-- **`TestOneDoorTwoSchedules.test_a_contact_may_hold_one_door_twice_on_the_same_schedule(self)`** - `tests/test_one_door_two_schedules.py:122`
-  - Съвпадащите графици остават разрешени - иначе това е забрана, не защита.
-- **`TestOneDoorTwoSchedules.test_an_employee_cannot_hold_one_door_on_two_schedules(self)`** - `tests/test_one_door_two_schedules.py:141`
-- **`TestOneDoorTwoSchedules.test_an_employee_may_hold_one_door_twice_on_the_same_schedule(self)`** - `tests/test_one_door_two_schedules.py:160`
-- **`TestOverlappingAccessGroups.setUp(self)`** - `tests/test_overlapping_access_groups.py:27`
-  - calls `super()`
-  - touches: `hr.rfid.access.group.contact.rel`, `hr.rfid.access.group.door.rel`, `hr.rfid.card.door.rel`, `hr.rfid.command`, `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.reader`, `hr.rfid.time.schedule`
-- **`TestOverlappingAccessGroups.test_r1_new_rel_activate_creates_door_rel_and_add(self)`** - `tests/test_overlapping_access_groups.py:112`
-  - R1: New rel that activates → 1 door rel + 1 ADD command, no REMOVE.
-- **`TestOverlappingAccessGroups.test_r2_lone_rel_expires_removes_door_rel_and_emits_remove(self)`** - `tests/test_overlapping_access_groups.py:126`
-  - R2: Single rel expires → -1 door rel + 1 REMOVE command.
-- **`TestOverlappingAccessGroups.test_r3_card_not_ready_no_rel(self)`** - `tests/test_overlapping_access_groups.py:144`
-  - R3: card.active=False → _activate creates no rel and no commands.
-- **`TestOverlappingAccessGroups.test_r5_rel_unlink_removes_door_rel(self)`** - `tests/test_overlapping_access_groups.py:157`
-  - R5: rel.unlink() → -1 door rel + 1 REMOVE command.
-- **`TestOverlappingAccessGroups.test_r6_card_write_noop_idempotent(self)`** - `tests/test_overlapping_access_groups.py:170`
-  - R6: card.write({deactivate_on: same}) → triggers update_card_rels but no duplicate work.
-- **`TestOverlappingAccessGroups.test_e1_activate_before_deactivate_preserves_access(self)`** - `tests/test_overlapping_access_groups.py:190`
-  - E1 (THE BUG): _activate called BEFORE _deactivate (lazy recompute order).
-  - effects: `sql`
-  - touches: `hr.rfid.access.group.contact.rel`
-- **`TestOverlappingAccessGroups.test_e2_deactivate_before_activate_preserves_access(self)`** - `tests/test_overlapping_access_groups.py:244`
-  - E2: _deactivate called BEFORE _activate (normal cron order).
-  - effects: `sql`
-  - touches: `hr.rfid.access.group.contact.rel`
-- **`TestRecalcRefusalIsHeard.setUpClass(cls)`** (`@classmethod`) - `tests/test_recalc_hook.py:30`
-  - super-split (super): pre=- · post=`with_context`
-  - effects: `with_context`
-  - touches: `hr.employee`
-- **`TestRecalcRefusalIsHeard.test_nobody_objects_so_the_rebuild_goes_ahead(self)`** - `tests/test_recalc_hook.py:44`
-  - With no add-on protecting anything, asking must simply be allowed.
-- **`TestRecalcRefusalIsHeard.test_asking_about_nobody_is_allowed(self)`** - `tests/test_recalc_hook.py:52`
-  - Selecting no one is not an error - there is nothing to protect.
-  - touches: `hr.employee`
-- **`TestRecalcRefusalIsHeard.test_an_objection_reaches_the_operator(self)`** - `tests/test_recalc_hook.py:58`
-  - An add-on that refuses stops the rebuild, whoever loaded last.
-  - effects: `raise:UserError`
-- **`TestRecalcRefusalIsHeard.test_an_add_on_that_allows_does_not_silence_the_one_underneath(self)`** - `tests/test_recalc_hook.py:88`
-  - Two add-ons, and only one of them objects: the refusal still wins.
-  - effects: `raise:UserError`
-- **`TestRecalcRefusalIsHeard.test_the_refusal_point_belongs_to_the_shared_module(self)`** - `tests/test_recalc_hook.py:117`
-  - No add-on can take the place of the refusal point and drop it.
-- **`TestMultiCompanyIsolation.test_webstack_company_isolation(self)`** - `tests/test_security.py:27`
-  - Test webstacks are isolated by company.
-- **`TestMultiCompanyIsolation.test_card_company_isolation(self)`** - `tests/test_security.py:34`
-  - Test cards are isolated by company.
-- **`TestMultiCompanyIsolation.test_access_group_company_isolation(self)`** - `tests/test_security.py:41`
-  - Test access groups are isolated by company.
-- **`TestMultiCompanyIsolation.test_create_webstack_company2(self)`** - `tests/test_security.py:48`
-  - Test creating webstack in different company.
-  - touches: `hr.rfid.webstack`
-- **`TestGroupPermissions.setUpClass(cls)`** (`@classmethod`) - `tests/test_security.py:69`
-  - calls `super()`
-- **`TestGroupPermissions.test_viewer_can_read_cards(self)`** - `tests/test_security.py:96`
-  - Test RFID viewer can read card records.
-  - touches: `hr.rfid.card`
-- **`TestGroupPermissions.test_viewer_can_read_events(self)`** - `tests/test_security.py:103`
-  - Test RFID viewer can read user events.
-  - touches: `hr.rfid.event.user`
-- **`TestGroupPermissions.test_officer_can_create_card(self)`** - `tests/test_security.py:108`
-  - Test RFID officer can create cards.
-  - touches: `hr.rfid.card`
-- **`TestGroupPermissions.test_manager_can_create_webstack(self)`** - `tests/test_security.py:118`
-  - Test RFID manager can create webstacks.
-  - touches: `hr.rfid.webstack`
-- **`TestGroupPermissions.test_manager_can_create_access_group(self)`** - `tests/test_security.py:129`
-  - Test RFID manager can create access groups.
-  - touches: `hr.rfid.access.group`
-- **`TestGroupPermissions.test_non_rfid_user_denied_webstack(self)`** - `tests/test_security.py:137`
-  - Test user without RFID groups cannot access webstacks.
-  - touches: `hr.rfid.webstack`
-- **`TestGroupPermissions.test_non_rfid_user_denied_cards(self)`** - `tests/test_security.py:150`
-  - Test user without RFID groups cannot access cards.
-  - touches: `hr.rfid.card`
-- **`TestSotDenied.setUpClass(cls)`** (`@classmethod`) - `tests/test_sot_denied.py:38`
-  - calls `super()`
-  - touches: `hr.rfid.card`, `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.reader`, `res.partner`
-- **`TestSotDenied.test_01_known_card_creates_user_event(self)`** - `tests/test_sot_denied.py:163`
-  - Cardholder triggers SOT_DENIED → user event with action 5 or 15.
-  - touches: `hr.rfid.event.user`
-- **`TestSotDenied.test_02_unknown_card_falls_back_to_system_event(self)`** - `tests/test_sot_denied.py:187`
-  - Unrecognised card number → system event (not a user event).
-  - touches: `hr.rfid.event.user`
-- **`TestSotDenied.test_03_no_card_falls_back_to_system_event(self)`** - `tests/test_sot_denied.py:202`
-  - Hardware-only trigger (card=0000000000) → system event fallback.
-- **`TestSystemEventDedup.setUpClass(cls)`** (`@classmethod`) - `tests/test_system_event_dedup.py:27`
-  - calls `super()`
-  - touches: `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.webstack`
-- **`TestSystemEventDedup.test_same_door_repeat_groups(self)`** - `tests/test_system_event_dedup.py:65`
-  - The regression itself: a repeating door event must GROUP (it never
-- **`TestSystemEventDedup.test_different_door_new_row(self)`** - `tests/test_system_event_dedup.py:74`
-- **`TestSystemEventDedup.test_after_quiet_gap_new_row(self)`** - `tests/test_system_event_dedup.py:79`
-  - A repeat AFTER the window is a new incident - it must never vanish
-- **`TestSystemEventDedup.test_sliding_window_keeps_grouping(self)`** - `tests/test_system_event_dedup.py:88`
-  - Repeats each within the window of the PREVIOUS one keep grouping,
-- **`TestSystemEventDedup.test_webstack_only_event_groups(self)`** - `tests/test_system_event_dedup.py:99`
-  - Module-level events (no controller/door) keep grouping as before.
-  - touches: `hr.rfid.event.system`
-- **`TestSystemEventDedup.test_door_event_not_merged_into_doorless(self)`** - `tests/test_system_event_dedup.py:110`
-  - An event WITH a door must not fold into a doorless row (and vice
-  - touches: `hr.rfid.event.system`
-- **`TestModulePresence.test_a_module_gone_dark_is_flagged(self)`** - `tests/test_telemetry_bus.py:54`
-- **`TestModulePresence.test_one_missed_check_in_does_not_condemn_a_module(self)`** - `tests/test_telemetry_bus.py:62`
-  - Only Odoo-provisioned modules are guaranteed to beat every minute;
-- **`TestModulePresence.test_contact_restores_the_full_tolerance(self)`** - `tests/test_telemetry_bus.py:74`
-  - A module that misses, reports, then misses again must get the whole
-- **`TestModulePresence.test_a_module_already_dark_costs_nothing_more(self)`** - `tests/test_telemetry_bus.py:88`
-  - A site switched off for a week must not cost a write every five
-- **`TestModulePresence.test_a_module_still_reporting_keeps_its_green_light(self)`** - `tests/test_telemetry_bus.py:101`
-  - The negative half: the scan must not call a healthy module dark.
-  - touches: `hr.rfid.webstack`
-- **`TestModulePresence.test_a_module_that_never_connected_is_not_nagged_about(self)`** - `tests/test_telemetry_bus.py:108`
-  - An unfinished installation is not a communication failure - and the
-  - touches: `hr.rfid.webstack`
-- **`TestModulePresence.test_a_check_in_marks_a_dark_module_alive_again(self)`** - `tests/test_telemetry_bus.py:116`
-  - Recovery is owned by the check-in itself, not by the scan: the scan
-- **`TestModulePresence.test_the_scan_also_catches_a_module_that_recovered_unnoticed(self)`** - `tests/test_telemetry_bus.py:127`
-  - Belt and braces: whatever route brought the timestamp forward, the
-- **`TestModulePresence.test_a_real_time_module_is_not_called_dark(self)`** - `tests/test_telemetry_bus.py:137`
-  - A module on the websocket never writes updated_at - judging it by
-- **`TestModulePresence.test_the_daily_todo_ignores_a_healthy_real_time_module(self)`** - `tests/test_telemetry_bus.py:148`
-  - Same trap, one day later: the 24-hour Todo must not land on a module
-  - touches: `hr.rfid.webstack`
-- **`TestModulePresence.test_the_daily_todo_still_fires_for_a_genuinely_silent_module(self)`** - `tests/test_telemetry_bus.py:158`
-  - The transport-aware predicate must not swallow the real case.
-  - touches: `hr.rfid.webstack`
-- **`TestHeartbeatWritesOnlyWhatChanged.test_repeating_the_same_firmware_does_not_touch_the_record(self)`** - `tests/test_telemetry_bus.py:178`
-- **`TestHeartbeatWritesOnlyWhatChanged.test_a_long_firmware_string_does_not_defeat_the_guard(self)`** - `tests/test_telemetry_bus.py:188`
-  - The field truncates at its size; comparing the stored value against
-- **`TestHeartbeatWritesOnlyWhatChanged.test_a_firmware_upgrade_is_recorded(self)`** - `tests/test_telemetry_bus.py:201`
-- **`TestThePresenceScanIsInstalled.test_the_scan_runs_by_itself(self)`** - `tests/test_telemetry_bus.py:214`
-  - effects: `sudo`
-  - touches: `ir.config_parameter`
-- **`TestTimeScheduleIntervals.test_time_schedule_exists(self)`** - `tests/test_time_schedules.py:17`
-  - Test that default time schedules exist after module install.
-  - touches: `hr.rfid.time.schedule`
-- **`TestTimeScheduleIntervals.test_interval_begin_before_end(self)`** - `tests/test_time_schedules.py:22`
-  - Test begin time must be before end time.
-  - touches: `hr.rfid.ctrl.ts.line`
-- **`TestTimeScheduleIntervals.test_valid_interval_creation(self)`** - `tests/test_time_schedules.py:34`
-  - Test creating a valid time schedule interval.
-  - touches: `hr.rfid.ctrl.ts.line`
-- **`TestTimeScheduleIntervals.test_interval_float_to_str(self)`** - `tests/test_time_schedules.py:47`
-  - Test float to string conversion for time values.
-  - touches: `hr.rfid.ctrl.ts.line`
-- **`TestTimeScheduleIntervals.test_zero_end_allowed(self)`** - `tests/test_time_schedules.py:55`
-  - Test that end=0 is allowed (means midnight/24h).
-  - touches: `hr.rfid.ctrl.ts.line`
-- **`TestTimeScheduleIntervals.test_equal_begin_end_raises(self)`** - `tests/test_time_schedules.py:66`
-  - Test that begin == end raises ValidationError (except when end=0).
-  - touches: `hr.rfid.ctrl.ts.line`
-- **`TestTimeScheduleIntervals.test_display_name(self)`** - `tests/test_time_schedules.py:78`
-  - Test display name computation for time schedule line.
-  - touches: `hr.rfid.ctrl.ts.line`
-- **`TestHrRfidTours.setUpClass(cls)`** (`@classmethod`) - `tests/test_tours.py:12`
-  - calls `super()`
-  - touches: `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.webstack`, `res.partner`, `res.users`
-- **`TestHrRfidTours.test_add_webstack_tour(self)`** - `tests/test_tours.py:46`
-  - Process 1: admin registers a brand-new RFID module.
-  - touches: `hr.rfid.webstack`
-- **`TestHrRfidTours.test_realtime_channel_tour(self)`** - `tests/test_tours.py:70`
-  - Process: an operator enables the real-time channel on a module
-- **`TestHrRfidTours.test_access_group_add_door_tour(self)`** - `tests/test_tours.py:91`
-  - Process 2: admin creates an Access Group and attaches a door.
-  - touches: `hr.rfid.access.group`
-- **`TestHrRfidTours.test_onboarding_panel_tour(self)`** - `tests/test_tours.py:115`
-  - Process 0: a new admin lands on User Events and is guided by the
-  - effects: `sudo`
-  - touches: `onboarding.onboarding`, `onboarding.progress`, `onboarding.progress.step`, `res.company`
-- **`TestHrRfidTours.test_card_assign_tour(self)`** - `tests/test_tours.py:152`
-  - Process 3: admin issues a card to a contact.
-  - touches: `hr.rfid.card`
-- **`TestAnUnknownDevicePayload.test_the_barcode_shape_is_answered_not_dropped_on_the_floor(self)`** - `tests/test_unknown_device_payload.py:29`
-  - The exact payload that used to end in a server error.
-- **`TestAnUnknownDevicePayload.test_any_other_unknown_shape_is_answered_too(self)`** - `tests/test_unknown_device_payload.py:44`
-  - NEGATIVE: nothing about this is special to barcode devices.
-- **`TestWebstackCRUD.test_webstack_create(self)`** - `tests/test_webstack.py:16`
-  - Test creating a webstack.
-- **`TestWebstackCRUD.test_webstack_serial(self)`** - `tests/test_webstack.py:21`
-  - Test webstack serial number.
-- **`TestWebstackCRUD.test_webstack_available(self)`** - `tests/test_webstack.py:26`
-  - Test webstack availability status.
-- **`TestWebstackCRUD.test_webstack_timezone(self)`** - `tests/test_webstack.py:31`
-  - Test webstack timezone setting.
-- **`TestWebstackCRUD.test_webstack_company(self)`** - `tests/test_webstack.py:36`
-  - Test webstack company assignment.
-- **`TestWebstackCRUD.test_webstack_key_generated(self)`** - `tests/test_webstack.py:42`
-  - Test webstack key is generated on creation.
-- **`TestWebstackCRUD.test_create_second_webstack(self)`** - `tests/test_webstack.py:47`
-  - Test creating a second webstack with different serial.
-  - touches: `hr.rfid.webstack`
-- **`TestWebstackHeartbeat.test_heartbeat_empty_response(self)`** - `tests/test_webstack.py:66`
-  - Test heartbeat with no pending commands returns empty.
-- **`TestWebstackHeartbeat.test_heartbeat_increments(self)`** - `tests/test_webstack.py:72`
-  - Test heartbeat counter increments properly.
-- **`TestWebstackHeartbeat.test_heartbeat_provisions_detected_controller(self)`** - `tests/test_webstack.py:87`
-  - A heartbeat reporting an unknown controller creates it and queues F0
-  - touches: `hr.rfid.command`
-- **`TestWebstackHeartbeat.test_heartbeat_provision_is_idempotent(self)`** - `tests/test_webstack.py:102`
-  - Re-reporting the same controller creates no duplicate record or F0.
-  - touches: `hr.rfid.command`
-- **`TestWebstackHeartbeat.test_heartbeat_provision_mixed_only_creates_new(self)`** - `tests/test_webstack.py:116`
-  - An array mixing a known and an unknown id creates only the unknown one.
-  - touches: `hr.rfid.ctrl`
-- **`TestWebstackHeartbeat.test_heartbeat_without_controllers_key_is_backward_compatible(self)`** - `tests/test_webstack.py:128`
-  - Legacy firmware (no 'controllers' key) provisions nothing; FW still set.
-  - touches: `hr.rfid.ctrl`
-- **`TestWebstackHeartbeat.test_heartbeat_provision_skips_zero_id(self)`** - `tests/test_webstack.py:140`
-  - Id 0 (broadcast/no-controller) is skipped; a real id alongside is created.
-- **`TestWebstackHeartbeat.test_heartbeat_malformed_controllers_is_safe(self)`** - `tests/test_webstack.py:147`
-  - A malformed 'controllers' value must never break the heartbeat (no 500).
-  - touches: `hr.rfid.ctrl`
-- **`TestWebstackHeartbeat.test_heartbeat_provision_caps_oversized_list(self)`** - `tests/test_webstack.py:158`
-  - An oversized 'controllers' array (beyond the hardware bus max) is
-  - touches: `hr.rfid.ctrl`
-- **`TestWebstackHeartbeat.test_heartbeat_provision_failure_keeps_command_delivery(self)`** - `tests/test_webstack.py:169`
-  - A pre-provision failure is best-effort: the heartbeat still delivers
-  - touches: `hr.rfid.ctrl`
-- **`SharedModuleCase.setUpClass(cls)`** (`@classmethod`) - `tests/test_webstack_sharing.py:31`
-  - calls `super()`
-  - touches: `hr.department`, `hr.employee`, `hr.rfid.access.group`, `hr.rfid.card`, `res.company`
-- **`TestSharedModuleVisibility.test_sharing_company_sees_hardware_control_company_does_not(self)`** - `tests/test_webstack_sharing.py:143`
-  - B (shared with) can see the controllers, doors and readers of the
-- **`TestSharedModuleVisibility.test_module_record_itself_is_never_shared(self)`** - `tests/test_webstack_sharing.py:160`
-  - The module record carries the device credentials that authenticate
-  - effects: `sudo`
-  - touches: `hr.rfid.command`
-- **`TestSharedModuleVisibility.test_per_company_data_stays_isolated_while_sharing(self)`** - `tests/test_webstack_sharing.py:179`
-  - Sharing the hardware shares NOTHING else: A's cards, access groups,
-  - effects: `sudo`
-  - touches: `hr.rfid.time.schedule`
-- **`TestSharedModuleVisibility.test_grant_relations_scoped_not_enumerable(self)`** - `tests/test_webstack_sharing.py:196`
-  - The card-door / group-door relations follow the same boundaries:
-- **`TestSharedModuleVisibility.test_grant_by_sharing_company_reaches_the_hardware(self)`** - `tests/test_webstack_sharing.py:217`
-  - B's grant must still be delivered to the owner's controller - the
-  - effects: `sudo`
-  - touches: `hr.rfid.command`
-- **`TestSharedModuleGuards.test_duplicate_card_number_blocked_on_shared_module(self)`** - `tests/test_webstack_sharing.py:235`
-  - Two people from the two companies cannot carry the same card
-  - touches: `hr.rfid.card`
-- **`TestSharedModuleGuards.test_duplicate_by_number_change_blocked(self)`** - `tests/test_webstack_sharing.py:252`
-  - Renumbering an already-granted card into a colliding number is
-  - effects: `sudo`
-- **`TestSharedModuleGuards.test_duplicate_allowed_when_not_sharing(self)`** - `tests/test_webstack_sharing.py:262`
-  - Regression: without sharing, the same number may exist and be
-  - effects: `sudo`
-  - touches: `hr.rfid.access.group.door.rel`, `hr.rfid.card`, `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.reader`, `hr.rfid.webstack`
-- **`TestSharedModuleGuards.test_foreign_grant_only_with_unrestricted_schedule(self)`** - `tests/test_webstack_sharing.py:292`
-  - B may only grant 24/7 (schedule 0) on the shared module - the
-  - effects: `sudo`
-  - touches: `hr.rfid.access.group.door.rel`, `hr.rfid.time.schedule`
-- **`TestSharedModuleGuards.test_unshared_door_not_grantable_by_other_company(self)`** - `tests/test_webstack_sharing.py:310`
-  - A door whose module is NOT shared with B cannot enter B's access
-  - effects: `sudo`
-  - touches: `hr.rfid.access.group.door.rel`
-- **`TestSharedModuleGuards.test_ownership_stays_with_owner(self)`** - `tests/test_webstack_sharing.py:323`
-  - B operates the shared module but cannot take it over: changing the
-- **`TestSharedModuleGuards.test_sharing_company_cannot_take_over_or_break_the_hardware(self)`** - `tests/test_webstack_sharing.py:341`
-  - The sharing company may READ the owner's hardware, never change it.
-  - touches: `hr.rfid.command`, `hr.rfid.webstack`
-- **`TestSharedModuleGuards.test_sharing_company_cannot_remove_the_owners_grants(self)`** - `tests/test_webstack_sharing.py:367`
-  - B manages the grants of its OWN people; the owner's grants on the
-  - effects: `sudo`
-  - touches: `hr.rfid.access.group.door.rel`
-- **`TestSharedModuleGuards.test_unshare_revokes_access(self)`** - `tests/test_webstack_sharing.py:383`
-  - Removing B from the sharing list drops B's grants, queues the
-  - effects: `sudo`
-  - touches: `hr.rfid.access.group.door.rel`, `hr.rfid.card.door.rel`, `hr.rfid.command`, `hr.rfid.ctrl`
-- **`TestSharedModuleGuards.test_replace_wizard_carries_sharing(self)`** - `tests/test_webstack_sharing.py:408`
-  - Swapping a broken module for a new one keeps serving both
-  - touches: `hr.rfid.webstack`, `hr.rfid.webstack.replace.wiz`
-- **`TestSharedModuleWorkcodes.test_workcode_of_badging_persons_company_is_recognised(self)`** - `tests/test_webstack_sharing.py:433`
-  - touches: `hr.rfid.workcode`
-- **`TestSharedModuleE2E.test_shared_module_full_lifecycle(self)`** - `tests/test_webstack_sharing.py:470`
-  - effects: `sudo`
-  - touches: `hr.employee`, `hr.rfid.card`, `hr.rfid.card.door.rel`, `hr.rfid.ctrl`, `hr.rfid.event.system`, `hr.rfid.event.user`
-- **`TestAccessGroupWizard.test_wizard_add_doors(self)`** - `tests/test_wizards.py:19`
-  - Test adding doors to AG via wizard.
-  - effects: `with_context`
-  - touches: `hr.rfid.access.group.wizard`
-- **`TestAccessGroupWizard.test_wizard_del_doors(self)`** - `tests/test_wizards.py:31`
-  - Test removing doors from AG via wizard.
-  - effects: `with_context`
-  - touches: `hr.rfid.access.group.wizard`
-- **`TestZoneDoorsWizard.test_zone_wizard_add_doors(self)`** - `tests/test_wizards.py:55`
-  - Test adding doors to zone via wizard.
-  - effects: `with_context`
-  - touches: `hr.rfid.zone`, `hr.rfid.zone.doors.wiz`
-- **`TestZoneDoorsWizard.test_zone_wizard_remove_doors(self)`** - `tests/test_wizards.py:71`
-  - Test removing doors from zone via wizard.
-  - effects: `with_context`
-  - touches: `hr.rfid.zone`, `hr.rfid.zone.doors.wiz`
-- **`TestDepartmentAccessGroupWizard.test_dept_acc_gr_wizard(self)`** - `tests/test_wizards.py:97`
-  - Test setting allowed access groups on department via wizard.
-  - effects: `with_context`
-  - touches: `hr.department.acc.grs`, `hr.rfid.access.group`
-- **`TestDepartmentAccessGroupWizard.test_dept_def_acc_gr_wizard(self)`** - `tests/test_wizards.py:112`
-  - Test setting default access group via wizard.
-  - effects: `with_context`
-  - touches: `hr.department.def.acc.gr`
-- **`TestDepartmentAccessGroupWizard.test_dept_change_and_apply_def_acc_gr(self)`** - `tests/test_wizards.py:125`
-  - Test changing default AG and applying to all employees.
-  - effects: `with_context`
-  - touches: `hr.department.def.acc.gr`
-- **`TestDepartmentAccessGroupWizard.test_dept_mass_add_acc_grs(self)`** - `tests/test_wizards.py:137`
-  - Test mass adding access groups to department employees.
-  - effects: `with_context`
-  - touches: `hr.department.mass.wiz`
-- **`TestDepartmentAccessGroupWizard.test_dept_mass_remove_acc_grs(self)`** - `tests/test_wizards.py:146`
-  - Test mass removing access groups from department employees.
-  - effects: `with_context`
-  - touches: `hr.department.mass.wiz`
-- **`TestCardAddRemoveEmployee.test_add_remove_card_employee(self)`** - `tests/test_wizards.py:170`
-  - Test full employee card add/remove cycle.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.employee.rel`
-- **`TestCardAddRemovePartner.test_add_remove_card_partner(self)`** - `tests/test_wizards.py:218`
-  - Test full partner card add/remove cycle with card validity interaction.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`
-- **`TestWsCommands.setUp(self)`** - `tests/test_ws_commands.py:26`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `ir.config_parameter`
-- **`TestWsCommands.test_event_batch_does_not_burn_command_retries(self)`** - `tests/test_ws_commands.py:72`
-  - F1: a multi-event batch must run the queued-command piggyback for
-  - touches: `bus.bus`, `ir.websocket`
-- **`TestWsCommands.test_rsp_wrong_cid_falls_back_to_code_match(self)`** - `tests/test_ws_commands.py:92`
-  - F2: a cid that points at a command whose code does not match the
-  - touches: `bus.bus`, `ir.websocket`
-- **`TestWsCommands.test_poison_command_does_not_abort_sync_on_connect(self)`** - `tests/test_ws_commands.py:116`
-  - F4/F12: the OLDEST queued command raising in send_command must not
-  - touches: `bus.bus`, `ir.websocket`
-- **`TestWsCommands.test_republish_cron_climbs_to_giveup_on_poison(self)`** - `tests/test_ws_commands.py:145`
-  - F5: a command that keeps failing to publish still climbs its retry
-  - effects: `sql`
-  - touches: `hr.rfid.command`
-- **`TestWsCommands.test_create_publish_failure_does_not_break_creation(self)`** - `tests/test_ws_commands.py:172`
-  - F6: a publish failure at create-time must never break the business
-- **`TestWsCommands.test_create_publishes_when_online(self)`** - `tests/test_ws_commands.py:187`
-  - touches: `bus.bus`
-- **`TestWsCommands.test_create_offline_stays_wait_for_http(self)`** - `tests/test_ws_commands.py:203`
-  - touches: `bus.bus`
-- **`TestWsCommands.test_connect_sync_republishes_pending(self)`** - `tests/test_ws_commands.py:218`
-  - touches: `bus.bus`, `ir.websocket`
-- **`TestWsCommands.test_republish_cron_retries_then_fails(self)`** - `tests/test_ws_commands.py:234`
-  - effects: `sql`
-  - touches: `bus.bus`, `hr.rfid.command`
-- **`TestWsCommands.test_rsp_cid_targets_exact_command(self)`** - `tests/test_ws_commands.py:268`
-  - touches: `bus.bus`, `ir.websocket`
-- **`TestWsDispatch.setUp(self)`** - `tests/test_ws_dispatch.py:34`
-  - super-split (super): pre=- · post=`sudo`
-  - effects: `sudo`
-  - touches: `ir.config_parameter`
-- **`TestWsDispatch.test_bad_key_is_refused_with_nack(self)`** - `tests/test_ws_dispatch.py:75`
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_keyless_device_presenting_0000_is_refused(self)`** - `tests/test_ws_dispatch.py:89`
-  - A keyless (never-provisioned / re-keyed) module presenting the insecure
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_heal_0000_to_real_key_adopts_onto_same_endpoint(self)`** - `tests/test_ws_dispatch.py:100`
-  - G1 heal: a module stored with the insecure '0000' presents a new
-  - effects: `sudo`
-  - touches: `bus.bus`, `ir.config_parameter`
-- **`TestWsDispatch.test_real_key_is_never_overridden_by_a_different_key(self)`** - `tests/test_ws_dispatch.py:130`
-  - A device with a REAL (non-0000) key is NOT healable: a different key,
-  - effects: `sudo`
-  - touches: `bus.bus`, `ir.config_parameter`
-- **`TestWsDispatch.test_auth_flood_raises_one_system_event(self)`** - `tests/test_ws_dispatch.py:153`
-  - touches: `hr.rfid.event.system`
-- **`TestWsDispatch.test_disabled_module_is_refused_with_nack(self)`** - `tests/test_ws_dispatch.py:163`
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_unknown_serial_is_safe(self)`** - `tests/test_ws_dispatch.py:175`
-  - touches: `hr.rfid.webstack`
-- **`TestWsDispatch.test_hello_acks_and_updates(self)`** - `tests/test_ws_dispatch.py:185`
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_hello_proto_mismatch(self)`** - `tests/test_ws_dispatch.py:204`
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_hb_provisions_controllers(self)`** - `tests/test_ws_dispatch.py:214`
-- **`TestWsDispatch.test_ev_from_new_controller_not_consumed(self)`** - `tests/test_ws_dispatch.py:224`
-  - An event from an unknown controller mirrors the HTTP 400 path:
-  - touches: `bus.bus`, `hr.rfid.event.system`
-- **`TestWsDispatch.test_ev_batch_processes_and_acks(self)`** - `tests/test_ws_dispatch.py:247`
-  - On a known controller the same core as HTTP processes the event
-  - touches: `bus.bus`, `hr.rfid.event.system`
-- **`TestWsDispatch.test_ev_resend_is_deduplicated(self)`** - `tests/test_ws_dispatch.py:264`
-  - touches: `bus.bus`, `hr.rfid.event.system`
-- **`TestWsDispatch.test_ev_malformed_entry_is_consumed_not_looped(self)`** - `tests/test_ws_dispatch.py:281`
-  - A non-dict / unparseable entry is FINAL - consume it (ok:true +
-  - touches: `bus.bus`, `hr.rfid.event.system`
-- **`TestWsDispatch.test_ev_out_of_range_controller_id_dropped(self)`** - `tests/test_ws_dispatch.py:299`
-  - An event whose controller id is outside the RS-485 range (1..254)
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_ev_bad_time_is_consumed(self)`** - `tests/test_ws_dispatch.py:317`
-  - A bad controller clock is consumed (ok:true) like the HTTP path's
-  - touches: `bus.bus`, `hr.rfid.event.system`
-- **`TestWsDispatch.test_malformed_rsp_does_not_escape_to_transport(self)`** - `tests/test_ws_dispatch.py:335`
-  - A malformed rsp (missing 'c') must be caught in-dispatch: the HTTP
-  - touches: `bus.bus`, `hr.rfid.event.system`
-- **`TestWsDispatch.test_auth_fail_writes_are_bounded(self)`** - `tests/test_ws_dispatch.py:356`
-  - Bad-token frames increment the counter only up to the threshold
-- **`TestWsDispatch.test_poisoned_fw_does_not_break_parsing(self)`** - `tests/test_ws_dispatch.py:366`
-  - A non-numeric fw from the device (hello) must not poison the
-  - touches: `bus.bus`
-- **`TestWsDispatch.test_f0_rsp_and_inline_command_on_event(self)`** - `tests/test_ws_dispatch.py:390`
-  - Full round-trip: hello -> F0 read queued -> F0 response over the WS
-  - effects: `sudo`, `with_context`
-  - touches: `bus.bus`, `hr.rfid.command`
-- **`TestWsDispatch.test_dedup_gc(self)`** - `tests/test_ws_dispatch.py:448`
-  - effects: `sudo`
-  - touches: `hr.rfid.ws.dedup`
-- **`TestWsLayer.test_enable_does_not_mint_a_secret(self)`** - `tests/test_ws_layer.py:37`
-- **`TestWsLayer.test_disable_keeps_key(self)`** - `tests/test_ws_layer.py:49`
-- **`TestWsLayer.test_rekey_clears_key_for_tofu(self)`** - `tests/test_ws_layer.py:57`
-  - action_ws_rekey arms TOFU: it clears the stored key so the next
-- **`TestWsLayer.test_channel_format(self)`** - `tests/test_ws_layer.py:71`
-- **`TestWsLayer.test_send_requires_enabled_and_key(self)`** - `tests/test_ws_layer.py:77`
-  - touches: `bus.bus`
-- **`TestWsLayer.test_send_publishes_on_device_channel(self)`** - `tests/test_ws_layer.py:83`
-  - touches: `bus.bus`
-- **`TestWsLayer.test_send_requires_a_key(self)`** - `tests/test_ws_layer.py:91`
-  - With the key cleared (TOFU armed) there is no channel to publish
-  - touches: `bus.bus`
-- **`TestWsLayer.test_ws_online_compute_and_search(self)`** - `tests/test_ws_layer.py:105`
-  - touches: `hr.rfid.webstack`
-- **`TestWsLayer.test_provision_payload_only_when_pending(self)`** - `tests/test_ws_layer.py:126`
 - **`log(msg)`** - `tools/odoo_bus_device_sim.py:40`
 - **`WsClient.send_text(self, payload)`** - `tools/odoo_bus_device_sim.py:81`
 - **`WsClient.recv_text(self, timeout=15.0)`** - `tools/odoo_bus_device_sim.py:104`
@@ -3053,25 +2147,25 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 - **`NoRedirect.redirect_request(self, *args, **kwargs)`** - `tools/odoo_bus_device_sim.py:212`
 - **`event_dict(ctrl=5, bos=1, event_n=4, card='0000000000')`** - `tools/odoo_bus_device_sim.py:216`
 - **`scenario_single(dev)`** - `tools/odoo_bus_device_sim.py:226`
-  - The SPEC §12 walk: provisioning, hello, new-controller event flow,
+  - The SPEC §12 walk: provisioning, hello, new-controller event flow, F0 response, event retry, dedup, command over the bus.
 - **`main()`** - `tools/odoo_bus_device_sim.py:291`
 
 ### Private helpers
 
-- **`_ws_db_update_dict()`** - `controllers/main.py:20`
-- **`_get_remote_ip_address()`** - `controllers/main.py:27`
-- **`WebRfidController._parse_event(self, post_data, webstack)`** - `controllers/main.py:38`
-  - Thin delegate - the parsing core lives on ``hr.rfid.webstack``
-- **`WebRfidController._respond_to_ev_64(self, open_door, controller, reader, card, post_data)`** - `controllers/main.py:45`
+- **`_ws_db_update_dict()`** - `controllers/main.py:21`
+- **`_get_remote_ip_address()`** - `controllers/main.py:28`
+- **`WebRfidController._parse_event(self, post_data, webstack)`** - `controllers/main.py:39`
+  - Thin delegate - the parsing core lives on ``hr.rfid.webstack`` (``models/hr_rfid_webstack_hw_events.py``) so the websocket ingress can reuse it. Kept as a method so route overrides that call it keep working unchanged.
+- **`WebRfidController._respond_to_ev_64(self, open_door, controller, reader, card, post_data)`** - `controllers/main.py:46`
   - Thin delegate - core on hr.rfid.webstack (see _hw_respond_to_ev_64).
-- **`WebRfidController._decode_post(self, post)`** - `controllers/main.py:94`
-- **`WebRfidController._make_response(self, result)`** - `controllers/main.py:106`
+- **`WebRfidController._decode_post(self, post)`** - `controllers/main.py:95`
+- **`WebRfidController._make_response(self, result)`** - `controllers/main.py:107`
   - Wrap the result for the wire the module speaks. THREE shapes:
-- **`WebRfidController._authenticate_webstack(self, post_data)`** - `controllers/main.py:150`
+- **`WebRfidController._authenticate_webstack(self, post_data)`** - `controllers/main.py:151`
   - Find and authenticate the webstack behind a hardware POST.
   - effects: `log_info`, `message_post`, `sudo`, `with_context`
   - touches: `hr.rfid.webstack`, `ir.config_parameter`, `res.company`, `res.users`
-- **`WebRfidController._parse_raw_data(self, post_data)`** - `controllers/main.py:341`
+- **`WebRfidController._parse_raw_data(self, post_data)`** - `controllers/main.py:369`
   - Answer a device that speaks a shape this endpoint does not handle.
   - effects: `log_info`
 - **`BaseImporter.__init__(self, old_url, old_db, old_username, old_password, new_url, new_db, new_username, new_password, source_version, batch_size=100)`** - `manual_import.py:8`
@@ -3080,181 +2174,6 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
   - effects: `log_warn`
 - **`_check_overlap(ranges)`** - `models/hr_rfid_access_group.py:562`
 - **`_tz_get(self)`** - `models/hr_rfid_webstack.py:64`
-- **`RFIDAppCase._get_id_num(self)`** - `tests/common.py:156`
-- **`RFIDAppCase._get_heartbeat(self)`** - `tests/common.py:160`
-- **`RFIDAppCase._check_no_commands(self, module_id=None)`** - `tests/common.py:164`
-- **`RFIDAppCase._make_F0(self, hw_version=None, serial_number=None, sw_version=None, mode=None, inputs=None, outputs=None, readers=None, time_schedules=None, io_table_lines=None, alarm_lines=None, max_cards_count=None, max_events_count=None, ctrl=None)`** - `tests/common.py:171`
-- **`RFIDAppCase._get_F0_response(self, ctrl)`** - `tests/common.py:203`
-- **`RFIDAppCase._time_10_3(self, delta_in_seconds)`** - `tests/common.py:223`
-- **`RFIDAppCase._assertResponse(self, response)`** - `tests/common.py:231`
-- **`RFIDAppCase._hearbeat(self, webstack_id, controllers=None)`** - `tests/common.py:239`
-- **`RFIDAppCase._count_system_events(self, company_id=None)`** - `tests/common.py:253`
-  - effects: `with_company`
-  - touches: `hr.rfid.event.system`
-- **`RFIDAppCase._count_user_events(self, company_id=None)`** - `tests/common.py:258`
-  - touches: `hr.rfid.event.user`
-- **`RFIDAppCase._user_events(self, company_id, count=True, last=False)`** - `tests/common.py:263`
-  - effects: `with_company`
-  - touches: `hr.rfid.event.user`
-- **`RFIDAppCase._send_cmd(self, cmd, system_event=False, company_id=None)`** - `tests/common.py:273`
-- **`RFIDAppCase._send_cmd_response(self, request_cmd, data='', module=234567, key='0000')`** - `tests/common.py:291`
-- **`RFIDAppCase._count_ctrl_waiting_cmd(self, ctrl)`** - `tests/common.py:310`
-  - touches: `hr.rfid.command`
-- **`RFIDAppCase._check_no_cmd(self, ctrl)`** - `tests/common.py:313`
-  - touches: `hr.rfid.command`
-- **`RFIDAppCase._check_cmd_add_card(self, ctrl, count=None, rights=None, mask=None)`** - `tests/common.py:318`
-  - touches: `hr.rfid.command`
-- **`RFIDAppCase._check_cmd_delete_card(self, ctrl)`** - `tests/common.py:334`
-  - touches: `hr.rfid.command`
-- **`RFIDAppCase._check_cmd_add_card_and_remove(self, ctrl, count=None, rights=None, mask=None)`** - `tests/common.py:345`
-- **`RFIDAppCase._check_cmd_delete_card_and_remove(self, ctrl)`** - `tests/common.py:348`
-- **`RFIDAppCase._clear_ctrl_cmd(self, ctrl)`** - `tests/common.py:351`
-  - touches: `hr.rfid.command`
-- **`RFIDAppCase._process_io_table(self, response, ctrl, module=234567, key='0000')`** - `tests/common.py:356`
-- **`RFIDAppCase._check_added_controller(self, ctrl)`** - `tests/common.py:381`
-- **`RFIDAppCase._make_event_on_all_readers(self, ctrl, card=None, pin=None, date=None, day=None, time=None, event_code=None, system_event=False, relay_num=1)`** - `tests/common.py:393`
-- **`RFIDAppCase._make_event(self, ctrl, card=None, pin=None, reader=None, date=None, day=None, time=None, event_code=None, system_event=False, relay_num=1)`** - `tests/common.py:405`
-- **`RFIDAppCase._test_R_event(self, ctrl, reader=1)`** - `tests/common.py:453`
-- **`RFIDAppCase._test_R1R2(self, ctrl)`** - `tests/common.py:473`
-- **`RFIDAppCase._test_R1R2R3R4(self, ctrl)`** - `tests/common.py:477`
-- **`RFIDAppCase._test_Duress(self, ctrl)`** - `tests/common.py:483`
-- **`RFIDAppCase._test_inputs(self, ctrl)`** - `tests/common.py:488`
-- **`RFIDAppCase._test_Emergency(self, ctrl)`** - `tests/common.py:496`
-- **`RFIDAppCase._test_Exit_buttons(self, ctrl)`** - `tests/common.py:502`
-- **`RFIDAppCase._test_External_control(self, ctrl)`** - `tests/common.py:504`
-- **`RFIDAppCase._test_Door_Overtime(self, ctrl)`** - `tests/common.py:507`
-- **`RFIDAppCase._test_Force_Door_Open(self, ctrl)`** - `tests/common.py:512`
-- **`RFIDAppCase._test_Power_On(self, ctrl)`** - `tests/common.py:515`
-- **`RFIDAppCase._change_mode(self, ctrl, mode)`** - `tests/common.py:520`
-- **`RFIDAppCase._ev64(self, ctrl)`** - `tests/common.py:536`
-  - effects: `log_info`
-- **`RFIDController._add_Vending(self, module=234567, key='0000', id=None)`** - `tests/controller.py:57`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_Turnstile(self, module=234567, key='0000', id=None)`** - `tests/controller.py:86`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_iCon180(self, module=234567, key='0000', id=5)`** - `tests/controller.py:118`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_iCon130(self, module=234567, key='0000', id=None)`** - `tests/controller.py:147`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_RelayController(self, module=234567, key='0000', id=None)`** - `tests/controller.py:177`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_iCon115(self, module=234567, key='0000', id=None)`** - `tests/controller.py:207`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_iCon110(self, module=234567, key='0000', id=None)`** - `tests/controller.py:239`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_iCon50(self, module=234567, key='0000', id=None)`** - `tests/controller.py:269`
-  - touches: `hr.rfid.ctrl`
-- **`RFIDController._add_Temperature(self, module=234567, key='0000', id=None)`** - `tests/controller.py:298`
-  - touches: `hr.rfid.ctrl`
-- **`TestAddDoorsTimeSchedule._door(self, name='Врата')`** - `tests/test_access_group_add_doors.py:27`
-  - touches: `hr.rfid.door`
-- **`TestAddDoorsTimeSchedule._group(self, company)`** - `tests/test_access_group_add_doors.py:30`
-  - touches: `hr.rfid.access.group`
-- **`TestAddDoorsTimeSchedule._rel_schedule(self, group, door)`** - `tests/test_access_group_add_doors.py:35`
-  - touches: `hr.rfid.access.group.door.rel`
-- **`TestAlarmLineStateParse._ctrl(self, alarm_line_states)`** - `tests/test_alarm_line_state.py:19`
-  - effects: `with_context`
-  - touches: `hr.rfid.ctrl`
-- **`TestAntiPassback._setup_apb_environment(self)`** - `tests/test_apb_zones.py:71`
-  - Set up controllers and access groups for APB testing.
-  - effects: `with_context`
-  - touches: `hr.rfid.access.group.wizard`
-- **`TestBarcodeNumber._make_card(self, number, card_input_type)`** - `tests/test_barcode_qr.py:31`
-  - touches: `hr.rfid.card`
-- **`TestPlateNumberEntry._plate(self, number)`** - `tests/test_card_lifecycle.py:186`
-  - touches: `hr.rfid.card`
-- **`RFIDTests._test_add_remove_card_employee(self, ctrl)`** - `tests/test_functional.py:98`
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.employee.rel`
-- **`RFIDTests._test_add_remove_card_partner(self, ctrl)`** - `tests/test_functional.py:160`
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`
-- **`RFIDTests._test_global_APB(self)`** - `tests/test_functional.py:232`
-  - effects: `with_context`
-  - touches: `hr.rfid.access.group.wizard`, `hr.rfid.zone`
-- **`RFIDTests._test_add_remove_card_employee(self, ctrl)`** - `tests/test_functional_old.py:100`
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.employee.rel`
-- **`RFIDTests._test_add_remove_card_partner(self, ctrl)`** - `tests/test_functional_old.py:162`
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.contact.rel`
-- **`RFIDTests._test_global_APB(self)`** - `tests/test_functional_old.py:234`
-  - effects: `with_context`
-  - touches: `hr.rfid.access.group.wizard`, `hr.rfid.zone`
-- **`TestInterlockingMode._drain_io_table(self, response)`** - `tests/test_interlocking_mode.py:24`
-  - Consume the follow-up D9 io-table commands an F0 read queues.
-- **`TestMultiCompanySharedRecords._visible(self, model, record)`** - `tests/test_multi_company_rules.py:85`
-  - Search the record as the company-A-bound non-superuser.
-- **`TestMultiCompanySharedRecords._free_workcodes(cls, count)`** (`@classmethod`) - `tests/test_multi_company_rules.py:91`
-  - Workcode has a global UNIQUE(workcode) constraint — pick codes
-  - effects: `sudo`
-  - touches: `hr.rfid.workcode`
-- **`TestOrphanUserEventVisibility._sees(self, user, event)`** - `tests/test_multi_company_rules.py:424`
-  - touches: `hr.rfid.event.user`
-- **`TestOnboardingPanelFirstLoadRace._assert_full_panel(self, html)`** - `tests/test_onboarding.py:92`
-- **`TestOnboardingPanelFailures._render_with(self, failure)`** - `tests/test_onboarding_panel_errors.py:32`
-  - Render the banner while the work behind it fails with ``failure``.
-- **`TestOnboardingPanelFailures._assert_passed_on(self, failure)`** - `tests/test_onboarding_panel_errors.py:43`
-  - The failure travels on - and is never dressed up as a hidden banner.
-- **`TestOneDoorTwoSchedules._group_on_the_door(self, name, schedule)`** - `tests/test_one_door_two_schedules.py:75`
-  - Група за достъп, която отваря общата врата по подадения график.
-  - touches: `hr.rfid.access.group`, `hr.rfid.access.group.door.rel`
-- **`TestOneDoorTwoSchedules._both_groups_named(self, message, first, second)`** - `tests/test_one_door_two_schedules.py:92`
-  - Съобщението на проверката за графици назовава ДВЕТЕ групи.
-- **`TestOverlappingAccessGroups._card_state(self)`** - `tests/test_overlapping_access_groups.py:80`
-  - touches: `hr.rfid.command`
-- **`TestOverlappingAccessGroups._make_rel(self, activate_on, expiration)`** - `tests/test_overlapping_access_groups.py:100`
-  - touches: `hr.rfid.access.group.contact.rel`
-- **`TestOverlappingAccessGroups._raw_insert_rel(self, activate_on, expiration, state)`** - `tests/test_overlapping_access_groups.py:283`
-  - Insert a contact rel bypassing the overlap @api.constrains check (we want overlap).
-  - effects: `sql`
-- **`TestRecalcRefusalIsHeard._ask(self, employee=None)`** - `tests/test_recalc_hook.py:38`
-- **`TestSotDenied._build_minimal_hardware(cls)`** (`@classmethod`) - `tests/test_sot_denied.py:90`
-  - Create a webstack + iCON115 controller + door + reader when the
-  - touches: `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.reader`, `hr.rfid.webstack`
-- **`TestSotDenied._post_event_32(self, card_number, reader=1)`** - `tests/test_sot_denied.py:129`
-- **`TestSotDenied._count_user_events(self, card)`** - `tests/test_sot_denied.py:155`
-  - touches: `hr.rfid.event.user`
-- **`TestSotDenied._count_sys_events(self)`** - `tests/test_sot_denied.py:159`
-  - touches: `hr.rfid.event.system`
-- **`TestSystemEventDedup._make(self, ts, door=None, action='25')`** - `tests/test_system_event_dedup.py:50`
-  - touches: `hr.rfid.event.system`
-- **`TestSystemEventDedup._count(self, action='25')`** - `tests/test_system_event_dedup.py:59`
-  - touches: `hr.rfid.event.system`
-- **`TestModulePresence._go_silent_since(self, minutes_ago)`** - `tests/test_telemetry_bus.py:29`
-  - Put the module in the state a dark one is really in.
-- **`TestModulePresence._pretend_realtime_connected(self)`** - `tests/test_telemetry_bus.py:43`
-  - A module living on the websocket - it never writes updated_at.
-- **`TestModulePresence._scan(self, times=1)`** - `tests/test_telemetry_bus.py:50`
-  - touches: `hr.rfid.webstack`
-- **`TestHeartbeatWritesOnlyWhatChanged._heartbeat_payload(self, firmware)`** - `tests/test_telemetry_bus.py:174`
-- **`TestAnUnknownDevicePayload._post(self, payload)`** - `tests/test_unknown_device_payload.py:24`
-- **`TestWebstackHeartbeat._ctrl(self, ctrl_id)`** - `tests/test_webstack.py:81`
-  - touches: `hr.rfid.ctrl`
-- **`SharedModuleCase._ts_b(self, number=0)`** - `tests/test_webstack_sharing.py:84`
-  - effects: `sudo`
-  - touches: `hr.rfid.time.schedule`
-- **`SharedModuleCase._make_light_hardware(self)`** - `tests/test_webstack_sharing.py:90`
-  - Owner-side controller/door/reader built directly through the ORM -
-  - touches: `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.reader`
-- **`SharedModuleCase._share_with_b(self)`** - `tests/test_webstack_sharing.py:111`
-- **`SharedModuleCase._grant_b(self, door, ts_number=0, ag=None)`** - `tests/test_webstack_sharing.py:116`
-  - B includes the shared door in ITS OWN access group, as B's manager.
-  - touches: `hr.rfid.access.group.door.rel`
-- **`TestSharedModuleVisibility._search_as(self, user, model, domain)`** - `tests/test_webstack_sharing.py:140`
-- **`TestWsCommands._ws(self)`** - `tests/test_ws_commands.py:36`
-- **`TestWsCommands._go_online(self, ws)`** - `tests/test_ws_commands.py:39`
-  - effects: `sudo`
-  - touches: `bus.bus`, `hr.rfid.command`, `ir.websocket`
-- **`TestWsCommands._mk_cmd(self, ctrl, **vals)`** - `tests/test_ws_commands.py:53`
-  - effects: `sudo`
-  - touches: `hr.rfid.command`
-- **`TestWsCommands._event(self, ctrl, bos, event_n=4)`** - `tests/test_ws_commands.py:59`
-- **`TestWsCommands._dispatch_ev(self, ws, bid, events)`** - `tests/test_ws_commands.py:66`
-  - touches: `bus.bus`, `ir.websocket`
-- **`TestWsDispatch._ws(self)`** - `tests/test_ws_dispatch.py:31`
-- **`TestWsDispatch._enable(self)`** - `tests/test_ws_dispatch.py:43`
-- **`TestWsDispatch._msg(self, mtype, ws=None, k=None, v=WS_PROTO_VERSION, **payload)`** - `tests/test_ws_dispatch.py:48`
-- **`TestWsDispatch._dispatch(self, data)`** - `tests/test_ws_dispatch.py:57`
-  - touches: `ir.websocket`
-- **`TestWsDispatch._event_dict(self, ctrl_id=5, bos=1, card=None, event_n=4, reader=1)`** - `tests/test_ws_dispatch.py:61`
-- **`TestWsLayer._ws(self)`** - `tests/test_ws_layer.py:30`
 - **`WsClient.__init__(self, ws_url, origin, cookie)`** - `tools/odoo_bus_device_sim.py:49`
 - **`WsClient._read_exact(self, n)`** - `tools/odoo_bus_device_sim.py:95`
 - **`Device.__init__(self, args)`** - `tools/odoo_bus_device_sim.py:135`
@@ -3389,7 +2308,7 @@ Who can do what. Answer access-related questions from this section.
 **Groups defined**: `hr_rfid_group_viewer`, `hr_rfid_group_officer`, `hr_rfid_group_manager`, `hr_rfid_view_module_discovery`, `hr_rfid_view_rfid_data`, `hr_rfid_view_rfid_pin_code_data`, `hr_rfid_view_door_open_close`, `hr_rfid_view_door_arm_disarm`, `hr_rfid_view_emergency_on_off`, `hr_view_own_department`, `hr_rfid_view_own_department`
 
 
-### Access rights (ir.model.access)
+### Access rights (ir.model.access; v20: ir.access rows with a group)
 
 | CSV id | Model | Group | R | W | C | D |
 |---|---|---|---|---|---|---|
@@ -3579,10 +2498,10 @@ Who can do what. Answer access-related questions from this section.
 - **`ir_rule_hr_rfid_card_door_rel_multi_company_write`** on `model_hr_rfid_card_door_rel` - perms=`WCD`, groups=`global`, domain=`['|', ('card_id.company_id', 'in', company_ids), ('door_id.company_id', 'in', company_ids + [False])]`
 - **`ir_rule_hr_rfid_access_group_door_rel_multi_company`** on `model_hr_rfid_access_group_door_rel` - perms=`R`, groups=`global`, domain=`['|', ('access_group_id.company_id', 'in', company_ids), '|', ('door_id.company_id', 'in', company_ids + [False]), ('door_id.webstack_id.shared_company_ids', 'in', company_ids)]`
 - **`ir_rule_hr_rfid_access_group_door_rel_multi_company_write`** on `model_hr_rfid_access_group_door_rel` - perms=`WCD`, groups=`global`, domain=`['|', ('access_group_id.company_id', 'in', company_ids), ('door_id.company_id', 'in', company_ids + [False])]`
-- **`hr_rfid_group_officer_department_cards_rule`** on `hr_rfid.model_hr_rfid_card` - perms=`RWCD`, groups=`global`, domain=`[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]`
-- **`hr_rfid_view_own_department_employees_rule`** on `hr.model_hr_employee` - perms=`RWCD`, groups=`global`, domain=`[('department_id.id','=',user.employee_ids.department_id.id)]`
-- **`hr_rfid_view_own_department_department_rule`** on `hr.model_hr_department` - perms=`RWCD`, groups=`global`, domain=`[('id','=',user.employee_ids.department_id.id)]`
-- **`hr_rfid_group_view_own_department_events_rule`** on `hr_rfid.model_hr_rfid_event_user` - perms=`RWCD`, groups=`global`, domain=`[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]`
+- **`hr_rfid_group_officer_department_cards_rule`** on `hr_rfid.model_hr_rfid_card` - perms=`RWCD`, groups=`hr_rfid_view_own_department`, domain=`[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]`
+- **`hr_rfid_view_own_department_employees_rule`** on `hr.model_hr_employee` - perms=`RWCD`, groups=`hr_view_own_department`, domain=`[('department_id.id','=',user.employee_ids.department_id.id)]`
+- **`hr_rfid_view_own_department_department_rule`** on `hr.model_hr_department` - perms=`RWCD`, groups=`hr_view_own_department`, domain=`[('id','=',user.employee_ids.department_id.id)]`
+- **`hr_rfid_group_view_own_department_events_rule`** on `hr_rfid.model_hr_rfid_event_user` - perms=`RWCD`, groups=`hr_rfid_view_own_department`, domain=`[('employee_id.department_id.id','=',user.employee_ids.department_id.id)]`
 
 
 ## Data & Automation <a id='data'></a>
@@ -3600,8 +2519,10 @@ XML records seeded at install and scheduled actions.
 
 ### Data records summary
 
+- `ir.actions.act_window`: 43 record(s)
 - `hr.rfid.event.user`: 11 record(s)
 - `hr.rfid.card.type`: 10 record(s)
+- `ir.actions.server`: 10 record(s)
 - `hr.rfid.card`: 7 record(s)
 - `ir.cron`: 5 record(s)
 - `onboarding.onboarding.step`: 5 record(s)
@@ -3611,15 +2532,13 @@ XML records seeded at install and scheduled actions.
 - `ir.config_parameter`: 3 record(s)
 - `hr.department`: 3 record(s)
 - `hr.rfid.workcode`: 3 record(s)
+- `ir.actions.report`: 3 record(s)
 - `hr.rfid.ctrl`: 2 record(s)
 - `hr.rfid.access.group`: 2 record(s)
 - `mail.template`: 1 record(s)
 - `onboarding.onboarding`: 1 record(s)
 - `res.lang`: 1 record(s)
 - `res.users`: 1 record(s)
-- `hr.rfid.webstack`: 1 record(s)
-- `hr.rfid.ctrl.alarm`: 1 record(s)
-- `hr.rfid.ctrl.emergency.group`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
@@ -3637,6 +2556,15 @@ JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
 
 
 **QWeb templates** (2): `static/src/components/onboarding/onboarding.xml`, `static/src/views/onboarding_anywhere/onboarding_anywhere.xml`
+
+
+**QWeb templates in XML data, rendered by the server** (5): `card_barcode_report_template_foldable_badge`, `hr_rfid_card_report_template_foldable_badge`, `res_partner_report_template_foldable_badge`, `hr_employee_report_template_foldable_badge`, `card_barcode_report_template_formatted_address`
+
+
+**Asset bundles extended in the manifest**: `web.assets_backend`, `web.report_assets_common`, `web.report_assets_pdf`, `web.assets_unit_tests` (tests only), `web.assets_tests` (tests only)
+
+
+**Other static JS/SCSS loaded by these bundles** (7): `static/tests/onboarding_banner.test.js`, `static/tests/onboarding_in_any_view.test.js`, `static/tests/tours/access_group_add_door_tour.js`, `static/tests/tours/add_webstack_tour.js`, `static/tests/tours/card_assign_tour.js`, `static/tests/tours/onboarding_panel_tour.js`, `static/tests/tours/realtime_channel_tour.js`
 
 
 
@@ -3811,29 +2739,29 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > remove buttons and move actions
 
-### From `git_log` (70)
+### From `git_log` (63)
 
-#### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior chang
+#### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior ...
 
 Commit `b5dfd0bc1f` (2026-07-22): fix(hr_rfid): green the vending + tour tests broken by three prior changes
 
-#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u re-wro
+#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u ...
 
 Commit `54843cfc81` (2026-07-22): fix(demo): showcase demo files must be noupdate=1 - production -u re-wrote them
 
-#### Fix: fix(hr_rfid): HTTP auth idempotent for unprovisioned 0000 + G1 heal (pre
+#### Fix: fix(hr_rfid): HTTP auth idempotent for unprovisioned 0000 + G1 heal ...
 
 Commit `03a923e8c4` (2026-07-19): fix(hr_rfid): HTTP auth idempotent for unprovisioned 0000 + G1 heal (precommit)
 
-#### Fix: fix(hr_rfid): remove dead orphaned hr_rfid_notification.xml (precommit A
+#### Fix: fix(hr_rfid): remove dead orphaned hr_rfid_notification.xml ...
 
 Commit `e6f8f6b466` (2026-07-19): fix(hr_rfid): remove dead orphaned hr_rfid_notification.xml (precommit A12)
 
-#### Fix: fix(hr_rfid): system-event grouping never matched door events + no time 
+#### Fix: fix(hr_rfid): system-event grouping never matched door events + no ...
 
 Commit `c2a718801b` (2026-07-17): fix(hr_rfid): system-event grouping never matched door events + no time bound
 
-#### Fix: fix(hr_rfid): reword two WS log lines so a serial doesn't read as "N fai
+#### Fix: fix(hr_rfid): reword two WS log lines so a serial doesn't read as ...
 
 Commit `7f232e99c3` (2026-07-14): fix(hr_rfid): reword two WS log lines so a serial doesn't read as "N failed"
 
@@ -3845,21 +2773,17 @@ Commit `639141922a` (2026-07-11): [FIX] hr_rfid: silent-failure-hunter findings 
 
 Commit `a22ec8fd10` (2026-07-11): [FIX] hr_rfid: security-review hardening of the websocket ingress
 
-#### Fix: [FIX] revert malformed manual bg.po appends (broke web translation loadi
+#### Fix: [FIX] revert malformed manual bg.po appends (broke web translation ...
 
 Commit `fdb5eabb0c` (2026-06-24): [FIX] revert malformed manual bg.po appends (broke web translation loading)
-
-#### Fix: [FIX] hr_rfid + hr_attendance_multi_rfid + rfid_service_base: two real b
-
-Commit `27870ac47b` (2026-06-11): [FIX] hr_rfid + hr_attendance_multi_rfid + rfid_service_base: two real bugs found by un-flaking the test suites
 
 #### Fix: [FIX] hr_rfid/vending/ip_cam: authenticate hardware & camera webhooks
 
 Commit `93125c7183` (2026-06-11): [FIX] hr_rfid/vending/ip_cam: authenticate hardware & camera webhooks
 
-#### Fix: [FIX] hr_rfid family: multi-company rules — global records + broken M2O 
+#### Fix: [FIX] hr_rfid family: multi-company rules - global records + broken ...
 
-Commit `a58ac6f455` (2026-06-11): [FIX] hr_rfid family: multi-company rules — global records + broken M2O chains were hidden
+Commit `a58ac6f455` (2026-06-11): [FIX] hr_rfid family: multi-company rules - global records + broken M2O chains were hidden
 
 #### Fix: [FIX] hr_rfid: honor 'delay 0 = disabled' for delay_between_events
 
@@ -3877,10 +2801,6 @@ Commit `46650f3373` (2026-05-19): [FIX] hr_rfid: preserve card access on overlap
 
 Commit `3213db515a` (2026-04-23): [FIX] hr_rfid: handle firmware event 32 (SOT_DENIED) as card event
 
-#### Fix: [TEST] hr_rfid_vending: Add ev64 flow tests and fix init sequence
-
-Commit `27d717a56e` (2026-04-03): [TEST] hr_rfid_vending: Add ev64 flow tests and fix init sequence
-
 #### Fix: [IMP] hr_rfid: Fix exception variable naming and lazy log formatting
 
 Commit `c3a615d172` (2026-04-03): [IMP] hr_rfid: Fix exception variable naming and lazy log formatting
@@ -3892,14 +2812,6 @@ Commit `7367e5bccc` (2026-04-03): [FIX] hr_rfid: Continue command chain on contr
 #### Fix: [FIX] hr_rfid: Skip FF command for vending controllers during init
 
 Commit `ccfff62d89` (2026-04-03): [FIX] hr_rfid: Skip FF command for vending controllers during init
-
-#### Fix: [FIX] hr_rfid,hr_rfid_vending: Add readonly=False to hardware routes and
-
-Commit `1309fee0a8` (2026-04-03): [FIX] hr_rfid,hr_rfid_vending: Add readonly=False to hardware routes and fix onboarding access
-
-#### Fix: [FIX] hr_rfid,rfid_service_zpl_labels: Add forcecreate=False to ir.confi
-
-Commit `3a9ba0c116` (2026-03-31): [FIX] hr_rfid,rfid_service_zpl_labels: Add forcecreate=False to ir.config_parameter records
 
 #### Fix: [FIX] hr_rfid: Handle concurrent onboarding step progress creation
 
@@ -3913,10 +2825,26 @@ Commit `58827cc6c4` (2026-03-26): [FIX] hr_rfid: Fix legacy module 10.3 JSON res
 
 Commit `a751b6c771` (2026-03-26): [FIX] hr_rfid: Stop command flooding on controller error response
 
+#### Fix: [FIX] hr_rfid: Fix command retry loop causing event flooding
+
+Commit `1b62ae05df` (2026-03-26): [FIX] hr_rfid: Fix command retry loop causing event flooding
+
+#### Fix: [FIX] hr_rfid: Handle concurrent onboarding progress creation
+
+Commit `1a00ac4e5b` (2026-03-26): [FIX] hr_rfid: Handle concurrent onboarding progress creation
+
+#### Fix: [REM] hr_rfid: Delete obsolete http.py monkey-patch
+
+Commit `311ce5c7e3` (2026-03-19): [REM] hr_rfid: Delete obsolete http.py monkey-patch
+
+#### Fix: [MIG] all: Migrate hardware routes to Odoo 19 Json2Dispatcher
+
+Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 Json2Dispatcher
+
 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:bfab40bc1cfdb3403bf012bf5a0430bfb6d4596ac391cee94607bed4b739ad8c`
-- Generated at: `2026-08-26T11:07:13+00:00`
+- Source digest: `sha256:8fae63ae5f5fdba8a7d7220c4629c62c3c8431043cc7cba8a1f624338cfaa506`
+- Generated at: `2026-11-09T07:58:39+00:00`
 - Generator: `polimex_module_knowledge`

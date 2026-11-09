@@ -1,5 +1,6 @@
 # Copyright 2024 Polimex Holding Ltd..
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from odoo.addons.hr_rfid.controllers import polimex
 from odoo.addons.hr_rfid.tests.controller import RFIDController
 from odoo.tests.common import HttpCase, tagged
 
@@ -253,5 +254,39 @@ class TestVendingInit(RFIDController, HttpCase):
     def test_vending_hw_version(self):
         """Test Vending controller hardware version."""
         self._add_Vending()
-        self.c_vending.read()
-        self.assertEqual(self.c_vending.hw_version, '16', 'Vending hw_version should be 16')
+        self._assert_read_as_vending_machine('16', 'Vending')
+
+    def _assert_read_as_vending_machine(self, hw_version, label):
+        ctrl = self.c_vending
+        ctrl.invalidate_recordset()
+        self.assertEqual(ctrl.hw_version, hw_version)
+        self.assertEqual(ctrl.get_ctrl_model_name(None), label)
+        self.assertTrue(ctrl.is_vending_ctrl())
+        self.assertFalse(ctrl.door_ids, "a vending machine has no doors to give rights to")
+        self.assertEqual(len(ctrl.reader_ids), 2)
+        self._check_no_commands()
+
+    def test_an_executive_only_vending_machine_is_read_as_a_vending_machine(self):
+        """The iCON180 board with the Executive-only firmware (20) is a vending
+        machine, not an alarm panel: no doors, its own name in the list."""
+        self._add_Vending(hw=20)
+        self._assert_read_as_vending_machine('20', 'Vending Executive')
+
+    def test_an_mdb_vending_machine_is_read_as_a_vending_machine(self):
+        """The MDB cashless firmware (21) is a vending machine too."""
+        self._add_Vending(hw=21)
+        self._assert_read_as_vending_machine('21', 'Vending MDB')
+
+    def test_a_vending_machine_in_mode_1_is_read_without_a_door(self):
+        """The Executive-only firmware accepts mode 1 as well as mode 2; a
+        machine set to mode 1 is read the same way, without a door."""
+        self._add_Vending(hw=20, mode=1)
+        self._assert_read_as_vending_machine('20', 'Vending Executive')
+        self.assertEqual(self.c_vending.mode, 1)
+
+    def test_only_the_three_vending_firmwares_are_vending_machines(self):
+        """Exactly 16, 20 and 21 are vending machines (Polimex, 06.11.2026);
+        every other hardware code keeps its doors and its own kind."""
+        Ctrl = self.env['hr.rfid.ctrl']
+        vending = {code for code, _label in polimex.HW_TYPES if Ctrl.is_vending_ctrl(hw_version=code)}
+        self.assertEqual(vending, {'16', '20', '21'})

@@ -8,21 +8,27 @@ these functions with the core where the core has a counterpart.
 import hashlib
 from datetime import datetime
 
-from odoo.addons.hr_rfid.controllers.polimex import HW_TYPES, READ_CARDS_BLOCK_SIZE, bytes_to_num
+from odoo.addons.hr_rfid.controllers.polimex import (
+    HW_TYPES,
+    READ_CARDS_BLOCK_SIZE,
+    VENDING_HW_VERSIONS,
+    bytes_to_num,
+)
 
 HW_LABELS = dict(HW_TYPES)
 
 #: Hardware families. The codes are the two BCD digits the controller reports
 #: in its system information; where hr_rfid has a classifier of its own
-#: (is_vending_ctrl = '16', is_relay_ctrl = 30-32, is_temperature_ctrl = 22-24)
-#: the family follows it exactly - tests/test_codecs.py holds the parity test.
-#: Codes hr_rfid lists but no firmware reports (33, 36-39) stay unknown.
+#: (is_vending_ctrl, is_relay_ctrl = 30-32, is_temperature_ctrl = 22) the
+#: family follows it - tests/test_codecs.py holds the parity test. Codes
+#: hr_rfid lists but no firmware reports (33, 36-39) stay unknown.
 FAMILY_BY_HW = {}
 for _code in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '17'):
     FAMILY_BY_HW[_code] = 'access'
 for _code in ('13', '14'):
     FAMILY_BY_HW[_code] = 'hotel'
-FAMILY_BY_HW['16'] = 'vending'
+for _code in VENDING_HW_VERSIONS:
+    FAMILY_BY_HW[_code] = 'vending'
 for _code in ('30', '31', '32'):
     FAMILY_BY_HW[_code] = 'relay'
 for _code in ('34', '35'):
@@ -33,7 +39,7 @@ for _code in ('18', '19'):
     FAMILY_BY_HW[_code] = 'fire'
 FAMILY_BY_HW['25'] = 'gas'
 FAMILY_BY_HW['26'] = 'power'
-for _code in ('20', '21', '27', '28', '29'):
+for _code in ('27', '28', '29'):
     FAMILY_BY_HW[_code] = 'alarm'
 for _code in (str(c) for c in range(40, 50)):
     FAMILY_BY_HW[_code] = 'reader'

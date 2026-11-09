@@ -1,16 +1,19 @@
-# Copyright 2022 Polimex Holding Ltd..
-# License APL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# Copyright 2022 Polimex Holding Ltd.
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from odoo.addons.hr_rfid.tests.controller import RFIDController
 from odoo.tests.common import HttpCase, tagged
 
 from odoo.tools import float_compare
 
+from .vending_common import VendingFlowMixin, take_everyone_off_auto_refill, units_hex
+
 
 # {'convertor': 242865, 'key': '0000', 'event': {'id': 38, 'cmd': 'FA', 'err': 0, 'tos': 1, 'bos': 1, 'event_n': 4, 'time': '17:45:15', 'day': 4, 'date': '13.10.22', 'card': '1598240645', 'reader': 1, 'dt': '00000000000000'}}
 # TODO Add this event if happend
 @tagged('rfid_vending')
-class VendingController(RFIDController, HttpCase):
+class VendingController(VendingFlowMixin, RFIDController, HttpCase):
     def test_vending_functionality(self):
+        take_everyone_off_auto_refill(self.env)
         self._add_Vending()
 
         self._add_products()
@@ -72,29 +75,17 @@ class VendingController(RFIDController, HttpCase):
 
     def _check_balance(self, expected, ctrl_id=None):
         ctrl_id = ctrl_id or self.c_vending
-        response = self._send_cmd({
-            "convertor": ctrl_id.webstack_id.serial,
-            "event": {"bos": 1,
-                      "tos": 1,
-                      "card": self.test_card_employee.number,
-                      "cmd": "FA",
-                      "date": self.test_date_10_3,
-                      "day": self.test_dow_10_3,
-                      "dt": "00000000000000",
-                      "time": self.test_time_10_3,
-                      "err": 0, "event_n": 64, "id": ctrl_id.ctrl_id, "reader": 1},
-            "key": ctrl_id.webstack_id.key
-        })
+        response = self._ev64(ctrl_id=ctrl_id)
         if expected != 0:
-            es = '{:02}'.format(expected)
             # The DB grant echoes the requesting card back digit-by-digit (each
-            # decimal digit as a '0X' byte), then the two balance digits the
-            # same way. Derive the expected payload from the actual card number
-            # so the assertion is not coupled to a specific fixture card value.
+            # decimal digit as a '0X' byte), then the balance in units as two
+            # hex digits the same way. Derive the expected payload from the
+            # actual card number so the assertion is not coupled to a
+            # specific fixture card value.
             card_bytes = ''.join('0' + digit for digit in self.test_card_employee.number)
             self.assertEqual(response, {
                 'cmd': {'id': ctrl_id.ctrl_id, 'c': 'DB',
-                        'd': f'4000{card_bytes}0{es[0]}0{es[1]}'}})
+                        'd': '4000%s%s' % (card_bytes, units_hex(expected))}})
             response = self._send_cmd_response(response, '0000')
         self.assertEqual(response, {})
 
@@ -140,28 +131,12 @@ class VendingController(RFIDController, HttpCase):
         # Finishing with 0.3 balance and self balance 5. Let's spend it
 
     def _sale_event(self, product, price_in_units, change_in_units=0, card_number=None, ctrl_id=None):
-        def h_x2(h):
-            return f'0{h[0]}0{h[1]}'
-
-        ctrl_id = ctrl_id or self.c_vending
-        p = '{:02x}'.format(product)
-        piu = h_x2('{:02x}'.format(price_in_units))
-        ciu = h_x2('{:02x}'.format(change_in_units))
-        response = self._send_cmd({
-            "convertor": ctrl_id.webstack_id.serial,
-            "event": {"bos": 1,
-                      "tos": 1,
-                      "card": card_number or self.test_card_employee.number,
-                      "cmd": "FA",
-                      "date": self.test_date_10_3,
-                      "day": self.test_dow_10_3,
-                      # "dt": "00 00 01 00 01 00 01",
-                      # pass,pass, 72 hex product, price hex H, price hex L, result_credit hex H, result_credit hex L
-                      "dt": f"0000{p}{piu}{ciu}",
-                      "time": self.test_time_10_3,
-                      "err": 0, "event_n": 47 if product != 99 else 50, "id": ctrl_id.ctrl_id, "reader": 1},
-            "key": ctrl_id.webstack_id.key
-        })
+        # Product 99 is the self recharge (ev50); any other is a sale (ev47).
+        if product == 99:
+            response = self._ev50(price_in_units, change_in_units, card_number=card_number, ctrl_id=ctrl_id)
+        else:
+            response = self._ev47(product, price_in_units, change_in_units,
+                                  card_number=card_number, ctrl_id=ctrl_id)
         self.assertEqual(response, {})
 
     def _sale_test(self, ctrl_id=None):

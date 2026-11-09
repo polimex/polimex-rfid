@@ -11,6 +11,13 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
+def f0_with_mode_byte(f0, mode_byte):
+    """The F0 (system information) answer with its mode byte replaced: hex
+    characters 42-43, the low bits the mode, 0x08 dual person, 0x10
+    interlocking, 0x20 external database, 0x40 relay time factor."""
+    return '%s%02X%s' % (f0[:42], mode_byte, f0[44:])
+
 _controllers_created = 0
 _TIMEOUT = 500
 
@@ -356,11 +363,11 @@ class RFIDAppCase(common.TransactionCase):
     def _process_io_table(self, response, ctrl, module=234567, key='0000'):
         ctrl.read()
         self.assertTrue(response['cmd']['c'] == 'F9' and response['cmd']['d'] == '01', '(%s)' % ctrl.name)
-        self.assertNotEqual(ctrl.default_io_table, '(%s)' % ctrl.name)
+        self.assertTrue(ctrl.default_io_table, '(%s)' % ctrl.name)
         io_count = 0
         while response['cmd']['c'] == 'F9':
             line = int(response['cmd']['d'], 16)
-            self.assertNotEqual(ctrl.default_io_table[(line - 1) * 16:(line - 1) * 16 + 16], '(%s)' % ctrl.name)
+            self.assertTrue(ctrl.default_io_table[(line - 1) * 16:(line - 1) * 16 + 16], '(%s)' % ctrl.name)
             response = self._send_cmd({
                 "convertor": module,
                 "response": {
@@ -527,7 +534,7 @@ class RFIDAppCase(common.TransactionCase):
         mode = response['cmd']['d']
         response = self._send_cmd_response(response)  # To D5 change mode
         original_F0 = self.default_F0[int(ctrl.hw_version)]
-        new_F0 = original_F0[:42] + mode + original_F0[44:]
+        new_F0 = f0_with_mode_byte(original_F0, int(mode, 16))
 
         response = self._send_cmd_response(response, new_F0)
         while response != {} and response['cmd']['c'] == 'D9':

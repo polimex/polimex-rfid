@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage EXECUTIVE based vending machines
-last_updated: '2026-08-26'
-source_digest: sha256:39dcdcb8b6b3c5d2bbff3e65b2f375fbba9281adbab7db195040463d59d2ef3b
+last_updated: '2026-11-09'
+source_digest: sha256:ffbc98011d8ee0ab14c766b66ed154ad069b333eac53a14b28627109c1a2420c
 companion_doc: llms-full.md
 ---
 
@@ -26,7 +26,7 @@ This guide is for users who **configure** and **use** the module. If you need to
 
 ## How to configure
 
-Open **Settings → General Settings** and look for the section named after this module. Available options:
+Open **Settings**. Available options:
 
 - **refill_interval_number** - Repeat every x.
 - **Interval Unit** - Time unit for the auto-refill repeat interval. Combined with Repeat every (above) to drive the cron schedule.
@@ -79,6 +79,26 @@ RFID Vending integrates EXECUTIVE-based vending machines with Odoo's RFID system
 - EXECUTIVE vending machines with RFID readers
 - Network connectivity to vending machines
 
+##### Vending firmwares
+
+The iCON180 vending board runs one of three firmwares, shown as the
+controller's Hardware Type:
+
+- **Vending** - Executive with a coin mechanism. Sells at the prices set in
+  Odoo.
+- **Vending Executive** - Executive only, no coin mechanism. Sells at the
+  prices set in Odoo, exactly like Vending.
+- **Vending MDB** - MDB cashless. The machine keeps its own prices, so the
+  controller has no Prices button. Card payments on it are refused for now,
+  because Odoo cannot yet record a sale the machine reports without its
+  price. Each refused card, and any sale the machine still reports, leaves a
+  system event on the controller with the card and the machine's data, for
+  the operator to check on the machine.
+
+A refused card on any vending machine (unknown, archived, without an
+employee, or an employee who must be checked in first) leaves a system event
+on the controller with the card number and the reason.
+
 #### 🛠️ Installation
 
 1. Install hr_rfid module first
@@ -102,7 +122,8 @@ RFID Vending integrates EXECUTIVE-based vending machines with Odoo's RFID system
 2. **Configure Products**
    - RFID → Vending → Machine Configuration
    - Map slots to Odoo products
-   - Set prices per slot
+   - Set prices per slot (Vending and Vending Executive; a Vending MDB machine
+     keeps its own prices)
 
 3. **Enable on Employees**
    - HR → Employees → RFID tab
@@ -326,7 +347,6 @@ This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 ---
 
 For more information, visit [polimex.co](https://polimex.co)
-
 
 ### Available actions
 

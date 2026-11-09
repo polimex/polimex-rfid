@@ -888,7 +888,10 @@ class HrRfidCommands(models.Model):
                 return _door
 
             if self.controller_id.is_vending_ctrl(hw_ver):
-                return None
+                # A vending machine has no door. An empty recordset, not None:
+                # the callers read `.id` or add it to a reader's doors, in
+                # every mode (mode 1 too, which 20 and 21 accept).
+                return door_env
             return door_env.create(door_dict)
 
         def create_reader(name, number, reader_type, door_id=None):
@@ -1076,8 +1079,10 @@ class HrRfidCommands(models.Model):
         if self.controller_id.is_temperature_ctrl():
             self.controller_id.read_cards_cmd()
             self.controller_id.temp_range_cmd()
+        # Anti-passback guards doors; a vending machine has none.
         if not self.controller_id.is_relay_ctrl() and \
                 not self.controller_id.is_temperature_ctrl() and \
+                not self.controller_id.is_vending_ctrl() and \
                 ((self.controller_id.readers == 2 and ctrl_mode == 1) or \
                  (self.controller_id.readers > 2 and ctrl_mode < 4)) and \
                 not ctrl_already_existed:

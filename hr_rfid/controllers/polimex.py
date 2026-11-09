@@ -7,17 +7,21 @@ MAX_DIRECT_EXECUTE_TIME = 5  # last X seconds for counting executed cmds
 HW_TYPES = [('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
             ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),
             ('9', 'Turnstile'), ('10', 'iCON180'), ('11', 'iCON115'), ('12', 'iCON50'),
-            ('13', 'FireControl'), ('14', 'FireControl'), ('18', 'FireControl'),
+            ('13', 'iCON115 hotel'), ('14', 'iCON180 hotel'), ('18', 'FireControl'),
             ('19', 'FireControl'), ('15', 'TempRH'), ('16', 'Vending'), ('17', 'iCON130'),
-            ('20', 'AlarmControl'), ('21', 'AlarmControl'), ('22', 'Temperature'),
-            ('23', 'AlarmControl'), ('26', 'AlarmControl'), ('27', 'AlarmControl'),
-            ('28', 'AlarmControl'), ('29', 'AlarmControl'), ('24', 'iTemp'), ('25', 'iGas'),
+            ('20', 'Vending Executive'), ('21', 'Vending MDB'), ('22', 'Temperature'),
+            ('23', 'IO44 TempRH'), ('26', 'PowerController'), ('27', 'AlarmControl'),
+            ('28', 'AlarmControl'), ('29', 'AlarmControl'), ('24', 'IO23 TempRH'), ('25', 'iGas'),
             ('30', 'RelayControl110'), ('31', 'RelayControl'), ('32', 'RelayControl'),
-            ('33', 'RelayControl'), ('34', 'RelayControl'), ('35', 'RelayControl'),
+            ('33', 'RelayControl'), ('34', 'IO 88'), ('35', 'IO 010'),
             ('36', 'RelayControl'), ('37', 'RelayControl'), ('38', 'RelayControl'),
             ('39', 'RelayControl'), ('40', 'MFReader'), ('41', 'MFReader'), ('42', 'MFReader'),
             ('43', 'MFReader'), ('44', 'MFReader'), ('45', 'MFReader'), ('46', 'MFReader'),
             ('47', 'MFReader'), ('48', 'MFReader'), ('49', 'MFReader'), ('50', 'iMotor')]
+# Hardware codes of vending machines: no doors, card balances instead of door
+# rights. One iCON180 board carries three vending firmwares: 16 (Executive
+# with a coin mechanism), 20 (Executive only) and 21 (MDB cashless).
+VENDING_HW_VERSIONS = ('16', '20', '21')
 DEFAULT_IO_TABLES = [
     # [hw_version, mode, data]
     # iCON110

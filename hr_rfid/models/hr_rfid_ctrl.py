@@ -751,10 +751,10 @@ class HrRfidController(models.Model):
 
     def is_vending_ctrl(self, hw_version=None):
         if hw_version:
-            return hw_version in ['16']
+            return hw_version in polimex.VENDING_HW_VERSIONS
         elif self:
             self.ensure_one()
-            return self.hw_version in ['16']
+            return self.hw_version in polimex.VENDING_HW_VERSIONS
 
     def is_turnstile_ctrl(self, hw_version=None):
         if hw_version:

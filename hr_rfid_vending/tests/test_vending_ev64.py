@@ -1,11 +1,13 @@
-# Copyright 2026 Polimex Holding Ltd..
-# License APL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# Copyright 2026 Polimex Holding Ltd.
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from odoo.addons.hr_rfid.tests.controller import RFIDController
 from odoo.tests.common import HttpCase, tagged
 
+from .vending_common import VendingFlowMixin
+
 
 @tagged('rfid_vending', 'rfid_vending_ev64')
-class TestVendingEv64(RFIDController, HttpCase):
+class TestVendingEv64(VendingFlowMixin, RFIDController, HttpCase):
     """Test all ev64 (Cloud Card Request) paths from hardware to Odoo response."""
 
     _registry_readonly_enabled = False
@@ -14,48 +16,12 @@ class TestVendingEv64(RFIDController, HttpCase):
         super().setUp()
         self._add_Vending()
 
-    def _ev64(self, card_number, ctrl_id=None, bos=1, tos=1):
-        """Send ev64 (Cloud Card Request) and return parsed response."""
-        ctrl_id = ctrl_id or self.c_vending
-        return self._send_cmd({
-            "convertor": ctrl_id.webstack_id.serial,
-            "event": {
-                "bos": bos, "tos": tos,
-                "card": card_number,
-                "cmd": "FA",
-                "date": self.test_date_10_3,
-                "day": self.test_dow_10_3,
-                "dt": "00000000000000",
-                "time": self.test_time_10_3,
-                "err": 0, "event_n": 64,
-                "id": ctrl_id.ctrl_id, "reader": 1,
-            },
-            "key": ctrl_id.webstack_id.key
-        })
-
-    def _ev49(self, card_number, ctrl_id=None):
-        """Send ev49 (VEND FAIL) event."""
-        ctrl_id = ctrl_id or self.c_vending
-        return self._send_cmd({
-            "convertor": ctrl_id.webstack_id.serial,
-            "event": {
-                "bos": 1, "tos": 1,
-                "card": card_number,
-                "cmd": "FA",
-                "date": self.test_date_10_3,
-                "day": self.test_dow_10_3,
-                "dt": "00000000000000",
-                "time": self.test_time_10_3,
-                "err": 0, "event_n": 49,
-                "id": ctrl_id.ctrl_id, "reader": 1,
-            },
-            "key": ctrl_id.webstack_id.key
-        }, system_event=True)
-
-    def _vending_event_count(self):
-        return self.env['hr.rfid.vending.event'].sudo().search_count([
-            ('controller_id', '=', self.c_vending.id)
-        ])
+    def _assert_refusal_seen_by_the_operator(self, card_number):
+        """A refused card leaves one system event saying which card, which
+        machine event and when - not only a line in the server log."""
+        refusals = self._system_events(event_action='64')
+        self.assertEqual(len(refusals), 1)
+        self.assertEqual(refusals.card_number, card_number)
 
     # ---- ev64 deny paths ----
 
@@ -66,6 +32,7 @@ class TestVendingEv64(RFIDController, HttpCase):
         self.assertEqual(response, {}, 'Unknown card should get empty response (deny)')
         self.assertEqual(self._vending_event_count(), count_before,
                          'No vending event should be created for unknown card')
+        self._assert_refusal_seen_by_the_operator('9999999999')
 
     def test_ev64_card_inactive(self):
         """Inactive card -> deny, no vending event."""
@@ -75,6 +42,7 @@ class TestVendingEv64(RFIDController, HttpCase):
         response = self._ev64(self.test_card_employee.number)
         self.assertEqual(response, {}, 'Inactive card should get empty response (deny)')
         self.assertEqual(self._vending_event_count(), count_before)
+        self._assert_refusal_seen_by_the_operator(self.test_card_employee.number)
 
     def test_ev64_employee_not_checked_in(self):
         """Employee with attendance check enabled but not checked in -> deny."""
@@ -84,6 +52,7 @@ class TestVendingEv64(RFIDController, HttpCase):
         response = self._ev64(self.test_card_employee.number)
         self.assertEqual(response, {}, 'Employee not checked in should get deny')
         self.assertEqual(self._vending_event_count(), count_before)
+        self._assert_refusal_seen_by_the_operator(self.test_card_employee.number)
 
     def test_ev64_zero_balance(self):
         """Employee with zero balance -> deny, vending event created."""
@@ -106,14 +75,11 @@ class TestVendingEv64(RFIDController, HttpCase):
         self.test_employee_id.hr_rfid_vending_add_to_balance(0.15)
         count_before = self._vending_event_count()
         response = self._ev64(self.test_card_employee.number)
-        self.assertIn('cmd', response, 'Should return DB2 command for grant')
-        self.assertEqual(response['cmd']['c'], 'DB', 'Grant command should be DB')
-        self.assertTrue(response['cmd']['d'].startswith('4000'), 'DB2 data should start with 4000')
+        # 0.15 at scale factor 5 is 3 units.
+        self._assert_balance_response(response, 3)
         self.assertEqual(self._vending_event_count(), count_before + 1,
                          'Vending event should be created on grant')
-        # Complete the DB2 response
-        response = self._send_cmd_response(response, '0000')
-        self.assertEqual(response, {})
+        self._check_no_commands()
 
     # ---- ev49 VEND FAIL ----
 

@@ -4,6 +4,7 @@ from lxml import etree
 
 from odoo.tests.common import HttpCase, tagged
 
+from odoo.addons.hr_rfid.tests.common import f0_with_mode_byte
 from odoo.addons.hr_rfid.tests.controller import RFIDController
 
 
@@ -34,8 +35,7 @@ class TestInterlockingMode(RFIDController, HttpCase):
         self.assertFalse(ctrl.interlocking_mode, "starts off")
 
         f0 = self.default_F0[int(ctrl.hw_version)]
-        patched = '%02X' % (int(f0[42:44], 16) | 0x10)
-        f0_interlocked = f0[:42] + patched + f0[44:]
+        f0_interlocked = f0_with_mode_byte(f0, int(f0[42:44], 16) | 0x10)
 
         ctrl.read_controller_information_cmd()
         response = self._hearbeat(ctrl.webstack_id)

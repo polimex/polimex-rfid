@@ -3,9 +3,11 @@
 from odoo.addons.hr_rfid.tests.controller import RFIDController
 from odoo.tests.common import HttpCase, tagged
 
+from .vending_common import VendingFlowMixin
+
 
 @tagged('rfid_vending', 'rfid_vending_key_auth')
-class TestVendingKeyAuth(RFIDController, HttpCase):
+class TestVendingKeyAuth(VendingFlowMixin, RFIDController, HttpCase):
     """Security regression: the vending /hr/rfid/event override must validate
     the module key (constant-time) before processing any event.
 
@@ -33,26 +35,7 @@ class TestVendingKeyAuth(RFIDController, HttpCase):
 
     def _ev64_with_key(self, card_number, key):
         """Send an ev64 (Cloud Card Request) signed with an explicit key."""
-        return self._send_cmd({
-            "convertor": self.c_vending.webstack_id.serial,
-            "event": {
-                "bos": 1, "tos": 1,
-                "card": card_number,
-                "cmd": "FA",
-                "date": self.test_date_10_3,
-                "day": self.test_dow_10_3,
-                "dt": "00000000000000",
-                "time": self.test_time_10_3,
-                "err": 0, "event_n": 64,
-                "id": self.c_vending.ctrl_id, "reader": 1,
-            },
-            "key": key,
-        })
-
-    def _vending_event_count(self):
-        return self.env['hr.rfid.vending.event'].sudo().search_count([
-            ('controller_id', '=', self.c_vending.id)
-        ])
+        return self._ev64(card_number, key=key)
 
     def _key_mismatch_sys_events(self):
         return self.env['hr.rfid.event.system'].sudo().search_count([

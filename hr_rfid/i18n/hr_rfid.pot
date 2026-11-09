@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 14:13+0000\n"
-"PO-Revision-Date: 2026-08-14 14:13+0000\n"
+"POT-Creation-Date: 2026-11-06 18:16+0000\n"
+"PO-Revision-Date: 2026-11-06 18:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1435,10 +1435,6 @@ msgid "Alarm system groups"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__20
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__21
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__23
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__26
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__27
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__28
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__29
@@ -4850,8 +4846,6 @@ msgid "Fire/Emergency"
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__13
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__14
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__18
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__19
 msgid "FireControl"
@@ -5464,6 +5458,16 @@ msgid "ID behind IP Module"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__35
+msgid "IO 010"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__34
+msgid "IO 88"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_controller_io_table_action
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__io_row_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
@@ -5485,6 +5489,16 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
 msgid "IO table:"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__24
+msgid "IO23 TempRH"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__23
+msgid "IO44 TempRH"
 msgstr ""
 
 #. module: hr_rfid
@@ -7802,6 +7816,11 @@ msgid "Power On event"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__26
+msgid "PowerController"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__hb_card_present
 msgid "Present card in reader"
 msgstr ""
@@ -8615,8 +8634,6 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__31
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__32
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__33
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__34
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__35
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__36
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__37
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__38
@@ -10279,6 +10296,15 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid ""
+"The plate number \"%(entered)s\" contains %(chars)s - not something a number"
+" plate can carry, and there is nothing it converts to. Enter the number "
+"exactly as it reads on the plate, e.g. CB5803CM."
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__sensor_number
 msgid ""
 "The position number of this sensor in the controller's sensor list. This is "
@@ -11128,6 +11154,16 @@ msgid "Vending Error2"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__20
+msgid "Vending Executive"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__21
+msgid "Vending MDB"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__47
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__47
 msgid "Vending Purchase Complete"
@@ -11794,6 +11830,11 @@ msgid "iCON115"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__13
+msgid "iCON115 hotel"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__5
 msgid "iCON120"
 msgstr ""
@@ -11830,6 +11871,11 @@ msgid "iCON180"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__14
+msgid "iCON180 hotel"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__1
 msgid "iCON200"
 msgstr ""
@@ -11847,11 +11893,6 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__50
 msgid "iMotor"
-msgstr ""
-
-#. module: hr_rfid
-#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__24
-msgid "iTemp"
 msgstr ""
 
 #. module: hr_rfid

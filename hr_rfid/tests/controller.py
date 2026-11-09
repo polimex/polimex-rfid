@@ -1,8 +1,8 @@
-# Copyright 2022 Polimex Holding Ltd..
-# License APL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# Copyright 2022 Polimex Holding Ltd.
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from dateutil.relativedelta import relativedelta
 
-from odoo.addons.hr_rfid.tests.common import RFIDAppCase
+from odoo.addons.hr_rfid.tests.common import RFIDAppCase, f0_with_mode_byte
 
 import logging
 
@@ -20,6 +20,12 @@ class RFIDController(RFIDAppCase):
             11: '0101000202000704000000050000040201050208010200090702070003000506',  # iCON115
             12: '0102000000010703090000010000030100000208000100010502060003000506',  # iCON50
             16: '0106000003090704020000010000010201050200002200090702070003000506',  # Vending Controller
+            # Vending, Executive only (VEND_V3_11, sw 7.11) and MDB cashless
+            # (VEND_mbd_17, sw 7.17): 8 inputs, 8 outputs, 2 readers, 8 time
+            # schedules, 20 IO lines, mode 2 + external db, 7677 cards, 4093
+            # events - the F0 fields as the two firmwares fill them.
+            20: '0200000004000701010000080000080200080200002200070607070004000903',
+            21: '0201000004010701070000080000080200080200002200070607070004000903',
             17: '0107000601000703090000090000080401050208000401050807000008010900',  # iCON130
             22: '0202000207080704040000050000040001050208000200000102070004000604',  # Temperature Controller
             30: '0300070004060704010000050001000200080206000200090702070003000506',  # Relay controller 30
@@ -32,6 +38,8 @@ class RFIDController(RFIDAppCase):
             11: '000001000335000000000000000000000000050204000000',  # iCON115
             12: '000000000686000000000000000000000000010802000000',  # iCON50
             16: '00006E010752079200000000000000000000000000000000',  # Vending Controller
+            20: '00006E010752079200000000000000000000000000000000',  # Vending Executive
+            21: '00006E010752079200000000000000000000000000000000',  # Vending MDB
             17: '00006E010752079200000000000000000000000000000000',  # iCON130
             22: '000000000875000001840390000000000000000802000000',  # Temperature Controller
             30: '000001000335000000000000000000000000050204000000',  # Relay controller 30
@@ -54,7 +62,12 @@ class RFIDController(RFIDAppCase):
 
     # Create controllers
 
-    def _add_Vending(self, module=234567, key='0000', id=None):
+    def _add_Vending(self, module=234567, key='0000', id=None, hw=16, mode=None):
+        """Add a vending controller the way it reports itself.
+
+        `hw` picks the firmware (16, 20 or 21). `mode` replaces the low bits of
+        the mode byte (the external-database bit stays), e.g. mode=1.
+        """
         id = id or self._get_id_num()
         self.c_vending = self.env['hr.rfid.ctrl'].create({
             'name': 'Turnstile Vending',
@@ -63,9 +76,12 @@ class RFIDController(RFIDAppCase):
         })
         self.c_vending.read_controller_information_cmd()
 
+        f0 = self.default_F0[hw]
+        if mode is not None:
+            f0 = f0_with_mode_byte(f0, (int(f0[42:44], 16) & ~0x07) | mode)
         response = self._hearbeat(self.c_vending.webstack_id)
         self.assertEqual(response, {'cmd': {'id': id, 'c': 'F0', 'd': ''}}, '(%s)' % self.c_vending.name)
-        response = self._send_cmd_response(response, self.default_F0[16])
+        response = self._send_cmd_response(response, f0)
         self.assertTrue(response['cmd']['c'] == 'D7', '(%s)' % self.c_vending.name)  #
         response = self._send_cmd_response(response)
         self.assertTrue(response['cmd']['c'] == 'DC', '(%s)' % self.c_vending.name)
@@ -78,9 +94,9 @@ class RFIDController(RFIDAppCase):
         response = self._process_io_table(response, self.c_vending)
         self.assertTrue(response['cmd']['c'] == 'FB')
         response = self._send_cmd_response(response, '0f000000')
-        # FF (Read Output T/S) is skipped for vending controllers (hw=16)
+        # FF (Read Output T/S) is skipped for vending controllers
         self.assertTrue(response['cmd']['c'] == 'B3', '(%s)' % self.c_vending.name)
-        response = self._send_cmd_response(response, self.default_B3[16])
+        response = self._send_cmd_response(response, self.default_B3[hw])
         self.assertTrue(response == {}, '(%s)' % self.c_vending.name)
 
     def _add_Turnstile(self, module=234567, key='0000', id=None):

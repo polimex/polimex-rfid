@@ -1,5 +1,11 @@
 from odoo import fields, models, api, _, exceptions
 
+# Vending firmwares that keep the price table Odoo writes and report the price
+# of every sale: 16 and 20. The MDB firmware (21) keeps its prices in the
+# machine and its sale events carry the credit left, not the price, so Odoo
+# cannot book its sales yet and gives it no credit.
+PRICE_TABLE_HW_VERSIONS = ('16', '20')
+
 
 class HrRfidControllerVending(models.Model):
     _name = 'hr.rfid.ctrl'
@@ -57,16 +63,38 @@ Helps manage cash flow and collection schedules for vending operations.""",
 Leave empty to use default product prices."""
     )
 
+    is_vending = fields.Boolean(
+        string='Is a Vending Machine',
+        compute='_compute_vending_flags',
+        help="Set when the controller runs a vending firmware: it works with card "
+             "balances and vending counters instead of doors.",
+    )
+
+    has_vending_price_table = fields.Boolean(
+        string='Prices Set in Odoo',
+        compute='_compute_vending_flags',
+        help="Set when the machine sells at the prices entered in Odoo. Machines "
+             "that keep their own prices (MDB) do not show the Prices button.",
+    )
+
+    @api.depends('hw_version')
+    def _compute_vending_flags(self):
+        for ctrl in self:
+            ctrl.is_vending = ctrl.is_vending_ctrl()
+            ctrl.has_vending_price_table = ctrl._vending_has_price_table()
+
+    def _vending_has_price_table(self):
+        self.ensure_one()
+        return self.hw_version in PRICE_TABLE_HW_VERSIONS
+
     @api.model
     def _convert_balance_to_ctrl(self, balance):
         self.ensure_one()
-        # convert balance in units for machine
-        balance *= 100
-        if self.scale_factor > 0:
-            balance /= self.scale_factor
-        else:
-            balance = 0
-        balance = int(balance)
+        # Balance in machine units: whole cents first, then whole units the
+        # cents pay for. In floats 1.15 * 100 / 5 is 22.999..., and int()
+        # would offer one unit less than the balance covers.
+        cents = int(round(balance * 100))
+        balance = cents // self.scale_factor if self.scale_factor > 0 else 0
         if balance > 0xFF:
             balance = 0xFF
         b1 = (balance & 0xF0) // 0x10
@@ -76,7 +104,7 @@ Leave empty to use default product prices."""
 
     def _compute_show_price_timeout(self):
         for ctrl in self:
-            if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':
+            if not ctrl.io_table or not ctrl.is_vending_ctrl():
                 ctrl.show_price_timeout = 0
                 continue
 
@@ -89,7 +117,7 @@ Leave empty to use default product prices."""
 
     def _compute_scale_factor(self):
         for ctrl in self:
-            if not ctrl.io_table or ctrl.io_table == '' or ctrl.hw_version != '16':
+            if not ctrl.io_table or not ctrl.is_vending_ctrl():
                 ctrl.scale_factor = 0
                 continue
 
@@ -117,10 +145,11 @@ Leave empty to use default product prices."""
         return rows
     def write(self, vals):
         for ctrl in self:
-            # If it's not a vending machine
             super(HrRfidControllerVending, ctrl).write(vals)
 
-            if ctrl.hw_version != '16':
+            # The rows are the price table; a machine that keeps its own
+            # prices has none to edit.
+            if not ctrl._vending_has_price_table():
                 continue
 
             if 'io_table' in vals:

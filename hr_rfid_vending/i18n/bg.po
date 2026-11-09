@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 10:35+0000\n"
-"PO-Revision-Date: 2026-08-26 13:37\n"
+"POT-Creation-Date: 2026-11-06 18:52+0000\n"
+"PO-Revision-Date: 2026-11-06 20:53\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -12,6 +12,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"%(employee)s is not checked in, and gets vending credit only after a check-"
+"in."
+msgstr ""
+"%(employee)s не е отбелязан като присъстващ и получава вендинг кредит само "
+"след отбелязване на присъствие."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
@@ -540,6 +550,12 @@ msgid "Controller ID"
 msgstr "ИН на контролер"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid "Could not find the card"
+msgstr "Картата не беше намерена"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__create_uid
@@ -1034,6 +1050,11 @@ msgid "Is Follower"
 msgstr "Е последовател"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
+msgid "Is a Vending Machine"
+msgstr "Е вендинг машина"
+
+#. module: hr_rfid_vending
 #. odoo-python
 #: code:addons/hr_rfid_vending/controllers/main.py:0
 msgid "Item %s has the cost of %f but vending reported it costs %f!"
@@ -1504,6 +1525,11 @@ msgid "Prices"
 msgstr "Цени"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__has_vending_price_table
+msgid "Prices Set in Odoo"
+msgstr "Цени, зададени в Odoo"
+
+#. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_product_template
 msgid "Product"
 msgstr "Продукт"
@@ -1875,6 +1901,24 @@ msgid "Set vending balance"
 msgstr "Задай Баланс за вендинг"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
+msgid ""
+"Set when the controller runs a vending firmware: it works with card balances"
+" and vending counters instead of doors."
+msgstr ""
+"Задава се, когато контролерът работи с вендинг фърмуер: той работи с баланси"
+" на карти и вендинг броячи вместо с врати."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__has_vending_price_table
+msgid ""
+"Set when the machine sells at the prices entered in Odoo. Machines that keep"
+" their own prices (MDB) do not show the Prices button."
+msgstr ""
+"Задава се, когато машината продава на цените, въведени в Odoo. Машините, "
+"които поддържат собствени цени (MDB), не показват бутона „Цени“."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
 msgid "Show Price Timeout"
 msgstr "Време за показване на Цената"
@@ -2003,6 +2047,16 @@ msgid ""
 msgstr "Алармена линия за това събитие"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"The card is archived or belongs to no employee, so it gets no vending "
+"credit."
+msgstr ""
+"Картата е архивирана или не принадлежи на служител, затова не получава "
+"вендинг кредит."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
 msgid ""
 "The employee who triggered this access event. Automatically populated from "
@@ -2031,9 +2085,37 @@ msgstr "Стойността на %s е невалидна. Трябва да е
 
 #. module: hr_rfid_vending
 #. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid "The vending machine reported an error (data %(data)s)."
+msgstr "Вендинг машината съобщи за грешка (данни %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
 msgid "This event has already been reversed."
 msgstr "Това събитие вече е сторнирано."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"This vending machine keeps its own prices, and Odoo cannot record its sales "
+"yet, so it gets no credit for cards."
+msgstr ""
+"Тази вендинг машина поддържа собствени цени и Odoo все още не може да "
+"записва продажбите ѝ, затова не зарежда кредит на картите."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"This vending machine reported a transaction (card %(card)s, item %(item)s, "
+"data %(data)s) that Odoo does not record, because the machine keeps its own "
+"prices. Check it on the machine."
+msgstr ""
+"Тази вендинг машина съобщи за транзакция (карта %(card)s, артикул %(item)s, "
+"данни %(data)s), която Odoo не записва, защото машината поддържа собствени "
+"цени. Проверете я на машината."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.actions.act_window,help:hr_rfid_vending.hr_rfid_vending_event_action
@@ -2457,9 +2539,3 @@ msgstr "по отдел"
 #: code:addons/hr_rfid_vending/models/hr_rfid_ctrl_settings.py:0
 msgid "item %s: %f is not a valid price. Must be between %f and %f"
 msgstr "артикул %s: %f не е валидна цена. Трябва да е между %f и %f"
-
-#~ msgid ""
-#~ "After how long the vending machine will stop showing the product price on "
-#~ "the screen"
-#~ msgstr ""
-#~ "След колко време автоматът ще спре да показва цената на продукта на екрана"

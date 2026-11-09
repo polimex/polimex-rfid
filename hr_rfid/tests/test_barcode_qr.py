@@ -4,11 +4,17 @@
 Regression tests for hr.rfid.card.barcode_number.
 
 The portal QR-code, the foldable badge PDF, and the full-page ticket PDF
-all read `card.barcode_number`. The reader/scanner that consumes that
-QR decodes the printed hex back to the 5+5 decimal that the controller
-firmware actually sends on every scan, and Odoo looks the card up by
-`internal_number`. So the QR hex MUST be the hex of the card's
-`internal_number` — not of whatever raw `number` the user typed in.
+all read `card.barcode_number`. A reader set up for QR codes (a setting
+of the reader itself) reads the printed hex and passes it to the
+controller over Wiegand, the same way as a card; the controller reports
+it as the 5+5 decimal and Odoo looks the card up by `internal_number`
+(path confirmed by Polimex, 06.11.2026). So the QR hex MUST be the hex of
+the card's `internal_number` - not of whatever raw `number` the user
+typed in.
+
+The other path - a QR code read directly by the iCON1XX 100.1 over
+RS-232 and processed there - is not covered here: how that path reports
+the code to Odoo is not established.
 
 Prior to the fix, `_compute_barcode_number` fed `card.number` to
 `w34_to_hex`. That worked for `card_input_type='w34'` (5+5 decimal input)
@@ -79,7 +85,7 @@ class TestBarcodeNumber(RFIDAppCase):
 
         @api.depends must include internal_number (which itself depends on
         number + card_input_type). Otherwise the QR keeps the old hex while
-        the controller now expects a different internal_number — every
+        the controller now expects a different internal_number - every
         scan fails with 'Could not find the card'.
         """
         card = self._make_card('0012345678', 'w34')

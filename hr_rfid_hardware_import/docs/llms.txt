@@ -107,6 +107,7 @@ talks to the module directly and does not change where it reports to.
 controller did not answer, or answered with a damaged reply. Check the
 device and press *Check again* on the module, or start a new survey.
 
-**Why is a vending machine controller left out?** Vending machines hold a
-product and price table, not access rights; they are not part of an access
-control import.
+**Why is a vending machine controller left out?** Vending machines sell
+against card balances; they hold no access rights and are not part of an
+access control import. This covers all three vending firmwares: Vending,
+Vending Executive and Vending MDB.

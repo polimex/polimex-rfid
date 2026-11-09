@@ -1,6 +1,6 @@
 {
     'name': 'RFID Hardware Import',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'HR',
     'summary': 'Survey a running access control system without changing it and import it',
     'author': 'Polimex Dev Team',

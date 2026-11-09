@@ -59,7 +59,7 @@
                 </xpath>
                 <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="attributes">
                     <!-- If controller is a vending controller, turn this button invisible -->
-                    <attribute name="invisible">hw_version=='16'</attribute>
+                    <attribute name="invisible">is_vending</attribute>
                 </xpath>
                 <xpath expr="//button[@id='hr_rfid_view_modify_io_table_btn']" position="after">
                     <button string="Prices"
@@ -68,10 +68,11 @@
                             type="action"
                             class="oe_stat_button"
                             icon="fa-table"
-                            invisible="hw_version!='16'"/>
+                            groups="hr_rfid_vending.group_operator"
+                            invisible="not has_vending_price_table"/>
                 </xpath>
                 <xpath expr="//page[@name='debug']" position="before">
-                    <page string="Vending info" name='vending' invisible="hw_version!='16'">
+                    <page string="Vending info" name='vending' invisible="not is_vending">
                         <p class="text-muted">
                             Read-only firmware counters reported by the vending controller. The scale factor maps card-balance units to physical currency; cash contained is the running tally the controller has yet to deposit.
                         </p>

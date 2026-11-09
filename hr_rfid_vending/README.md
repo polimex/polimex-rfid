@@ -42,6 +42,26 @@ RFID Vending integrates EXECUTIVE-based vending machines with Odoo's RFID system
 - EXECUTIVE vending machines with RFID readers
 - Network connectivity to vending machines
 
+### Vending firmwares
+
+The iCON180 vending board runs one of three firmwares, shown as the
+controller's Hardware Type:
+
+- **Vending** - Executive with a coin mechanism. Sells at the prices set in
+  Odoo.
+- **Vending Executive** - Executive only, no coin mechanism. Sells at the
+  prices set in Odoo, exactly like Vending.
+- **Vending MDB** - MDB cashless. The machine keeps its own prices, so the
+  controller has no Prices button. Card payments on it are refused for now,
+  because Odoo cannot yet record a sale the machine reports without its
+  price. Each refused card, and any sale the machine still reports, leaves a
+  system event on the controller with the card and the machine's data, for
+  the operator to check on the machine.
+
+A refused card on any vending machine (unknown, archived, without an
+employee, or an employee who must be checked in first) leaves a system event
+on the controller with the card number and the reason.
+
 ### Dependencies
 ```python
 'depends': ['hr_rfid', 'product', 'hr']
@@ -70,7 +90,8 @@ RFID Vending integrates EXECUTIVE-based vending machines with Odoo's RFID system
 2. **Configure Products**
    - RFID → Vending → Machine Configuration
    - Map slots to Odoo products
-   - Set prices per slot
+   - Set prices per slot (Vending and Vending Executive; a Vending MDB machine
+     keeps its own prices)
 
 3. **Enable on Employees**
    - HR → Employees → RFID tab

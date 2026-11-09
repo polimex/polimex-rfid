@@ -24,11 +24,8 @@ auto_refill_job() and exhaustively covers every refill variation:
 from datetime import datetime, timedelta
 
 from odoo.tests.common import TransactionCase, tagged
-from odoo.tools import float_compare
 
-
-def fc(a, b):
-    return float_compare(a, b, precision_digits=2) == 0
+from .vending_common import fc, take_everyone_off_auto_refill
 
 
 @tagged('rfid_vending', 'rfid_vending_auto_refill', 'post_install', '-at_install')
@@ -38,6 +35,7 @@ class TestAutoRefillCron(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        take_everyone_off_auto_refill(cls.env)
         cls.RefillModel = cls.env['hr.rfid.vending.auto.refill']
         cls.HistoryModel = cls.env['hr.rfid.vending.balance.history']
         cls.company = cls.env.company

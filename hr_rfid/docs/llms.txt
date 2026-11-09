@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage employee access control
-last_updated: '2026-08-26'
-source_digest: sha256:bfab40bc1cfdb3403bf012bf5a0430bfb6d4596ac391cee94607bed4b739ad8c
+last_updated: '2026-11-09'
+source_digest: sha256:8fae63ae5f5fdba8a7d7220c4629c62c3c8431043cc7cba8a1f624338cfaa506
 companion_doc: llms-full.md
 ---
 
@@ -26,7 +26,7 @@ This guide is for users who **configure** and **use** the module. If you need to
 
 ## How to configure
 
-Open **Settings → General Settings** and look for the section named after this module. Available options:
+Open **Settings → RFID System**. Available options:
 
 - **Event life time** - Number of days to keep access events in the system. Events older than this will be automatically deleted to save storage space. Default is 365 days (1 year).
 - **Accept new Modules** - Allow the system to automatically register new hardware modules when they connect. Enable this when adding new controllers to your system. Disable for security after all modules are registered. Note: Does not support Multi-Company setups.
@@ -275,20 +275,11 @@ This module is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 
 For more information, visit [polimex.co](https://polimex.co)
 
-
 ### Available actions
 
-- **Set active**
-- **Set inactive**
-- **Set webstack settings** - Set webstack settings for the module.
-- **Check if ws available**
-- **Close panel rfid setup**
-- **Open step rfid settings**
-- **Open step add webstack**
-- **Open step scan controllers**
-- **Open step create access group**
-- **Open step register card**
-- **Send badge email** - Open a window to compose an email, with the template - 'card_badge'
+- **Setup module for this odoo** - Set webstack settings for the module.
+- **Test module connection**
+- **Send Barcode Badge** - Open a window to compose an email, with the template - 'card_badge' message loaded by default
 
 
 ## Common questions and errors

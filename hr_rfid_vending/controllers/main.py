@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import http, fields, exceptions, _
+from odoo import http, fields, exceptions
 from odoo.http import request
 from functools import reduce
 from odoo.addons.hr_rfid.controllers.main import WebRfidController, BadTimeException
@@ -42,9 +42,8 @@ class HrRfidVending(WebRfidController):
 
         status_code = 200
 
-        item_missing_err_str = _('Item number %d missing from vending machine configuration')
-        item_cost_diff_err_str = _('Item %s has the cost of %f but vending reported it costs %f!')
-
+        item_missing_err_str = request.env._('Item number %d missing from vending machine configuration')
+        item_cost_diff_err_str = request.env._('Item %s has the cost of %f but vending reported it costs %f!')
         def ret_super():
             return super(HrRfidVending, self).post_event(**post)
         def ret_local_no_command(controller, ev=None):
@@ -53,6 +52,16 @@ class HrRfidVending(WebRfidController):
             if not post and 'cmd' in data:
                 return {'cmd': data['cmd']}
             return data
+
+        def vending_sys_ev(controller, description):
+            """A system event that says which machine event, card and time it
+            is about - the way the core reports a refused card."""
+            event = post_data['event']
+            card = event.get('card')
+            return controller.report_sys_ev(description, post_data=post_data, sys_ev_dict={
+                'event_action': str(event['event_n']),
+                'card_number': card if card and card != '0000000000' else False,
+            })
 
         def create_ev(controller, event, card, ev_num, item_sold_id=None, transaction_price=None,
                       item_number=None):
@@ -87,7 +96,7 @@ class HrRfidVending(WebRfidController):
             :return: 0 if item does not exist, else the cost of the item in human money
             """
             if len(item) == 0:
-                controller.report_sys_ev(err_msg, event)
+                vending_sys_ev(controller, err_msg)
                 return -1
             return item.list_price
 
@@ -106,19 +115,47 @@ class HrRfidVending(WebRfidController):
                 return ret_super()
 
             # If it's not a vending controller
-            if controller.hw_version != '16':
+            if not controller.is_vending_ctrl():
                 return ret_super()
 
             card_env = request.env['hr.rfid.card'].with_company(webstack_id.company_id).sudo()
             _logger.info('Vending event %d on %s, card=%s', event['event_n'], controller.name, event.get('card', '?'))
+
+            # A machine that keeps its own prices (MDB) reports a sale without
+            # its price: it gets no credit, and no sale is booked as zero.
+            if event['event_n'] == 64 and not controller._vending_has_price_table():
+                _logger.info('Vending ev64 on %s refused: the machine keeps its own prices', controller.name)
+                vending_sys_ev(controller, request.env._(
+                    'This vending machine keeps its own prices, and Odoo cannot record its sales yet, '
+                    'so it gets no credit for cards.'))
+                return ret_local_no_command(controller)
+            if event['event_n'] in (47, 50) and not controller._vending_has_price_table():
+                # The machine has already handed out the item or taken the
+                # money; the system event is the only trace of it in Odoo.
+                _logger.warning('Vending ev%d on %s not recorded: the machine keeps its own prices',
+                                event['event_n'], controller.name)
+                vending_sys_ev(controller, request.env._(
+                    'This vending machine reported a transaction (card %(card)s, item %(item)s, data %(data)s) '
+                    'that Odoo does not record, because the machine keeps its own prices. '
+                    'Check it on the machine.',
+                    card=event.get('card'), item=int(event['dt'][4:6], 16), data=event['dt']))
+                return ret_local_no_command(controller)
 
             # TODO Move into function "deal_with_ev_64"
             if event['event_n'] == 64:
                 card = card_env.with_context(active_test=False).search(
                     [('company_id', '=', webstack_id.company_id.id), ('internal_number', '=', event['card'])])
 
-                if len(card) == 0 or len(card.employee_id) == 0 or not card.active:
-                    _logger.info('Vending ev64 denied: card=%s not found/inactive/no employee', event['card'])
+                # A refused card leaves a system event, as in the core: the
+                # operator sees which card and why.
+                if len(card) == 0:
+                    _logger.info('Vending ev64 denied: card=%s not found', event['card'])
+                    vending_sys_ev(controller, request.env._('Could not find the card'))
+                    return ret_local_no_command(controller, None)
+                if not card.active or len(card.employee_id) == 0:
+                    _logger.info('Vending ev64 denied: card=%s inactive or without an employee', event['card'])
+                    vending_sys_ev(controller, request.env._(
+                        'The card is archived or belongs to no employee, so it gets no vending credit.'))
                     return ret_local_no_command(controller, None)
 
                 emp = card.employee_id
@@ -126,6 +163,9 @@ class HrRfidVending(WebRfidController):
                 if emp.hr_rfid_vending_in_attendance is True \
                         and emp.attendance_state != 'checked_in':
                     _logger.info('Vending ev64 denied: %s not checked in', emp.name)
+                    vending_sys_ev(controller, request.env._(
+                        '%(employee)s is not checked in, and gets vending credit only after a check-in.',
+                        employee=emp.name))
                     return ret_local_no_command(controller, None)
 
                 date = controller.webstack_id.get_ws_time(event)
@@ -219,8 +259,8 @@ class HrRfidVending(WebRfidController):
                     if item_price >= 0:
                         purchase_money = item_price
                         if item_price != calced_price:
-                            controller.report_sys_ev(
-                                item_cost_diff_err_str % (item.name, item.list_price, calced_price), event)
+                            vending_sys_ev(
+                                controller, item_cost_diff_err_str % (item.name, item.list_price, calced_price))
 
                     # TODO Reduce item quantity
 
@@ -228,8 +268,11 @@ class HrRfidVending(WebRfidController):
                     ev = create_ev(controller, event, card, '47', item, purchase_money, item_number=item_sold)
                     card.employee_id.hr_rfid_vending_purchase(purchase_money, ev.id)
                 else:
-                    controller.cash_contained += item_price
-                    ev = create_ev(controller, event, card, '47', item, item_price, item_number=item_sold)
+                    # The same amount as a card sale: an item missing from the
+                    # price table counts at the price the machine reported,
+                    # never as the -1 that marks it missing.
+                    controller.cash_contained += purchase_money
+                    ev = create_ev(controller, event, card, '47', item, purchase_money, item_number=item_sold)
 
                 _logger.info('Vending ev47 purchase: card=%s item=%s price=%.2f',
                              event['card'], item_sold, purchase_money)
@@ -237,7 +280,8 @@ class HrRfidVending(WebRfidController):
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
                 _logger.info('Vending ev%d error from %s', event['event_n'], controller.name)
-                controller.report_sys_ev('Vending machine sent us an error', event)
+                vending_sys_ev(controller, request.env._(
+                    'The vending machine reported an error (data %(data)s).', data=event['dt']))
                 return ret_local_no_command(controller)
             elif event['event_n'] == 50:
                 card = card_env.with_context(active_test=False).search(
