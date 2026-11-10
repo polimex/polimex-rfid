@@ -1,6 +1,7 @@
 import random
 from datetime import datetime, timedelta, time
 from odoo import fields, models, api, _
+from odoo.fields import Domain
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -41,6 +42,7 @@ class HrRfidUserEvent(models.Model):
 
     name = fields.Char(
         compute='_compute_user_ev_name',
+        search='_search_name',
         help="Auto-generated event description combining person name, action, and location"
     )
 
@@ -308,6 +310,74 @@ class HrRfidUserEvent(models.Model):
             if record.door_id:
                 name += ' @ ' + record.door_id.name
             record.name = name
+
+    def _search_name(self, operator, value):
+        """Search the name by the parts it is built from.
+
+        The name is worked out when it is shown, not kept (see
+        _compute_user_ev_name): the person - or, without one, the contact or
+        the door - then the action, then the door. It is the first field of
+        the events' search box and part of their name search, so a search by
+        it is answered from those parts. ``=`` and "is set" reach this method
+        as ``in`` (odoo/orm/domains.py); a negative operator is left to the
+        ORM, which searches the positive one and inverts it.
+        """
+        if operator in ('like', 'ilike'):
+            return self._search_name_containing(operator, value)
+        if operator == 'in':
+            # Every event has a name - the action is always in it - so
+            # "no name" (False) matches none.
+            return Domain.OR(self._search_name_equal(name) for name in value if name)
+        return NotImplemented
+
+    def _search_name_equal(self, name):
+        """The events whose name is exactly ``name``, read back from its parts."""
+        labels = self._fields['event_action']._description_selection(self.env)
+        matches = []
+        for key, label in labels:
+            action = Domain('event_action', '=', key)
+            if name == label:
+                matches.append(action & Domain('employee_id', '=', False)
+                               & Domain('contact_id', '=', False)
+                               & Domain('door_id', '=', False))
+                continue
+            at_door = ' - %s @ ' % label
+            if at_door in name:
+                who, _sep, door = name.partition(at_door)
+                matches.append(action & Domain('door_id.name', '=', door)
+                               & self._search_name_owner(who))
+            elif name.endswith(' - ' + label):
+                who = name[:-len(' - ' + label)]
+                matches.append(action & Domain('door_id', '=', False)
+                               & self._search_name_owner(who))
+        return Domain.OR(matches)
+
+    @api.model
+    def _search_name_owner(self, who):
+        """Who the name starts with: the person, else the contact, else the door."""
+        no_person = Domain('employee_id', '=', False)
+        return Domain.OR([
+            Domain('employee_id.name', '=', who),
+            no_person & Domain('contact_id.name', '=', who),
+            no_person & Domain('contact_id', '=', False) & Domain('door_id.name', '=', who),
+        ])
+
+    def _search_name_containing(self, operator, value):
+        """The events whose name contains ``value``: any of its parts does."""
+        matches = [
+            Domain('employee_id.name', operator, value),
+            Domain('contact_id.name', operator, value),
+            Domain('door_id.name', operator, value),
+        ]
+        # The action reads as its label in the language of the person searching.
+        text = value if operator == 'like' else value.lower()
+        actions = [
+            key for key, label in self._fields['event_action']._description_selection(self.env)
+            if text in (label if operator == 'like' else label.lower())
+        ]
+        if actions:
+            matches.append(Domain('event_action', 'in', actions))
+        return Domain.OR(matches)
 
     @api.depends('event_action')
     def _compute_user_ev_action_str(self):

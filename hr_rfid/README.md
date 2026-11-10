@@ -141,6 +141,8 @@ Event Endpoint: /hr/rfid/event
    - RFID → Events → User Events
    - Real-time event stream
    - Filter by door, person, or time
+   - Type part of a person's, contact's or door's name, or an action as it
+     reads in the list (e.g. "Card Denied"), in the search box and press Enter
 
 2. **Door Status**
    - RFID → Doors

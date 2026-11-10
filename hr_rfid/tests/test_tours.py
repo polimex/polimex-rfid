@@ -1,5 +1,6 @@
 # Copyright 2026 Polimex Holding Ltd.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from odoo import fields
 from odoo.tests import HttpCase, tagged
 
 
@@ -42,6 +43,28 @@ class TestHrRfidTours(HttpCase):
             "name": "CardTour Contact A",
             "company_id": cls.company.id,
         })
+
+    def test_event_search_by_name_tour(self):
+        """Process: an officer finds a person's events by typing the name.
+
+        Live case, 10.11.2026: Enter in this search box ended in an error
+        dialog; the tour types and presses Enter exactly as the officer did.
+        """
+        reader = self.env["hr.rfid.reader"].create({
+            "name": "SearchTour Reader", "number": 1, "reader_type": "0",
+            "controller_id": self.controller.id,
+        })
+        for name in ("SearchTour Petrova", "SearchTour Kolev"):
+            self.env["hr.rfid.event.user"].create({
+                "reader_id": reader.id, "door_id": self.door.id,
+                "employee_id": self.env["hr.employee"].create({"name": name}).id,
+                "event_action": "2", "event_time": fields.Datetime.now(),
+            })
+        self.start_tour(
+            "/odoo/action-hr_rfid.hr_rfid_event_user_action",
+            "hr_rfid_event_search_by_name_tour",
+            login="admin",
+        )
 
     def test_add_webstack_tour(self):
         """Process 1: admin registers a brand-new RFID module."""
