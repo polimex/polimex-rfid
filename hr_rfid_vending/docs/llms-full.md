@@ -664,6 +664,23 @@ Python class `VendingEvents` in `models/hr_rfid_vending_event.py:8`.  Model.  In
   - calls `super() `write``
 - **`search(self, *args, **kwargs)`** - decorators: `@api.model`
   - calls `super() `search``
+- **`_compute_user_ev_name(self)`** - decorators: `@api.depends('item_sold_id.name')`
+  (added to the dependencies of `hr.rfid.event.user`). A sale (`47`) reads
+  "product - buyer" (either part alone when the other is missing, the
+  action's label when both are); every other event is computed by
+  `hr_rfid` as an access event. The sales are taken out of the set before
+  `super()`, so a name never depends on the other events computed with it.
+  - calls `super() `_compute_user_ev_name``
+- **`_search_name_containing(self, operator, value)`** - a sale is matched
+  by `item_sold_id.name` and `employee_id.name` (and, with neither, by the
+  sale's action label through `_search_name_actions`); every other event by
+  `hr_rfid`'s rule. Makes the first option of the vending events' search
+  box find a product's sales.
+  - calls `super() `_search_name_containing``
+- **`_search_name_equal(self, name)`** - the exact name of a sale read back
+  into product and buyer, trying every " - " as the boundary (either name may
+  hold it).
+  - calls `super() `_search_name_equal``
 
 ### `product.template` <a id='model-product-template'></a>
 Python class `ProductTemplate` in `models/product_template.py:4`.  Model.  Inherits: `product.template`.

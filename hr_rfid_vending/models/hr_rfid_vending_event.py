@@ -1,4 +1,5 @@
 from odoo import fields, models, api
+from odoo.fields import Domain
 from datetime import timedelta, datetime
 
 import logging
@@ -315,13 +316,50 @@ Contains technical details about the hardware communication."""
 
         return ret
 
+    @api.depends('item_sold_id.name')
     def _compute_user_ev_name(self):
-        for record in self:
-            if record.event_action == '47':
-                name = record.item_sold_id and record.item_sold_id.name or ''
-                if record.employee_id:
-                    name += ' - %s' % record.employee_id.name
-                    
-                record.name = name
-            else:
-                record.name = super(VendingEvents, self)._compute_user_ev_name()
+        """A sale reads as the product, then the buyer; every other event as
+        an access event does (hr_rfid). A sale with neither - a cash sale
+        from a slot without a product - reads as its action, so every event
+        has a name."""
+        sales = self.filtered(lambda event: event.event_action == '47')
+        super(VendingEvents, self - sales)._compute_user_ev_name()
+        for sale in sales:
+            parts = (sale.item_sold_id.name, sale.employee_id.name)
+            sale.name = ' - '.join(part for part in parts if part) or sale.get_event_action_text()
+
+    def _search_name_containing(self, operator, value):
+        """A sale's name holds the product and the buyer; the others' are
+        read as in hr_rfid."""
+        sale = Domain('event_action', '=', '47')
+        in_sale = [
+            Domain('item_sold_id.name', operator, value),
+            Domain('employee_id.name', operator, value),
+        ]
+        if '47' in self._search_name_actions(operator, value):
+            in_sale.append(Domain('item_sold_id', '=', False) & Domain('employee_id', '=', False))
+        return (~sale & super()._search_name_containing(operator, value)) | (sale & Domain.OR(in_sale))
+
+    def _search_name_equal(self, name):
+        """The events whose name is exactly ``name``; a sale's is "product -
+        buyer", either part alone, or its action when it has neither."""
+        sale = Domain('event_action', '=', '47')
+        no_product = Domain('item_sold_id', '=', False)
+        no_buyer = Domain('employee_id', '=', False)
+        matches = [
+            Domain('item_sold_id.name', '=', name) & no_buyer,
+            no_product & Domain('employee_id.name', '=', name),
+        ]
+        # Either name may hold " - " itself, so every place it appears is a
+        # possible boundary between the product and the buyer.
+        cut = name.find(' - ')
+        while cut != -1:
+            matches.append(
+                Domain('item_sold_id.name', '=', name[:cut])
+                & Domain('employee_id.name', '=', name[cut + 3:])
+            )
+            cut = name.find(' - ', cut + 1)
+        labels = dict(self._fields['event_action']._description_selection(self.env))
+        if name == labels.get('47'):
+            matches.append(no_product & no_buyer)
+        return (~sale & super()._search_name_equal(name)) | (sale & Domain.OR(matches))

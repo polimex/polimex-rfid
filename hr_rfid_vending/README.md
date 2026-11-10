@@ -157,6 +157,9 @@ hr_rfid_vending.auto_refill_threshold: 10.00
    - Vending → Machines
    - Check online status
    - View sales in real-time
+   - In Vending Events, type part of a product's name or a person's name in
+     the search box and press Enter: a sale reads "product - buyer", so the
+     list keeps that product's sales or that person's purchases
 
 3. **Reports**
    - Vending → Reports
