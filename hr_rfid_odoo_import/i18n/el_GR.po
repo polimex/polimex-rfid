@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 17:28+0000\n"
-"PO-Revision-Date: 2026-10-12 18:06\n"
+"POT-Creation-Date: 2026-11-10 13:44+0000\n"
+"PO-Revision-Date: 2026-11-10 15:45\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -126,6 +126,20 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid ""
+"%(count)s stay(s) of the other system were not brought over: this system "
+"already has a different stay recorded for the same person at that time, and "
+"that one stays as it is. %(who)s. The downloaded protocol lists every one of"
+" them with both times, to be looked at."
+msgstr ""
+"Παραμονές του άλλου συστήματος που δεν μεταφέρθηκαν: %(count)s. Αυτό το "
+"σύστημα έχει ήδη καταγεγραμμένη διαφορετική παραμονή για το ίδιο άτομο την "
+"ίδια χρονική περίοδο και αυτή παραμένει ως έχει. %(who)s. Το πρωτόκολλο που "
+"λήφθηκε απαριθμεί κάθε μία με τις δύο ώρες, για έλεγχο."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/site_importer.py:0
 msgid ""
 "%(equipment)s piece(s) of equipment had not arrived yet and %(sites)s "
@@ -136,7 +150,6 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "%(first)s and %(more)s more"
 msgstr "%(first)s και %(more)s ακόμη"
@@ -154,6 +167,18 @@ msgstr ""
 #: code:addons/hr_rfid_odoo_import/models/importers/base_importer.py:0
 msgid "%(kind)s №%(num)s from the other system has no match here"
 msgstr "%(kind)s №%(num)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: %(count)s record(s) of the other system belong to %(owners)s that "
+"are not in this system, and %(owners)s were not part of this transfer - "
+"%(where)s."
+msgstr ""
+"%(kind)s: εγγραφές στο άλλο σύστημα: %(count)s, που ανήκουν σε %(owners)s "
+"που δεν υπάρχουν σε αυτό το σύστημα, και οι %(owners)s δεν συμμετείχαν σε "
+"αυτή τη μεταφορά - %(where)s."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -177,11 +202,33 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
 msgid ""
+"%(kind)s: not part of this transfer, so the difference is shown for "
+"comparison only - %(where)s."
+msgstr ""
+"%(kind)s: δεν συμμετέχει σε αυτή τη μεταφορά, επομένως η διαφορά εμφανίζεται"
+" μόνο για σύγκριση - %(where)s."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
 "%(kind)s: the other system cannot be asked about this per company, so no "
 "comparison was made."
 msgstr ""
 "%(kind)s: το άλλο σύστημα δεν μπορεί να ερωτηθεί για αυτό ανά εταιρεία, "
 "επομένως δεν έγινε σύγκριση."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system did not say how many of these belong to "
+"%(owners)s that are not in this system, so all of the difference counts as "
+"missing - %(where)s."
+msgstr ""
+"%(kind)s: το άλλο σύστημα δεν ανέφερε πόσες από αυτές ανήκουν σε %(owners)s "
+"που δεν υπάρχουν σε αυτό το σύστημα, επομένως όλη η διαφορά θεωρείται ως "
+"ελλείπουσα - %(where)s."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -200,6 +247,18 @@ msgstr ""
 "%(kind)s: το άλλο σύστημα έχει περισσότερες εγγραφές από όσες ήρθαν εδώ - "
 "%(where)s. Εξετάστε το βήμα που τις μεταφέρει: συνήθως λείπει αυτό στο οποίο"
 " παραπέμπουν οι εγγραφές."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid ""
+"%(kind)s: the other system names more records of %(owners)s that are not in "
+"this system than are missing here, so the two do not add up and all of the "
+"difference counts as missing - %(where)s."
+msgstr ""
+"%(kind)s: το άλλο σύστημα αναφέρει περισσότερες εγγραφές των %(owners)s που "
+"δεν υπάρχουν σε αυτό το σύστημα από όσες λείπουν εδώ, επομένως τα δύο μεγέθη"
+" δεν συμφωνούν και όλη η διαφορά θεωρείται ως ελλείπουσα - %(where)s."
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -237,6 +296,12 @@ msgstr ""
 "%(missing)s συμβάν/-τα αναγνωρισμένης πινακίδας παρέμειναν πίσω, επειδή τα "
 "συμβάντα εξαιρέθηκαν από αυτή τη μεταφορά. Εκτελέστε την ξανά με "
 "ενεργοποιημένα τα συμβάντα για να τα συμπεριλάβετε."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/attendance_importer.py:0
+msgid "%(name)s from %(day)s"
+msgstr "%(name)s από %(day)s"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -1994,6 +2059,17 @@ msgid "Status"
 msgstr "Κατάσταση"
 
 #. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid ""
+"Stays of the other system not brought over: a different stay is recorded "
+"here for the same person at that time, and it stays as it is (%(count)s)"
+msgstr ""
+"Παραμονές του άλλου συστήματος που δεν μεταφέρθηκαν: εδώ υπάρχει "
+"καταγεγραμμένη διαφορετική παραμονή για το ίδιο άτομο την ίδια χρονική "
+"περίοδο και παραμένει ως έχει (%(count)s)"
+
+#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,field_description:hr_rfid_odoo_import.field_hr_rfid_odoo_import_run__step_totals_json
 msgid "Step Totals Json"
 msgstr "Json Αθροισμάτων Βημάτων"
@@ -2615,10 +2691,28 @@ msgstr "Ζώνες"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "absences"
+msgstr "απουσίες"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "access events"
+msgstr "συμβάντα πρόσβασης"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
 msgid "access group №%(src)s from the other system has no match here"
 msgstr ""
 "η ομάδα πρόσβασης №%(src)s από το άλλο σύστημα δεν έχει αντιστοιχία εδώ"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "access groups"
+msgstr "ομάδες πρόσβασης"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2641,6 +2735,12 @@ msgstr "και %(more)s ακόμη λόγο(-ους)"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "attendance"
 msgstr "παρουσία"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "attendances"
+msgstr "παρουσίες"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2681,9 +2781,51 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "cards"
+msgstr "κάρτες"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "communication modules"
+msgstr "μονάδες επικοινωνίας"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "contacts"
+msgstr "επαφές"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "contacts in access groups"
+msgstr "επαφές σε ομάδες πρόσβασης"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "controller %(name)s hangs off archived module %(module)s"
 msgstr "ο ελεγκτής %(name)s εξαρτάται από αρχειοθετημένη ενότητα %(module)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "controllers"
+msgstr "ελεγκτές"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "daily working-time summaries"
+msgstr "ημερήσιες συνοψίσεις ωρών εργασίας"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "departments"
+msgstr "τμήματα"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2706,6 +2848,12 @@ msgstr "η θύρα %(name)s δεν έχει αναγνώστες"
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "door %(name)s is attached to no equipment"
 msgstr "η θύρα %(name)s δεν είναι συνδεδεμένη σε εξοπλισμό"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "door permissions"
+msgstr "δικαιώματα πρόσβασης σε πόρτες"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2760,51 +2908,27 @@ msgstr "η θύρα №%(num)s από το άλλο σύστημα δεν έχε
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "doors"
+msgstr "πόρτες"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "group %(group)s grants door %(door)s of another company"
 msgstr ""
 "η ομάδα %(group)s παραχωρεί πρόσβαση στη θύρα %(door)s άλλης εταιρείας"
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "hr.employee"
-msgstr "hr.employee"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "hr.rfid.access.group"
-msgstr "hr.rfid.access.group"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "hr.rfid.card"
-msgstr "hr.rfid.card"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "hr.rfid.ctrl"
-msgstr "hr.rfid.ctrl"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "hr.rfid.door"
-msgstr "hr.rfid.door"
-
-#. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "hr.rfid.zone"
-msgstr "hr.rfid.zone"
-
-#. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
 msgid "https://erp.example.com"
 msgstr "https://erp.example.com"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "leave balances"
+msgstr "υπόλοιπα αδειών"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form
@@ -2824,9 +2948,23 @@ msgstr "my_database"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "people"
+msgstr "άτομα"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/importers/access_importer.py:0
 msgid "permission %(rel)s: %(what)s"
 msgstr "δικαίωμα πρόσβασης %(rel)s: %(what)s"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+msgid "person | other system: in - out | recorded here: in - out"
+msgstr ""
+"άτομο | άλλο σύστημα: είσοδος - έξοδος | καταγεγραμμένο εδώ: είσοδος - "
+"έξοδος"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2839,6 +2977,12 @@ msgstr "ο αναγνώστης %(name)s δεν έχει θύρα"
 #: code:addons/hr_rfid_odoo_import/models/importers/consistency_importer.py:0
 msgid "reader %(name)s is attached to no equipment"
 msgstr "ο αναγνώστης %(name)s δεν είναι συνδεδεμένος σε εξοπλισμό"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "readers"
+msgstr "αναγνώστες"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2856,18 +3000,37 @@ msgstr ""
 " χρησιμοποιείται για την αντιστοίχιση μεταξύ εγκαταστάσεων."
 
 #. module: hr_rfid_odoo_import
-#. odoo-python
-#: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
-msgid "res.partner"
-msgstr "res.partner"
-
-#. module: hr_rfid_odoo_import
 #: model:ir.model.fields,help:hr_rfid_odoo_import.field_hr_rfid_odoo_import_wiz__source_uid
 msgid ""
 "res.users ID of the connected source user. Cached after Test Connection."
 msgstr ""
 "Αναγνωριστικό res.users του συνδεδεμένου χρήστη προέλευσης. Αποθηκεύεται "
 "προσωρινά μετά τη Δοκιμή Σύνδεσης."
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "service sales"
+msgstr "πωλήσεις υπηρεσιών"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "staff in access groups"
+msgstr "προσωπικό σε ομάδες πρόσβασης"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/import_run.py:0
+#: code:addons/hr_rfid_odoo_import/tests/test_a_stay_recorded_here_is_kept.py:0
+msgid "still open"
+msgstr "ακόμη ανοιχτό"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "system events"
+msgstr "συμβάντα συστήματος"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2946,9 +3109,27 @@ msgstr ""
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "time schedules"
+msgstr "χρονοπρογράμματα"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "vending balance entries"
+msgstr "εγγραφές υπολοίπου αυτόματου πωλητή"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "vending machines"
 msgstr "πωλητές αυτόματων μηχανημάτων"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "vending sales"
+msgstr "πωλήσεις αυτόματου πωλητή"
 
 #. module: hr_rfid_odoo_import
 #. odoo-python
@@ -2961,6 +3142,12 @@ msgstr "υπηρεσίες επισκεπτών"
 #: code:addons/hr_rfid_odoo_import/models/import_wizard.py:0
 msgid "working time reports"
 msgstr "αναφορές ωραρίου εργασίας"
+
+#. module: hr_rfid_odoo_import
+#. odoo-python
+#: code:addons/hr_rfid_odoo_import/models/importers/reconcile_importer.py:0
+msgid "zones"
+msgstr "ζώνες"
 
 #. module: hr_rfid_odoo_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_odoo_import.hr_rfid_odoo_import_wiz_form

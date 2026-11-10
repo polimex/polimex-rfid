@@ -145,8 +145,11 @@ class TestAStayRecordedHereIsKept(TransactionCase):
         """A time the way the downloaded protocol writes it for that person."""
         return format_datetime(self.env, value, tz=employee.tz, dt_format='short')
 
-    def _reconciled(self, step_totals, counts):
-        counting = _CountingSource(self.env, dict(self.company_map), {}, counts)
+    def _reconciled(self, step_totals, counts, options=None):
+        """The check's line on the attendance; by default of a transfer that carried it."""
+        counting = _CountingSource(
+            self.env, dict(self.company_map),
+            options if options is not None else {'import_attendance': True}, counts)
         # Through JSON, as every pass after the first reads them.
         counting.step_totals = json.loads(json.dumps(step_totals))
         phase = ReconcileImporter(counting)
@@ -377,7 +380,7 @@ class TestAStayRecordedHereIsKept(TransactionCase):
         self.assertEqual(len(source.step_totals[ATTENDANCE_CURSOR][DIFFERS_KEY]), 1)
         self.assertEqual(
             self._reconciled(source.step_totals,
-                             {'hr.attendance': at_the_source(101, 2)})['status'],
+                             {'hr.attendance': at_the_source(101, 2, employee_id=77)})['status'],
             'done')
 
     def test_the_reconciliation_does_not_count_the_stays_kept_here_as_lost(self):
@@ -394,7 +397,7 @@ class TestAStayRecordedHereIsKept(TransactionCase):
             self._row(12, moment(8, DAY + 2), moment(17, DAY + 2)),  # arrives
         ])
         self._transfer(writing)
-        counts = {'hr.attendance': at_the_source(101, 3)}
+        counts = {'hr.attendance': at_the_source(101, 3, employee_id=77)}
 
         row = self._reconciled(writing.step_totals, counts)
         self.assertEqual((row['imported_count'], row['linked_count'], row['status']),
@@ -414,7 +417,8 @@ class TestAStayRecordedHereIsKept(TransactionCase):
         self._transfer(writing)
 
         row = self._reconciled(writing.step_totals, {
-            'hr.attendance': at_the_source(101, 3) + at_the_source(202, 2)})
+            'hr.attendance': (at_the_source(101, 3, employee_id=77)
+                              + at_the_source(202, 2, employee_id=80))})
         self.assertEqual(row['status'], 'error')
         self.assertIn(self.other_company.name, row['error'])
         self.assertNotIn(self.company.name + ':', row['error'])
@@ -423,19 +427,23 @@ class TestAStayRecordedHereIsKept(TransactionCase):
         """A transfer of the cards alone still knows what an earlier one kept here.
 
         The check compares every kind, whatever was ticked; the stays an
-        earlier transfer of the same system kept here on purpose are not a
-        loss in a later one that carried no attendance at all.
+        earlier transfer of the same system kept here on purpose are no
+        difference in a later one that carried no attendance at all - not even
+        a remark, which is all a difference in an unticked kind can be.
         """
         self._recorded_here(self.person, moment(8), moment(17))
         first = self._source([self._row(10, moment(8), moment(17)),
                               self._row(11, moment(7, DAY + 1), moment(16, DAY + 1))])
         self._transfer(first)
-        counts = {'hr.attendance': at_the_source(101, 2)}
-        self.assertEqual(self._reconciled({}, counts)['status'], 'error',
-                         'without the earlier transfer on record the check must bite')
+        counts = {'hr.attendance': at_the_source(101, 2, employee_id=77)}
+        cards_alone = {'import_access': True}
+        self.assertEqual(self._reconciled({}, counts, cards_alone)['status'], 'skipped',
+                         'without the earlier transfer on record the check must '
+                         'still say the numbers differ')
 
         self._run_record(first)
-        self.assertEqual(self._reconciled({}, counts)['status'], 'done')
+        row = self._reconciled({}, counts, cards_alone)
+        self.assertEqual((row['status'], row['error']), ('done', ''))
 
     def test_a_second_run_changes_nothing_and_reconciles_the_same(self):
         """Running the transfer again adds nothing, says the same, and balances the same."""
@@ -444,7 +452,7 @@ class TestAStayRecordedHereIsKept(TransactionCase):
         rows = [self._row(10, moment(8), moment(17)),
                 self._row(11, moment(7, DAY + 1), moment(16, DAY + 1)),
                 self._row(12, moment(17, DAY + 1), moment(18, DAY + 1))]
-        counts = {'hr.attendance': at_the_source(101, 3)}
+        counts = {'hr.attendance': at_the_source(101, 3, employee_id=77)}
         first_source = self._source(rows)
         first = self._transfer(first_source)
         before = self._stays_of(self.person)

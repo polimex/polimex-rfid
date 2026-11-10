@@ -827,19 +827,24 @@ class HrRfidOdooImportWiz(models.TransientModel):
 
             # Count source records for key models. Labels are the words the
             # operator uses, translated - not model names: this page is read
-            # by the person deciding whether to press Start.
-            count_models = [
-                ('hr.rfid.webstack', co_domain, self.env._('Communication modules')),
-                ('hr.rfid.ctrl', [], self.env._('Controllers')),
-                ('hr.rfid.door', [], self.env._('Doors')),
-                ('hr.rfid.card', co_domain, self.env._('Cards')),
-                ('hr.employee', co_domain, self.env._('Employees')),
-                ('res.partner', co_domain, self.env._('Contacts')),
-                ('hr.rfid.access.group', co_domain, self.env._('Access groups')),
-                ('hr.rfid.zone', [], self.env._('Zones')),
-            ]
+            # by the person deciding whether to press Start. A mapping, not
+            # tuples: core's term extractor reads a "(" right after a
+            # translation call as one more call, and the model names went out
+            # for translation (reconcile_importer.KIND_LABELS says the same).
+            labels = {
+                'hr.rfid.webstack': self.env._('Communication modules'),
+                'hr.rfid.ctrl': self.env._('Controllers'),
+                'hr.rfid.door': self.env._('Doors'),
+                'hr.rfid.card': self.env._('Cards'),
+                'hr.employee': self.env._('Employees'),
+                'res.partner': self.env._('Contacts'),
+                'hr.rfid.access.group': self.env._('Access groups'),
+                'hr.rfid.zone': self.env._('Zones'),
+            }
+            counted_whole = ('hr.rfid.ctrl', 'hr.rfid.door', 'hr.rfid.zone')
 
-            for model, domain, label in count_models:
+            for model, label in labels.items():
+                domain = [] if model in counted_whole else co_domain
                 try:
                     count = counter._search_count(model, domain)
                     preview_lines.append('%s: %s' % (label, count))
@@ -1192,6 +1197,16 @@ class HrRfidOdooImportWiz(models.TransientModel):
             'import_attendance': self.import_attendance and self.source_has_attendance and self.target_has_attendance,
             'import_attendance_extra': self.import_attendance_extra and self.source_has_attendance_late and self.target_has_attendance_late,
             'import_service': self.import_service and self.source_has_service and self.target_has_service,
+            # What the operator ticked, before the four switches above are
+            # turned off for data this system cannot take: the final check
+            # tells data that was asked for and left behind from data that
+            # was never asked for (reconcile_importer._ticked).
+            'ticked': {
+                'import_vending': self.import_vending,
+                'import_attendance': self.import_attendance,
+                'import_attendance_extra': self.import_attendance_extra,
+                'import_service': self.import_service,
+            },
         }
 
     def _do_import(self):

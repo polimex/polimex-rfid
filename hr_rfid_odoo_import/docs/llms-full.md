@@ -152,6 +152,12 @@ Features
 * **An account of what happened** - one line per step, including what was left
   behind and why, written in the language of the person who started the
   transfer
+* **A final check against the other system** - every kind of data is counted
+  on both sides, company by company. A difference counts as a problem only in
+  what this transfer was asked to bring: in a kind left unticked it is shown as
+  a remark, with both numbers, and the transfer still finishes. A record of a
+  person (or other owner) who is not in this system, of a kind left unticked,
+  is said the same way
 
 Configuration
 =============
@@ -1056,7 +1062,8 @@ carried by this transfer (its source id has no external ID) to that rule:
   accounted for (`ReconcileImporter._kept_here_on_purpose`), not as lost; a
   transfer that carried no attendance takes them from the latest earlier
   transfer of the same system that did (`_attendance_verdicts`), since the
-  check compares every kind whatever was ticked.
+  check compares every kind whatever was ticked (see "The final check: a
+  problem only in what was carried").
 - Nothing links a left-out row to the record here, so every run checks again:
   a stay that collides today arrives on the run after the stay here is put
   right.
@@ -1068,12 +1075,69 @@ database: 8 824 arrived (the three months the system had no attendance for),
 9 808 counted as already here, 1 327 listed, no new overlap, and a second run
 changed nothing.
 
+## The final check: a problem only in what was carried
+
+`ReconcileImporter` (Phase 10) counts every kind of `RECONCILED` on both
+sides, tenant by tenant, whatever was ticked. Each entry is `(model, path,
+option[, extra domain])`; `option` is the operator's tick that asks for the
+kind, a tuple when several do (cards: `import_access` or the "Import Cards"
+tick `import_cards`). `CARRIED_BY` maps model to option; the label the
+operator reads is `KIND_LABELS[model]`, a lazy translation.
+
+- Asked for = `_ticked(option)`: the option itself or the operator's raw tick
+  in `options['ticked']`. The wizard (`_build_options`) folds a tick with
+  module availability for vending, attendance, extra attendance and services,
+  so the step switch is off when this system cannot take the data; the raw
+  tick keeps such data, asked for and left behind, a problem.
+- A kind not asked for: no difference - `done`; any difference, either way -
+  `skipped` with a remark that it was not part of this transfer, both numbers
+  per tenant. A check that breaks on such a kind is `skipped` too. None of it
+  makes the run fail (owner's decision, 10.11.2026).
+- A kind asked for and short: before calling it a loss, the check asks the
+  other system how many of those records belong to an owner that is not here
+  (`_owned_by_owners_not_here`). Owners are listed explicitly in `OWNED_BY`:
+  the person of an attendance, daily summary, vending balance entry, absence,
+  leave balance and staff membership of an access group; the contact of a
+  contact membership; the person of a card, then - only for a card with no
+  person - its contact. They are tried in the order the steps try them, and
+  only owners whose kind was not asked for count (`OWNER_CARRIED_BY`: both
+  come with People). The same tenant filter and extra domain as the main
+  count apply. "Here" is the transfer's identity of the owner with a record
+  still behind it, archived included (`_source_ids_here`; a ledger row whose
+  record was deleted around the ORM does not count; a name that does not end
+  in the source id makes the answer unknown).
+  - those records fill the gap: a remark (`partial`), with their count;
+  - the other system will not say (`None`): the whole gap stays a loss and the
+    line says it was not told;
+  - more of them than the gap: the two counts do not describe the same records
+    and explain nothing - the whole gap stays a loss;
+  - what is still short after them: `error`.
+  When the owner's kind WAS asked for, nothing is excused: the owner's own line
+  says who is missing.
+- "Arrived" is read from the transfer's own identity rows by the exact prefix
+  the steps write (`_identity_prefix`, model included): the identity of one
+  source must not take in another's whose name continues it ("acme" and
+  "acme_old").
+- `KIND_LABELS` is a separate mapping on purpose: core's term extractor
+  (`odoo/tools/babel/python_extractor.py`) keeps the last NAME it saw, so the
+  `(` opening a tuple right after a `_lt(...)` or `env._(...)` call is read as
+  one more call, and the tuple's model names went out for translation. The
+  wizard's preview counts keep their labels in a mapping for the same reason.
+
+Customer case, 10.11.2026: a second transfer of the attendance alone carried
+8 824 stays and kept 1 327 recorded here, and was reported "stopped by a
+problem" over people (209 there, 208 here), access and system events, daily
+summaries and one stay of a person this system does not have. With the rule it
+ends as finished, with those as remarks; a second run changes nothing.
+
 The background worker writes the protocol in the language of the person who
 started the transfer (`_in_starters_language`, used by `_cron_process`, its
 failure path and `_abandon_stalled_runs`), not in the scheduler's - only when
 that person has a language, as core does (`mail_activity.py:422-424`).
 
-Tests: `tests/test_a_stay_recorded_here_is_kept.py`,
+Tests: `tests/test_reconcile_with_the_source.py` (every rule above, each with
+its negative twin, and the whole pass of an attendance-only transfer ending as
+finished), `tests/test_a_stay_recorded_here_is_kept.py`,
 `tests/test_background_run.py::test_the_protocol_is_written_in_the_language_of_who_started_it`.
 
 ## Reference data vs migrated data

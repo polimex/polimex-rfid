@@ -53,6 +53,8 @@ class _FakeSource(BaseImporter):
         self._readable_cache = {}
         self.read_cursors = {}
         self.step_totals = {}
+        # The run reports the fields the source refused after every step.
+        self.refused_fields = {}
         self.stopped_early = False
         self.time_is_up = None
         self._data = data

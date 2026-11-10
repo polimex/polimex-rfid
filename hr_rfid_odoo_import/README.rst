@@ -64,6 +64,12 @@ Features
 * **An account of what happened** - one line per step, including what was left
   behind and why, written in the language of the person who started the
   transfer
+* **A final check against the other system** - every kind of data is counted
+  on both sides, company by company. A difference counts as a problem only in
+  what this transfer was asked to bring: in a kind left unticked it is shown as
+  a remark, with both numbers, and the transfer still finishes. A record of a
+  person (or other owner) who is not in this system, of a kind left unticked,
+  is said the same way
 
 Configuration
 =============

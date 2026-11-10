@@ -30,28 +30,43 @@
 записи вместо пренесените, "done" вместо "не можах да сравня".
 """
 
+import json
 import time
 import xmlrpc.client
+from datetime import datetime
 
 from odoo.tests.common import TransactionCase, tagged
 
 from ..models.importers.consistency_importer import ConsistencyImporter
 from ..models.importers.phase import registry
 from ..models.importers.reconcile_importer import (
-    CARRYABLE_LEAVE_STATES, RECONCILED, ReconcileImporter,
+    CARRYABLE_LEAVE_STATES, KIND_LABELS, RECONCILED, ReconcileImporter,
 )
 from .test_older_source_missing_models import _OlderSource
 
 
-def at_the_source(company, count=1, active=True, state=None):
+def at_the_source(company, count=1, active=True, state=None, **values):
     """`count` записа на този наемател в ДРУГАТА система.
 
     Фикстурата е малка, доказателството - живо: два реда тук стоят за 400-те
     карти на един наемател или за 152 469-те дневни обобщения. Размерът не е
     твърдението; твърдението е в поведението на контрола.
+
+    ``values`` са полетата, по които проверката пита отделно (човекът на
+    присъствието: `employee_id` с номера му в другата система).
     """
-    return [{'company': company, 'active': active, 'state': state}
+    return [dict({'company': company, 'active': active, 'state': state}, **values)
             for _ in range(count)]
+
+
+def _option_names(option):
+    """Настройката на вида като списък - един вид може да се иска с няколко."""
+    return list(option) if isinstance(option, tuple) else [option]
+
+
+#: Пълен пренос: всичко, което проверката сверява, е отметнато.
+EVERYTHING_CARRIED = {name: True for entry in RECONCILED
+                      for name in _option_names(entry[2])}
 
 
 class _PerTenantCountProxy:
@@ -60,8 +75,9 @@ class _PerTenantCountProxy:
     Умишлено строг за архивираните: истинският източник не просто скрива
     архивирания запис, а собственото му правило за достъп (верижна фирмена
     проверка) ОТКАЗВА записа под архивиран модул, ако контекстът не е
-    `active_test=False`. Затова двойникът дава архивираните САМО по контекста -
-    броене, което заобикаля собствения брояч на прехвърлянето, тук връща
+    `active_test=False`. Затова двойникът дава архивираните само по контекста
+    или когато самото условие назовава `active` - както броячът на
+    прехвърлянето прави винаги. Броене, което заобикаля този брояч, тук връща
     по-малко число, точно както страницата за преглед обеща 6 395 при 8 505.
     """
 
@@ -71,6 +87,12 @@ class _PerTenantCountProxy:
         self.calls = []
         #: Модели, за които другата система отказва да брои изобщо.
         self.refuse = set()
+        #: Модели, за които отказва само въпроса „чии са“ (`not in`).
+        self.refuse_owner_question = set()
+        #: Условия, които двойникът не може да изпълни честно. Проверката
+        #: поглъща всяка грешка при броенето като „не може да се каже“, затова
+        #: тук те се записват и тестът ги проверява сам след прогона.
+        self.fixture_errors = []
 
     def execute_kw(self, db, uid, password, model, method, args, kwargs=None):
         kwargs = kwargs or {}
@@ -84,30 +106,71 @@ class _PerTenantCountProxy:
         if model in self.refuse:
             raise xmlrpc.client.Fault(
                 2, "You are not allowed to access '%s' records." % model)
+        if model in self.refuse_owner_question and any(
+                isinstance(leaf, (list, tuple)) and len(leaf) == 3
+                and leaf[1] == 'not in' for leaf in domain):
+            raise xmlrpc.client.Fault(2, "the request is too large")
         return len(self._matching(model, domain,
                                   kwargs.get('context') or {}))
 
     def _matching(self, model, domain, context):
         wants_archived = context.get('active_test') is False
-        company = states = None
+        company = states = actives = None
+        others = []
         for leaf in domain:
             if not isinstance(leaf, (list, tuple)) or len(leaf) != 3:
                 continue
-            name, _op, value = leaf
+            name, op, value = leaf
             if str(name).endswith('company_id'):
                 company = value
             elif name == 'state':
                 states = list(value) if isinstance(value, (list, tuple)) else [value]
+            elif name == 'active' and op == 'in':
+                # As on a real server: a domain that names `active` itself is
+                # not narrowed by active_test.
+                actives = list(value)
+            elif op == 'not in' or (op in ('!=', '=') and value is False):
+                if op == 'not in' and not any(
+                        name in row for row in self.counts.get(model, [])):
+                    # A fixture that forgot the owner would make every row
+                    # "an owner who is not here" - and the test pass for it.
+                    self._refuse_the_fixture(
+                        'никой ред на %s няма поле %s - фикстурата не казва '
+                        'чий е записът' % (model, name))
+                others.append((name, op, value))
+            else:
+                self._refuse_the_fixture(
+                    'двойникът не познава условието %r - добави го, вместо '
+                    'да го пропуска мълчаливо' % (leaf,))
         out = []
         for row in self.counts.get(model, []):
             if company is not None and row.get('company') != company:
                 continue
             if states is not None and row.get('state') not in states:
                 continue
-            if not wants_archived and not row.get('active', True):
+            if actives is not None:
+                if row.get('active', True) not in actives:
+                    continue
+            elif not wants_archived and not row.get('active', True):
+                continue
+            if not all(self._holds(row.get(name) or False, op, value)
+                       for name, op, value in others):
                 continue
             out.append(row)
         return out
+
+    def _refuse_the_fixture(self, message):
+        self.fixture_errors.append(message)
+        raise AssertionError(message)
+
+    @staticmethod
+    def _holds(field_value, op, value):
+        """A leaf on a many2one, as the server reads it (False = no link)."""
+        if op == 'not in':
+            return field_value not in value
+        if op == '!=':
+            return field_value != value
+        return field_value == value
 
     def companies_asked_about(self, model):
         return [call['domain'] for call in self.calls
@@ -160,15 +223,19 @@ class TestReconcileWithTheSource(TransactionCase):
     # ── двойник и помощници ───────────────────────────────────
 
     def _source(self, counts, company_map=None, **options):
+        """Другата система с тези числа; без изброени настройки - пълен пренос."""
         return _CountingSource(
             self.env,
             dict(company_map if company_map is not None else self.company_map),
-            options, counts)
+            options or dict(EVERYTHING_CARRIED), counts)
 
     def _rows(self, source):
         """Протоколните редове на проверката, по етикета, който операторът чете."""
         phase = ReconcileImporter(source)
         phase.run(None)
+        self.assertFalse(source.rpc_models.fixture_errors,
+                         'Двойникът не можа да отговори честно - резултатът '
+                         'на проверката не значи нищо')
         return {row['model']: row for row in phase.results}
 
     def _employee(self, company, name):
@@ -349,6 +416,26 @@ class TestReconcileWithTheSource(TransactionCase):
             'Трима там, един пренесен - редът е чист само защото са преброени '
             'и чуждите записи',
         )
+
+    def test_records_of_another_old_system_with_a_longer_name_are_not_this_ones(self):
+        """Пренесеното от ДРУГА стара система не покрива загуба от тази.
+
+        Една система може да приеме преноси от няколко стари, а името на
+        едната може да е продължение на другата („acme“ и „acme_old“).
+        Записите от втората носят своя идентичност; ако проверката на
+        първата ги брои за свои, загубата ѝ изглежда покрита.
+        """
+        source = self._source({'hr.employee': at_the_source(101, 1)})
+        older = self._source({'hr.employee': at_the_source(101, 1)})
+        older.source_slug = source.source_slug + '_old'
+        self._arrived(older, 'hr.employee', 1,
+                      self._employee(self.tenant, 'От другата стара система'))
+
+        row = self._rows(source)['people']
+        self.assertEqual(
+            (row['imported_count'], row['status']), (0, 'error'),
+            'Човекът от „%s“ е броен като пренесен от „%s“: %s'
+            % (older.source_slug, source.source_slug, row['error']))
 
     # ── нещо, което не може да се сравни ──────────────────────
 
@@ -679,10 +766,411 @@ class TestReconcileWithTheSource(TransactionCase):
             'два реда за едно нещо и не знае кой да чете'
             % [m for m in listed if listed.count(m) > 1],
         )
+        reaching_the_run = set(self.env['hr.rfid.odoo.import.wiz'].new({})
+                               ._build_options())
+        phase_switches = {name for cls in registry()
+                          for name in (cls.OPTION,) + tuple(cls.OPTION_ANY) if name}
+        self.assertEqual(
+            set(KIND_LABELS), set(listed),
+            'Видовете с име и сверяваните видове се разминават - вид без име '
+            'гърми в проверката, име без вид е мъртво')
         for entry in RECONCILED:
             self.assertIn(
                 len(entry), (3, 4),
                 'Ред от списъка е с непознат вид: %s' % (entry,))
+            label = self.env._(KIND_LABELS[entry[0]])
             self.assertTrue(
-                entry[2] and entry[2] == entry[2].strip(),
+                label and label == label.strip(),
                 'Видът %s се показва на оператора без четимо име' % entry[0])
+            # Сгрешено име на настройката прави вида „непренасян" завинаги -
+            # всяка загуба в него минава за забележка.
+            names = _option_names(entry[2])
+            for name in names:
+                self.assertIn(
+                    name, reaching_the_run,
+                    'Видът %s се води пренасян от %r, а такава отметка не '
+                    'стига до преноса - загубата му ще излиза като забележка'
+                    % (entry[0], name))
+            self.assertTrue(
+                set(names) & phase_switches,
+                'Видът %s се води пренасян от %s, а нито една от тях не пуска '
+                'стъпка - видът ще се брои за пренасян, без да е'
+                % (entry[0], names))
+
+    # ── само пренесеното е проблем (собственикът, 10.11.2026) ─────
+
+    def _stay(self, person, day):
+        """Едно затворено присъствие на човека в този ден, тук."""
+        return self.env['hr.attendance'].create({
+            'employee_id': person.id,
+            'check_in': datetime(2025, 12, day, 7, 0),
+            'check_out': datetime(2025, 12, day, 15, 0),
+        })
+
+    def test_a_kind_left_out_of_the_transfer_is_a_remark_not_a_problem(self):
+        """Повторен пренос само на присъствията не е „спрян поради проблем“ заради хората.
+
+        Мерено на 10.11.2026 на копие на клиентска система: всяка стъпка на
+        повторния пренос мина, присъствията дойдоха, а преносът излезе като
+        спрян - заради хора, събития и обобщения, които никой не е искал да
+        пренася. Собственикът: проблем е само пренесеното, останалото е
+        забележка. Разликата пак се казва, с двете числа, защото е полезна.
+        """
+        source = self._source({'hr.employee': at_the_source(101, 3)},
+                              import_attendance=True)
+        self._arrived(source, 'hr.employee', 1,
+                      self._employee(self.tenant, 'Пренесен по-рано'))
+
+        row = self._rows(source)['people']
+        self.assertEqual(
+            row['status'], 'skipped',
+            'Хората не са част от този пренос, а разликата им е отчетена като '
+            '%r - така преносът на присъствията излиза спрян' % row['status'])
+        for expected in (self.tenant.name, '3 there', '1 here',
+                         'not part of this transfer'):
+            self.assertIn(
+                expected, row['error'],
+                'Забележката не казва %r - операторът не знае каква е разликата '
+                'и защо не е проблем: %s' % (expected, row['error']))
+        self.assertEqual(
+            (row['source_count'], row['imported_count']), (3, 1),
+            'Числата на забележката не са в колоните, където операторът ги чете')
+
+        # Обратният близнак: отметнати ли са хората, същата разлика е загуба.
+        carried = self._source({'hr.employee': at_the_source(101, 3)},
+                               import_people=True)
+        self.assertEqual(
+            self._rows(carried)['people']['status'], 'error',
+            'Хората са част от преноса, двама не са дошли, а редът не е грешка')
+
+    def test_a_kind_left_out_with_the_same_numbers_is_a_clean_line(self):
+        """Непренасян вид без разлика не оставя забележка.
+
+        Забележка без разлика е шум, а шумът учи оператора да не чете реда.
+        """
+        source = self._source({'hr.employee': at_the_source(101, 1)},
+                              import_attendance=True)
+        self._arrived(source, 'hr.employee', 1,
+                      self._employee(self.tenant, 'Единственият'))
+
+        row = self._rows(source)['people']
+        self.assertEqual((row['status'], row['error']), ('done', ''),
+                         'Един там, един тук, а редът казва нещо: %s' % row['error'])
+
+    def test_a_stay_of_a_person_who_is_not_here_is_a_remark_when_people_were_not_carried(self):
+        """Присъствие на човек, когото тук няма, не спира пренос само на присъствията.
+
+        Мерено на 10.11.2026: от 41 856 присъствия на другата система едно не
+        дойде - на човек, когото новата система няма, - и преносът излезе
+        спрян. Без човек тук присъствието няма към кого да се закачи, а
+        хората не са били част от преноса. Разликата е тяхната, казана още
+        веднъж - като забележка, с броя и с двете числа.
+        """
+        person = self._employee(self.tenant, 'Пренесен човек')
+        counts = {
+            'hr.employee': at_the_source(101, 2),
+            'hr.attendance': (at_the_source(101, 2, employee_id=77)
+                              + at_the_source(101, 1, employee_id=78)),
+        }
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.attendance', 1, self._stay(person, 3))
+        self._arrived(source, 'hr.attendance', 2, self._stay(person, 4))
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(
+            row['status'], 'partial',
+            'Присъствие на човек, когото тук няма и не е пренасян, е отчетено '
+            'като %r: %s' % (row['status'], row['error']))
+        for expected in (self.tenant.name, '3 there', '2 here', 'people',
+                         'not part of this transfer'):
+            self.assertIn(
+                expected, row['error'],
+                'Забележката не казва %r: %s' % (expected, row['error']))
+
+        # Близнак 1: хората СА част от преноса - липсващият човек е загуба на
+        # преноса, и присъствието му с него.
+        with_people = self._source(counts, import_attendance=True,
+                                   import_people=True)
+        self.assertEqual(
+            self._rows(with_people)['attendances']['status'], 'error',
+            'Хората са пренасяни, един не е дошъл, а присъствието му не е загуба')
+
+    def test_a_lost_stay_of_a_person_who_is_here_still_stops_the_transfer(self):
+        """Забележката за липсващия човек не покрива истинска загуба до нея.
+
+        Човекът е тук, присъствието му е там, а не е дошло - това е точно
+        загубата, заради която проверката съществува, каквото и друго да е
+        обяснено в същия ред.
+        """
+        person = self._employee(self.tenant, 'Пренесен човек')
+        counts = {
+            'hr.attendance': (at_the_source(101, 3, employee_id=77)
+                              + at_the_source(101, 1, employee_id=78)),
+        }
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.attendance', 1, self._stay(person, 3))
+        self._arrived(source, 'hr.attendance', 2, self._stay(person, 4))
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(
+            row['status'], 'error',
+            'Едно присъствие на човек, който Е тук, не е дошло, а редът е %r: %s'
+            % (row['status'], row['error']))
+
+    def test_a_person_deleted_here_after_the_first_transfer_counts_as_not_here(self):
+        """Изтритият тук човек е „няма го тук“, макар първият пренос да го е донесъл.
+
+        При клиента човекът на администратора е бил пренесен и после изтрит;
+        идентичността му в преноса си е отишла с него. Проверката трябва да го
+        вижда като липсващ, а не да брои присъствието му за изгубено.
+        """
+        person = self._employee(self.tenant, 'Остава')
+        gone = self._employee(self.tenant, 'Изтрит после')
+        counts = {'hr.attendance': (at_the_source(101, 1, employee_id=77)
+                                    + at_the_source(101, 1, employee_id=78))}
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.employee', 78, gone)
+        self._arrived(source, 'hr.attendance', 1, self._stay(person, 3))
+        gone_id = gone.id
+        gone.unlink()
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(
+            row['status'], 'partial',
+            'Присъствие на изтрит тук човек е отчетено като %r: %s'
+            % (row['status'], row['error']))
+
+        # Изтриване покрай ORM (каскада в базата) оставя идентичността да сочи
+        # празно място. Тя не прави човека „тук“.
+        source.link_existing('hr.employee', 78, gone_id)
+        row = self._rows(source)['attendances']
+        self.assertEqual(
+            row['status'], 'partial',
+            'Идентичност без запис зад нея е броена за човек тук: %r, %s'
+            % (row['status'], row['error']))
+
+    def test_a_card_of_a_person_who_is_not_here_does_not_stop_a_transfer_of_the_cards(self):
+        """Пренос на картите без хората: карта на човек, когото тук няма, е забележка.
+
+        Стъпката оставя такава карта назад по име („картата ... е на човек,
+        който не е дошъл"). Отметнати ли са и хората, липсващият човек е загуба
+        на преноса - и картата му с него.
+        """
+        person = self._employee(self.tenant, 'Притежател тук')
+        counts = {'hr.rfid.card': (at_the_source(101, 1, employee_id=77, contact_id=False)
+                                   + at_the_source(101, 1, employee_id=78, contact_id=False))}
+        source = self._source(counts, import_access=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.rfid.card', 1, self._card(person, '7730000101'))
+
+        row = self._rows(source)['cards']
+        self.assertEqual(row['status'], 'partial',
+                         'Карта на човек, когото тук няма: %r, %s'
+                         % (row['status'], row['error']))
+
+        with_people = self._source(counts, import_access=True, import_people=True)
+        self.assertEqual(self._rows(with_people)['cards']['status'], 'error',
+                         'Хората са пренасяни, един не е дошъл, а картата му '
+                         'не е загуба')
+
+    def test_a_card_asked_for_by_its_own_tick_and_lost_is_a_problem(self):
+        """„Импорт на карти" е отметка на екрана: картите с нея са поискани.
+
+        Картите идват с достъпа, а самата отметка вече не пуска стъпка. Който
+        я е отметнал, е поискал картите - изгубени, те са проблем, не забележка.
+        """
+        counts = {'hr.rfid.card': at_the_source(101, 2, employee_id=77, contact_id=False)}
+        source = self._source(counts, import_cards=True)
+        # The holder is here, so nothing explains the two lost cards.
+        self._arrived(source, 'hr.employee', 77,
+                      self._employee(self.tenant, 'Притежател тук'))
+        row = self._rows(source)['cards']
+        self.assertEqual(row['status'], 'error',
+                         'Поисканите карти не са дошли, а редът е %r: %s'
+                         % (row['status'], row['error']))
+
+        untouched = self._source(counts, import_attendance=True)
+        self.assertEqual(self._rows(untouched)['cards']['status'], 'skipped')
+
+    def test_an_archived_person_here_is_here(self):
+        """Архивиран човек тук е тук: изгубено негово присъствие е загуба.
+
+        Архивираните вече веднъж минаха за липсващи (6 395 срещу 8 505). Ако
+        минат за „ги няма тук", загубата им става забележка.
+        """
+        person = self._employee(self.tenant, 'Архивиран')
+        counts = {'hr.attendance': at_the_source(101, 2, employee_id=77)}
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.attendance', 1, self._stay(person, 3))
+        person.active = False
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(row['status'], 'error',
+                         'Присъствие на архивиран човек тук е скрито като '
+                         'забележка: %s' % row['error'])
+
+    def test_a_person_missing_in_one_tenant_does_not_explain_a_loss_in_another(self):
+        """Липсващ човек при един наемател не покрива загуба при друг."""
+        ours = self._employee(self.tenant, 'Тук, наемател А')
+        counts = {'hr.attendance': (at_the_source(101, 2, employee_id=77)
+                                    + at_the_source(202, 1, employee_id=78))}
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, ours)
+        self._arrived(source, 'hr.attendance', 1, self._stay(ours, 3))
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(row['status'], 'error')
+        loss = row['error'].split('. ')[0]
+        self.assertIn(self.tenant.name, loss,
+                      'Загубата при наемател А не е назована: %s' % row['error'])
+        self.assertNotIn(self.other.name, loss,
+                         'Наемател Б е назован като загубил: %s' % row['error'])
+
+    def test_records_of_people_not_here_are_counted_by_the_same_filter(self):
+        """Отказаните отсъствия на липсващ човек не покриват одобрено, изгубено.
+
+        Проверката брои само отсъствията, които преносът носи. Ако „чии са"
+        се питаше без същия филтър, 2 848-те отказани отсъствия от живия
+        случай щяха да обяснят всяка загуба.
+        """
+        if 'hr.leave' not in self.env:
+            self.skipTest('hr_holidays не е инсталиран тук')
+        person = self._employee(self.tenant, 'Тук')
+        counts = {'hr.leave': (at_the_source(101, 1, state='validate', employee_id=77)
+                               + at_the_source(101, 1, state='refuse', employee_id=78))}
+        source = self._source(counts, import_leaves=True)
+        self._arrived(source, 'hr.employee', 77, person)
+
+        row = self._rows(source)['absences']
+        self.assertEqual(row['status'], 'error',
+                         'Отказано отсъствие на липсващ човек покри одобрено, '
+                         'изгубено: %s' % row['error'])
+
+    def test_when_the_other_system_will_not_say_whose_they_are_the_loss_stays(self):
+        """Не можем да питаме „чии са" - разликата остава загуба и се казва защо."""
+        person = self._employee(self.tenant, 'Тук')
+        counts = {'hr.attendance': (at_the_source(101, 1, employee_id=77)
+                                    + at_the_source(101, 1, employee_id=78))}
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.attendance', 1, self._stay(person, 3))
+        source.rpc_models.refuse_owner_question.add('hr.attendance')
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(row['status'], 'error')
+        self.assertIn('did not say', row['error'],
+                      'Не е казано, че обяснението не е проверено: %s' % row['error'])
+
+    def test_more_records_of_people_not_here_than_are_missing_explains_nothing(self):
+        """Повече „на липсващи хора" отколкото липсват - числата не се връзват.
+
+        Недошлите записи не могат да са повече от разликата. Излязат ли
+        повече, двете числа не говорят за едни и същи записи и не обясняват
+        нищо: разликата остава загуба.
+        """
+        person = self._employee(self.tenant, 'Тук')
+        counts = {'hr.attendance': (at_the_source(101, 2, employee_id=77)
+                                    + at_the_source(101, 2, employee_id=78))}
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        for index, day in ((1, 3), (2, 4), (3, 5)):
+            self._arrived(source, 'hr.attendance', index, self._stay(person, day))
+
+        row = self._rows(source)['attendances']
+        self.assertEqual(row['status'], 'error')
+        self.assertIn('do not add up', row['error'])
+
+    def test_a_kind_left_out_with_more_here_is_still_said(self):
+        """Непренасян вид с повече тук също се казва - като забележка."""
+        source = self._source({'hr.employee': at_the_source(101, 1)},
+                              import_attendance=True)
+        for index in (1, 2):
+            self._arrived(source, 'hr.employee', index,
+                          self._employee(self.tenant, 'Пренесен %s' % index))
+
+        row = self._rows(source)['people']
+        self.assertEqual(row['status'], 'skipped')
+        self.assertIn('1 there', row['error'])
+
+    def test_a_tick_this_system_cannot_take_is_still_the_operators_request(self):
+        """Отметнато, а системата тук не може да го приеме: остава загуба.
+
+        Превключвателят на стъпката е изключен, защото тук няма къде да дойде,
+        но операторът го е поискал. Неотметнатото е забележка.
+        """
+        counts = {'hr.attendance': at_the_source(101, 2, employee_id=77)}
+        self._arrived(self._source(counts), 'hr.employee', 77,
+                      self._employee(self.tenant, 'Тук'))
+        asked = self._source(counts, import_attendance=False,
+                             ticked={'import_attendance': True})
+        self.assertEqual(self._rows(asked)['attendances']['status'], 'error')
+
+        not_asked = self._source(counts, import_attendance=False,
+                                 ticked={'import_attendance': False})
+        self.assertEqual(self._rows(not_asked)['attendances']['status'], 'skipped')
+
+    def test_a_check_that_breaks_on_a_kind_not_carried_does_not_stop_the_transfer(self):
+        """Паднала проверка на непренасян вид се казва, но не спира преноса."""
+        source = self._source({'hr.employee': at_the_source(101, 1)},
+                              import_attendance=True)
+        source.blow_up_on.add('hr.employee')
+
+        row = self._rows(source)['people']
+        self.assertEqual(row['status'], 'skipped')
+        self.assertTrue(row['error'], 'Падналата проверка не казва защо')
+
+    def test_a_transfer_of_the_attendance_alone_ends_as_finished(self):
+        """Целият пренос, не само редът: само присъствия, разлика само в хората.
+
+        Решението на собственика е за ПРЕНОСА - „излезе като спрян". Тук
+        минава истинският край на прогона: стъпката, редовете в протокола и
+        състоянието, което операторът вижда.
+        """
+        from ..models.importers import phase as phase_module
+
+        person = self._employee(self.tenant, 'Тук')
+        counts = {'hr.employee': at_the_source(101, 2),
+                  'hr.attendance': (at_the_source(101, 1, employee_id=77)
+                                    + at_the_source(101, 1, employee_id=78))}
+
+        Run = self.registry['hr.rfid.odoo.import.run']
+        current = {}
+        self.patch(phase_module, 'phase_plan',
+                   lambda env, options, modules: [(ReconcileImporter, None)])
+        self.patch(Run, '_build_importer', lambda records, options: current['source'])
+        self.patch(Run, '_wake_the_worker', lambda records: None)
+        # The pass makes its progress permanent after every step; in a test
+        # that would end the test's own transaction.
+        self.patch(self.env.cr, 'commit', lambda: None)
+
+        def finish(counts, people_too=False):
+            options = {'import_attendance': True, 'import_people': people_too}
+            current['source'] = self._source(counts, **options)
+            run = self.env['hr.rfid.odoo.import.run'].create({
+                'source_url': 'http://localhost:1', 'source_login': 'admin',
+                'source_db': 'src', 'source_password': 'secret',
+                'options_json': json.dumps(options),
+                'installed_modules_json': json.dumps(['hr_rfid']),
+                'company_map_json': json.dumps(
+                    {str(k): v for k, v in self.company_map.items()}),
+                'state': 'queued',
+            })
+            run._process_pass()
+            self.assertFalse(current['source'].rpc_models.fixture_errors)
+            return run
+
+        source = self._source(counts, import_attendance=True)
+        self._arrived(source, 'hr.employee', 77, person)
+        self._arrived(source, 'hr.attendance', 1, self._stay(person, 3))
+
+        run = finish(counts)
+        self.assertEqual(run.state, 'done',
+                         'Само присъствия, разлика само в хората, а преносът е %r'
+                         % run.state)
+
+        # Близнакът: хората са пренасяни и един липсва - преносът е спрян.
+        self.assertEqual(finish(counts, people_too=True).state, 'failed')
