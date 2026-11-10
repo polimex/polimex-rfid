@@ -369,15 +369,23 @@ class HrRfidUserEvent(models.Model):
             Domain('contact_id.name', operator, value),
             Domain('door_id.name', operator, value),
         ]
-        # The action reads as its label in the language of the person searching.
-        text = value if operator == 'like' else value.lower()
-        actions = [
-            key for key, label in self._fields['event_action']._description_selection(self.env)
-            if text in (label if operator == 'like' else label.lower())
-        ]
+        actions = self._search_name_actions(operator, value)
         if actions:
             matches.append(Domain('event_action', 'in', actions))
         return Domain.OR(matches)
+
+    @api.model
+    def _search_name_actions(self, operator, value):
+        """The actions whose label contains ``value``.
+
+        The action reads as its label in the language of the person
+        searching, so that is what the text is compared with.
+        """
+        text = value if operator == 'like' else value.lower()
+        return [
+            key for key, label in self._fields['event_action']._description_selection(self.env)
+            if text in (label if operator == 'like' else label.lower())
+        ]
 
     @api.depends('event_action')
     def _compute_user_ev_action_str(self):

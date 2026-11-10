@@ -1545,11 +1545,13 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:35`.  Model.  In
   `_rec_names_search`, so also the name search of an event link): `like` /
   `ilike` become an OR over `employee_id.name`, `contact_id.name`,
   `door_id.name` and the `event_action` keys whose label, in the searcher's
-  language, contains the text; `in` (what `=` and "is set" arrive as) reads
-  each exact name back into action, owner and door (`_search_name_equal`),
-  and `False` matches nothing because every name holds the action; a
-  negative operator returns `NotImplemented` and the ORM negates the
-  positive search. `hr.rfid.vending.event` inherits it. Without it every text search in that box raised "Cannot convert
+  language, contains the text (`_search_name_actions`); `in` (what `=` and
+  "is set" arrive as) reads each exact name back into action, owner and door
+  (`_search_name_equal`), and `False` matches nothing because every name
+  holds the action; a negative operator returns `NotImplemented` and the ORM
+  negates the positive search. `hr.rfid.vending.event` inherits it and
+  overrides `_search_name_containing` / `_search_name_equal` for sales, whose
+  name is "product - buyer". Without it every text search in that box raised "Cannot convert
   hr.rfid.event.user.name to SQL because it is not stored" (client case,
   10.11.2026).
 - **`_compute_user_ev_action_str(self)`** - decorators: `@api.depends`

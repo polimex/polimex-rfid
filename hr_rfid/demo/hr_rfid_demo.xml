@@ -173,7 +173,12 @@
       <!-- An employee may only be put in an access group his department
            allows (hr_employee.py, check_access_group), so every department
            whose people carry a demo card has to allow the employee group -
-           otherwise the demo cannot give them one. -->
+           otherwise the demo cannot give them one.
+           The departments are hr's records: on an update of a database whose
+           demo is already loaded they are left as they are (noupdate), so the
+           cards and memberships that rely on them carry forcecreate="False"
+           and are made only at install too. Created on an update, they met
+           departments that allow nothing and stopped the whole upgrade. -->
       <record id="hr.dep_management" model="hr.department">
           <field name="hr_rfid_default_access_group" ref="demo_access_group_2"/>
           <field name="hr_rfid_allowed_access_groups" eval="[(4, ref('demo_access_group_2'), 0)]"/>
@@ -210,13 +215,13 @@
              leave-form showcases, which suspend their badges on purpose - so
              without these two the whole demo would show an access-control
              system in which not one person can open a door. -->
-        <record id="demo_card_employee_ngh" model="hr.rfid.card">
+        <record id="demo_card_employee_ngh" model="hr.rfid.card" forcecreate="False">
             <field name="employee_id" ref="hr.employee_ngh"/>
             <field name="number">0011122240</field>
             <field name="card_reference">Badge 40</field>
             <field name="company_id" ref="base.main_company"/>
         </record>
-        <record id="demo_card_employee_chs" model="hr.rfid.card">
+        <record id="demo_card_employee_chs" model="hr.rfid.card" forcecreate="False">
             <field name="employee_id" ref="hr.employee_chs"/>
             <field name="number">0011122241</field>
             <field name="card_reference">Badge 41</field>
@@ -229,23 +234,23 @@
              module is installed; the demo staff come from hr's own demo, so
              nothing would ever attach them and every badge in the showcase
              would belong to somebody who cannot open a door. -->
-        <record id="demo_access_group_employee_rel_admin" model="hr.rfid.access.group.employee.rel">
+        <record id="demo_access_group_employee_rel_admin" model="hr.rfid.access.group.employee.rel" forcecreate="False">
             <field name="access_group_id" ref="demo_access_group_2"/>
             <field name="employee_id" ref="hr.employee_admin"/>
         </record>
-        <record id="demo_access_group_employee_rel_al" model="hr.rfid.access.group.employee.rel">
+        <record id="demo_access_group_employee_rel_al" model="hr.rfid.access.group.employee.rel" forcecreate="False">
             <field name="access_group_id" ref="demo_access_group_2"/>
             <field name="employee_id" ref="hr.employee_al"/>
         </record>
-        <record id="demo_access_group_employee_rel_qdp" model="hr.rfid.access.group.employee.rel">
+        <record id="demo_access_group_employee_rel_qdp" model="hr.rfid.access.group.employee.rel" forcecreate="False">
             <field name="access_group_id" ref="demo_access_group_2"/>
             <field name="employee_id" ref="hr.employee_qdp"/>
         </record>
-        <record id="demo_access_group_employee_rel_ngh" model="hr.rfid.access.group.employee.rel">
+        <record id="demo_access_group_employee_rel_ngh" model="hr.rfid.access.group.employee.rel" forcecreate="False">
             <field name="access_group_id" ref="demo_access_group_2"/>
             <field name="employee_id" ref="hr.employee_ngh"/>
         </record>
-        <record id="demo_access_group_employee_rel_chs" model="hr.rfid.access.group.employee.rel">
+        <record id="demo_access_group_employee_rel_chs" model="hr.rfid.access.group.employee.rel" forcecreate="False">
             <field name="access_group_id" ref="demo_access_group_2"/>
             <field name="employee_id" ref="hr.employee_chs"/>
         </record>
