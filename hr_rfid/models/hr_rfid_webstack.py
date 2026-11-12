@@ -1237,6 +1237,7 @@ class HrRfidWebstack(models.Model):
                 'ex_timestamp': fields.Datetime.now(),
                 'response': json.dumps(post_data),
             })
+            command._explain_a_refused_card_schedule()
             return not direct_cmd and self.check_for_unsent_cmd(200)
 
         command.write({

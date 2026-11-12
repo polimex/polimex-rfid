@@ -701,15 +701,19 @@ class HrRfidCardDoorRel(models.Model):
     )
 
     def get_ts_code_string(self):
+        """The card's schedule for each of the controller's four readers.
+
+        Every reader of the door gets the schedule - the entry and the exit
+        alike. The array used to be cleared for each reader, so only the last
+        one carried it. The card write itself does not read this (add_card
+        sends one command per reader, merged per slot), so no card went out
+        that way; the helper now answers the same as the write does.
+        """
         self.ensure_one()
-        ts_code = None
+        ts_code = [0, 0, 0, 0]
         for reader in self.door_id.reader_ids:
-            ts_code = [0, 0, 0, 0]
             ts_code[reader.number - 1] = self.time_schedule_id.number
-        if ts_code is not None:
-            return '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
-        else:
-            return '%02X%02X%02X%02X' % (0, 0, 0, 0)
+        return '%02X%02X%02X%02X' % (ts_code[0], ts_code[1], ts_code[2], ts_code[3])
 
     def _remove_cards(self, card_ids, door_ids):
         self.search([('card_id', 'in', card_ids.mapped('id')), ('door_id', 'in', door_ids.mapped('id'))]).unlink()

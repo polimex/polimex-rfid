@@ -288,6 +288,8 @@ For more information, visit [polimex.co](https://polimex.co)
 
 Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
 
+- **"The door ... takes time schedules numbered 0 to 3 for a card"** - iCON130 and iCON180 (hotel too) hold time schedules 0-3 for a card and refuse the whole card write above that, so the door would never open for the group's cards. Choose a schedule numbered 3 or lower for such a door; iCON110, iCON115 and the turnstile take 0-15.
+- **"Card ... was not written to the controller: its time schedule is number ..."** in a controller's system events - the controller refused the card because of its schedule (an access group set up before the check existed). Give the door a schedule in the controller's range in the access group and reload the cards.
 - **Set webstack settings** (on `hr.rfid.webstack`) - Set webstack settings for the module.
 - **Check if ws available** (on `hr.rfid.webstack`)
 

@@ -22,6 +22,13 @@ HW_TYPES = [('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140
 # rights. One iCON180 board carries three vending firmwares: 16 (Executive
 # with a coin mechanism), 20 (Executive only) and 21 (MDB cashless).
 VENDING_HW_VERSIONS = ('16', '20', '21')
+# The highest time schedule number a card write (D1) may carry, per controller
+# model. Read by the protocol team from command_d1 of each firmware (protocol
+# change D47, 12.11.2026): iCON130 and iCON180 (hotel too) keep 2 bits per
+# reader and refuse the WHOLE card write above 3; iCON110, iCON115 and the
+# turnstile take 0-15. A model not listed here has no known limit, and iCON50
+# simply ignores the schedule.
+CARD_SCHEDULE_MAX = {'17': 3, '10': 3, '14': 3, '6': 15, '11': 15, '9': 15}
 DEFAULT_IO_TABLES = [
     # [hw_version, mode, data]
     # iCON110

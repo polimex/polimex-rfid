@@ -519,6 +519,31 @@ class HrRfidAccessGroupDoorRel(models.Model):
                     'unrestricted (24/7) schedule for now. Time-limited access on '
                     'shared modules is set up by the owner company.'))
 
+    @api.constrains('door_id', 'time_schedule_id')
+    def _check_schedule_fits_the_controller(self):
+        """A schedule the controller cannot hold is refused here, not at the door.
+
+        iCON130 and iCON180 keep schedules 0-3 for a card and refuse the whole
+        card write above that, so every card of the group would silently stay
+        off the controller. The person choosing the schedule is told which
+        numbers the door takes.
+        """
+        for rel in self:
+            controller = rel.door_id.controller_id
+            highest = controller._card_schedule_max() if controller else None
+            if highest is not None and rel.time_schedule_id.number > highest:
+                raise exceptions.ValidationError(self.env._(
+                    'The door "%(door)s" is on a %(model)s controller, which takes '
+                    'time schedules numbered 0 to %(highest)d for a card. '
+                    '"%(schedule)s" is number %(number)d: choose a schedule with a '
+                    'lower number for this door.',
+                    door=rel.door_id.name,
+                    model=dict(controller._fields['hw_version']._description_selection(self.env)).get(
+                        controller.hw_version, controller.hw_version),
+                    highest=highest,
+                    schedule=rel.time_schedule_id.name,
+                    number=rel.time_schedule_id.number))
+
     @api.model
     def check_for_ts_inconsistencies(self, rels1, rels2):
         for door_rel in rels1:

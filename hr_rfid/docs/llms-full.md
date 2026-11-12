@@ -635,6 +635,9 @@ Python class `HrRfidAccessGroupDoorRel` in `models/hr_rfid_access_group.py:453`.
 
 #### Notable methods
 
+- **`_check_schedule_fits_the_controller(self)`** - decorators: `@api.constrains('door_id', 'time_schedule_id')`
+  - Refuses a schedule above what the door's controller holds for a card: `hr.rfid.ctrl._card_schedule_max()` from `controllers/polimex.py` `CARD_SCHEDULE_MAX` (protocol D47: iCON130/iCON180/hotel 0-3, iCON110/iCON115/turnstile 0-15, others no known limit). The controller would otherwise refuse the whole card write (e=4). A controller that refuses a card anyway is explained in its system events by `hr.rfid.command._explain_a_refused_card_schedule()` (D1 with error 4 and a schedule above the limit).
+  - effects: `raise:ValidationError`
 - **`_check_shared_module_grant(self)`** - decorators: `@api.constrains`
   - A company the module is shared with may include its doors in its own access groups, but only with the unrestricted schedule: the controller's schedule slots belong to the owner company, and writing a…
   - effects: `raise:ValidationError`
@@ -1412,6 +1415,7 @@ Python class `HrRfidCardDoorRel` in `models/hr_rfid_door.py:670`.  Model.  Descr
 #### Notable methods
 
 - **`get_ts_code_string(self)`** - decorators: -
+  - The card's schedule for each of the four readers, every reader of the door included. The card write itself does not read it: `hr.rfid.command.add_card` sends one D1 per reader, merged per slot by `hr.rfid.ctrl.add_remove_card`.
 - **`update_card_rels(self, card_id, access_group=None)`** - decorators: `@api.model`
   - Checks all card-door relations and updates them :param card_id: Card for which the relations to be checked :param access_group: Which access groups to go through when searching for the doors. If None…
 - **`update_door_rels(self, door_id, access_group=None)`** - decorators: `@api.model`

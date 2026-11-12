@@ -235,6 +235,28 @@ class HrRfidCommands(models.Model):
         help='Indicates if this command includes alarm-related access rights. Used for debugging purposes.',
     )
 
+    def _explain_a_refused_card_schedule(self):
+        """Say in words why a controller refused to take a card.
+
+        The controller answers a card write whose schedule it cannot hold with
+        "wrong value" (e=4), and the whole card stays off it. On the models with
+        a known limit (polimex.CARD_SCHEDULE_MAX) that cause is certain when the
+        command carried a schedule above it, so the controller's log names the
+        card, the schedule and the numbers the controller takes.
+        """
+        for command in self.filtered(lambda c: c.cmd == 'D1' and c.error == '4'):
+            controller = command.controller_id
+            highest = controller._card_schedule_max()
+            code = command.ts_code or ''
+            numbers = [int(code[i:i + 2], 16) for i in range(0, len(code) - 1, 2)]
+            if highest is None or not numbers or max(numbers) <= highest:
+                continue
+            controller.report_sys_ev(self.env._(
+                'Card %(card)s was not written to the controller: its time '
+                'schedule is number %(number)d, and this controller takes time '
+                'schedules numbered 0 to %(highest)d for a card.',
+                card=command.card_number, number=max(numbers), highest=highest))
+
     @api.depends('cmd')
     def _compute_cmd_name(self):
         def find_desc(cmd):

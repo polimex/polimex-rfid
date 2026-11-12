@@ -749,6 +749,14 @@ class HrRfidController(models.Model):
             self.ensure_one()
             return self.hw_version in ['30', '31', '32']
 
+    def _card_schedule_max(self):
+        """The highest time schedule a card on this controller can be given.
+
+        None where the model has no known limit (polimex.CARD_SCHEDULE_MAX).
+        """
+        self.ensure_one()
+        return polimex.CARD_SCHEDULE_MAX.get(self.hw_version)
+
     def is_vending_ctrl(self, hw_version=None):
         if hw_version:
             return hw_version in polimex.VENDING_HW_VERSIONS

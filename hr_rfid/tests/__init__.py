@@ -32,3 +32,4 @@ from . import test_unknown_device_payload
 from . import test_environment_readings
 from . import test_a_lost_race_is_retried
 from . import test_event_search_by_name
+from . import test_card_schedule_fits_the_controller

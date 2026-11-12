@@ -186,12 +186,14 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
 
     @api.constrains('begin', 'end', 'number')
     def _check_description(self):
+        # Each bound is checked on its own: a chained "0 > x > 24" is never
+        # true, so none of these used to fire.
         for record in self:
-            if 0 > record.begin > 24:
+            if not 0 <= record.begin <= 24:
                 raise ValidationError(_("Begin is not in range"))
-            if 0 > record.end > 24:
+            if not 0 <= record.end <= 24:
                 raise ValidationError(_("End is not in range"))
-            if 0 > record.number > 3:
+            if not 0 <= record.number <= 3:
                 raise ValidationError(_("The number is not in range"))
             if record.begin >= record.end != 0:
                 raise ValidationError(_("The begin time have to be before end time"))
