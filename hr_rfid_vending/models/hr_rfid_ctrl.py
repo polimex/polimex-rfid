@@ -1,4 +1,4 @@
-from odoo import fields, models, api, _, exceptions
+from odoo import api, fields, models
 
 # Vending firmwares that keep the price table Odoo writes and report the price
 # of every sale: 16 and 20. The MDB firmware (21) keeps its prices in the
@@ -141,10 +141,10 @@ Leave empty to use default product prices."""
             meanings = {
                 0: _("The vending machine does not answer."),
                 2: _("The vending machine did not answer after a status request."),
+                # The firmware keeps the machine's own answer in the PIN
+                # bytes and does not send it: the product byte is 0 here.
                 4: _(
-                    "The vending machine sent a command the controller does not know "
-                    "(the machine's reply: %(reply)d).",
-                    reply=product,
+                    "The vending machine sent a command the controller does not know."
                 ),
                 5: _(
                     "Product error: the item number is out of range or the machine reported a "

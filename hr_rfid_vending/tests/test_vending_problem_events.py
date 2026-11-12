@@ -46,6 +46,17 @@ class TestVendingProblemsInWords(VendingFlowMixin, RFIDController, HttpCase):
         """48 code 0 on the Executive (16): the machine does not answer."""
         self.assertIn("does not answer", self._problem(16, 48, code=0))
 
+    def test_an_unknown_command_shows_no_value_the_firmware_does_not_send(self):
+        """NEGATIVE: 48 code 4 on 16/20 names the unknown command, with no number.
+
+        The firmware keeps the machine's answer in the PIN bytes and does not
+        send it (protocol team, 12.11.2026), so no byte of the event is shown
+        as that answer.
+        """
+        text = self._problem(20, 48, product=0, code=4)
+        self.assertIn("does not know", text)
+        self.assertNotRegex(text, r"\d")
+
     def test_an_mdb_session_closed_by_timeout_points_at_the_machine(self):
         """48 code 3 on MDB (21): the session closed after 30 seconds."""
         self.assertIn("after 30 seconds", self._problem(21, 48, code=3))
