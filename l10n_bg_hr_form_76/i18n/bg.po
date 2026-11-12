@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-08 14:07+0000\n"
-"PO-Revision-Date: 2026-03-08 16:08\n"
+"PO-Revision-Date: 2026-11-12 15:17\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -196,6 +196,12 @@ msgstr "Май"
 #. module: l10n_bg_hr_form_76
 #. odoo-python
 #: code:addons/l10n_bg_hr_form_76/reports/report_form_76_bg.py:0
+msgid "No Department"
+msgstr "Без отдел"
+
+#. module: l10n_bg_hr_form_76
+#. odoo-python
+#: code:addons/l10n_bg_hr_form_76/reports/report_form_76_bg.py:0
 msgid "No data for report!"
 msgstr "Няма данни за отчета!"
 
@@ -273,12 +279,22 @@ msgstr "Годината не е валидна %d"
 #. module: l10n_bg_hr_form_76
 #: model:ir.model,name:l10n_bg_hr_form_76.model_hr_leave_type
 msgid "Time Off Type"
-msgstr "Тип на Отпуск"
+msgstr "Тип отпуск"
 
 #. module: l10n_bg_hr_form_76
 #: model:ir.model,name:l10n_bg_hr_form_76.model_hr_attendance_form76_wizard
 msgid "Wizard for generation Form 76 in Bulgaria"
 msgstr "Съветник за генериране на формуляр 76 в България"
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "А"
+msgstr "А"
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "Б"
+msgstr "Б"
 
 #. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
@@ -291,6 +307,17 @@ msgid "Всичко човекодни"
 msgstr "Всичко човекодни"
 
 #. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_employee__corporate_internal_number
+msgid ""
+"Вътрешен корпоративен номер на служителя в дружеството (например "
+"табелен/служебен №). Излиза в съответната колона на Форма 76, ако е "
+"попълнен."
+msgstr ""
+"Вътрешен корпоративен номер на служителя в дружеството (например "
+"табелен/служебен №). Излиза в съответната колона на Форма 76, ако е "
+"попълнен."
+
+#. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_f76_footer
 msgid ""
 "Генерирано от Полимекс ЕРП система за управление на персонала "
@@ -298,6 +325,11 @@ msgid ""
 msgstr ""
 "Генерирано от Полимекс ЕРП система за управление на персонала "
 "(https://polimex.co)"
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "Д"
+msgstr "Д"
 
 #. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
@@ -330,14 +362,47 @@ msgid "Изп. държ. задължения"
 msgstr "Изп. държ. задължения"
 
 #. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_attendance_form76_wizard__report_year
+msgid ""
+"Календарна година за която се генерира Форма 76. Приема стойности от 2020 "
+"нататък."
+msgstr ""
+"Календарна година за която се генерира Форма 76. Приема стойности от 2020 "
+"нататък."
+
+#. module: l10n_bg_hr_form_76
 #: model:ir.model.fields,field_description:l10n_bg_hr_form_76.field_hr_leave_type__form76_code
 msgid "Код за форма 76"
 msgstr "Код за форма 76"
 
 #. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_leave_type__form76_code
+msgid ""
+"Кодът на типа отпуск според Форма 76 на НАП (например '01' за платен годишен"
+" отпуск). Излиза в графата на справката."
+msgstr ""
+"Кодът на типа отпуск според Форма 76 на НАП (например '01' за платен годишен"
+" отпуск). Излиза в графата на справката."
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "М"
+msgstr "М"
+
+#. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.hr_holidays_request_document
 msgid "МОЛБА ЗА ОТПУСК"
 msgstr "МОЛБА ЗА ОТПУСК"
+
+#. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_attendance_form76_wizard__report_month
+msgid "Месец, за който се генерира Форма 76 в комбинация с годината по-горе."
+msgstr "Месец, за който се генерира Форма 76 в комбинация с годината по-горе."
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "Н"
+msgstr "Н"
 
 #. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.hr_holidays_request_document
@@ -358,6 +423,11 @@ msgstr "Неплатен отпуск на учащи се"
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
 msgid "Неявяване на работа"
 msgstr "Неявяване на работа"
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "О"
+msgstr "О"
 
 #. module: l10n_bg_hr_form_76
 #: model:ir.model.fields,field_description:l10n_bg_hr_form_76.field_hr_leave_type__form76_description
@@ -433,6 +503,15 @@ msgid "Платен годишен отпуск"
 msgstr "Платен годишен отпуск"
 
 #. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_leave_type__form76_law_reason
+msgid ""
+"Правното основание за този тип отпуск (член/алинея от КТ или друг нормативен"
+" акт). Излиза в съответната колона на справката."
+msgstr ""
+"Правното основание за този тип отпуск (член/алинея от КТ или друг нормативен"
+" акт). Излиза в съответната колона на справката."
+
+#. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
 msgid "Празнични и почивни дни"
 msgstr "Празнични и почивни дни"
@@ -455,6 +534,11 @@ msgstr ""
 "Ръководител:........................................................................."
 
 #. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
+msgid "С"
+msgstr "С"
+
+#. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.hr_holidays_request_document
 msgid ""
 "С Уважение:...............................\n"
@@ -472,6 +556,15 @@ msgstr "С разреш. на администр."
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
 msgid "Самоотлъчка"
 msgstr "Самоотлъчка"
+
+#. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_leave_type__form76_description
+msgid ""
+"Свободен текст за вътрешни нужди — пояснява в кои ситуации да се ползва този"
+" тип отпуск. Не излиза в справката."
+msgstr ""
+"Свободен текст за вътрешни нужди — пояснява в кои ситуации да се ползва този"
+" тип отпуск. Не излиза в справката."
 
 #. module: l10n_bg_hr_form_76
 #: model:hr.leave.type,name:l10n_bg_hr_form_76.holiday_status_f76_6
@@ -512,6 +605,11 @@ msgstr "Частични"
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.report_form_76
 msgid "Явяване на работа"
 msgstr "Явяване на работа"
+
+#. module: l10n_bg_hr_form_76
+#: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.hr_holidays_request_document
+msgid "в"
+msgstr "в"
 
 #. module: l10n_bg_hr_form_76
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.hr_holidays_request_document
@@ -576,3 +674,13 @@ msgstr "работни дни)."
 #: model_terms:ir.ui.view,arch_db:l10n_bg_hr_form_76.hr_holidays_request_document
 msgid "работни дни, считано от"
 msgstr "работни дни, считано от"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_l10n_bg_hr_form_76
+msgid "Attendance Form 76 Bulgaria"
+msgstr "Присъствена форма 76 (България)"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_l10n_bg_hr_form_76
+msgid "Form 76 for Bulgaria"
+msgstr "Форма 76 за България"
