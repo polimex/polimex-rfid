@@ -7,4 +7,5 @@ from . import hr_rfid_event_user
 from . import hr_rfid_zone
 from . import res_company
 from . import res_config_settings
+from . import resource_calendar
 

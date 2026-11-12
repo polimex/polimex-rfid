@@ -2,7 +2,7 @@
 # noinspection PyStatementEffect
 {
     'name': 'RFID Attendance',
-    'version': '19.0.1.5.8',
+    'version': '19.0.1.5.9',
     'category': 'Human Resources',
     'summary': 'Manage employee attendance',
     'author': 'Polimex Dev Team',
@@ -28,6 +28,7 @@
         'views/hr_rfid_webstack_views.xml',
         'views/hr_employee.xml',
         'views/res_config_settings_views.xml',
+        'views/resource_calendar_views.xml',
         'views/attendance_recalc_run_views.xml',
         'wizards/hr_recalc_attendance_wizard.xml',
     ],

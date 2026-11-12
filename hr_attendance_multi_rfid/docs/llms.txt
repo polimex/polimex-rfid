@@ -137,6 +137,33 @@ Right under it, **Forgotten badge** decides WHAT is then recorded:
 | Credit the scheduled day, minus a penalty | The same, less the hours set beside it - for companies that treat a forgotten badge as time off site. |
 | Count nothing for that day | No working time at all. The stay is marked as a forgotten badge and the real hours have to be entered by hand - which is the point: the person has to say why they forgot. |
 
+### What a forgotten day is worth on one schedule
+
+A working schedule can carry its own number: **Employees -> Configuration ->
+Working Schedules**, open the schedule, **Hours for a Forgotten Badge**. It
+replaces "the scheduled day" in the setting above for the people on that
+schedule, and only for them. A floating schedule of fourteen hours describes
+the frame people may work in; with 7:00 here, a day somebody forgot to badge
+out of is credited seven hours, while the office on its eight-hour schedule
+keeps eight. Left at 0:00, the schedule's working day is credited as before.
+
+The number can only lower what a forgotten day pays: above the schedule's own
+day it pays that day, and a negative number is refused. The company setting
+still decides whether anything is credited: a penalty comes off the
+schedule's number, and "Count nothing for that day" credits nothing whatever
+the schedule says. The hours are hours of work: on a schedule with an unpaid
+lunch break, a day worth six hours from eight ends at three, and one worth
+four and a half ends at half past one. A day is judged by the schedule the
+person was on that day, and so is its number - after a move to another
+schedule, past days keep the old one's.
+
+Changing the number does not touch days that are already settled; a rebuild
+of the period (Re-create Attendance records) credits them again with the number set
+now. On a database where forgotten days have not been settled yet, switch
+Automatic Check-Out off before updating the module, set the number, and switch
+it back on: the scheduled task then settles every waiting day with the new
+number.
+
 Nothing is settled at all where Automatic Check-Out is off, or where not even
 the person's calendar says how long a working day is: there is nothing to
 measure against, and a made-up duration would land in somebody's hours. The
@@ -340,7 +367,9 @@ RFID Attendance bridges the gap between physical access control and time trackin
 ##### Employee Setup
 
 1. **RFID Cards**: Ensure employees have active RFID cards
-2. **Working Hours**: Set employee working schedules
+2. **Working Hours**: Set employee working schedules. On a schedule, **Hours
+   for a Forgotten Badge** says what a day nobody badged out of is worth for
+   the people on it (0 = the schedule's working day)
 3. **PIN Codes**: Optional PIN for attendance validation
 
 ##### Where the rules actually live

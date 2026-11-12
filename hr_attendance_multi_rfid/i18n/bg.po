@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-24 14:51+0000\n"
-"PO-Revision-Date: 2026-08-24 17:52\n"
+"PO-Revision-Date: 2026-11-12 11:46\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Bulgarian\n"
 "Language: bg\n"
@@ -47,6 +47,11 @@ msgstr "<span class=\"me-2\">Забравено маркиране</span>"
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.res_config_settings_view_form_forgotten_badge
 msgid "<span class=\"me-2\">Hours taken off</span>"
 msgstr "<span class=\"me-2\">Отнети часове</span>"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.resource_calendar_form_forgotten_badge
+msgid "<span class=\"ms-2 text-muted\">0 = the working day of the schedule</span>"
+msgstr "<span class=\"ms-2 text-muted\">0 = работният ден по графика</span>"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
@@ -360,6 +365,7 @@ msgstr "Неизвестна посока"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_company__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_resource_calendar__display_name
 msgid "Display Name"
 msgstr "Име за показване"
 
@@ -467,12 +473,6 @@ msgid "From"
 msgstr "От"
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron_ir_actions_server
-msgid "HR RFID Multi Attendance: Auto-close incomplete attendances"
-msgstr ""
-"HR RFID Мулти Присъствие: Проверка за автоматично затваряне на присъствие"
-
-#. module: hr_attendance_multi_rfid
 #: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron_ir_actions_server
 msgid "HR RFID Multi Attendance: Continue attendance rebuilds"
 msgstr ""
@@ -482,6 +482,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__has_message
 msgid "Has Message"
 msgstr "Има съобщение"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_resource_calendar__forgotten_badge_hours
+msgid "Hours for a Forgotten Badge"
+msgstr "Часове при забравено маркиране"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_res_company__forgotten_badge_penalty_hours
@@ -511,6 +516,22 @@ msgid "How many door events were replayed for this person."
 msgstr "Колко събития от врата бяха възпроизведени за това лице."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_resource_calendar__forgotten_badge_hours
+msgid ""
+"How many hours a day is worth when somebody on this schedule forgets to "
+"badge out and the system closes the day for them - at most the working day "
+"of the schedule. Leave at 0 to credit the working day. The Forgotten Badge "
+"setting of the company still applies: a penalty is taken off these hours, "
+"and with \"Count nothing for that day\" nothing is credited."
+msgstr ""
+"Колко часа се признават за един ден, когато човек по този график забрави да "
+"маркира при излизане и системата приключи деня вместо него - най-много "
+"работния ден по графика. Оставете 0, за да се признае работният ден. "
+"Настройката за Забравено маркиране на фирмата продължава да се прилага: от "
+"тези часове се удържа санкция, а при \"Не се признава нищо за деня\" не се "
+"признава нищо."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__done_count
 msgid ""
 "How many of the people on the list the rebuild has got through so far - "
@@ -536,8 +557,9 @@ msgstr "Колко лица обхваща това преизчисляване
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_company__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_resource_calendar__id
 msgid "ID"
-msgstr "Номер (ID)"
+msgstr "ID"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
@@ -546,7 +568,6 @@ msgstr "Ако е отметнато, новите съобщения изиск
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
-#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е отметнато, някои съобщения имат грешка при доставка."
 
@@ -609,7 +630,7 @@ msgstr "Съобщения"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_mode
 msgid "Mode"
-msgstr "Вид"
+msgstr "Режим"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
@@ -804,7 +825,7 @@ msgstr "RFID"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
 msgid "RFID User Event"
-msgstr "RFID потребителско събитие"
+msgstr "RFID събитие на потребител"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -893,14 +914,14 @@ msgid "Replaced by a later entry"
 msgstr "Заменено от по-късно влизане"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_resource_calendar
+msgid "Resource Working Time"
+msgstr "Работно време на ресурсите"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
 msgid "Run"
 msgstr "Изпълнение"
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Грешка при доставка на SMS"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -1011,6 +1032,15 @@ msgstr "Фирмата, за която е стартирано преизчис
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__company_id
 msgid "The company this rebuild was started for."
 msgstr "Фирмата, за която е стартирано това преизчисляване."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.constraint,message:hr_attendance_multi_rfid.constraint_resource_calendar_forgotten_badge_hours_not_negative
+msgid ""
+"The hours for a forgotten badge cannot be negative. Enter 0 to credit the "
+"working day of the schedule."
+msgstr ""
+"Часовете при забравено маркиране не могат да бъдат отрицателни. Въведете 0, "
+"за да се признава работният ден по графика."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__employee_ids
@@ -1199,15 +1229,15 @@ msgstr "Какво се случи"
 msgid ""
 "What to record when somebody forgets to badge out and the system has to settle the stay for them:\n"
 "\n"
-"• Credit the scheduled day: they are credited the hours their working schedule says for that day.\n"
+"• Credit the scheduled day: they are credited the hours their working schedule says for that day, or the Hours for a Forgotten Badge set on that schedule.\n"
 "• Credit the scheduled day, minus a penalty: the same, less the hours set below - for companies that treat a forgotten badge as time off site.\n"
 "• Count nothing for that day: no working time at all. The stay is marked as a forgotten badge, and somebody has to enter the real hours by hand - which is the point: the person has to say why they forgot."
 msgstr ""
-"Какво да се записва, когато някой забрави да отчете излизане и системата трябва да уреди престоя вместо него:\n"
+"Какво да се записва, когато някой забрави да маркира при излизане и системата трябва да приключи престоя вместо него:\n"
 "\n"
-"• Кредитиране на планирания ден: кредитират се часовете, които работният график предвижда за този ден.\n"
-"• Кредитиране на планирания ден, минус санкция: същото, но намалено с часовете, зададени по-долу — за фирми, които третират забравената карта като отсъствие от обекта.\n"
-"• Не се брои нищо за деня: никакво работно време. Престоят се маркира като забравена карта и някой трябва да въведе реалните часове ръчно — което всъщност е целта: човекът трябва да обясни защо е забравил."
+"• Признава се работният ден по график: признават се часовете, които работният му график определя за този ден, или зададените в този график Часове при забравено маркиране.\n"
+"• Признава се работният ден по график, минус санкция: същото, но без часовете, зададени по-долу - за фирми, които третират забравеното маркиране като отсъствие от обекта.\n"
+"• Не се признава нищо за деня: изобщо няма работно време. Престоят се отбелязва като забравено маркиране и някой трябва да въведе реалните часове на ръка - в това е смисълът: човекът трябва да обясни защо е забравил."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_out

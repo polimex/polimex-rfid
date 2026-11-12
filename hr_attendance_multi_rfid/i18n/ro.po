@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-14 13:55+0000\n"
-"PO-Revision-Date: 2026-08-14 17:15\n"
+"PO-Revision-Date: 2026-11-12 11:49\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -20,8 +20,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
-"%(count)s other person(s) had no door events between the dates you chose, so "
-"their attendance was left as it was."
+"%(count)s other person(s) had no door events between the dates you chose, so"
+" their attendance was left as it was."
 msgstr ""
 "%(count)s alte persoane nu au avut evenimente de acces între datele alese, "
 "astfel încât prezența lor a rămas neschimbată."
@@ -30,12 +30,28 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
-"%(count)s person(s) had door events that made no attendance at all, so their "
-"attendance for that period was cleared and nothing was put back: %(people)s."
+"%(count)s person(s) had door events that made no attendance at all, so their"
+" attendance for that period was cleared and nothing was put back: "
+"%(people)s."
 msgstr ""
 "%(count)s persoane au avut evenimente de acces care nu au generat nicio "
 "prezență, astfel încât prezența lor pentru perioada respectivă a fost "
 "ștearsă și nu a fost repusă: %(people)s."
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.res_config_settings_view_form_forgotten_badge
+msgid "<span class=\"me-2\">Forgotten badge</span>"
+msgstr "<span class=\"me-2\">Card uitat</span>"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.res_config_settings_view_form_forgotten_badge
+msgid "<span class=\"me-2\">Hours taken off</span>"
+msgstr "<span class=\"me-2\">Ore libere</span>"
+
+#. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.resource_calendar_form_forgotten_badge
+msgid "<span class=\"ms-2 text-muted\">0 = the working day of the schedule</span>"
+msgstr "<span class=\"ms-2 text-muted\">0 = ziua de lucru din program</span>"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.rfid_hr_employee_view_search
@@ -46,6 +62,11 @@ msgstr "Angajați absenți"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction
 msgid "Action Needed"
 msgstr "Acțiune necesară"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__already_inside
+msgid "Already inside"
+msgstr "Deja înăuntru"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_attachment_count
@@ -87,8 +108,8 @@ msgstr "Reconstruiri prezență"
 #: code:addons/hr_attendance_multi_rfid/wizards/hr_recalc_attendance_wizard.py:0
 msgid ""
 "Attendance cannot be rebuilt right now: the scheduled task that does the "
-"work is switched off. Please ask your system administrator to switch it back "
-"on."
+"work is switched off. Please ask your system administrator to switch it back"
+" on."
 msgstr ""
 "Prezența nu poate fi reconstruită în acest moment: sarcina programată care "
 "efectuează această operațiune este dezactivată. Vă rugăm să solicitați "
@@ -124,8 +145,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
-"Attendance for %(count)s person(s) is not for this system to rebuild and was "
-"left untouched: %(people)s. The line below for each of them says why, and "
+"Attendance for %(count)s person(s) is not for this system to rebuild and was"
+" left untouched: %(people)s. The line below for each of them says why, and "
 "what to do instead - asking for the same rebuild again will get the same "
 "answer."
 msgstr ""
@@ -179,11 +200,6 @@ msgid "Attendance is rebuilt from this day onwards."
 msgstr "Prezența este reconstruită începând cu această zi."
 
 #. module: hr_attendance_multi_rfid
-#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_view_zone_form_inherit_hr_attendance_multi_rfid
-msgid "Attendance options"
-msgstr "Opțiuni prezență"
-
-#. module: hr_attendance_multi_rfid
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid "Attendance rebuild"
@@ -201,25 +217,6 @@ msgid "Attendance records"
 msgstr "Înregistrări de prezență"
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
-msgid "Auto-close Worked Hours"
-msgstr "Închidere automată ore lucrate"
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
-msgid ""
-"Automatically delete attendance records if the employee is late by more than "
-"this many hours. This helps maintain data quality by removing likely "
-"erroneous entries. Set to 0 to disable this feature. Example: Set to 4 to "
-"delete attendance if someone is more than 4 hours late."
-msgstr ""
-"Șterge automat înregistrările de prezență dacă angajatul întârzie mai mult "
-"decât numărul de ore specificat. Acest lucru contribuie la menținerea "
-"calității datelor prin eliminarea înregistrărilor probabil eronate. Setați "
-"la 0 pentru a dezactiva această funcție. Exemplu: Setați la 4 pentru a "
-"șterge prezența dacă cineva întârzie mai mult de 4 ore."
-
-#. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
 msgid "Cancel"
 msgstr "Anulare"
@@ -233,13 +230,12 @@ msgid ""
 "resources."
 msgstr ""
 "Nu se poate efectua înregistrarea ieșirii pentru %(empl_name)s, nu a fost "
-"găsită înregistrarea de intrare corespunzătoare. Prezențele dumneavoastră au "
-"fost probabil modificate manual de către resurse umane."
+"găsită înregistrarea de intrare corespunzătoare. Prezențele dumneavoastră au"
+" fost probabil modificate manual de către resurse umane."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__check_in
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__in
-#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__in
 msgid "Check In"
 msgstr "Intrare"
 
@@ -252,14 +248,30 @@ msgstr "Înregistrări intrare {}"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__check_out
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__out
-#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__out
 msgid "Check Out"
 msgstr "Ieșire"
+
+#. module: hr_attendance_multi_rfid
+#. odoo-python
+#: code:addons/hr_attendance_multi_rfid/models/hr_attendance.py:0
+msgid ""
+"Check-out moved back to %(new)s: the stay ran from %(start)s to %(old)s, "
+"longer than the working schedule and the tolerance allow, so the badge-out "
+"never happened. Credited %(hours).2f hours."
+msgstr ""
+"Check-out mutat înapoi la %(new)s: șederea a durat de la %(start)s până la "
+"%(old)s, mai mult decât permit programul de lucru și toleranța, deci ieșirea"
+" cu cardul nu a avut loc. S-au creditat %(hours).2f ore."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__no_result
 msgid "Cleared, nothing put back"
 msgstr "Ștearsă, nimic repus"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_res_company
+msgid "Companies"
+msgstr "Companii"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__company_id
@@ -268,9 +280,19 @@ msgid "Company"
 msgstr "Companie"
 
 #. module: hr_attendance_multi_rfid
-#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
-msgid "Continue now"
-msgstr "Continuă acum"
+#: model:ir.model,name:hr_attendance_multi_rfid.model_res_config_settings
+msgid "Config Settings"
+msgstr "Setări de configurare"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__res_company__forgotten_badge_policy__ignore
+msgid "Count nothing for that day"
+msgstr "Nu se contorizează nimic pentru acea zi"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__manual_record
+msgid "Covered by a manual record"
+msgstr "Acoperit de o înregistrare manuală"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__create_uid
@@ -287,6 +309,16 @@ msgid "Created on"
 msgstr "Creat la"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__res_company__forgotten_badge_policy__credit_schedule
+msgid "Credit the scheduled day"
+msgstr "Creditează ziua programată"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__res_company__forgotten_badge_policy__penalty
+msgid "Credit the scheduled day, minus a penalty"
+msgstr "Creditează ziua programată, minus o penalizare"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__check_in
 msgid ""
 "Date and time when the employee checked in to work. This is automatically "
@@ -300,18 +332,13 @@ msgstr ""
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__check_out
 msgid ""
-"Date and time when the employee checked out from work. This is automatically "
-"recorded when leaving an RFID attendance zone or can be manually set by HR "
+"Date and time when the employee checked out from work. This is automatically"
+" recorded when leaving an RFID attendance zone or can be manually set by HR "
 "managers."
 msgstr ""
-"Data și ora la care angajatul a ieșit de la lucru. Aceasta este înregistrată "
-"automat la părăsirea unei zone de prezență RFID sau poate fi setată manual "
+"Data și ora la care angajatul a ieșit de la lucru. Aceasta este înregistrată"
+" automat la părăsirea unei zone de prezență RFID sau poate fi setată manual "
 "de managerii de resurse umane."
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__delete_attendance_if_late_more_than
-msgid "Delete if Late More Than (Hours)"
-msgstr "Șterge dacă întârzierea depășește (ore)"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__department_id
@@ -324,6 +351,11 @@ msgid "Departments"
 msgstr "Departamente"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__direction_unknown
+msgid "Direction unknown"
+msgstr "Direcție necunoscută"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__display_name
@@ -331,6 +363,9 @@ msgstr "Departamente"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__display_name
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_company__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_resource_calendar__display_name
 msgid "Display Name"
 msgstr "Nume afișat"
 
@@ -376,8 +411,8 @@ msgid ""
 msgstr ""
 "Activați urmărirea automată a prezenței pentru această zonă. Când angajații "
 "intră în această zonă, vor fi înregistrați automat pentru prezență. Când "
-"pleacă, vor fi înregistrați ca ieșiți. Ideal pentru intrările principale sau "
-"zonele de lucru."
+"pleacă, vor fi înregistrați ca ieșiți. Ideal pentru intrările principale sau"
+" zonele de lucru."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__end_date
@@ -391,7 +426,29 @@ msgid ""
 "processed up to and including this date. Default is today."
 msgstr ""
 "Data de sfârșit pentru recalcularea prezenței. Înregistrările de prezență "
-"vor fi procesate până la această dată inclusiv. Implicit este ziua de astăzi."
+"vor fi procesate până la această dată inclusiv. Implicit este ziua de "
+"astăzi."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__no_attendance_reason
+msgid ""
+"Filled in when a granted passage did not change the attendance, so the reason is visible instead of a blank Attendance column:\n"
+"\n"
+"• Already inside: the person was already checked in and this zone keeps the first entry.\n"
+"• Not tracked in this zone: the zone follows only certain departments or tags, and this person is not one of them.\n"
+"• Nothing open to close: an exit arrived with no attendance open, and this zone does not reopen the previous one.\n"
+"• Covered by a manual record: the moment already falls inside attendance entered by hand, which is never overwritten.\n"
+"• Replaced by a later entry: a second entry came before any exit, and the zone keeps the later one.\n"
+"• Direction unknown: the passage carries no reader, or one that is set to neither In nor Out, so it cannot be read as an arrival or a departure."
+msgstr ""
+"Se completează atunci când o trecere permisă nu a modificat prezența, astfel încât motivul să fie vizibil în loc de o coloană Prezență goală:\n"
+"\n"
+"• Deja înăuntru: persoana era deja intrată, iar această zonă păstrează prima intrare.\n"
+"• Neurmărit în această zonă: zona urmărește doar anumite departamente sau etichete, iar această persoană nu face parte dintre ele.\n"
+"• Nimic deschis de închis: a sosit o ieșire fără nicio prezență deschisă, iar această zonă nu redeschide prezența anterioară.\n"
+"• Acoperit de o înregistrare manuală: momentul se încadrează deja într-o prezență introdusă manual, care nu este niciodată suprascrisă.\n"
+"• Înlocuit de o intrare ulterioară: a apărut o a doua intrare înainte de orice ieșire, iar zona o păstrează pe cea ulterioară.\n"
+"• Direcție necunoscută: trecerea nu are cititor sau are un cititor care nu este setat nici pe Intrare, nici pe Ieșire, deci nu poate fi interpretată ca sosire sau plecare."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__done
@@ -409,14 +466,16 @@ msgid "Followers (Partners)"
 msgstr "Urmăritori (Parteneri)"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__forgotten_badge
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_company__forgotten_badge_policy
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__forgotten_badge_policy
+msgid "Forgotten Badge"
+msgstr "Card uitat"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_from
 msgid "From"
 msgstr "De la"
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_autoclose_cron_ir_actions_server
-msgid "HR RFID Multi Attendance: Auto-close incomplete attendances"
-msgstr "HR RFID Multi Attendance: Închidere automată prezențe incomplete"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.actions.server,name:hr_attendance_multi_rfid.hr_attendance_multi_rfid_recalc_cron_ir_actions_server
@@ -427,6 +486,23 @@ msgstr "HR RFID Multi Attendance: Continuă reconstruirile de prezență"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__has_message
 msgid "Has Message"
 msgstr "Are mesaj"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_resource_calendar__forgotten_badge_hours
+msgid "Hours for a Forgotten Badge"
+msgstr "Ore pentru un card uitat"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_res_company__forgotten_badge_penalty_hours
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_res_config_settings__forgotten_badge_penalty_hours
+msgid ""
+"Hours taken off the scheduled day when a badge is forgotten. Used only with "
+"the penalty option above. A day shorter than the penalty is credited nothing"
+" rather than a negative number."
+msgstr ""
+"Orele scăzute din ziua programată atunci când un card este uitat. Se "
+"folosesc doar împreună cu opțiunea de penalizare de mai sus. O zi mai scurtă"
+" decât penalizarea este creditată cu zero ore, nu cu un număr negativ."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__progress
@@ -444,14 +520,30 @@ msgid "How many door events were replayed for this person."
 msgstr "Câte evenimente de acces au fost redate pentru această persoană."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_resource_calendar__forgotten_badge_hours
+msgid ""
+"How many hours a day is worth when somebody on this schedule forgets to "
+"badge out and the system closes the day for them - at most the working day "
+"of the schedule. Leave at 0 to credit the working day. The Forgotten Badge "
+"setting of the company still applies: a penalty is taken off these hours, "
+"and with \"Count nothing for that day\" nothing is credited."
+msgstr ""
+"Câte ore valorează o zi atunci când o persoană din acest program uită să "
+"treacă cardul la ieșire și sistemul închide ziua în locul ei - cel mult ziua"
+" de lucru din program. Lăsați 0 pentru a credita ziua de lucru. Setarea Card"
+" uitat a companiei se aplică în continuare: o penalizare se scade din aceste"
+" ore, iar cu opțiunea „Nu se contorizează nimic pentru acea zi” nu se "
+"creditează nimic."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__done_count
 msgid ""
 "How many of the people on the list the rebuild has got through so far - "
-"whether or not there was anything to rebuild for them, and whether or not it "
-"worked. What came of each one is on the list below."
+"whether or not there was anything to rebuild for them, and whether or not it"
+" worked. What came of each one is on the list below."
 msgstr ""
-"Câte dintre persoanele din listă au fost procesate până acum de reconstruire "
-"- indiferent dacă a existat ceva de reconstruit pentru ele sau dacă "
+"Câte dintre persoanele din listă au fost procesate până acum de reconstruire"
+" - indiferent dacă a existat ceva de reconstruit pentru ele sau dacă "
 "operațiunea a reușit. Rezultatul pentru fiecare se află în lista de mai jos."
 
 #. module: hr_attendance_multi_rfid
@@ -467,6 +559,9 @@ msgstr "Câte persoane acoperă această reconstruire."
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__id
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_company__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__id
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_resource_calendar__id
 msgid "ID"
 msgstr "ID"
 
@@ -477,7 +572,6 @@ msgstr "Dacă este bifat, mesajele noi necesită atenția dumneavoastră."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
-#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Dacă este bifat, unele mesaje au o eroare de livrare."
 
@@ -494,24 +588,19 @@ msgstr "În curs"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_event_user__in_or_out
 msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or "
-"check-out.\n"
+"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
 "\n"
 "• Check In: Employee entered an attendance zone\n"
 "• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or "
-"error)\n"
+"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
 "\n"
-"This field is automatically set when recalculating attendance from RFID "
-"events."
+"This field is automatically set when recalculating attendance from RFID events."
 msgstr ""
-"Indică dacă acest eveniment RFID a fost procesat ca intrare sau ieșire din "
-"prezență.\n"
+"Indică dacă acest eveniment RFID a fost procesat ca intrare sau ieșire din prezență.\n"
 "\n"
 "• Intrare: Angajatul a intrat într-o zonă de prezență\n"
 "• Ieșire: Angajatul a părăsit o zonă de prezență  \n"
-"• Fără informații: Evenimentul nu a fost procesat pentru prezență (poate fi "
-"o zonă fără urmărire prezență sau o eroare)\n"
+"• Fără informații: Evenimentul nu a fost procesat pentru prezență (poate fi o zonă fără urmărire prezență sau o eroare)\n"
 "\n"
 "Acest câmp este setat automat la recalcularea prezenței din evenimente RFID."
 
@@ -540,24 +629,6 @@ msgid "Last day the rebuild covers."
 msgstr "Ultima zi acoperită de reconstruire."
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
-msgid "Maximum Hours in Zone"
-msgstr "Ore maxime în zonă"
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__max_time_in_zone
-msgid ""
-"Maximum hours an employee can stay in the zone before attendance is "
-"automatically closed. This prevents forgotten check-outs from creating "
-"excessively long attendance records. Set to 0 to disable automatic closure. "
-"Example: 12 hours for a standard work day."
-msgstr ""
-"Numărul maxim de ore pe care un angajat le poate petrece în zonă înainte ca "
-"prezența să fie închisă automat. Aceasta previne crearea de înregistrări de "
-"prezență excesiv de lungi din cauza ieșirilor uitate. Setați la 0 pentru a "
-"dezactiva închiderea automată. Exemplu: 12 ore pentru o zi de lucru standard."
-
-#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_error
 msgid "Message Delivery error"
 msgstr "Eroare livrare mesaj"
@@ -568,13 +639,17 @@ msgid "Messages"
 msgstr "Mesaje"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__in_mode
+msgid "Mode"
+msgstr "Mod"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
 msgid "Name"
 msgstr "Nume"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__in_or_out__no_info
-#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_vending_event__in_or_out__no_info
 msgid "No Info"
 msgstr "Fără informații"
 
@@ -587,10 +662,8 @@ msgstr "Nicio prezență nu a fost reconstruită încă"
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
 msgid ""
 "No attendance was rebuilt. Read the message below\n"
-"                            for what happened - most often nobody on this "
-"list\n"
-"                            had a door event between the dates chosen, "
-"which\n"
+"                            for what happened - most often nobody on this list\n"
+"                            had a door event between the dates chosen, which\n"
 "                            means no area is set to count towards attendance."
 msgstr ""
 "Nicio prezență nu a fost reconstruită. Citiți mesajul de mai jos pentru a "
@@ -609,6 +682,16 @@ msgid "Not rebuilt"
 msgstr "Nereconstruită"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__not_tracked_here
+msgid "Not tracked in this zone"
+msgstr "Neurmărit în această zonă"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__nothing_to_close
+msgid "Nothing open to close"
+msgstr "Nimic deschis de închis"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__nothing
 msgid "Nothing to rebuild"
 msgstr "Nimic de reconstruit"
@@ -619,8 +702,8 @@ msgstr "Nimic de reconstruit"
 msgid ""
 "Nothing was rebuilt. %(count)s person(s) did have door events between the "
 "dates you chose, but those events did not make a single attendance record: "
-"%(people)s. Their attendance for that period was cleared and nothing was put "
-"back. This normally means the doors those events came from have no reader "
+"%(people)s. Their attendance for that period was cleared and nothing was put"
+" back. This normally means the doors those events came from have no reader "
 "set as the way in. Check the readers on those doors, then start the rebuild "
 "again."
 msgstr ""
@@ -636,18 +719,18 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
-"Nothing was rebuilt: none of the %(count)s person(s) had a single door event "
-"between the dates you chose, so their attendance was left exactly as it was. "
-"The usual reason is that no area is set to count towards attendance, which "
-"leaves no doors to read; otherwise nobody passed those doors in that period. "
-"Check the areas, then start the rebuild again."
+"Nothing was rebuilt: none of the %(count)s person(s) had a single door event"
+" between the dates you chose, so their attendance was left exactly as it "
+"was. The usual reason is that no area is set to count towards attendance, "
+"which leaves no doors to read; otherwise nobody passed those doors in that "
+"period. Check the areas, then start the rebuild again."
 msgstr ""
 "Nu a fost reconstruit nimic: niciuna dintre cele %(count)s persoane nu a "
 "avut vreun eveniment de acces între datele alese, astfel încât prezența lor "
 "a rămas exact așa cum era. Motivul obișnuit este că nicio zonă nu este "
 "configurată să conteze pentru prezență, ceea ce nu lasă nicio ușă de citit; "
-"altfel, nimeni nu a trecut prin acele uși în perioada respectivă. Verificați "
-"zonele, apoi porniți din nou reconstruirea."
+"altfel, nimeni nu a trecut prin acele uși în perioada respectivă. Verificați"
+" zonele, apoi porniți din nou reconstruirea."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_needaction_counter
@@ -673,28 +756,24 @@ msgstr "Număr de mesaje cu eroare de livrare"
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__log_ids
 msgid "One line per person, with what was rebuilt and what was not."
 msgstr ""
-"O linie pentru fiecare persoană, cu ceea ce a fost reconstruit și ceea ce nu."
+"O linie pentru fiecare persoană, cu ceea ce a fost reconstruit și ceea ce "
+"nu."
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
 msgid ""
 "One line per person. \"No door events\" means\n"
-"                                    there was nothing to replay in the "
-"period,\n"
+"                                    there was nothing to replay in the period,\n"
 "                                    so their attendance was left as it was.\n"
-"                                    \"Cleared, nothing put back\" means the "
-"door\n"
-"                                    events made no attendance at all, so "
-"that\n"
-"                                    period is now empty for them. "
-"\"Refused\"\n"
+"                                    \"Cleared, nothing put back\" means the door\n"
+"                                    events made no attendance at all, so that\n"
+"                                    period is now empty for them. \"Refused\"\n"
 "                                    means their attendance is not for this\n"
-"                                    system to rebuild - the reason says what "
-"to\n"
+"                                    system to rebuild - the reason says what to\n"
 "                                    do instead."
 msgstr ""
-"O linie pentru fiecare persoană. „Fără evenimente de acces” înseamnă că nu a "
-"existat nimic de redat în perioada respectivă, astfel încât prezența lor a "
+"O linie pentru fiecare persoană. „Fără evenimente de acces” înseamnă că nu a"
+" existat nimic de redat în perioada respectivă, astfel încât prezența lor a "
 "rămas neschimbată. „Ștearsă, nimic repus” înseamnă că evenimentele de acces "
 "nu au generat nicio prezență, astfel încât perioada respectivă este acum "
 "goală pentru ei. „Refuzată” înseamnă că prezența lor nu poate fi "
@@ -715,6 +794,12 @@ msgstr "Suprascriere intrare"
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_out
 msgid "Overwrite check-out"
 msgstr "Suprascriere ieșire"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_company__forgotten_badge_penalty_hours
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_res_config_settings__forgotten_badge_penalty_hours
+msgid "Penalty"
+msgstr "Penalizare"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
@@ -747,9 +832,14 @@ msgid "Progress"
 msgstr "Progres"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance__in_mode__rfid
+msgid "RFID"
+msgstr "RFID"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model,name:hr_attendance_multi_rfid.model_hr_rfid_event_user
 msgid "RFID User Event"
-msgstr "Eveniment RFID utilizator"
+msgstr "Eveniment utilizator RFID"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -782,15 +872,14 @@ msgstr "Se reconstruiește prezența"
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.hr_attendance_recalc_run_action
 msgid ""
 "Rebuilding replays the door events of a period and puts the\n"
-"                    attendance back the way those events say it happened. "
-"Start\n"
-"                    one from an employee list - Re-create Attendance records "
-"-\n"
+"                    attendance back the way those events say it happened. Start\n"
+"                    one from an employee list - Re-create Attendance records -\n"
 "                    and it will appear here."
 msgstr ""
-"Reconstruirea redă evenimentele de acces dintr-o perioadă și repune prezența "
-"exact așa cum indică aceste evenimente că s-a întâmplat. Porniți una dintr-o "
-"listă de angajați - Recreează înregistrările de prezență - și va apărea aici."
+"Reconstruirea redă evenimentele de acces dintr-o perioadă și repune prezența"
+" exact așa cum indică aceste evenimente că s-a întâmplat. Porniți una "
+"dintr-o listă de angajați - Recreează înregistrările de prezență - și va "
+"apărea aici."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__done
@@ -800,12 +889,13 @@ msgstr "Reconstruită"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__status
 msgid ""
-"Rebuilt: their attendance was replayed from the door events. No door events: "
-"there was nothing in the period to replay, so their attendance was left "
+"Rebuilt: their attendance was replayed from the door events. No door events:"
+" there was nothing in the period to replay, so their attendance was left "
 "alone. Cleared, nothing put back: there were door events, but they made no "
 "attendance at all - the period is now empty for this person. Refused: their "
-"attendance is not for this system to rebuild, and the reason says what to do "
-"instead. Not rebuilt: something went wrong and their attendance is as it was."
+"attendance is not for this system to rebuild, and the reason says what to do"
+" instead. Not rebuilt: something went wrong and their attendance is as it "
+"was."
 msgstr ""
 "Reconstruită: prezența lor a fost redată din evenimentele de acces. Fără "
 "evenimente de acces: nu a existat nimic de redat în perioada respectivă, "
@@ -822,20 +912,30 @@ msgid "Recalculate attendance for selected employees"
 msgstr "Recalculare prezență pentru angajații selectați"
 
 #. module: hr_attendance_multi_rfid
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
+msgid "Refresh"
+msgstr "Actualizare"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_log__status__refused
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance_recalc_run__state__refused
 msgid "Refused"
 msgstr "Refuzată"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_rfid_event_user__no_attendance_reason__superseded
+msgid "Replaced by a later entry"
+msgstr "Înlocuit de o intrare ulterioară"
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model,name:hr_attendance_multi_rfid.model_resource_calendar
+msgid "Resource Working Time"
+msgstr "Timpul Lucru Resurse"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__run_id
 msgid "Run"
 msgstr "Rulare"
-
-#. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Eroare livrare SMS"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.view_hr_attendance_records_recompute_wizard
@@ -845,28 +945,37 @@ msgstr "Selectați intervalul de date"
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_wizard__employee_ids
 msgid ""
-"Select employees whose attendance records will be recalculated from RFID "
-"events.\n"
+"Select employees whose attendance records will be recalculated from RFID events.\n"
 "        \n"
 "• Process: Existing auto-generated attendance will be deleted and recreated\n"
 "• Manual attendance: Records created manually by HR will be preserved\n"
-"• RFID events: System will analyze all RFID door events to rebuild "
-"attendance\n"
+"• RFID events: System will analyze all RFID door events to rebuild attendance\n"
 "\n"
-"Use this when attendance data seems incorrect or after changing zone "
-"settings."
+"Use this when attendance data seems incorrect or after changing zone settings."
 msgstr ""
-"Selectați angajații ale căror înregistrări de prezență vor fi recalculate "
-"din evenimente RFID.\n"
+"Selectați angajații ale căror înregistrări de prezență vor fi recalculate din evenimente RFID.\n"
 "        \n"
 "• Procesare: Prezența generată automat va fi ștearsă și recreată\n"
-"• Prezență manuală: Înregistrările create manual de resurse umane vor fi "
-"păstrate\n"
-"• Evenimente RFID: Sistemul va analiza toate evenimentele RFID de la uși "
-"pentru a reconstrui prezența\n"
+"• Prezență manuală: Înregistrările create manual de resurse umane vor fi păstrate\n"
+"• Evenimente RFID: Sistemul va analiza toate evenimentele RFID de la uși pentru a reconstrui prezența\n"
 "\n"
-"Utilizați această opțiune când datele de prezență par incorecte sau după "
-"modificarea setărilor de zonă."
+"Utilizați această opțiune când datele de prezență par incorecte sau după modificarea setărilor de zonă."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance__forgotten_badge
+msgid ""
+"Set by the system when this stay outlasted what the working schedule and the"
+" tolerance allow, so somebody clearly forgot to badge. What was then "
+"recorded depends on the company's Forgotten Badge setting: the hours may "
+"have been settled (the record also reads Automatically Checked-Out), or "
+"nothing was counted for that day and the real hours have to be entered by "
+"hand."
+msgstr ""
+"Setat de sistem atunci când această ședere a depășit ceea ce permit "
+"programul de lucru și toleranța, deci cineva a uitat clar să treacă cardul. "
+"Ce s-a înregistrat apoi depinde de setarea Card uitat a companiei: orele pot"
+" fi stabilite (înregistrarea afișează și Ieșit automat) sau nu s-a "
+"contorizat nimic pentru acea zi, iar orele reale trebuie introduse manual."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__name
@@ -879,7 +988,8 @@ msgstr ""
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
 "Something went wrong while this person was being rebuilt. Their attendance "
-"was put back the way it was. Your system administrator can see what happened."
+"was put back the way it was. Your system administrator can see what "
+"happened."
 msgstr ""
 "Ceva nu a funcționat în timp ce se reconstruia prezența acestei persoane. "
 "Prezența lor a fost repusă așa cum era. Administratorul de sistem poate "
@@ -929,8 +1039,8 @@ msgid ""
 "employee is working in."
 msgstr ""
 "Zona RFID în care se desfășoară această sesiune de prezență. Este setată la "
-"înregistrarea intrării și ștearsă la înregistrarea ieșirii. Utilizată pentru "
-"a urmări în ce zonă lucrează angajatul."
+"înregistrarea intrării și ștearsă la înregistrarea ieșirii. Utilizată pentru"
+" a urmări în ce zonă lucrează angajatul."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__company_id
@@ -943,11 +1053,20 @@ msgid "The company this rebuild was started for."
 msgstr "Compania pentru care a fost pornită această reconstruire."
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.constraint,message:hr_attendance_multi_rfid.constraint_resource_calendar_forgotten_badge_hours_not_negative
+msgid ""
+"The hours for a forgotten badge cannot be negative. Enter 0 to credit the "
+"working day of the schedule."
+msgstr ""
+"Orele pentru un card uitat nu pot fi negative. Introduceți 0 pentru a "
+"credita ziua de lucru din program."
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__employee_ids
 msgid ""
-"The people whose attendance is being rebuilt, as chosen when the rebuild was "
-"asked for. Somebody taken on afterwards is not added to it. If this list is "
-"changed while the rebuild is under way, the change applies from the next "
+"The people whose attendance is being rebuilt, as chosen when the rebuild was"
+" asked for. Somebody taken on afterwards is not added to it. If this list is"
+" changed while the rebuild is under way, the change applies from the next "
 "person onwards - anybody already finished is not done a second time."
 msgstr ""
 "Persoanele a căror prezență este reconstruită, așa cum au fost alese atunci "
@@ -970,20 +1089,20 @@ msgstr "Persoana la care se referă această linie."
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
 msgid ""
 "The rebuild carries on in the background, one person\n"
-"                            at a time. You can close this page - press "
-"Continue\n"
-"                            now to refresh what you see."
+"                            at a time. You can close this page - press Refresh\n"
+"                            to see how far it has got."
 msgstr ""
-"Reconstruirea continuă în fundal, o persoană pe rând. Puteți închide această "
-"pagină - apăsați Continuă acum pentru a actualiza ceea ce vedeți."
+"Reconstruirea continuă în fundal, câte o persoană\n"
+"                            pe rând. Puteți închide această pagină - apăsați Reîmprospătare\n"
+"                            pentru a vedea cât a avansat."
 
 #. module: hr_attendance_multi_rfid
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
 "The rebuild finished, but attendance for %(count)s person(s) could not be "
-"rebuilt: %(people)s. Everybody else is done. Look at the list below, put the "
-"cause right, and start a rebuild for those people again."
+"rebuilt: %(people)s. Everybody else is done. Look at the list below, put the"
+" cause right, and start a rebuild for those people again."
 msgstr ""
 "Reconstruirea s-a finalizat, dar prezența pentru %(count)s persoane nu a "
 "putut fi reconstruită: %(people)s. Toți ceilalți au fost procesați. "
@@ -995,8 +1114,8 @@ msgstr ""
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
 "The rebuild stopped because of a problem in the system itself, and not with "
-"any of the people on the list. Nothing was changed by this attempt. Start it "
-"again; if it stops a second time, your system administrator can see what "
+"any of the people on the list. Nothing was changed by this attempt. Start it"
+" again; if it stops a second time, your system administrator can see what "
 "went wrong."
 msgstr ""
 "Reconstruirea s-a oprit din cauza unei probleme în sistemul propriu-zis, și "
@@ -1023,8 +1142,7 @@ msgstr ""
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.actions.act_window,help:hr_attendance_multi_rfid.recreate_attendance_records_action
 msgid ""
-"This action allows HR managers to rebuild attendance records based on RFID "
-"events.\n"
+"This action allows HR managers to rebuild attendance records based on RFID events.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Use cases:\n"
@@ -1033,25 +1151,21 @@ msgid ""
 "                • After importing historical RFID events\n"
 "                • To sync attendance with actual door access events"
 msgstr ""
-"Această acțiune permite managerilor de resurse umane să reconstruiască "
-"înregistrările de prezență pe baza evenimentelor RFID.\n"
+"Această acțiune permite managerilor de resurse umane să reconstruiască înregistrările de prezență pe baza evenimentelor RFID.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Cazuri de utilizare:\n"
 "                • După modificarea setărilor de prezență ale zonei\n"
 "                • Când datele de prezență par incorecte\n"
 "                • După importul evenimentelor RFID istorice\n"
-"                • Pentru a sincroniza prezența cu evenimentele reale de "
-"acces la uși"
+"                • Pentru a sincroniza prezența cu evenimentele reale de acces la uși"
 
 #. module: hr_attendance_multi_rfid
 #: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_attendance_recalc_run_form
 msgid ""
 "This attendance is not for this system to rebuild.\n"
-"                            The list below says why for each person, and "
-"what\n"
-"                            to do instead. Asking for the same rebuild "
-"again\n"
+"                            The list below says why for each person, and what\n"
+"                            to do instead. Asking for the same rebuild again\n"
 "                            will give the same answer."
 msgstr ""
 "Această prezență nu poate fi reconstruită de acest sistem. Lista de mai jos "
@@ -1065,16 +1179,16 @@ msgid ""
 "This rebuild cannot be carried out: the account that asked for it is no "
 "longer in use. Ask for it again from an active account."
 msgstr ""
-"Această reconstruire nu poate fi efectuată: contul care a solicitat-o nu mai "
-"este activ. Solicitați-o din nou de la un cont activ."
+"Această reconstruire nu poate fi efectuată: contul care a solicitat-o nu mai"
+" este activ. Solicitați-o din nou de la un cont activ."
 
 #. module: hr_attendance_multi_rfid
 #. odoo-python
 #: code:addons/hr_attendance_multi_rfid/models/attendance_recalc_run.py:0
 msgid ""
 "This rebuild stopped without finishing and has been closed. The people it "
-"had already done keep their rebuilt attendance. Start a new one for the rest "
-"when you are ready."
+"had already done keep their rebuilt attendance. Start a new one for the rest"
+" when you are ready."
 msgstr ""
 "Această reconstruire s-a oprit fără a se finaliza și a fost închisă. "
 "Persoanele deja procesate își păstrează prezența reconstruită. Porniți una "
@@ -1088,25 +1202,20 @@ msgid ""
 "                    <br>\n"
 "                    <br>\n"
 "                Key features:\n"
-"                • Deletes auto-generated attendance records in the date "
-"range\n"
+"                • Deletes auto-generated attendance records in the date range\n"
 "                • Preserves manually created attendance records\n"
 "                • Rebuilds attendance from RFID zone entry/exit events\n"
 "                • Handles zone-specific attendance settings and overrides"
 msgstr ""
-"Acest asistent recalculează înregistrările de prezență prin analizarea "
-"evenimentelor RFID de la uși \n"
+"Acest asistent recalculează înregistrările de prezență prin analizarea evenimentelor RFID de la uși \n"
 "                pentru angajații și intervalul de date selectate.\n"
 "                    <br>\n"
 "                    <br>\n"
 "                Funcționalități principale:\n"
-"                • Șterge înregistrările de prezență generate automat în "
-"intervalul de date\n"
+"                • Șterge înregistrările de prezență generate automat în intervalul de date\n"
 "                • Păstrează înregistrările de prezență create manual\n"
-"                • Reconstruiește prezența din evenimentele de intrare/ieșire "
-"din zona RFID\n"
-"                • Gestionează setările și suprascrierile de prezență "
-"specifice zonei"
+"                • Reconstruiește prezența din evenimentele de intrare/ieșire din zona RFID\n"
+"                • Gestionează setările și suprascrierile de prezență specifice zonei"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__date_to
@@ -1135,17 +1244,20 @@ msgid "What happened"
 msgstr "Ce s-a întâmplat"
 
 #. module: hr_attendance_multi_rfid
-#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__auto_close_time_for_zone
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_res_company__forgotten_badge_policy
+#: model:ir.model.fields,help:hr_attendance_multi_rfid.field_res_config_settings__forgotten_badge_policy
 msgid ""
-"When attendance is automatically closed (due to max_time_in_zone), this "
-"value will be recorded as the actual worked hours. For example, if max is 12 "
-"hours but this is set to 7, the system will record 7 hours of work when auto-"
-"closing."
+"What to record when somebody forgets to badge out and the system has to settle the stay for them:\n"
+"\n"
+"• Credit the scheduled day: they are credited the hours their working schedule says for that day, or the Hours for a Forgotten Badge set on that schedule.\n"
+"• Credit the scheduled day, minus a penalty: the same, less the hours set below - for companies that treat a forgotten badge as time off site.\n"
+"• Count nothing for that day: no working time at all. The stay is marked as a forgotten badge, and somebody has to enter the real hours by hand - which is the point: the person has to say why they forgot."
 msgstr ""
-"Când prezența este închisă automat (din cauza max_time_in_zone), această "
-"valoare va fi înregistrată ca ore efectiv lucrate. De exemplu, dacă maximul "
-"este de 12 ore dar această valoare este setată la 7, sistemul va înregistra "
-"7 ore de lucru la închiderea automată."
+"Ce se înregistrează atunci când cineva uită să treacă cardul la ieșire, iar sistemul trebuie să stabilească șederea în locul său:\n"
+"\n"
+"• Creditează ziua programată: i se creditează orele indicate de programul de lucru pentru acea zi sau Orele pentru un card uitat setate pe acel program.\n"
+"• Creditează ziua programată, minus o penalizare: la fel, minus orele setate mai jos - pentru companiile care tratează un card uitat ca timp liber în afara locației.\n"
+"• Nu se contorizează nimic pentru acea zi: fără niciun timp de lucru. Șederea este marcată ca card uitat, iar cineva trebuie să introducă manual orele reale - exact acesta este scopul: persoana trebuie să explice de ce a uitat."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_out
@@ -1155,9 +1267,9 @@ msgid ""
 "ensuring the last zone exit is recorded as the actual work end time."
 msgstr ""
 "Când este activată, dacă un angajat care a înregistrat deja ieșirea "
-"părăsește această zonă, ora de ieșire va fi actualizată la ora curentă. Util "
-"pentru a asigura că ultima ieșire din zonă este înregistrată ca ora efectivă "
-"de sfârșit a lucrului."
+"părăsește această zonă, ora de ieșire va fi actualizată la ora curentă. Util"
+" pentru a asigura că ultima ieșire din zonă este înregistrată ca ora "
+"efectivă de sfârșit a lucrului."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
@@ -1169,8 +1281,8 @@ msgid ""
 msgstr ""
 "Când este activată, dacă un angajat care a înregistrat deja intrarea intră "
 "în această zonă, ora de intrare va fi actualizată la ora curentă. Util când "
-"doriți ca cea mai recentă intrare în zonă să fie considerată ora efectivă de "
-"început a lucrului."
+"doriți ca cea mai recentă intrare în zonă să fie considerată ora efectivă de"
+" început a lucrului."
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_run__state
@@ -1200,6 +1312,12 @@ msgid ""
 msgstr ""
 "Cine a solicitat reconstruirea. Lucrul rulează în fundal, deci aceasta este "
 "persoana anunțată la finalizare."
+
+#. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_event_user__no_attendance_reason
+#: model_terms:ir.ui.view,arch_db:hr_attendance_multi_rfid.hr_rfid_user_ev_view_search_inherit_hr_attendance_multi_rfid
+msgid "Why Not Counted"
+msgstr "Motivul necontorizării"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,help:hr_attendance_multi_rfid.field_hr_attendance_recalc_log__error_message

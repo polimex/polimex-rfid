@@ -1,5 +1,5 @@
 import logging
-from datetime import timedelta
+from datetime import date, timedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -28,6 +28,11 @@ _logger = logging.getLogger(__name__)
 # it (odoo/service/model.py, retrying), and a passage or a stay absorbed here
 # would simply be lost.
 SETTLING_REFUSED = (UserError, ValueError)
+
+# How far past check-in plus the credited hours _end_after_worked_hours looks
+# for the end: the unpaid breaks a credited day can step over. A schedule's
+# breaks come nowhere near it, and the search is seventeen halvings.
+UNPAID_TIME_A_CREDITED_DAY_MAY_SPAN = timedelta(hours=24)
 
 
 def stay_outlasts(start, end, allowed, earlier=0.0):
@@ -299,6 +304,15 @@ class HrAttendance(models.Model):
         many stays it took. Somebody in from eight to twelve who came back at
         one and forgot is credited until five.
 
+        A working schedule can say what a forgotten day is worth for its own
+        people instead (Hours for a Forgotten Badge): a floating schedule of
+        fourteen hours describes the frame people may work in, not what a day
+        nobody badged out of should pay. That number stands in for the
+        scheduled day and nothing else - the policy still decides whether
+        anything is credited and what the penalty takes off - and it counts
+        as core counts a stay, so the schedule's unpaid break inside it is
+        added on rather than taken out of it.
+
         The penalty option takes its hours off that, for companies that treat
         a forgotten badge as time off site. The third credits nothing at all.
 
@@ -319,12 +333,79 @@ class HrAttendance(models.Model):
         if float_compare(span, 0.0, precision_digits=2) <= 0:
             return False
         earlier = self._hours_earlier_that_day()
-        credit = hours - earlier if earlier else span
+        forgotten_badge_hours = self._calendar_of_the_day().forgotten_badge_hours
+        if forgotten_badge_hours:
+            # Never more than the day itself: the number can only lower what a
+            # forgotten day pays, and so the credited end stays inside the
+            # limit the stay was judged by, whenever the task runs.
+            credit = min(forgotten_badge_hours, hours) - earlier
+        else:
+            credit = hours - earlier if earlier else span
         if company.forgotten_badge_policy == 'penalty':
             credit -= company.forgotten_badge_penalty_hours or 0.0
         if float_compare(credit, 0.0, precision_digits=2) <= 0:
             return False
-        return min(self.check_in + timedelta(hours=credit), self._latest_end_of_stay())
+        if forgotten_badge_hours:
+            end = self._end_after_worked_hours(credit)
+        else:
+            end = self.check_in + timedelta(hours=credit)
+        return min(end, self._latest_end_of_stay())
+
+    def _calendar_of_the_day(self):
+        """The schedule in force for this person on the day of the stay.
+
+        Chosen exactly as core chooses the schedule _scheduled_day takes the
+        day from (hr.employee._get_expected_attendances): the contract version
+        in force that day, else the person's schedule, else the company's. So
+        a rebuild of a past period uses the schedule the person was on then,
+        not the one they have moved to since, and the number and the day
+        always come from the same schedule.
+
+        Not hr.attendance._get_employee_calendar: Enterprise overrides it to
+        read the check-out date (hr_work_entry_attendance), and the stays
+        settled here are mostly still open.
+        """
+        self.ensure_one()
+        employee = self.employee_id
+        day = employee._local_day(self.check_in)
+        versions = employee.sudo()._get_versions_with_contract_overlap_with_period(day, day)
+        in_force = versions.filtered(lambda v: v.date_start <= day <= (v.date_end or date.max))
+        calendar = in_force[:1].resource_calendar_id if versions else employee.resource_calendar_id
+        return calendar or employee.company_id.resource_calendar_id
+
+    def _end_after_worked_hours(self, hours):
+        """The first second at which this stay is worth `hours`, as core counts it.
+
+        Core takes the schedule's unpaid break out of a stay on a fixed
+        schedule (hr_attendance._get_worked_hours_in_range) and nothing out of
+        one on a floating schedule: seven hours from eight on an 08-12 / 13-17
+        day end at four, not at three. Core's count only grows with the end,
+        so where check-in plus the hours falls short, the end is found by
+        halving the search window, to the second - landing inside a break
+        then still ends after it, never in it.
+        """
+        self.ensure_one()
+        probe = self.new({
+            'employee_id': self.employee_id.id,
+            'check_in': self.check_in,
+            'check_out': self.check_in,
+        })
+
+        def worth(end):
+            probe.check_out = end
+            return probe._get_worked_hours_in_range(self.check_in, end)
+
+        first_guess = self.check_in + timedelta(hours=hours)
+        if float_compare(worth(first_guess), hours, precision_digits=4) >= 0:
+            return first_guess
+        short, enough = 0, int(UNPAID_TIME_A_CREDITED_DAY_MAY_SPAN.total_seconds())
+        while enough - short > 1:
+            middle = (short + enough) // 2
+            if float_compare(worth(first_guess + timedelta(seconds=middle)), hours, precision_digits=4) >= 0:
+                enough = middle
+            else:
+                short = middle
+        return first_guess + timedelta(seconds=enough)
 
     def _judged_at(self):
         """The moment an open stay is judged at.
@@ -415,7 +496,8 @@ class HrAttendance(models.Model):
             'out_mode': 'auto_check_out',
             'forgotten_badge': True,
         })
-        hours = (self.check_out - self.check_in).total_seconds() / 3600.0
+        # What payroll reads: core's worked hours, the unpaid break left out.
+        hours = self.worked_hours
         if was:
             # Only the already-closed case leaves a note: an open record being
             # closed is the ordinary end of a stay, while MOVING a check-out

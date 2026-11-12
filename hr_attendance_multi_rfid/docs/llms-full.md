@@ -171,14 +171,18 @@ RFID Attendance bridges the gap between physical access control and time trackin
 ###### Employee Setup
 
 1. **RFID Cards**: Ensure employees have active RFID cards
-2. **Working Hours**: Set employee working schedules
+2. **Working Hours**: Set employee working schedules. On a schedule, **Hours
+   for a Forgotten Badge** says what a day nobody badged out of is worth for
+   the people on it (0 = the schedule's working day)
 3. **PIN Codes**: Optional PIN for attendance validation
 
 ###### Where the rules live
 
 This module reads no system parameters. What decides how passages become
 attendance is on `hr.rfid.zone`: `attendance`, `overwrite_check_in`,
-`overwrite_check_out`, `max_time_in_zone`, `auto_close_time_for_zone`. The
+`overwrite_check_out`. When a stay is a forgotten badge and what it is credited
+is core's Automatic Check-Out with the company's `forgotten_badge_policy`, and
+per schedule `resource.calendar.forgotten_badge_hours`. The
 tolerances for small deviations are on `hr.department` (hr_attendance_late:
 `ignore_late_time`, `ignore_early_come_time`, `ignore_early_leave_time`,
 `ignore_overtime`, `ignore_extra_time`) and work on AMOUNTS OF TIME, never on
@@ -432,7 +436,19 @@ One setting, in one place. **When**: core's `res.company.auto_check_out` +
 `auto_check_out_tolerance`, measured against the person's own scheduled day.
 **What**: `res.company.forgotten_badge_policy` (`credit_schedule` / `penalty`
 / `ignore`) with `forgotten_badge_penalty_hours`, shown right under the core
-switch in Settings -> Attendances.
+switch in Settings -> Attendances. **Per schedule**:
+`resource.calendar.forgotten_badge_hours` (Float, 0 = unset, CHECK >= 0;
+models/resource_calendar.py, on the schedule form beside the hours, under the
+schedule's own access rights) replaces the scheduled day in the policy for the
+people on that schedule, capped at that day (`min(number, hours)`). The
+schedule is the one of the stay's day, chosen as core's
+`hr.employee._get_expected_attendances` chooses it
+(`hr.attendance._calendar_of_the_day`: contract version in force, else the
+person's, else the company's) - not `hr.attendance._get_employee_calendar`,
+which Enterprise's `hr_work_entry_attendance` overrides to read `check_out`.
+The policy still applies on top (penalty off the number, `ignore` credits
+nothing). Settled stays are not re-credited when the number changes; a rebuild
+re-credits them.
 
 `hr.attendance` (models/hr_attendance.py):
 
@@ -448,7 +464,13 @@ switch in Settings -> Attendances.
 - **`_settled_check_out(self)`** - when the stay is taken to have ended:
   check-in + the SPAN of the scheduled day (break included, so a settled day
   is worth a normal one), or, after an earlier stay that day, what is left of
-  the day's hours (`_hours_earlier_that_day`); less the penalty where the policy
+  the day's hours (`_hours_earlier_that_day`); with the schedule's
+  `forgotten_badge_hours` set, that number (at most the day's hours) less the
+  earlier stays, ended at the first second core's own count reaches it
+  (`_end_after_worked_hours`: core's `_get_worked_hours_in_range` on a probe,
+  halving a window of `UNPAID_TIME_A_CREDITED_DAY_MAY_SPAN` when check-in plus
+  the hours falls short, so an end inside a break moves past it);
+  less the penalty where the policy
   sets one, and never past `_latest_end_of_stay` (the moment judged, or the
   person's next stay, core's absence marks included, because its overtime engine
   refuses a record across one); `False` when nothing is to be credited.

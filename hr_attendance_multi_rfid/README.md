@@ -78,23 +78,19 @@ RFID Attendance bridges the gap between physical access control and time trackin
 ### Employee Setup
 
 1. **RFID Cards**: Ensure employees have active RFID cards
-2. **Working Hours**: Set employee working schedules
+2. **Working Hours**: Set employee working schedules. On a schedule, **Hours
+   for a Forgotten Badge** says what a day nobody badged out of is worth for
+   the people on it (0 = the schedule's working day)
 3. **PIN Codes**: Optional PIN for attendance validation
 
-### System Parameters
+### Where the rules live
 
-Configure in Settings → Technical → System Parameters:
-
-```
-# Minimum time between attendance events (seconds)
-hr_attendance_multi_rfid.min_time_between_events: 60
-
-# Auto check-out after hours
-hr_attendance_multi_rfid.auto_checkout_hours: 12
-
-# Allow multiple check-ins per day
-hr_attendance_multi_rfid.allow_multiple_sessions: True
-```
+This module reads no system parameters. What decides how passages become
+attendance is on the zone: **Attendance**, **Overwrite Check-In** and
+**Overwrite Check-Out**. When a stay counts as a forgotten badge and what is
+then recorded is in **Settings → Attendances**: Automatic Check-Out with its
+tolerance, and Forgotten Badge right under it; a working schedule can set its
+own number of hours for a forgotten day.
 
 ## 📖 Usage
 

@@ -37,30 +37,14 @@ class ForgottenBadgeCase(TransactionCase):
         # Eight hours of work and an unpaid hour between them, every day, with
         # two hours of tolerance: a stay is past its limit after ten hours, and
         # a credited day runs from the check-in for nine.
-        cls.calendar = cls.env["resource.calendar"].create(
-            {
-                "name": "New Entry 8-17",
-                "company_id": cls.company.id,
-                "tz": "UTC",
-                "hours_per_day": 8.0,
-                "attendance_ids": [
-                    Command.create(
-                        {
-                            "name": "%s %s" % (day, period),
-                            "dayofweek": day,
-                            "hour_from": start,
-                            "hour_to": stop,
-                            "day_period": period,
-                        }
-                    )
-                    for day in "0123456"
-                    for period, start, stop in (
-                        ("morning", 8.0, 12.0),
-                        ("lunch", 12.0, 13.0),
-                        ("afternoon", 13.0, 17.0),
-                    )
-                ],
-            }
+        cls.calendar = cls._every_day_calendar(
+            "New Entry 8-17",
+            (
+                ("morning", 8.0, 12.0),
+                ("lunch", 12.0, 13.0),
+                ("afternoon", 13.0, 17.0),
+            ),
+            hours_per_day=8.0,
         )
         cls.company.write(
             {
@@ -88,6 +72,34 @@ class ForgottenBadgeCase(TransactionCase):
         )
         cls.tuesday = cls.monday + timedelta(days=1)
         cls.wednesday = cls.monday + timedelta(days=2)
+
+    @classmethod
+    def _every_day_calendar(cls, name, periods, **values):
+        """A schedule with the same day, Monday to Sunday, in UTC.
+
+        :param periods: (day_period, hour_from, hour_to) of that day
+        """
+        return cls.env["resource.calendar"].create(
+            {
+                "name": name,
+                "company_id": cls.company.id,
+                "tz": "UTC",
+                "attendance_ids": [
+                    Command.create(
+                        {
+                            "name": "%s %s" % (day, period),
+                            "dayofweek": day,
+                            "hour_from": start,
+                            "hour_to": stop,
+                            "day_period": period,
+                        }
+                    )
+                    for day in "0123456"
+                    for period, start, stop in periods
+                ],
+                **values,
+            }
+        )
 
     @classmethod
     def _person(cls, name):
@@ -134,6 +146,31 @@ class ForgottenBadgeCase(TransactionCase):
                     "in_mode": "rfid",
                 }
             )
+        )
+
+    def _rebuild(self, employee=None):
+        (employee or self.employee).recalc_attendance(
+            fields.Date.to_date(self.monday) - timedelta(days=1),
+            fields.Date.to_date(self.wednesday) + timedelta(days=1),
+        )
+
+    def _assert_the_doors_tell_one_story(self, employee=None):
+        """Same passages, same days, whichever machine reads them.
+
+        And the same answer on every passage, not only on the records.
+        """
+        employee = employee or self.employee
+        live = self._story(employee)
+        passages = self.env["hr.rfid.event.user"].search(
+            [("employee_id", "=", employee.id)], order="event_time"
+        )
+        live_verdicts = [(p.in_or_out, p.no_attendance_reason) for p in passages]
+
+        self._rebuild(employee)
+
+        self.assertEqual(self._story(employee), live)
+        self.assertEqual(
+            [(p.in_or_out, p.no_attendance_reason) for p in passages], live_verdicts
         )
 
     def _typed_stay(self, start, stop):
@@ -413,12 +450,6 @@ class TestTheLivePassage(ForgottenBadgeCase):
 
 @tagged("post_install", "-at_install", "rfid_attendance_zone")
 class TestTheRebuild(ForgottenBadgeCase):
-    def _rebuild(self, employee=None):
-        (employee or self.employee).recalc_attendance(
-            fields.Date.to_date(self.monday) - timedelta(days=1),
-            fields.Date.to_date(self.wednesday) + timedelta(days=1),
-        )
-
     def _walk_the_week(self):
         self._in(self.at(self.monday, 8))
         self._in(self.at(self.tuesday, 8))
@@ -427,24 +458,6 @@ class TestTheRebuild(ForgottenBadgeCase):
         self._in(self.at(self.wednesday, 8))
         self._in(self.at(self.wednesday, 12.5))
         self._out(self.at(self.wednesday, 17))
-
-    def _assert_the_doors_tell_one_story(self):
-        """Same passages, same days, whichever machine reads them.
-
-        And the same answer on every passage, not only on the records.
-        """
-        live = self._story()
-        passages = self.env["hr.rfid.event.user"].search(
-            [("employee_id", "=", self.employee.id)], order="event_time"
-        )
-        live_verdicts = [(p.in_or_out, p.no_attendance_reason) for p in passages]
-
-        self._rebuild()
-
-        self.assertEqual(self._story(), live)
-        self.assertEqual(
-            [(p.in_or_out, p.no_attendance_reason) for p in passages], live_verdicts
-        )
 
     def test_the_rebuild_tells_the_same_story_as_the_doors_did(self):
         self._walk_the_week()
@@ -653,25 +666,8 @@ class TestTheScheduledTask(ForgottenBadgeCase):
         not the working day plus the tolerance, which is what core's own rule
         would record.
         """
-        no_break = self.env["resource.calendar"].create(
-            {
-                "name": "New Entry 8-16",
-                "company_id": self.company.id,
-                "tz": "UTC",
-                "hours_per_day": 8.0,
-                "attendance_ids": [
-                    Command.create(
-                        {
-                            "name": day,
-                            "dayofweek": day,
-                            "hour_from": 8.0,
-                            "hour_to": 16.0,
-                            "day_period": "morning",
-                        }
-                    )
-                    for day in "0123456"
-                ],
-            }
+        no_break = self._every_day_calendar(
+            "New Entry 8-16", (("morning", 8.0, 16.0),), hours_per_day=8.0
         )
         self.employee.resource_calendar_id = no_break
         stay = self._machine_stay(self.at(self.monday, 8))
