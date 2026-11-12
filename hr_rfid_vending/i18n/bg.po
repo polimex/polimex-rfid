@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-06 18:52+0000\n"
-"PO-Revision-Date: 2026-11-06 20:53\n"
+"PO-Revision-Date: 2026-11-12 16:14\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -217,11 +217,6 @@ msgstr "Работен код, пристигнал от събитието"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_attachment_count
 msgid "Attachment Count"
 msgstr "Брой прикачени файлове"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr "Присъствие"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
@@ -681,7 +676,7 @@ msgstr "Детайли"
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_digest_digest
 msgid "Digest"
-msgstr "Публикация"
+msgstr "Обзорен бюлетин"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__display_name
@@ -838,27 +833,6 @@ msgid "Execute Every"
 msgstr "Изпълнение на всеки"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid ""
-"Filled in when a granted passage did not change the attendance, so the reason is visible instead of a blank Attendance column:\n"
-"\n"
-"• Already inside: the person was already checked in and this zone keeps the first entry.\n"
-"• Not tracked in this zone: the zone follows only certain departments or tags, and this person is not one of them.\n"
-"• Nothing open to close: an exit arrived with no attendance open, and this zone does not reopen the previous one.\n"
-"• Covered by a manual record: the moment already falls inside attendance entered by hand, which is never overwritten.\n"
-"• Replaced by a later entry: a second entry came before any exit, and the zone keeps the later one.\n"
-"• Direction unknown: the passage carries no reader, or one that is set to neither In nor Out, so it cannot be read as an arrival or a departure."
-msgstr ""
-"Попълва се, когато разрешено преминаване не е променило присъствието, така че причината е видима вместо празна колона „Присъствие“:\n"
-"\n"
-"• Вече вътре: лицето вече е било регистрирано и тази зона запазва първото влизане.\n"
-"• Не се проследява в тази зона: зоната следи само определени отдели или тагове, а това лице не е сред тях.\n"
-"• Няма какво да се затвори: получен е изход без отворено присъствие, а тази зона не преотваря предишното.\n"
-"• Покрито от ръчен запис: моментът вече попада в присъствие, въведено ръчно, което никога не се презаписва.\n"
-"• Заменено от по-късен запис: постъпило е второ влизане преди изход, а зоната запазва по-късния запис.\n"
-"• Неизвестна посока: преминаването не носи четец или е такъв, който не е зададен нито като „Вход“, нито като „Изход“, и затова не може да бъде разпознато като пристигане или напускане."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__fixed
 msgid "Fixed"
 msgstr "Фиксиран"
@@ -970,7 +944,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__id
 msgid "ID"
-msgstr "Номер (ID)"
+msgstr "ID"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_needaction
@@ -979,7 +953,6 @@ msgstr "Ако е отметнато, новите съобщения изиск
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е отметнато, някои съобщения имат грешка при доставка."
 
@@ -1011,25 +984,6 @@ msgstr ""
 "дебитиранията) в обобщаващия имейл."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
-"\n"
-"• Check In: Employee entered an attendance zone\n"
-"• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
-"\n"
-"This field is automatically set when recalculating attendance from RFID events."
-msgstr ""
-"Показва дали това RFID събитие е обработено като регистрация на влизане или излизане за присъствие.\n"
-"\n"
-"• Влизане: Служителят е влязъл в зона за присъствие\n"
-"• Излизане: Служителят е напуснал зона за присъствие\n"
-"• Няма информация: Събитието не е обработено за присъствие (може да е извън зона за присъствие или грешка)\n"
-"\n"
-"Това поле се задава автоматично при преизчисляване на присъствието от RFID събития."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
 msgid ""
 "Individual employee balance-history entries created by this run. Use them to"
@@ -1053,6 +1007,13 @@ msgstr "Е последовател"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
 msgid "Is a Vending Machine"
 msgstr "Е вендинг машина"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Item %(item)d did not come out, and the credit was returned to the card."
+msgstr "Артикул %(item)d не излезе и кредитът беше върнат на картата."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -1550,6 +1511,16 @@ msgid "Product Purchased"
 msgstr "Продаден продукт"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Product error: the item number is out of range or the machine reported a "
+"product error."
+msgstr ""
+"Грешка в продукта: номерът на артикула е извън допустимия диапазон или "
+"машината съобщи за грешка в продукта."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
 msgid ""
 "Product mapped to the first slot of this row. Determines the name shown on "
@@ -1785,11 +1756,6 @@ msgstr ""
 "4 + слот."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "SMS грешка при доставка"
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
 msgid "Sales Per Product"
 msgstr "Продажби по продукти"
@@ -1929,30 +1895,6 @@ msgid "Show employee history balance"
 msgstr "Показване на баланса на историята на служител"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid "Site"
-msgstr "Обект"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid ""
-"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
-"\n"
-"• Source: Determined from door location, controller site, or webstack site\n"
-"• Purpose: Enables site-based filtering and reporting of access events\n"
-"• Usage: Track activity by location, generate site-specific reports\n"
-"\n"
-"This field helps analyze access patterns and security events by physical location."
-msgstr ""
-"Обект, в който е настъпило това RFID събитие, изчислен автоматично от местоположението на вратата, контролера или webstack-а.\n"
-"\n"
-"• Източник: Определя се от местоположението на вратата, обекта на контролера или обекта на webstack-а\n"
-"• Цел: Позволява филтриране и отчитане на събития за достъп по обект\n"
-"• Използване: Проследяване на активността по местоположение, генериране на отчети за конкретен обект\n"
-"\n"
-"Това поле помага за анализ на моделите на достъп и събитията за сигурност по физическо местоположение."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
 msgid "Slot 1 Number"
 msgstr "Номер на слот 1"
@@ -2019,6 +1961,18 @@ msgstr ""
 "продуктите тук записва нова I/O таблица към контролера при запазване."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine is talking again."
+msgstr "MDB шината на вендинг машината отново комуникира."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine went silent."
+msgstr "MDB шината на вендинг машината спря да комуникира."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
 msgid ""
 "The RFID card reader device that captured this event. Can be an entry or "
@@ -2057,6 +2011,18 @@ msgstr ""
 "вендинг кредит."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The connection to the vending machine is back."
+msgstr "Връзката с вендинг машината е възстановена."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The credit was returned to the card: nothing was chosen in time."
+msgstr "Кредитът беше върнат на картата: не е направен избор навреме."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
 msgid ""
 "The employee who triggered this access event. Automatically populated from "
@@ -2085,9 +2051,80 @@ msgstr "Стойността на %s е невалидна. Трябва да е
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
-msgid "The vending machine reported an error (data %(data)s)."
-msgstr "Вендинг машината съобщи за грешка (данни %(data)s)."
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller is connected to the server again."
+msgstr "Вендинг контролерът отново е свързан със сървъра."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller lost its connection to the server."
+msgstr "Вендинг контролерът загуби връзката си със сървъра."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine did not answer after a status request."
+msgstr "Вендинг машината не отговори след заявка за статус."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine did not close a session the controller asked to close; "
+"it was closed after 30 seconds. Check the vending machine's software."
+msgstr ""
+"Вендинг машината не затвори сесия, която контролерът поиска да бъде "
+"затворена; тя беше затворена след 30 секунди. Проверете софтуера на вендинг "
+"машината."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine does not answer."
+msgstr "Вендинг машината не отговаря."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported error %(code)d (data %(data)s)."
+msgstr "Вендинг машината съобщи за грешка %(code)d (данни %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported event %(event)d (data %(data)s)."
+msgstr "Вендинг машината съобщи за събитие %(event)d (данни %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command that is not implemented or comes out of "
+"order."
+msgstr ""
+"Вендинг машината изпрати команда, която не е реализирана или е изпратена в "
+"неправилен ред."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command the controller does not know (the "
+"machine's reply: %(reply)d)."
+msgstr ""
+"Вендинг машината изпрати команда, която контролерът не познава (отговорът на"
+" машината: %(reply)d)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine's link layer does not answer: a block was sent three "
+"times without confirmation. Check the wiring and the transceiver."
+msgstr ""
+"Каналният слой на вендинг машината не отговаря: блок е изпратен три пъти без"
+" потвърждение. Проверете кабелите и трансивъра."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -2341,7 +2378,7 @@ msgstr "Вендинг Събития"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__controller_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
 msgid "Vending Machine"
-msgstr "Контролер"
+msgstr "Вендинг машина"
 
 #. module: hr_rfid_vending
 #: model:product.pricelist,name:hr_rfid_vending.demo_vending_pricelist
@@ -2361,7 +2398,7 @@ msgstr "Настройки на Вендинг Машина"
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__controller_ids
 msgid "Vending Machines"
-msgstr "Контролер"
+msgstr "Вендинг машини"
 
 #. module: hr_rfid_vending
 #: model:res.groups,name:hr_rfid_vending.group_operator
@@ -2493,11 +2530,6 @@ msgstr "Къде"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Who"
 msgstr "Кой"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid "Why Not Counted"
-msgstr "Причина за неотчитане"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_cash_wiz

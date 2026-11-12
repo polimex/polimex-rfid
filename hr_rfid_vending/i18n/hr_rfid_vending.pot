@@ -193,11 +193,6 @@ msgid "Attachment Count"
 msgstr ""
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr ""
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
 msgid ""
 "Audit note explaining why the purchase is reversed (machine jam, double-"
@@ -781,19 +776,6 @@ msgid "Execute Every"
 msgstr ""
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid ""
-"Filled in when a granted passage did not change the attendance, so the reason is visible instead of a blank Attendance column:\n"
-"\n"
-"• Already inside: the person was already checked in and this zone keeps the first entry.\n"
-"• Not tracked in this zone: the zone follows only certain departments or tags, and this person is not one of them.\n"
-"• Nothing open to close: an exit arrived with no attendance open, and this zone does not reopen the previous one.\n"
-"• Covered by a manual record: the moment already falls inside attendance entered by hand, which is never overwritten.\n"
-"• Replaced by a later entry: a second entry came before any exit, and the zone keeps the later one.\n"
-"• Direction unknown: the passage carries no reader, or one that is set to neither In nor Out, so it cannot be read as an arrival or a departure."
-msgstr ""
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__fixed
 msgid "Fixed"
 msgstr ""
@@ -895,7 +877,6 @@ msgstr ""
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -921,18 +902,6 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
-"\n"
-"• Check In: Employee entered an attendance zone\n"
-"• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
-"\n"
-"This field is automatically set when recalculating attendance from RFID events."
-msgstr ""
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
 msgid ""
 "Individual employee balance-history entries created by this run. Use them to"
@@ -952,6 +921,13 @@ msgstr ""
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
 msgid "Is a Vending Machine"
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Item %(item)d did not come out, and the credit was returned to the card."
 msgstr ""
 
 #. module: hr_rfid_vending
@@ -1392,6 +1368,14 @@ msgid "Product Purchased"
 msgstr ""
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Product error: the item number is out of range or the machine reported a "
+"product error."
+msgstr ""
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
 msgid ""
 "Product mapped to the first slot of this row. Determines the name shown on "
@@ -1602,11 +1586,6 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr ""
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
 msgid "Sales Per Product"
 msgstr ""
@@ -1729,23 +1708,6 @@ msgid "Show employee history balance"
 msgstr ""
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid "Site"
-msgstr ""
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid ""
-"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
-"\n"
-"• Source: Determined from door location, controller site, or webstack site\n"
-"• Purpose: Enables site-based filtering and reporting of access events\n"
-"• Usage: Track activity by location, generate site-specific reports\n"
-"\n"
-"This field helps analyze access patterns and security events by physical location."
-msgstr ""
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
 msgid "Slot 1 Number"
 msgstr ""
@@ -1808,6 +1770,18 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine is talking again."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine went silent."
+msgstr ""
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
 msgid ""
 "The RFID card reader device that captured this event. Can be an entry or "
@@ -1844,6 +1818,18 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The connection to the vending machine is back."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The credit was returned to the card: nothing was chosen in time."
+msgstr ""
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
 msgid ""
 "The employee who triggered this access event. Automatically populated from "
@@ -1870,8 +1856,70 @@ msgstr ""
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
-msgid "The vending machine reported an error (data %(data)s)."
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller is connected to the server again."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller lost its connection to the server."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine did not answer after a status request."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine did not close a session the controller asked to close; "
+"it was closed after 30 seconds. Check the vending machine's software."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine does not answer."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported error %(code)d (data %(data)s)."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported event %(event)d (data %(data)s)."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command that is not implemented or comes out of "
+"order."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command the controller does not know (the "
+"machine's reply: %(reply)d)."
+msgstr ""
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine's link layer does not answer: a block was sent three "
+"times without confirmation. Check the wiring and the transceiver."
 msgstr ""
 
 #. module: hr_rfid_vending
@@ -2216,11 +2264,6 @@ msgstr ""
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Who"
-msgstr ""
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid "Why Not Counted"
 msgstr ""
 
 #. module: hr_rfid_vending

@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:24+0000\n"
-"PO-Revision-Date: 2026-11-06 20:53\n"
+"PO-Revision-Date: 2026-11-12 16:07\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -252,11 +252,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_attachment_count
 msgid "Attachment Count"
 msgstr "Numero allegati"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr "Presenze"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
@@ -910,27 +905,6 @@ msgid "Execute Every"
 msgstr "Esegui ogni"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid ""
-"Filled in when a granted passage did not change the attendance, so the reason is visible instead of a blank Attendance column:\n"
-"\n"
-"• Already inside: the person was already checked in and this zone keeps the first entry.\n"
-"• Not tracked in this zone: the zone follows only certain departments or tags, and this person is not one of them.\n"
-"• Nothing open to close: an exit arrived with no attendance open, and this zone does not reopen the previous one.\n"
-"• Covered by a manual record: the moment already falls inside attendance entered by hand, which is never overwritten.\n"
-"• Replaced by a later entry: a second entry came before any exit, and the zone keeps the later one.\n"
-"• Direction unknown: the passage carries no reader, or one that is set to neither In nor Out, so it cannot be read as an arrival or a departure."
-msgstr ""
-"Compilato quando un passaggio autorizzato non ha modificato la presenza, in modo che il motivo sia visibile invece di una colonna Presenza vuota:\n"
-"\n"
-"• Già all'interno: la persona aveva già effettuato l'ingresso e questa zona mantiene il primo ingresso.\n"
-"• Non tracciato in questa zona: la zona segue solo determinati reparti o tag e questa persona non ne fa parte.\n"
-"• Nulla da chiudere: è arrivata un'uscita senza alcuna presenza aperta e questa zona non riapre quella precedente.\n"
-"• Coperto da una registrazione manuale: il momento rientra già in una presenza inserita manualmente, che non viene mai sovrascritta.\n"
-"• Sostituito da un ingresso successivo: è arrivato un secondo ingresso prima di qualsiasi uscita e la zona mantiene quello successivo.\n"
-"• Direzione sconosciuta: il passaggio non ha un lettore, oppure ha un lettore impostato né su Ingresso né su Uscita, quindi non può essere interpretato come un arrivo o una partenza."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__fixed
 msgid "Fixed"
 msgstr "Fisso"
@@ -1050,7 +1024,6 @@ msgstr "Se selezionato, i nuovi messaggi richiedono attenzione."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Se selezionato, alcuni messaggi presentano un errore di recapito."
 
@@ -1082,25 +1055,6 @@ msgstr ""
 "distributori (somma positiva degli addebiti)."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
-"\n"
-"• Check In: Employee entered an attendance zone\n"
-"• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
-"\n"
-"This field is automatically set when recalculating attendance from RFID events."
-msgstr ""
-"Indica se questo evento RFID è stato elaborato come entrata o uscita per le presenze.\n"
-"\n"
-"• Entrata: il dipendente è entrato in una zona di presenza\n"
-"• Uscita: il dipendente ha lasciato una zona di presenza\n"
-"• Nessuna info: evento non elaborato per le presenze (potrebbe trattarsi di una zona senza rilevazione presenze o di un errore)\n"
-"\n"
-"Questo campo viene impostato automaticamente al ricalcolo delle presenze dagli eventi RFID."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
 msgid ""
 "Individual employee balance-history entries created by this run. Use them to"
@@ -1124,6 +1078,15 @@ msgstr "È seguace"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
 msgid "Is a Vending Machine"
 msgstr "È un distributore automatico"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Item %(item)d did not come out, and the credit was returned to the card."
+msgstr ""
+"L'articolo %(item)d non è stato erogato e il credito è stato restituito alla"
+" tessera."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -1658,6 +1621,16 @@ msgid "Product Purchased"
 msgstr "Prodotto acquistato"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Product error: the item number is out of range or the machine reported a "
+"product error."
+msgstr ""
+"Errore prodotto: il numero dell'articolo è fuori intervallo oppure il "
+"distributore ha segnalato un errore del prodotto."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
 msgid ""
 "Product mapped to the first slot of this row. Determines the name shown on "
@@ -1911,11 +1884,6 @@ msgstr ""
 "(row_num - 1) * 4 + slot."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Errore di recapito SMS"
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
 msgid "Sales Per Product"
 msgstr "Vendite per prodotto"
@@ -2059,30 +2027,6 @@ msgid "Show employee history balance"
 msgstr "Mostra storico saldo dipendente"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid "Site"
-msgstr "Sede"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid ""
-"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
-"\n"
-"• Source: Determined from door location, controller site, or webstack site\n"
-"• Purpose: Enables site-based filtering and reporting of access events\n"
-"• Usage: Track activity by location, generate site-specific reports\n"
-"\n"
-"This field helps analyze access patterns and security events by physical location."
-msgstr ""
-"Sede in cui si è verificato questo evento RFID, calcolata automaticamente dalla posizione della porta, del controller o del Webstack.\n"
-"\n"
-"• Origine: determinata dalla posizione della porta, dalla sede del controller o dalla sede del Webstack\n"
-"• Scopo: consente di filtrare e rendicontare gli eventi di accesso per sede\n"
-"• Utilizzo: consente di tracciare l'attività per posizione e di generare report specifici per sede\n"
-"\n"
-"Questo campo aiuta ad analizzare gli schemi di accesso e gli eventi di sicurezza in base alla posizione fisica."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
 msgid "Slot 1 Number"
 msgstr "Numero slot 1"
@@ -2158,6 +2102,18 @@ msgstr ""
 "dei prodotti qui scrive una nuova tabella I/O nel controller al salvataggio."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine is talking again."
+msgstr "Il bus MDB del distributore automatico comunica di nuovo."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine went silent."
+msgstr "Il bus MDB del distributore automatico non comunica più."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
 msgid ""
 "The RFID card reader device that captured this event. Can be an entry or "
@@ -2204,6 +2160,20 @@ msgstr ""
 "riceve credito per il distributore automatico."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The connection to the vending machine is back."
+msgstr "La connessione al distributore automatico è stata ripristinata."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The credit was returned to the card: nothing was chosen in time."
+msgstr ""
+"Il credito è stato restituito alla tessera: nessuna selezione è stata "
+"effettuata in tempo."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
 msgid ""
 "The employee who triggered this access event. Automatically populated from "
@@ -2237,9 +2207,86 @@ msgstr "Il valore di %s non è valido. Deve essere compreso tra 0 e 255"
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
-msgid "The vending machine reported an error (data %(data)s)."
-msgstr "Il distributore automatico ha segnalato un errore (dati %(data)s)."
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller is connected to the server again."
+msgstr ""
+"Il controller del distributore automatico è di nuovo connesso al server."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller lost its connection to the server."
+msgstr ""
+"Il controller del distributore automatico ha perso la connessione al server."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine did not answer after a status request."
+msgstr ""
+"Il distributore automatico non ha risposto dopo una richiesta di stato."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine did not close a session the controller asked to close; "
+"it was closed after 30 seconds. Check the vending machine's software."
+msgstr ""
+"Il distributore automatico non ha chiuso una sessione che il controller "
+"aveva richiesto di chiudere; la sessione è stata chiusa dopo 30 secondi. "
+"Verificare il software del distributore automatico."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine does not answer."
+msgstr "Il distributore automatico non risponde."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported error %(code)d (data %(data)s)."
+msgstr ""
+"Il distributore automatico ha segnalato l'errore %(code)d (dati %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported event %(event)d (data %(data)s)."
+msgstr ""
+"Il distributore automatico ha segnalato l'evento %(event)d (dati %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command that is not implemented or comes out of "
+"order."
+msgstr ""
+"Il distributore automatico ha inviato un comando non implementato oppure "
+"fuori sequenza."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command the controller does not know (the "
+"machine's reply: %(reply)d)."
+msgstr ""
+"Il distributore automatico ha inviato un comando che il controller non "
+"riconosce (risposta del distributore: %(reply)d)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine's link layer does not answer: a block was sent three "
+"times without confirmation. Check the wiring and the transceiver."
+msgstr ""
+"Il livello di collegamento del distributore automatico non risponde: un "
+"blocco è stato inviato tre volte senza conferma. Verificare il cablaggio e "
+"il transceiver."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -2658,11 +2705,6 @@ msgstr "Dove"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Who"
 msgstr "Chi"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid "Why Not Counted"
-msgstr "Motivo del mancato conteggio"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_cash_wiz

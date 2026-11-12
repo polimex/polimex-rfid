@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:53+0000\n"
-"PO-Revision-Date: 2026-11-06 20:53\n"
+"PO-Revision-Date: 2026-11-12 16:06\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el_GR\n"
@@ -252,11 +252,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_attachment_count
 msgid "Attachment Count"
 msgstr "Αριθμός Συνημμένων"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid "Attendance"
-msgstr "Παρουσία"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
@@ -911,27 +906,6 @@ msgid "Execute Every"
 msgstr "Εκτέλεση κάθε"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid ""
-"Filled in when a granted passage did not change the attendance, so the reason is visible instead of a blank Attendance column:\n"
-"\n"
-"• Already inside: the person was already checked in and this zone keeps the first entry.\n"
-"• Not tracked in this zone: the zone follows only certain departments or tags, and this person is not one of them.\n"
-"• Nothing open to close: an exit arrived with no attendance open, and this zone does not reopen the previous one.\n"
-"• Covered by a manual record: the moment already falls inside attendance entered by hand, which is never overwritten.\n"
-"• Replaced by a later entry: a second entry came before any exit, and the zone keeps the later one.\n"
-"• Direction unknown: the passage carries no reader, or one that is set to neither In nor Out, so it cannot be read as an arrival or a departure."
-msgstr ""
-"Συμπληρώνεται όταν μια επιτρεπόμενη διέλευση δεν άλλαξε την παρουσία, ώστε να φαίνεται ο λόγος αντί για κενή στήλη Παρουσία:\n"
-"\n"
-"• Ήδη εντός: το άτομο είχε ήδη καταγράψει είσοδο και αυτή η ζώνη διατηρεί την πρώτη είσοδο.\n"
-"• Δεν παρακολουθείται σε αυτή τη ζώνη: η ζώνη παρακολουθεί μόνο συγκεκριμένα τμήματα ή ετικέτες και το άτομο δεν ανήκει σε αυτά.\n"
-"• Δεν υπάρχει ανοιχτή παρουσία για κλείσιμο: ελήφθη έξοδος χωρίς ανοιχτή παρουσία και αυτή η ζώνη δεν ανοίγει ξανά την προηγούμενη.\n"
-"• Καλύπτεται από χειροκίνητη εγγραφή: η χρονική στιγμή εμπίπτει ήδη σε παρουσία που καταχωρίστηκε χειροκίνητα, η οποία δεν αντικαθίσταται ποτέ.\n"
-"• Αντικαταστάθηκε από μεταγενέστερη είσοδο: ελήφθη δεύτερη είσοδος πριν από οποιαδήποτε έξοδο και η ζώνη διατηρεί τη μεταγενέστερη.\n"
-"• Άγνωστη κατεύθυνση: η διέλευση δεν φέρει αναγνώστη ή φέρει αναγνώστη που δεν έχει οριστεί ούτε ως Είσοδος ούτε ως Έξοδος, επομένως δεν μπορεί να ερμηνευτεί ως άφιξη ή αναχώρηση."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__hr_rfid_vending_refill_type__fixed
 msgid "Fixed"
 msgstr "Σταθερό"
@@ -1050,7 +1024,6 @@ msgstr "Εάν είναι επιλεγμένο, νέα μηνύματα απαι
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα έχουν σφάλμα παράδοσης."
 
@@ -1082,25 +1055,6 @@ msgstr ""
 "άθροισμα των χρεώσεων) στο email σύνοψης."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__in_or_out
-msgid ""
-"Indicates whether this RFID event was processed as attendance check-in or check-out.\n"
-"\n"
-"• Check In: Employee entered an attendance zone\n"
-"• Check Out: Employee left an attendance zone  \n"
-"• No Info: Event not processed for attendance (may be non-attendance zone or error)\n"
-"\n"
-"This field is automatically set when recalculating attendance from RFID events."
-msgstr ""
-"Υποδεικνύει εάν αυτό το συμβάν RFID επεξεργάστηκε ως είσοδος ή έξοδος παρουσίας.\n"
-"\n"
-"• Είσοδος: ο εργαζόμενος εισήλθε σε ζώνη παρουσίας\n"
-"• Έξοδος: ο εργαζόμενος αποχώρησε από ζώνη παρουσίας\n"
-"• Χωρίς πληροφορίες: το συμβάν δεν επεξεργάστηκε για παρουσία (μπορεί να είναι ζώνη εκτός παρουσίας ή σφάλμα)\n"
-"\n"
-"Το πεδίο αυτό ορίζεται αυτόματα κατά τον επανυπολογισμό της παρουσίας από συμβάντα RFID."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
 msgid ""
 "Individual employee balance-history entries created by this run. Use them to"
@@ -1124,6 +1078,13 @@ msgstr "Είναι Ακόλουθος"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
 msgid "Is a Vending Machine"
 msgstr "Είναι αυτόματος πωλητής"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Item %(item)d did not come out, and the credit was returned to the card."
+msgstr "Το προϊόν %(item)d δεν βγήκε και η πίστωση επιστράφηκε στην κάρτα."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -1660,6 +1621,16 @@ msgid "Product Purchased"
 msgstr "Αγορασθέν Προϊόν"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Product error: the item number is out of range or the machine reported a "
+"product error."
+msgstr ""
+"Σφάλμα προϊόντος: ο αριθμός προϊόντος είναι εκτός εύρους ή το μηχάνημα "
+"ανέφερε σφάλμα προϊόντος."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
 msgid ""
 "Product mapped to the first slot of this row. Determines the name shown on "
@@ -1915,11 +1886,6 @@ msgstr ""
 "1) * 4 + slot."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Σφάλμα παράδοσης SMS"
-
-#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
 msgid "Sales Per Product"
 msgstr "Πωλήσεις ανά Προϊόν"
@@ -2064,30 +2030,6 @@ msgid "Show employee history balance"
 msgstr "Εμφάνιση ιστορικού υπολοίπου υπαλλήλου"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid "Site"
-msgstr "Χώρος"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__site_id
-msgid ""
-"Site where this RFID event occurred, computed automatically from the door, controller, or webstack location.\n"
-"\n"
-"• Source: Determined from door location, controller site, or webstack site\n"
-"• Purpose: Enables site-based filtering and reporting of access events\n"
-"• Usage: Track activity by location, generate site-specific reports\n"
-"\n"
-"This field helps analyze access patterns and security events by physical location."
-msgstr ""
-"Χώρος όπου προέκυψε αυτό το συμβάν RFID, που υπολογίζεται αυτόματα από την τοποθεσία της πόρτας, του ελεγκτή ή του webstack.\n"
-"\n"
-"• Πηγή: Προσδιορίζεται από την τοποθεσία της πόρτας, τον χώρο του ελεγκτή ή τον χώρο του webstack\n"
-"• Σκοπός: Επιτρέπει το φιλτράρισμα και την αναφορά συμβάντων πρόσβασης ανά χώρο\n"
-"• Χρήση: Παρακολούθηση δραστηριότητας ανά τοποθεσία, δημιουργία αναφορών ανά χώρο\n"
-"\n"
-"Το πεδίο αυτό βοηθά στην ανάλυση των προτύπων πρόσβασης και των συμβάντων ασφαλείας ανά φυσική τοποθεσία."
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
 msgid "Slot 1 Number"
 msgstr "Αριθμός θέσης 1"
@@ -2163,6 +2105,18 @@ msgstr ""
 " προϊόντων εδώ εγγράφει νέο πίνακα I/O στον ελεγκτή κατά την Αποθήκευση."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine is talking again."
+msgstr "Ο δίαυλος MDB του μηχανήματος Αυτόματης Πώλησης επικοινωνεί ξανά."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine went silent."
+msgstr "Ο δίαυλος MDB του μηχανήματος Αυτόματης Πώλησης σίγασε."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
 msgid ""
 "The RFID card reader device that captured this event. Can be an entry or "
@@ -2210,6 +2164,18 @@ msgstr ""
 "δεν λαμβάνει πίστωση αυτόματου πωλητή."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The connection to the vending machine is back."
+msgstr "Η σύνδεση με το μηχάνημα Αυτόματης Πώλησης αποκαταστάθηκε."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The credit was returned to the card: nothing was chosen in time."
+msgstr "Η πίστωση επιστράφηκε στην κάρτα: δεν έγινε επιλογή εγκαίρως."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
 msgid ""
 "The employee who triggered this access event. Automatically populated from "
@@ -2242,9 +2208,85 @@ msgstr "Η τιμή του %s δεν είναι έγκυρη. Πρέπει να 
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
-msgid "The vending machine reported an error (data %(data)s)."
-msgstr "Ο αυτόματος πωλητής ανέφερε σφάλμα (δεδομένα %(data)s)."
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller is connected to the server again."
+msgstr ""
+"Ο ελεγκτής αυτόματης πώλησης είναι ξανά συνδεδεμένος με τον διακομιστή."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller lost its connection to the server."
+msgstr "Ο ελεγκτής αυτόματης πώλησης έχασε τη σύνδεσή του με τον διακομιστή."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine did not answer after a status request."
+msgstr ""
+"Το μηχάνημα Αυτόματης Πώλησης δεν απάντησε μετά από αίτημα κατάστασης."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine did not close a session the controller asked to close; "
+"it was closed after 30 seconds. Check the vending machine's software."
+msgstr ""
+"Το μηχάνημα Αυτόματης Πώλησης δεν έκλεισε μια συνεδρία που ζήτησε να κλείσει"
+" ο ελεγκτής· έκλεισε μετά από 30 δευτερόλεπτα. Ελέγξτε το λογισμικό του "
+"μηχανήματος Αυτόματης Πώλησης."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine does not answer."
+msgstr "Το μηχάνημα Αυτόματης Πώλησης δεν απαντά."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported error %(code)d (data %(data)s)."
+msgstr ""
+"Το μηχάνημα Αυτόματης Πώλησης ανέφερε σφάλμα %(code)d (δεδομένα %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported event %(event)d (data %(data)s)."
+msgstr ""
+"Το μηχάνημα Αυτόματης Πώλησης ανέφερε συμβάν %(event)d (δεδομένα %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command that is not implemented or comes out of "
+"order."
+msgstr ""
+"Το μηχάνημα Αυτόματης Πώλησης έστειλε εντολή που δεν υποστηρίζεται ή που "
+"ήρθε εκτός σειράς."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command the controller does not know (the "
+"machine's reply: %(reply)d)."
+msgstr ""
+"Το μηχάνημα Αυτόματης Πώλησης έστειλε εντολή που ο ελεγκτής δεν αναγνωρίζει "
+"(απάντηση του μηχανήματος: %(reply)d)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine's link layer does not answer: a block was sent three "
+"times without confirmation. Check the wiring and the transceiver."
+msgstr ""
+"Το επίπεδο σύνδεσης του μηχανήματος Αυτόματης Πώλησης δεν απαντά: ένα μπλοκ "
+"στάλθηκε τρεις φορές χωρίς επιβεβαίωση. Ελέγξτε την καλωδίωση και τον "
+"πομποδέκτη."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -2661,11 +2703,6 @@ msgstr "Πού"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Who"
 msgstr "Ποιος"
-
-#. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__no_attendance_reason
-msgid "Why Not Counted"
-msgstr "Γιατί δεν υπολογίστηκε"
 
 #. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_cash_wiz

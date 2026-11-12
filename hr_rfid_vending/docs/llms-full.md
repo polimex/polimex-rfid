@@ -600,6 +600,8 @@ Python class `HrRfidControllerVending` in `models/hr_rfid_ctrl.py:10`.  Model.  
 
 - **`_compute_vending_flags(self)`** - decorators: `@api.depends`
 - **`_convert_balance_to_ctrl(self, balance)`** - decorators: `@api.model`
+- **`_vending_problem_text(self, event_n, data)`** - decorators: -
+  - The words for a machine's event 48 or 49, written as the system event by the event controller. From the vending part of the FA event (protocol D48): product `data[4:6]`, code of 48 `data[6:8]`. 49 = credit returned (product 0 = nothing chosen); 48 = the firmware's code (16: 0, 1, 2, 4, 5; 20: 0, 2, 4, 5; 21: 0, 1, 2, 3, 4, 6, 7). Unknown codes and data too short to read are shown as they came.
 - **`create_vending_rows(self)`** - decorators: -
   - touches: `hr.rfid.ctrl.vending.row`
 - **`write(self, vals)`** - decorators: -

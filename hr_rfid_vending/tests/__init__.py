@@ -6,3 +6,4 @@ from . import test_multi_company_rules
 from . import test_vending_key_auth
 from . import test_vending_new_firmwares
 from . import test_vending_event_search
+from . import test_vending_problem_events

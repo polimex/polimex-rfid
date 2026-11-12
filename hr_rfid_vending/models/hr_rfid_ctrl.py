@@ -87,6 +87,78 @@ Leave empty to use default product prices."""
         self.ensure_one()
         return self.hw_version in PRICE_TABLE_HW_VERSIONS
 
+    def _vending_problem_text(self, event_n, data):
+        """What a vending machine's event 48 or 49 means, in words.
+
+        The fields are read from the vending part of the event the way the
+        protocol team read them from the three firmwares (protocol change D48,
+        12.11.2026): the product byte is data[4:6], the code of event 48 is the
+        "price high" byte data[6:8], and its meaning depends on the firmware.
+
+        49 is not a fault: the credit went back to the card holder, either
+        because nothing was chosen (product 0) or because the chosen item did
+        not come out. 48 is the machine's own error code.
+        """
+        self.ensure_one()
+        _ = self.env._
+        if len(data or "") < 8:
+            # Too short to carry the vending part: say what came, not a guess.
+            return _(
+                "The vending machine reported event %(event)d (data %(data)s).",
+                event=event_n,
+                data=data,
+            )
+        product = int(data[4:6], 16)
+        if event_n == 49:
+            if product == 0:
+                return _(
+                    "The credit was returned to the card: nothing was chosen in time."
+                )
+            return _(
+                "Item %(item)d did not come out, and the credit was returned to the card.",
+                item=product,
+            )
+        code = int(data[6:8], 16)
+        if self.hw_version == "21":
+            meanings = {
+                0: _("The MDB bus of the vending machine went silent."),
+                1: _("The MDB bus of the vending machine is talking again."),
+                2: _(
+                    "The vending machine's link layer does not answer: a block was sent three "
+                    "times without confirmation. Check the wiring and the transceiver."
+                ),
+                3: _(
+                    "The vending machine did not close a session the controller asked to close; "
+                    "it was closed after 30 seconds. Check the vending machine's software."
+                ),
+                4: _(
+                    "The vending machine sent a command that is not implemented or comes out of order."
+                ),
+                6: _("The vending controller lost its connection to the server."),
+                7: _("The vending controller is connected to the server again."),
+            }
+        else:
+            meanings = {
+                0: _("The vending machine does not answer."),
+                2: _("The vending machine did not answer after a status request."),
+                4: _(
+                    "The vending machine sent a command the controller does not know "
+                    "(the machine's reply: %(reply)d).",
+                    reply=product,
+                ),
+                5: _(
+                    "Product error: the item number is out of range or the machine reported a "
+                    "product error."
+                ),
+            }
+            if self.hw_version == "16":
+                meanings[1] = _("The connection to the vending machine is back.")
+        return meanings.get(code) or _(
+            "The vending machine reported error %(code)d (data %(data)s).",
+            code=code,
+            data=data,
+        )
+
     @api.model
     def _convert_balance_to_ctrl(self, balance):
         self.ensure_one()

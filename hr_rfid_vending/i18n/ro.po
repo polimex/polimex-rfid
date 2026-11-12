@@ -4,14 +4,33 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:24+0000\n"
-"PO-Revision-Date: 2026-04-09 11:36\n"
+"PO-Revision-Date: 2026-11-12 16:09\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: bg\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"%(employee)s is not checked in, and gets vending credit only after a check-"
+"in."
+msgstr ""
+"%(employee)s nu a intrat și primește credit de vending doar după pontarea de"
+" intrare."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Tip: Fixed type sets the balance to the amount every cron run (good for a fixed daily allowance). Top-up type adds the amount until Max balance is reached (good for an \"up to N\" credit)."
+msgstr ""
+"<i class=\"fa fa-lightbulb-o\" role=\"img\"/>\n"
+"                                Sfat: Tipul Fix setează soldul la valoarea sumei la fiecare rulare a cron-ului (potrivit pentru o alocație zilnică fixă). Tipul Suplimentare adaugă suma până la atingerea Soldului maxim (potrivit pentru un credit „până la N”)."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_search
@@ -53,13 +72,16 @@ msgstr ""
 "се за отстраняване на грешки и разширен анализ."
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 msgid ""
-"After how long the vending machine will stop showing the product price on "
-"the screen"
+"Adjust the employee's vending balance. Enter the amount, then click Add to "
+"credit it or Subtract to debit. Each operation creates a balance-history "
+"entry stamped with your name for the audit trail."
 msgstr ""
-"След колко време вендинг машината ще спре да показва цената на продукта на "
-"екрана"
+"Ajustați soldul vending al angajatului. Introduceți suma, apoi apăsați "
+"Adaugă pentru a-l credita sau Scade pentru a-l debita. Fiecare operațiune "
+"creează o intrare în istoricul soldului, marcată cu numele dvs. pentru pista"
+" de audit."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__alarm_line_id
@@ -232,6 +254,27 @@ msgid "Attachment Count"
 msgstr "Брой прикачени файлове"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__reason
+msgid ""
+"Audit note explaining why the purchase is reversed (machine jam, double-"
+"charge, customer dispute, etc.). Stored on the original event's chatter."
+msgstr ""
+"Notă de audit care explică motivul pentru care achiziția este anulată "
+"(blocare a automatului, dublă taxare, dispută cu clientul etc.). Se "
+"păstrează în chatter-ul evenimentului original."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.actions.act_window,help:hr_rfid_vending.ctrl_cash_collect_log_action
+msgid ""
+"Audit trail of cash collected from each vending controller. A new entry is "
+"created every time an operator empties the controller's cash box through the"
+" Collect Cash wizard."
+msgstr ""
+"Pistă de audit a numerarului colectat de la fiecare controler de vending. O "
+"nouă înregistrare este creată de fiecare dată când un operator golește "
+"caseta de numerar a controlerului prin expertul Colectează numerar."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
 msgid "Auto Refill Event"
 msgstr "Eveniment de reaprovizionare automată"
@@ -263,6 +306,25 @@ msgid ""
 msgstr ""
 "Descriere eveniment generată automat, combinând numele persoanei, acțiunea "
 "și locația"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__name
+msgid ""
+"Auto-generated reference for each cron run (e.g. AR/2026/000123). Used as "
+"the human label in lists and history reports."
+msgstr ""
+"Referință generată automat pentru fiecare rulare a cron-ului (de ex. "
+"AR/2026/000123). Utilizată ca etichetă lizibilă în liste și rapoarte de "
+"istoric."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__auto_refill_id
+msgid ""
+"Auto-refill cron run that produced this credit. Empty for manual top-ups and"
+" for sales/reversals."
+msgstr ""
+"Rularea cron-ului de reaprovizionare automată care a generat acest credit. "
+"Goală pentru alimentările manuale și pentru vânzări/stornări."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_auto_refill
@@ -353,6 +415,11 @@ msgid "Balance result"
 msgstr "Резултат от баланса"
 
 #. module: hr_rfid_vending
+#: model:product.template,name:hr_rfid_vending.product_vending_water
+msgid "Bottled Water"
+msgstr "Apă îmbuteliată"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
@@ -417,6 +484,11 @@ msgid "Change vending balance"
 msgstr "Modifică sold vending"
 
 #. module: hr_rfid_vending
+#: model:product.template,name:hr_rfid_vending.product_vending_chocolate
+msgid "Chocolate Bar"
+msgstr "Baton de ciocolată"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
 msgid "Close"
 msgstr "Închide"
@@ -468,6 +540,15 @@ msgid "Company Currency"
 msgstr "Monedă"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__company_id
+msgid ""
+"Company in whose scope this refill run executed. Auto-refill is scheduled "
+"per company."
+msgstr ""
+"Compania în sfera căreia s-a executat această rulare de reaprovizionare. "
+"Reaprovizionarea automată este programată per companie."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_balance
 msgid ""
 "Company-provided balance for vending machine purchases.\n"
@@ -516,6 +597,12 @@ msgid "Controller ID"
 msgstr "ID controler"
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid "Could not find the card"
+msgstr "Cardul nu a putut fi găsit"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__create_uid
@@ -550,6 +637,16 @@ msgstr "Limită credit"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__currency_id
 msgid "Currency"
 msgstr "Monedă"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_log__currency_id
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_cash_wiz__currency_id
+msgid ""
+"Currency used to record the collected amount — taken from the company "
+"default and shown for context only."
+msgstr ""
+"Moneda folosită pentru înregistrarea sumei încasate — preluată din setarea "
+"implicită a companiei și afișată doar cu titlu informativ."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_employee__daily_limit_type__day
@@ -609,8 +706,28 @@ msgstr "Informații depanare"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__department_id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__department_id
 msgid "Department"
 msgstr "Departament"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__department_id
+msgid ""
+"Department of the employee at the time of the change. Stored so reports "
+"filter correctly even after the employee moves."
+msgstr ""
+"Departamentul angajatului la momentul modificării. Se stochează pentru ca "
+"rapoartele să filtreze corect chiar și după mutarea angajatului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__department_id
+msgid ""
+"Department of the employee at the time this event was recorded. Stored copy "
+"lets us filter and group events by department directly."
+msgstr ""
+"Departamentul angajatului la momentul înregistrării acestui eveniment. Copia"
+" stocată permite filtrarea și gruparea evenimentelor direct după "
+"departament."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_form
@@ -639,6 +756,18 @@ msgstr "Rezumat"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__display_name
 msgid "Display Name"
 msgstr "Nume afișat"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__scale_factor
+msgid ""
+"Divisor used to encode product prices in the controller (price in stotinki ÷"
+" scale_factor must fit a single byte 0-255). Increase it if any item exceeds"
+" 2.55 currency units at the default factor."
+msgstr ""
+"Divizor folosit pentru codificarea prețurilor produselor în controler "
+"(prețul în stotinki ÷ scale_factor trebuie să încapă într-un singur octet "
+"0-255). Măriți-l dacă vreun articol depășește 2,55 unități monetare la "
+"factorul implicit."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -693,6 +822,16 @@ msgid "Employee balance setter"
 msgstr "Setare sold angajat"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__employee_id
+msgid ""
+"Employee whose vending balance changed. Cascades on delete — when the "
+"employee record is removed, their balance history is removed with them."
+msgstr ""
+"Angajatul al cărui sold vending s-a modificat. Se propagă la ștergere — când"
+" înregistrarea angajatului este eliminată, istoricul soldului acestuia este "
+"eliminat odată cu ea."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__employee_ids
 msgid "Employees"
 msgstr "Angajați"
@@ -707,6 +846,11 @@ msgstr "Activează reaprovizionarea automată"
 #: model:ir.model.fields.selection,name:hr_rfid_vending.selection__hr_rfid_vending_event__event_action__49
 msgid "Error"
 msgstr "Eroare"
+
+#. module: hr_rfid_vending
+#: model:product.template,name:hr_rfid_vending.product_vending_espresso
+msgid "Espresso Coffee"
+msgstr "Cafea espresso"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
@@ -843,6 +987,17 @@ msgid "Human-readable description of the event action for display purposes."
 msgstr "Descriere lizibilă a acțiunii evenimentului, destinată afișării."
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__name
+msgid ""
+"Human-readable label — the operator who made the change for manual "
+"adjustments, the product name for vending sales, or 'Reversal: …' for "
+"reversed sales."
+msgstr ""
+"Etichetă lizibilă — operatorul care a făcut modificarea în cazul ajustărilor"
+" manuale, numele produsului pentru vânzările de vending sau „Stornare: …” "
+"pentru vânzările stornate."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_digest_digest__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee_vending_balance_wiz__id
@@ -867,9 +1022,45 @@ msgstr "Dacă este bifat, mesajele noi necesită atenția dvs."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_error
-#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Dacă este bifat, unele mesaje au o eroare de livrare."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count
+msgid ""
+"Include the count of individual purchases made through the vending "
+"controllers in the digest email."
+msgstr ""
+"Includeți în emailul rezumat numărul achizițiilor individuale efectuate prin"
+" controlerele de vending."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill
+msgid ""
+"Include the total amount auto-refilled to employee balances in the digest "
+"email."
+msgstr ""
+"Includeți în emailul rezumat suma totală reaprovizionată automat în "
+"soldurile angajaților."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale
+msgid ""
+"Include the total amount of vending purchases (positive sum of debits) in "
+"the digest email."
+msgstr ""
+"Includeți în emailul rezumat suma totală a achizițiilor de vending (suma "
+"pozitivă a debitelor)."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__balance_history_ids
+msgid ""
+"Individual employee balance-history entries created by this run. Use them to"
+" see exactly which employees were topped up and by how much."
+msgstr ""
+"Intrările individuale din istoricul soldului angajaților create de această "
+"rulare. Folosiți-le pentru a vedea exact ce angajați au fost alimentați și "
+"cu cât."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__refill_interval_type
@@ -880,6 +1071,18 @@ msgstr "Unitate interval"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_is_follower
 msgid "Is Follower"
 msgstr "Este urmăritor"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
+msgid "Is a Vending Machine"
+msgstr "Este automat de vending"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Item %(item)d did not come out, and the credit was returned to the card."
+msgstr "Articolul %(item)d nu a ieșit, iar creditul a fost returnat pe card."
 
 #. module: hr_rfid_vending
 #. odoo-python
@@ -979,6 +1182,31 @@ msgid "Last Updated on"
 msgstr "Последно актуализирано на"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_count_value
+msgid "Live count of individual vending purchases during the digest window."
+msgstr ""
+"Numărul în timp real al achizițiilor individuale de vending în perioada "
+"rezumatului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_refill_value
+msgid ""
+"Live total of auto-refill credits added to employee balances during the "
+"digest window."
+msgstr ""
+"Totalul în timp real al creditelor de reaprovizionare automată adăugate în "
+"soldurile angajaților în perioada rezumatului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_digest_digest__kpi_hr_rfid_vending_sale_value
+msgid ""
+"Live total spent by employees through the vending controllers during the "
+"digest window."
+msgstr ""
+"Totalul în timp real cheltuit de angajați prin controlerele de vending în "
+"perioada rezumatului."
+
+#. module: hr_rfid_vending
 #. odoo-python
 #: code:addons/hr_rfid_vending/models/ctrl_cash_collect_wizard.py:0
 msgid "Manual cash collect amount: %f %s"
@@ -989,6 +1217,19 @@ msgstr "Sumă colectare manuală numerar: %f %s"
 #: code:addons/hr_rfid_vending/models/hr_employee_wizards.py:0
 msgid "Manual updated employee personal balance from %d to %d"
 msgstr "Ръчно актуализиран личен баланс на служителя от %d на %d"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
+msgid ""
+"Map products to the controller's 4-per-row slot grid and tune two firmware "
+"parameters: how long the price stays on the LCD, and the scale factor used "
+"to encode prices into a single byte. Save writes the new I/O table to the "
+"controller."
+msgstr ""
+"Asociați produsele cu grila de sloturi a controlerului (4 pe rând) și "
+"ajustați doi parametri de firmware: cât timp rămâne prețul pe LCD și "
+"factorul de scară folosit pentru codificarea prețurilor într-un singur "
+"octet. Salvează scrie noua tabelă I/O în controler."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee__hr_rfid_vending_daily_limit
@@ -1129,6 +1370,11 @@ msgid "No balance changes found"
 msgstr "Не са намерени промени в баланса"
 
 #. module: hr_rfid_vending
+#: model_terms:ir.actions.act_window,help:hr_rfid_vending.ctrl_cash_collect_log_action
+msgid "No cash collections recorded yet"
+msgstr "Nu a fost înregistrată încă nicio colectare de numerar"
+
+#. module: hr_rfid_vending
 #: model_terms:ir.actions.act_window,help:hr_rfid_vending.hr_rfid_vending_event_action
 msgid "No vending machine events recorded yet"
 msgstr "Все още няма регистрирани събития от вендинг машина"
@@ -1159,6 +1405,43 @@ msgid "Number of messages with delivery error"
 msgstr "Брой съобщения с грешка при доставка"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
+msgid ""
+"Number the buyer presses on the machine keypad for the first slot of this "
+"row, computed from row_num (e.g. 'Item #1:' on row 1, 'Item #5:' on row 2)."
+msgstr ""
+"Numărul pe care cumpărătorul îl apasă pe tastatura automatului pentru primul"
+" slot al acestui rând, calculat din row_num (de ex. „Item #1:” pe rândul 1, "
+"„Item #5:” pe rândul 2)."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number4
+msgid ""
+"Number the buyer presses on the machine keypad for the fourth slot of this "
+"row."
+msgstr ""
+"Numărul pe care cumpărătorul îl apasă pe tastatura automatului pentru al "
+"patrulea slot al acestui rând."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number2
+msgid ""
+"Number the buyer presses on the machine keypad for the second slot of this "
+"row."
+msgstr ""
+"Numărul pe care cumpărătorul îl apasă pe tastatura automatului pentru al "
+"doilea slot al acestui rând."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number3
+msgid ""
+"Number the buyer presses on the machine keypad for the third slot of this "
+"row."
+msgstr ""
+"Numărul pe care cumpărătorul îl apasă pe tastatura automatului pentru al "
+"treilea slot al acestui rând."
+
+#. module: hr_rfid_vending
 #. odoo-python
 #: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
 msgid "Only purchase events can be reversed."
@@ -1184,6 +1467,17 @@ msgstr ""
 "• Tehnic: Primarily for system administrators and developers\n"
 "        \n"
 "Contains technical details about the hardware communication."
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_set_form
+msgid ""
+"Overwrite the employee's vending balance with the exact value below. Useful "
+"after a manual reconciliation; for incremental changes use the Add/Subtract "
+"wizard instead."
+msgstr ""
+"Suprascrie soldul vending al angajatului cu valoarea exactă de mai jos. Util"
+" după o reconciliere manuală; pentru modificări incrementale folosiți în "
+"schimb expertul Adaugă/Scade."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -1222,6 +1516,18 @@ msgstr ""
 "Acesta reprezintă banii personali ai angajatului disponibili pentru achizițiile de la automatul de vending."
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
+msgid ""
+"Personal vending balance and refill rules. The current balance is the value "
+"the controller charges against on each purchase; the auto-refill settings "
+"drive how often the company cron tops it up."
+msgstr ""
+"Sold vending personal și reguli de reaprovizionare. Soldul curent este "
+"valoarea din care controlerul debitează la fiecare achiziție; setările de "
+"reaprovizionare automată determină cât de des îl alimentează cron-ul "
+"companiei."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
 msgid ""
 "Physical slot/position number in the vending machine where the item was located.\n"
@@ -1241,6 +1547,11 @@ msgstr ""
 "• Reaprovizionare: Util pentru gestionarea stocurilor și planificarea reaprovizionării\n"
 "        \n"
 "Acesta este identificatorul intern al slotului aparatului, nu ID-ul produsului."
+
+#. module: hr_rfid_vending
+#: model:product.template,name:hr_rfid_vending.product_vending_crisps
+msgid "Potato Crisps"
+msgstr "Chipsuri de cartofi"
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__show_price_timeout
@@ -1279,6 +1590,11 @@ msgid "Prices"
 msgstr "Prețuri"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl__has_vending_price_table
+msgid "Prices Set in Odoo"
+msgstr "Prețuri setate în Odoo"
+
+#. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_product_template
 msgid "Product"
 msgstr "Produs"
@@ -1297,6 +1613,50 @@ msgstr "Listă de prețuri produse"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
 msgid "Product Purchased"
 msgstr "Produs achiziționat"
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"Product error: the item number is out of range or the machine reported a "
+"product error."
+msgstr ""
+"Eroare de produs: numărul articolului este în afara intervalului sau "
+"automatul a raportat o eroare de produs."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item1
+msgid ""
+"Product mapped to the first slot of this row. Determines the name shown on "
+"the controller's price screen."
+msgstr ""
+"Produsul asociat primului slot al acestui rând. Determină numele afișat pe "
+"ecranul de prețuri al controlerului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item4
+msgid "Product mapped to the fourth slot of this row."
+msgstr "Produsul asociat celui de-al patrulea slot al acestui rând."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item2
+msgid "Product mapped to the second slot of this row."
+msgstr "Produsul asociat celui de-al doilea slot al acestui rând."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item3
+msgid "Product mapped to the third slot of this row."
+msgstr "Produsul asociat celui de-al treilea slot al acestui rând."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__item_id
+msgid ""
+"Product matching the item sold by the vending controller for this entry — "
+"copied from the linked vending event so it survives event archiving."
+msgstr ""
+"Produsul corespunzător articolului vândut de controlerul de vending pentru "
+"această intrare — copiat din evenimentul de vending asociat, astfel încât să"
+" se păstreze după arhivarea evenimentului."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__item_sold_id
@@ -1372,6 +1732,18 @@ msgstr ""
 " în Setări > RFID > Coduri de lucru pentru a vedea etichete descriptive."
 
 #. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending
+msgid ""
+"Read-only firmware counters reported by the vending controller. The scale "
+"factor maps card-balance units to physical currency; cash contained is the "
+"running tally the controller has yet to deposit."
+msgstr ""
+"Contoare de firmware numai în citire, raportate de controlerul de vending. "
+"Factorul de scară asociază unitățile soldului cardului cu moneda fizică; "
+"numerarul conținut este totalul curent pe care controlerul nu l-a depus "
+"încă."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
 msgid "Reader"
 msgstr "Cititor"
@@ -1390,6 +1762,19 @@ msgstr "Причина за отмяната..."
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_form
 msgid "Receive Date"
 msgstr "Data primirii"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.ctrl_cash_collect_wizard_view_form
+msgid ""
+"Record the cash you have physically removed from the selected vending "
+"controllers. The amount is logged for audit and the controller's cash "
+"counter is reduced accordingly. The amount cannot exceed what each "
+"controller currently reports."
+msgstr ""
+"Înregistrați numerarul pe care l-ați scos fizic din controlerele de vending "
+"selectate. Suma este înregistrată pentru audit, iar contorul de numerar al "
+"controlerului este redus în consecință. Suma nu poate depăși valoarea "
+"raportată în prezent de fiecare controler."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_refill_amount
@@ -1483,9 +1868,14 @@ msgid "Row Num"
 msgstr "Nr. rând"
 
 #. module: hr_rfid_vending
-#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Eroare livrare SMS"
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__row_num
+msgid ""
+"Row index inside the vending machine grid (1-based). Each row holds 4 item "
+"slots; the global item number is (row_num - 1) * 4 + slot."
+msgstr ""
+"Indexul rândului în grila automatului de vending (începând de la 1). Fiecare"
+" rând conține 4 sloturi de articole; numărul global al articolului este "
+"(row_num - 1) * 4 + slot."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_event_graph
@@ -1511,6 +1901,27 @@ msgstr "Salvează"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__scale_factor
 msgid "Scale Factor"
 msgstr "Factor de scară"
+
+#. module: hr_rfid_vending
+#: model_terms:ir.ui.view,arch_db:hr_rfid_vending.view_company_form_inherit_vending
+msgid ""
+"Schedule for the auto-refill cron at the company level. The interval below "
+"controls how often employee balances are recharged; the next call timestamp "
+"shows when the scheduler will fire next."
+msgstr ""
+"Programarea cron-ului de reaprovizionare automată la nivel de companie. "
+"Intervalul de mai jos controlează cât de des sunt realimentate soldurile "
+"angajaților; data următoarei rulări arată când va porni următoarea execuție "
+"a planificatorului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
+msgid ""
+"Seconds the vending controller keeps the product price on its screen after "
+"the user picks the item. Range 0-255."
+msgstr ""
+"Numărul de secunde în care controlerul de vending păstrează prețul "
+"produsului pe ecran după ce utilizatorul alege articolul. Interval 0-255."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_employee_vending_balance_wiz__employee_ids
@@ -1579,6 +1990,24 @@ msgid "Set vending balance"
 msgstr "Setează sold vending"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__is_vending
+msgid ""
+"Set when the controller runs a vending firmware: it works with card balances"
+" and vending counters instead of doors."
+msgstr ""
+"Se bifează când controlerul rulează un firmware de vending: lucrează cu "
+"solduri de card și contoare de vending în loc de uși."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl__has_vending_price_table
+msgid ""
+"Set when the machine sells at the prices entered in Odoo. Machines that keep"
+" their own prices (MDB) do not show the Prices button."
+msgstr ""
+"Se bifează când automatul vinde la prețurile introduse în Odoo. Automatele "
+"care își păstrează propriile prețuri (MDB) nu afișează butonul Prețuri."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__show_price_timeout
 msgid "Show Price Timeout"
 msgstr "Timeout afișare preț"
@@ -1589,6 +2018,26 @@ msgid "Show employee history balance"
 msgstr "Afișează istoricul soldului angajatului"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number1
+msgid "Slot 1 Number"
+msgstr "Număr slot 1"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number2
+msgid "Slot 2 Number"
+msgstr "Număr slot 2"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number3
+msgid "Slot 3 Number"
+msgstr "Număr slot 3"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__item_number4
+msgid "Slot 4 Number"
+msgstr "Număr slot 4"
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_employee__hr_rfid_vending_spent_today
 msgid "Spent Today"
 msgstr "Cheltuit astăzi"
@@ -1597,6 +2046,15 @@ msgstr "Cheltuit astăzi"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_employee_vending_balance_change_form
 msgid "Subtract"
 msgstr "Scade"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
+msgid ""
+"Sum of all balance top-ups credited during this run. A useful sanity check "
+"against the company's vending budget."
+msgstr ""
+"Suma tuturor alimentărilor de sold creditate în timpul acestei rulări. Util "
+"ca verificare față de bugetul de vending al companiei."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__command_id
@@ -1623,6 +2081,27 @@ msgstr ""
 "• Tehnic: Utilizat în principal pentru administrarea sistemului și depanare\n"
 "\n"
 "Relevant în principal pentru utilizatorii tehnici și depanarea sistemului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__vending_row_ids
+msgid ""
+"The 4-slot rows of the vending machine grid. Editing the products here "
+"writes a new I/O table to the controller on Save."
+msgstr ""
+"Rândurile de 4 sloturi ale grilei automatului de vending. Editarea "
+"produselor de aici scrie o nouă tabelă I/O în controler la Salvare."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine is talking again."
+msgstr "Magistrala MDB a automatului de vending comunică din nou."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The MDB bus of the vending machine went silent."
+msgstr "Magistrala MDB a automatului de vending a rămas fără semnal."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__reader_id
@@ -1661,6 +2140,28 @@ msgstr ""
 "pentru operațiunile de armare/dezarmare a zonelor de securitate."
 
 #. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"The card is archived or belongs to no employee, so it gets no vending "
+"credit."
+msgstr ""
+"Cardul este arhivat sau nu aparține niciunui angajat, deci nu primește "
+"credit de vending."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The connection to the vending machine is back."
+msgstr "Conexiunea cu automatul de vending a fost restabilită."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The credit was returned to the card: nothing was chosen in time."
+msgstr "Creditul a fost returnat pe card: nu s-a ales nimic la timp."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event__employee_id
 msgid ""
 "The employee who triggered this access event. Automatically populated from "
@@ -1692,9 +2193,109 @@ msgstr "Valoarea %s este invalidă. Trebuie să fie între 0 și 255"
 
 #. module: hr_rfid_vending
 #. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller is connected to the server again."
+msgstr "Controlerul de vending este din nou conectat la server."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending controller lost its connection to the server."
+msgstr "Controlerul de vending a pierdut conexiunea cu serverul."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine did not answer after a status request."
+msgstr "Automatul de vending nu a răspuns după o cerere de stare."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine did not close a session the controller asked to close; "
+"it was closed after 30 seconds. Check the vending machine's software."
+msgstr ""
+"Automatul de vending nu a închis o sesiune pe care controlerul a cerut-o "
+"închisă; sesiunea a fost închisă după 30 de secunde. Verificați software-ul "
+"automatului de vending."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine does not answer."
+msgstr "Automatul de vending nu răspunde."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported error %(code)d (data %(data)s)."
+msgstr "Automatul de vending a raportat eroarea %(code)d (date %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid "The vending machine reported event %(event)d (data %(data)s)."
+msgstr ""
+"Automatul de vending a raportat evenimentul %(event)d (date %(data)s)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command that is not implemented or comes out of "
+"order."
+msgstr ""
+"Automatul de vending a trimis o comandă care nu este implementată sau care "
+"apare în afara ordinii."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine sent a command the controller does not know (the "
+"machine's reply: %(reply)d)."
+msgstr ""
+"Automatul de vending a trimis o comandă pe care controlerul nu o cunoaște "
+"(răspunsul automatului: %(reply)d)."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_ctrl.py:0
+msgid ""
+"The vending machine's link layer does not answer: a block was sent three "
+"times without confirmation. Check the wiring and the transceiver."
+msgstr ""
+"Stratul de legătură al automatului de vending nu răspunde: un bloc a fost "
+"trimis de trei ori fără confirmare. Verificați cablajul și transceiverul."
+
+#. module: hr_rfid_vending
+#. odoo-python
 #: code:addons/hr_rfid_vending/wizards/vending_event_reverse.py:0
 msgid "This event has already been reversed."
 msgstr "Това събитие вече е отменено."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"This vending machine keeps its own prices, and Odoo cannot record its sales "
+"yet, so it gets no credit for cards."
+msgstr ""
+"Acest automat de vending își păstrează propriile prețuri, iar Odoo nu poate "
+"înregistra încă vânzările sale, deci nu primește credit pentru carduri."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/controllers/main.py:0
+msgid ""
+"This vending machine reported a transaction (card %(card)s, item %(item)s, "
+"data %(data)s) that Odoo does not record, because the machine keeps its own "
+"prices. Check it on the machine."
+msgstr ""
+"Acest automat de vending a raportat o tranzacție (card %(card)s, articol "
+"%(item)s, date %(data)s) pe care Odoo nu o înregistrează, deoarece automatul"
+" își păstrează propriile prețuri. Verificați-o pe automat."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.actions.act_window,help:hr_rfid_vending.hr_rfid_vending_event_action
@@ -1771,9 +2372,29 @@ msgid "Time Odoo received the event"
 msgstr "Ora la care Odoo a primit evenimentul"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_res_company__refill_interval_type
+msgid ""
+"Time unit for the auto-refill repeat interval. Combined with Repeat every "
+"(above): 'every 1 months' tops up balances on the same day each month."
+msgstr ""
+"Unitatea de timp pentru intervalul de repetare al reaprovizionării automate."
+" Combinată cu Repetă la fiecare (mai sus): „la fiecare 1 luni” alimentează "
+"soldurile în aceeași zi a fiecărei luni."
+
+#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__event_time
 msgid "Timestamp"
 msgstr "Marcaj temporal"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_auto_refill__create_date
+msgid ""
+"Timestamp the cron run created the record. Use this to correlate refill "
+"totals with the cron's nextcall schedule."
+msgstr ""
+"Data și ora la care rularea cron-ului a creat înregistrarea. Folosiți-o "
+"pentru a corela totalurile de reaprovizionare cu programarea nextcall a "
+"cron-ului."
 
 #. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_auto_refill__auto_refill_total
@@ -1851,6 +2472,16 @@ msgid "User rights for the Vending module"
 msgstr "Drepturi utilizator pentru modulul Vending"
 
 #. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__person_responsible
+msgid ""
+"User who triggered the balance change. For vending sales this is the system "
+"user; for manual top-ups it is the operator who used the wizard."
+msgstr ""
+"Utilizatorul care a declanșat modificarea soldului. Pentru vânzările de "
+"vending este utilizatorul de sistem; pentru alimentările manuale este "
+"operatorul care a folosit expertul."
+
+#. module: hr_rfid_vending
 #: model:ir.ui.menu,name:hr_rfid_vending.hr_rfid_vending_menu
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.view_company_form_inherit_vending
@@ -1904,6 +2535,11 @@ msgid "Vending Machine"
 msgstr "Automat de vending"
 
 #. module: hr_rfid_vending
+#: model:product.pricelist,name:hr_rfid_vending.demo_vending_pricelist
+msgid "Vending Machine Pricelist"
+msgstr "Listă de prețuri a automatului de vending"
+
+#. module: hr_rfid_vending
 #: model:ir.model,name:hr_rfid_vending.model_hr_rfid_ctrl_vending_row
 msgid "Vending Machine Row"
 msgstr "Rând automat de vending"
@@ -1927,6 +2563,43 @@ msgstr "Operator vending"
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_vending_prices_wiz
 msgid "Vending Settings"
 msgstr "Setări vending"
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_settings__controller_id
+msgid ""
+"Vending controller being configured. Set automatically from the active "
+"record when the wizard is opened."
+msgstr ""
+"Controlerul de vending care este configurat. Se setează automat din "
+"înregistrarea activă la deschiderea expertului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_balance_history__vending_event_id
+msgid ""
+"Vending controller event that triggered the balance change (a sale or a sale"
+" reversal). Empty for manual operator adjustments."
+msgstr ""
+"Evenimentul controlerului de vending care a declanșat modificarea soldului "
+"(o vânzare sau o stornare a unei vânzări). Gol pentru ajustările manuale ale"
+" operatorului."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_ctrl_vending_row__controller_id
+msgid ""
+"Vending controller this row belongs to. Cascade on delete — rows do not "
+"survive their controller."
+msgstr ""
+"Controlerul de vending căruia îi aparține acest rând. Se propagă la ștergere"
+" — rândurile nu supraviețuiesc controlerului lor."
+
+#. module: hr_rfid_vending
+#: model:ir.model.fields,help:hr_rfid_vending.field_hr_rfid_vending_event_reverse__event_id
+msgid ""
+"Vending event being reversed. Set automatically from the active record when "
+"the wizard is opened."
+msgstr ""
+"Evenimentul de vending care este stornat. Se setează automat din "
+"înregistrarea activă la deschiderea expertului."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_ctrl_view_form_inherit_hr_rfid_vending

@@ -279,9 +279,8 @@ class HrRfidVending(WebRfidController):
                 return ret_local_no_command(controller, ev)
             # TODO Move into function "deal_with_err_evs"
             elif event['event_n'] in [48, 49]:
-                _logger.info('Vending ev%d error from %s', event['event_n'], controller.name)
-                vending_sys_ev(controller, request.env._(
-                    'The vending machine reported an error (data %(data)s).', data=event['dt']))
+                _logger.info('Vending ev%d from %s: %s', event['event_n'], controller.name, event['dt'])
+                vending_sys_ev(controller, controller._vending_problem_text(event['event_n'], event['dt']))
                 return ret_local_no_command(controller)
             elif event['event_n'] == 50:
                 card = card_env.with_context(active_test=False).search(
