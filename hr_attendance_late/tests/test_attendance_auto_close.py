@@ -147,9 +147,24 @@ class TestAttendanceAutoClose(TestAttendanceLateCommon):
             "Within the zone maximum the day is measured up to the "
             "calculation moment, never settled with auto-close hours")
 
+    def _a_working_day_not_over_yet(self):
+        """Next week's Monday: a scheduled working day nobody can have missed yet.
+
+        Relative to today, not a fixed date: once a fixed day has passed, a day
+        without a badge on it is an absence and gets its row by design
+        (update_extra_attendance_data, "Only a day that is over for the person
+        can be missed"), and the test would start failing on its own.
+        """
+        today = fields.Date.context_today(self.employee)
+        return today + timedelta(days=7 - today.weekday())
+
     def test_no_extra_record_without_attendance(self):
-        """Test that no hr.attendance.extra is created without real attendance"""
-        test_date = fields.Date.from_string('2026-11-09')  # Monday
+        """No daily row for a working day that is not over and has no badge.
+
+        Absences are counted only for days that are over; before that a day
+        without attendance has nothing to measure.
+        """
+        test_date = self._a_working_day_not_over_yet()
 
         # Do NOT create any attendance record
 
@@ -166,8 +181,8 @@ class TestAttendanceAutoClose(TestAttendanceLateCommon):
                          "No attendance.extra should be created without real attendance data")
 
     def test_no_extra_record_recreated_after_deletion(self):
-        """Test that deleted invalid records are not recreated"""
-        test_date = fields.Date.from_string('2026-11-09')  # Monday
+        """Calculating the same day again does not invent a row either."""
+        test_date = self._a_working_day_not_over_yet()
 
         # Do NOT create any attendance
 
