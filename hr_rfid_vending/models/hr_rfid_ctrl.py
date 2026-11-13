@@ -100,10 +100,9 @@ Leave empty to use default product prices."""
         not come out. 48 is the machine's own error code.
         """
         self.ensure_one()
-        _ = self.env._
         if len(data or "") < 8:
             # Too short to carry the vending part: say what came, not a guess.
-            return _(
+            return self.env._(
                 "The vending machine reported event %(event)d (data %(data)s).",
                 event=event_n,
                 data=data,
@@ -111,49 +110,57 @@ Leave empty to use default product prices."""
         product = int(data[4:6], 16)
         if event_n == 49:
             if product == 0:
-                return _(
+                return self.env._(
                     "The credit was returned to the card: nothing was chosen in time."
                 )
-            return _(
+            return self.env._(
                 "Item %(item)d did not come out, and the credit was returned to the card.",
                 item=product,
             )
         code = int(data[6:8], 16)
         if self.hw_version == "21":
             meanings = {
-                0: _("The MDB bus of the vending machine went silent."),
-                1: _("The MDB bus of the vending machine is talking again."),
-                2: _(
+                0: self.env._("The MDB bus of the vending machine went silent."),
+                1: self.env._("The MDB bus of the vending machine is talking again."),
+                2: self.env._(
                     "The vending machine's link layer does not answer: a block was sent three "
                     "times without confirmation. Check the wiring and the transceiver."
                 ),
-                3: _(
+                3: self.env._(
                     "The vending machine did not close a session the controller asked to close; "
                     "it was closed after 30 seconds. Check the vending machine's software."
                 ),
-                4: _(
+                4: self.env._(
                     "The vending machine sent a command that is not implemented or comes out of order."
                 ),
-                6: _("The vending controller lost its connection to the server."),
-                7: _("The vending controller is connected to the server again."),
+                6: self.env._(
+                    "The vending controller lost its connection to the server."
+                ),
+                7: self.env._(
+                    "The vending controller is connected to the server again."
+                ),
             }
         else:
             meanings = {
-                0: _("The vending machine does not answer."),
-                2: _("The vending machine did not answer after a status request."),
+                0: self.env._("The vending machine does not answer."),
+                2: self.env._(
+                    "The vending machine did not answer after a status request."
+                ),
                 # The firmware keeps the machine's own answer in the PIN
                 # bytes and does not send it: the product byte is 0 here.
-                4: _(
+                4: self.env._(
                     "The vending machine sent a command the controller does not know."
                 ),
-                5: _(
+                5: self.env._(
                     "Product error: the item number is out of range or the machine reported a "
                     "product error."
                 ),
             }
             if self.hw_version == "16":
-                meanings[1] = _("The connection to the vending machine is back.")
-        return meanings.get(code) or _(
+                meanings[1] = self.env._(
+                    "The connection to the vending machine is back."
+                )
+        return meanings.get(code) or self.env._(
             "The vending machine reported error %(code)d (data %(data)s).",
             code=code,
             data=data,
