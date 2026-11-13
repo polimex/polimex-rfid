@@ -11730,6 +11730,16 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid ""
+"The number \"%(entered)s\" is longer than the %(limit)d characters a card "
+"number holds. Nothing was saved."
+msgstr ""
+"Номерът „%(entered)s“ е по-дълъг от %(limit)d знака, колкото побира номер на"
+" карта. Нищо не е записано."
+
+#. module: hr_rfid
+#. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "The number is not in range"
 msgstr "Числото е извън допустимия диапазон"

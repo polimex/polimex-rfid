@@ -822,6 +822,14 @@ Python class `HrRfidCardType` in `models/hr_rfid_card.py:466`.  Model.  Inherits
 #### Notable methods
 
 - **`check_and_fix_card_numer(self, number)`** - decorators: -
+- **`hr.rfid.card._number_as_kept(self, number, card_type)`** - decorators: `@api.model`
+  - The number in the form the card stores it, or a refusal, applied in
+    `create` and `write` BEFORE the ORM takes the value. The `number` field
+    has `size=10` and the ORM cuts a longer value to fit (Char.convert_to_cache),
+    so no constraint ever saw a number that was too long: the card was saved
+    under its first 10 characters. Calls the card type's
+    `check_and_fix_card_numer` (leading zeros; a number plate without its
+    separators) and raises when the result is longer than the field.
   - effects: `raise:UserError`
 - **`unlink(self)`** - decorators: -
   - super-split (super `unlink`): pre=`raise:ValidationError` · post=-

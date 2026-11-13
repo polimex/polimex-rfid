@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-13 14:18\n"
+"PO-Revision-Date: 2026-11-13 16:30\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -11801,6 +11801,16 @@ msgid ""
 msgstr ""
 "Das Netzwerkmodul (Webstack), das den Controller dieses Lesers mit dem "
 "System verbindet. Wird automatisch vom Controller bestimmt."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid ""
+"The number \"%(entered)s\" is longer than the %(limit)d characters a card "
+"number holds. Nothing was saved."
+msgstr ""
+"Die Nummer „%(entered)s“ ist länger als die %(limit)d Zeichen, die eine "
+"Kartennummer aufnehmen kann. Es wurde nichts gespeichert."
 
 #. module: hr_rfid
 #. odoo-python

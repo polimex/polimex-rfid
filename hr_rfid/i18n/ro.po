@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-13 14:20\n"
+"PO-Revision-Date: 2026-11-13 16:31\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -11750,6 +11750,16 @@ msgid ""
 msgstr ""
 "Modulul de rețea (webstack) care conectează controlerul acestui cititor la "
 "sistem. Acesta este determinat automat de controler."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid ""
+"The number \"%(entered)s\" is longer than the %(limit)d characters a card "
+"number holds. Nothing was saved."
+msgstr ""
+"Numărul \"%(entered)s\" este mai lung decât cele %(limit)d caractere pe care"
+" le poate conține un număr card. Nu s-a salvat nimic."
 
 #. module: hr_rfid
 #. odoo-python

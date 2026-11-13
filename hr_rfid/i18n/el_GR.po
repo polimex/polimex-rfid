@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-13 14:18\n"
+"PO-Revision-Date: 2026-11-13 16:29\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el_GR\n"
@@ -1275,6 +1275,31 @@ msgid "Action"
 msgstr "Ενέργεια"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_needaction
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_needaction
+msgid "Action Needed"
+msgstr "Απαιτείται ενέργεια"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__action_string
+msgid "Action String"
+msgstr "Συμβολοσειρά ενέργειας"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Activate emergency mode"
 msgstr "Ενεργοποίηση λειτουργίας έκτακτης ανάγκης"
@@ -1319,6 +1344,26 @@ msgstr "Ενεργό"
 #: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_card
 msgid "Active cards"
 msgstr "Ενεργές κάρτες"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_ids
+msgid "Activities"
+msgstr "Δραστηριότητες"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Δραστηριότητα Εξαίρεσης Διακόσμησης"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_state
+msgid "Activity State"
+msgstr "Κατάσταση Δραστηριότητας"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Εικονίδιο Τύπου Δραστηριότητας"
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.hr_rfid_add_card_action
@@ -1556,6 +1601,11 @@ msgstr "Γραμμές Συναγερμού"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__alarm_lines_count
 msgid "Alarm Lines Count"
 msgstr "Πλήθος Γραμμών Συναγερμού"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__alarm_lines_setup
+msgid "Alarm Lines Setup"
+msgstr "Ρύθμιση γραμμών συναγερμού"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__alarm_rights
@@ -1944,6 +1994,26 @@ msgstr ""
 "παρακολούθηση χρόνου και διαχείριση παρουσίας."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_attachment_count
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_attachment_count
+msgid "Attachment Count"
+msgstr "Αριθμός Συνημμένων"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__name
 msgid ""
 "Auto-generated event description combining person name, action, and location"
@@ -2024,6 +2094,11 @@ msgid "Balloon Messages Mixin"
 msgstr "Mixin Μηνυμάτων Balloon"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__barcode_number
+msgid "Barcode Number"
+msgstr "Αριθμός γραμμωτού κώδικα"
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid ""
@@ -2048,6 +2123,12 @@ msgstr "Η αρχή δεν βρίσκεται εντός εύρους"
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__behind_nat
 msgid "Behind NAT"
+msgstr "Πίσω από NAT"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__behind_nat
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__behind_nat
+msgid "Behind Nat"
 msgstr "Πίσω από NAT"
 
 #. module: hr_rfid
@@ -2098,6 +2179,11 @@ msgstr ""
 "Δυαδική αναπαράσταση των κουμπιών υπηρεσίας που είναι αυτήν τη στιγμή "
 "πατημένα στους αναγνώστες ξενοδοχείου. Κάθε bit αντιπροσωπεύει την κατάσταση"
 " ενός κουμπιού. Χρησιμοποιείται συνήθως για αιτήματα υπηρεσίας επισκεπτών."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__bos
+msgid "Bos"
+msgstr "Bos"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__23
@@ -2244,6 +2330,12 @@ msgstr "Χορήγηση Κάρτας (χωρίς είσοδο)"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__user_event__7
 msgid "Card Granted Insert"
 msgstr "Χορήγηση Κάρτας - Εισαγωγή"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__card_input_type
+#: model:ir.model.fields,field_description:hr_rfid.field_res_company__card_input_type
+msgid "Card Input Type"
+msgstr "Τύπος εισόδου κάρτας"
 
 #. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_card_management
@@ -2442,6 +2534,11 @@ msgstr "Σχέσεις Κάρτας/Πόρτας"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
 msgid "Cards"
 msgstr "Κάρτες"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__cards_count
+msgid "Cards Count"
+msgstr "Πλήθος καρτών"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__7
@@ -2928,6 +3025,11 @@ msgstr ""
 "κανάλι ειδοποίησης (π.χ. 'Door Forced Open (Email)')."
 
 #. module: hr_rfid
+#: model:ir.model,name:hr_rfid.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ρυθμίσεις διαμόρφωσης"
+
+#. module: hr_rfid
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_settings_menu
 msgid "Configuration"
 msgstr "Διαμόρφωση"
@@ -3025,6 +3127,11 @@ msgid "Contact"
 msgstr "Επαφή"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__contact_count
+msgid "Contact Count"
+msgstr "Πλήθος επαφών"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_form
 msgid "Contact's Events"
 msgstr "Συμβάντα Επαφής"
@@ -3057,6 +3164,11 @@ msgstr "Επαφές σε {}"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_search
 msgid "Contacts only"
 msgstr "Μόνο επαφές"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__control_output
+msgid "Control Output"
+msgstr "Έξοδος ελέγχου"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__output_ts_ids
@@ -3353,6 +3465,12 @@ msgid "Create Child"
 msgstr "Δημιουργία Θυγατρικού"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__create_date
+msgid "Create Date"
+msgstr "Ημερομηνία Δημιουργίας"
+
+#. module: hr_rfid
 #: model:onboarding.onboarding.step,button_text:hr_rfid.onboarding_step_create_access_group
 msgid "Create Group"
 msgstr "Δημιουργία ομάδας"
@@ -3424,6 +3542,52 @@ msgid "Created a command to open the door for %d seconds."
 msgstr "Δημιουργήθηκε εντολή ανοίγματος της πόρτας για %d δευτερόλεπτα."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_output_ts__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_week_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__create_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__create_uid
+msgid "Created by"
+msgstr "Δημιουργήθηκε από"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__create_date
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__create_date
@@ -3474,6 +3638,11 @@ msgid "Creation Time"
 msgstr "Ώρα Δημιουργίας"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__ctrl_id_num
+msgid "Ctrl Id Num"
+msgstr "Αριθμός ID ελεγκτή"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__humidity
 msgid "Current Humidity"
 msgstr "Τρέχουσα Υγρασία"
@@ -3514,6 +3683,15 @@ msgstr ""
 "• Επεξεργασία: Η εντολή εκτελείται από τον ελεγκτή\n"
 "• Επιτυχία: Η εντολή ολοκληρώθηκε επιτυχώς\n"
 "• Αποτυχία: Η εντολή απέτυχε (ελέγξτε το πεδίο Σφάλμα για λεπτομέρειες)"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__humidity
+msgid ""
+"Current humidity reading from the door's environmental sensor (percentage). "
+"Important for climate-controlled areas."
+msgstr ""
+"Τρέχουσα ένδειξη υγρασίας από τον περιβαλλοντικό αισθητήρα της πόρτας "
+"(ποσοστό). Σημαντική για χώρους με ελεγχόμενο κλίμα."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__cards_count
@@ -3664,6 +3842,17 @@ msgstr ""
 "αποθήκευσης."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__system_voltage
+msgid ""
+"Current voltage level of the controller's internal power supply in VDC. "
+"Normal range is typically 11-14V for 12V systems. Low voltage may indicate "
+"power supply issues."
+msgstr ""
+"Τρέχουσα στάθμη τάσης του εσωτερικού τροφοδοτικού του ελεγκτή σε VDC. Το "
+"φυσιολογικό εύρος είναι συνήθως 11-14V για συστήματα 12V. Χαμηλή τάση μπορεί"
+" να υποδεικνύει προβλήματα στο τροφοδοτικό."
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__28
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_notification__system_event__28
 msgid "DELAY ZONE OFF (if in) Z4,Z3,Z2,Z1"
@@ -3709,6 +3898,17 @@ msgstr ""
 "ημερομηνία για προγραμματισμένη ενεργοποίηση."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__last_f0_read
+msgid ""
+"Date and time when the controller's system information (hardware details, "
+"capabilities, firmware version) was last retrieved. Updates when F0 command "
+"is executed."
+msgstr ""
+"Ημερομηνία και ώρα της τελευταίας ανάκτησης των πληροφοριών συστήματος του "
+"ελεγκτή (στοιχεία υλικού, δυνατότητες, έκδοση υλικολογισμικού). Ενημερώνεται"
+" όταν εκτελείται η εντολή F0."
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_employee_form_inherit_hr_rfid
 msgid "Date when this access group membership becomes active"
 msgstr ""
@@ -3742,6 +3942,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__day
 msgid "Day"
 msgstr "Ημέρα"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__day_number
+msgid "Day Number"
+msgstr "Αριθμός ημέρας"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__day
@@ -3791,6 +3996,11 @@ msgstr "Αποσφαλμάτωση επικοινωνίας JSON"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department__hr_rfid_default_access_group
 msgid "Default Access Group"
 msgstr "Προεπιλεγμένη Ομάδα Πρόσβασης"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__default_io_table
+msgid "Default Io Table"
+msgstr "Προεπιλεγμένος πίνακας I/O"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.res_config_settings_view_form
@@ -3922,6 +4132,11 @@ msgstr ""
 " Για παράδειγμα: «Δευτέρα-Παρασκευή 8:00-18:00» ή «Πρόσβαση 24/7». "
 "Διαφορετικές πόρτες στην ίδια ομάδα μπορούν να έχουν διαφορετικά "
 "χρονοδιαγράμματα."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__delay_between_events
+msgid "Delay Between Events"
+msgstr "Καθυστέρηση μεταξύ συμβάντων"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
@@ -4071,6 +4286,16 @@ msgid "Description"
 msgstr "Περιγραφή"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_active_state
+msgid "Destination Active State"
+msgstr "Ενεργή κατάσταση προορισμού"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__destination_webstack_id
+msgid "Destination Webstack"
+msgstr "Webstack προορισμού"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__error
 msgid ""
 "Detailed error information when a command fails. Common errors include:\n"
@@ -4198,6 +4423,65 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery_row__discovery_id
 msgid "Discovery wizard run that found this module."
 msgstr "Εκτέλεση οδηγού ανίχνευσης που εντόπισε αυτή τη μονάδα."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_balloon_mixin__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_rel__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_output_ts__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_week_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_ir_websocket__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_company__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner__display_name
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__display_name
+msgid "Display Name"
+msgstr "Εμφάνιση Ονόματος"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_res_config_settings__module_hr_rfid_realtime_dashboard
@@ -4755,6 +5039,11 @@ msgstr ""
 "πρόσβασης. Αυτό δεν επιτρέπεται."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__employee_count
+msgid "Employee Count"
+msgstr "Πλήθος εργαζομένων"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__employee_ids
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_employees
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_access_group_view_form
@@ -5066,6 +5355,11 @@ msgid "Error while trying to connect to the module. Information:\n"
 msgstr "Σφάλμα κατά την προσπάθεια σύνδεσης με το module. Πληροφορίες:\n"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__ev_ts
+msgid "Ev Ts"
+msgstr "Χρονική σήμανση συμβάντος"
+
+#. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_system_ev_view_pivot
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_user_ev_view_pivot
 msgid "Event"
@@ -5076,6 +5370,11 @@ msgstr "Συμβάν"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__user_event_count
 msgid "Event Count"
 msgstr "Πλήθος Συμβάντων"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__event_interval
+msgid "Event Interval"
+msgstr "Διάστημα συμβάντων"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__event_number
@@ -5375,6 +5674,31 @@ msgstr "Αναδιπλούμενο badge barcode (Επαφή)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_follower_ids
 msgid "Followers"
 msgstr "Ακόλουθοι"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_partner_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Ακόλουθοι (Συνεργάτες)"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Γραμματοσειρά awesome π.χ. fa-tasks"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__26
@@ -5681,6 +6005,26 @@ msgid "Hardware version reported by the discovered module."
 msgstr "Έκδοση υλικού που αναφέρεται από την ανιχνευμένη μονάδα."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__has_message
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__has_message
+msgid "Has Message"
+msgstr "Έχει Μήνυμα"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_event
 msgid "Helper for RFID Events"
 msgstr "Βοηθός για Συμβάντα RFID"
@@ -5842,6 +6186,11 @@ msgstr ""
 "• SMS: Αποστολή μηνύματος κειμένου (εάν είναι διαθέσιμο)"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__http_link
+msgid "Http Link"
+msgstr "Σύνδεσμος HTTP"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__action_string
 msgid "Human-readable description of the event action for display purposes."
 msgstr "Κατανοητή περιγραφή της ενέργειας συμβάντος για σκοπούς εμφάνισης."
@@ -5858,10 +6207,79 @@ msgid "Humidity (%)"
 msgstr "Υγρασία (%)"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__hw_version
+msgid "Hw Version"
+msgstr "Έκδοση υλικού"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__hysteresis
+msgid "Hysteresis"
+msgstr "Υστέρηση"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__1
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__2
 msgid "I2C Error"
 msgstr "Σφάλμα I2C"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_balloon_mixin__id
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_employee__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_rel__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_output_ts__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_week_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__id
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__id
+#: model:ir.model.fields,field_description:hr_rfid.field_ir_websocket__id
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding__id
+#: model:ir.model.fields,field_description:hr_rfid.field_onboarding_onboarding_step__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_company__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_config_settings__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner__id
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__id
+msgid "ID"
+msgstr "Κωδικός"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__ctrl_id
@@ -5929,6 +6347,56 @@ msgstr ""
 "IP μονάδα επικοινωνίας (webstack) με την οποία είναι συνδεδεμένος αυτός ο "
 "ελεγκτής. Το webstack παρέχει δικτυακή συνδεσιμότητα και διαχειρίζεται την "
 "επικοινωνία μεταξύ του διακομιστή και των ελεγκτών."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_exception_icon
+msgid "Icon"
+msgstr "Εικονίδιο"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Εικονίδιο που υποδεικνύει μια δραστηριότητα εξαίρεσης."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_needaction
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Εάν επιλεγεί τα νέα μηνύματα χρειάζονται την προσοχή σας."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Αν επιλεγεί, κάποια μηνύματα έχουν σφάλμα παράδοσης."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.card_barcode_report_template_foldable_badge
@@ -6203,6 +6671,11 @@ msgid "Input Masks"
 msgstr "Μάσκες Εισόδου"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__input_states
+msgid "Input States"
+msgstr "Καταστάσεις εισόδων"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__input_voltage
 msgid "Input Voltage"
 msgstr "Τάση Εισόδου"
@@ -6234,6 +6707,11 @@ msgstr "Πίνακας Εισόδου/Εξόδου"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__input_count
 msgid "Inputs"
 msgstr "Είσοδοι"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__inputs_mask
+msgid "Inputs Mask"
+msgstr "Μάσκα εισόδων"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__36
@@ -6279,6 +6757,18 @@ msgstr "Εσωτερικό Σφάλμα, Δοκιμάστε Ξανά (WebSDK)"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__internal_number
 msgid "Internal ID"
 msgstr "Εσωτερικό ID"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__internal_number
+msgid "Internal Number"
+msgstr "Εσωτερικός αριθμός"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__internal_state
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__internal_state
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_rel__internal_state
+msgid "Internal State"
+msgstr "Εσωτερική κατάσταση"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_ts_line__day_number
@@ -6366,6 +6856,47 @@ msgid "Invalid IO line number"
 msgstr "Μη έγκυρος αριθμός γραμμής IO"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__is_barcode
+msgid "Is Barcode"
+msgstr "Είναι γραμμωτός κώδικας"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__is_card_event
+msgid "Is Card Event"
+msgstr "Είναι συμβάν κάρτας"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner__is_employee
+#: model:ir.model.fields,field_description:hr_rfid.field_res_users__is_employee
+msgid "Is Employee"
+msgstr "Είναι εργαζόμενος"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__is_empty
+msgid "Is Empty"
+msgstr "Είναι κενό"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_is_follower
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_is_follower
+msgid "Is Follower"
+msgstr "Είναι Ακόλουθος"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__key
 msgid "Key"
 msgstr "Κλειδί"
@@ -6376,9 +6907,44 @@ msgid "Key features:"
 msgstr "Βασικά χαρακτηριστικά:"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_card_value
+msgid "Kpi Hr Rfid Card Value"
+msgstr "Τιμή KPI κάρτας RFID"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_command_value
+msgid "Kpi Hr Rfid Command Value"
+msgstr "Τιμή KPI εντολής RFID"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_denied_value
+msgid "Kpi Hr Rfid Denied Value"
+msgstr "Τιμή KPI απορρίψεων RFID"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_granted_value
+msgid "Kpi Hr Rfid Granted Value"
+msgstr "Τιμή KPI χορηγήσεων RFID"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_digest_digest__kpi_hr_rfid_system_value
+msgid "Kpi Hr Rfid System Value"
+msgstr "Τιμή KPI συστήματος RFID"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__last_ip
 msgid "Last IP"
 msgstr "Τελευταία IP"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__last_ip
+msgid "Last Ip"
+msgstr "Τελευταία IP"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_last_seen
+msgid "Last Real-time Activity"
+msgstr "Τελευταία δραστηριότητα πραγματικού χρόνου"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__last_f0_read
@@ -6391,9 +6957,108 @@ msgid "Last Update"
 msgstr "Τελευταία Ενημέρωση"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_output_ts__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_week_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__write_uid
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__write_uid
+msgid "Last Updated by"
+msgstr "Τελευταία Ενημέρωση από"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_acc_grs__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_def_acc_gr__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_department_mass_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_contact_rel__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_door_rel__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_employee_rel__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_row__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_output_ts__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th_log__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_week_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door_open_close_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_sys_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone_doors_wiz__write_date
+#: model:ir.model.fields,field_description:hr_rfid.field_res_partner_mass_wiz__write_date
+msgid "Last Updated on"
+msgstr "Τελευταία Ενημέρωση στις"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__last_occurrence
 msgid "Last occurrence"
 msgstr "Τελευταία εμφάνιση"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_last_seen
+msgid "Last time the device sent anything over the real-time link."
+msgstr ""
+"Η τελευταία φορά που η συσκευή έστειλε οτιδήποτε μέσω της σύνδεσης "
+"πραγματικού χρόνου."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__updated_at
@@ -6404,6 +7069,11 @@ msgstr ""
 "Τελευταία φορά που αυτή η μονάδα επικοινώνησε με το Odoo. Εάν αυτό ήταν πριν"
 " από περισσότερο από 10 λεπτά, η μονάδα μπορεί να είναι εκτός σύνδεσης ή να "
 "αντιμετωπίζει προβλήματα σύνδεσης."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__line_number
+msgid "Line Number"
+msgstr "Αριθμός γραμμής"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__door_id
@@ -6562,6 +7232,11 @@ msgstr "Φόρτωση Κατάστασης Ελεγκτή"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_io_table_wiz
 msgid "Load factory defaults"
 msgstr "Φόρτωση εργοστασιακών προεπιλογών"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_manual_create__local_ip_address
+msgid "Local Ip Address"
+msgstr "Τοπική διεύθυνση IP"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__lock_output
@@ -6808,6 +7483,26 @@ msgid "Memory Error"
 msgstr "Σφάλμα Μνήμης"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_error
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_has_error
+msgid "Message Delivery error"
+msgstr "Σφάλμα παράδοσης μηνύματος"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_ids
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_ids
@@ -6979,6 +7674,11 @@ msgid "Move controllers to ..."
 msgstr "Μετακίνηση ελεγκτών σε ..."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Η Προθεσμία της Δραστηριότητάς Μου"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__name
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__name
@@ -7020,6 +7720,11 @@ msgstr ""
 "ελεγκτών διαχειρίζεται αυτή η ομάδα."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_needs_provisioning
+msgid "Needs provisioning"
+msgstr "Απαιτείται παροχή ρυθμίσεων (provisioning)"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_department_add_def_acc_grs__acc_gr
 msgid "New Access Group"
 msgstr "Νέα Ομάδα Πρόσβασης"
@@ -7055,6 +7760,21 @@ msgstr ""
 "Νέο webstack που θα αναλάβει τους ελεγκτές. Οι ανενεργές μονάδες "
 "συμπεριλαμβάνονται ώστε μια νεοκαταχωρημένη συσκευή να μπορεί να "
 "ενεργοποιηθεί ως μέρος της αντικατάστασης."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Επόμενη Προθεσμία Δραστηριότητας"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_summary
+msgid "Next Activity Summary"
+msgstr "Σύνοψη Επόμενης Δραστηριότητας"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_type_id
+msgid "Next Activity Type"
+msgstr "Επόμενος Τύπος Δραστηριότητας"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
@@ -7239,6 +7959,11 @@ msgid "Not using TS"
 msgstr "Δεν χρησιμοποιεί χρονοδιάγραμμα"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__notification_type
+msgid "Notification Type"
+msgstr "Τύπος ειδοποίησης"
+
+#. module: hr_rfid
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_notification_no_notification_event
 msgid "Notification must have at least one checked event!"
 msgstr "Η ειδοποίηση πρέπει να έχει τουλάχιστον ένα επιλεγμένο συμβάν!"
@@ -7255,12 +7980,37 @@ msgid "Notify Followers"
 msgstr "Ειδοποίηση Ακολούθων"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_notification__notify_partner_ids
+msgid "Notify Partner"
+msgstr "Ειδοποίηση επαφής"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_input_mask__i_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__number
 msgid "Number"
 msgstr "Αριθμός"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_needaction_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Πλήθος ενεργειών"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__readers
@@ -7395,6 +8145,26 @@ msgstr ""
 "πλήρους λίστας προσβάσιμων πορτών."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__message_has_error_counter
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__message_has_error_counter
+msgid "Number of errors"
+msgstr "Αριθμός σφαλμάτων"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__hotel_readers
 msgid ""
 "Number of hotel-mode readers connected to the controller. Used for hotel "
@@ -7413,6 +8183,46 @@ msgstr ""
 "Αριθμός αναγνωστών καρτών τύπου ξενοδοχείου που είναι συνδεδεμένοι. Αυτοί οι"
 " αναγνώστες υποστηρίζουν ανίχνευση εισαγωγής κάρτας και κουμπιά υπηρεσίας "
 "πελατών (π.χ. \"Μη Ενοχλείτε\", \"Καθαρισμός Δωματίου\")."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_needaction_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Αριθμός μηνυμάτων που απαιτούν ενέργεια"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__message_has_error_counter
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Αριθμός μηνυμάτων με σφάλμα παράδοσης"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_io_table_wiz__outs
@@ -7564,9 +8374,9 @@ msgstr ""
 "περιορισμό σε κοινόχρηστες μονάδες ρυθμίζεται από την ιδιοκτήτρια εταιρεία."
 
 #. module: hr_rfid
-#: model:ir.model,name:hr_rfid.model_onboarding_onboarding
-msgid "Onboarding"
-msgstr "Εισαγωγή"
+#: model:ir.model,name:hr_rfid.model_onboarding_onboarding_step
+msgid "Onboarding Step"
+msgstr "Βήμα Εγγραφής"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection__1
@@ -7864,6 +8674,11 @@ msgid "Output %d working with TS %s"
 msgstr "Έξοδος %d λειτουργεί με χρονοδιάγραμμα %s"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_states
+msgid "Output States"
+msgstr "Καταστάσεις εξόδων"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ctrl_output_ts
 msgid "Output TS for Controllers"
 msgstr "TS Εξόδου για Ελεγκτές"
@@ -7990,6 +8805,16 @@ msgstr ""
 #: model:ir.ui.menu,name:hr_rfid.hr_rfid_menu_partners
 msgid "Partners"
 msgstr "Συνεργάτες"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__module_password
+msgid ""
+"Password for the module's web interface. Must match the password configured "
+"in the module. Required for direct connection and module configuration."
+msgstr ""
+"Κωδικός πρόσβασης για τη διεπαφή web της μονάδας. Πρέπει να ταιριάζει με τον"
+" κωδικό που έχει ρυθμιστεί στη μονάδα. Απαιτείται για την άμεση σύνδεση και "
+"τη διαμόρφωση της μονάδας."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_zone_view_form
@@ -8203,6 +9028,11 @@ msgstr ""
 "Ενσωμάτωση με Σύστημα Διαχείρισης Ακινήτων. Επιτρέπει τη χρήση του "
 "συστήματος RFID για πρόσβαση σε δωμάτια ξενοδοχείου και διαχείριση "
 "φιλοξενουμένων."
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_proto
+msgid "Protocol Version"
+msgstr "Έκδοση πρωτοκόλλου"
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_event_system__event_action__6
@@ -8824,9 +9654,19 @@ msgid "Reading controllers from the Module"
 msgstr "Ανάγνωση ελεγκτών από το module"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_enabled
+msgid "Real-time Channel"
+msgstr "Κανάλι πραγματικού χρόνου"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_ws_dedup
 msgid "Real-time Event Deduplication"
 msgstr "Αποδιπλασιασμός Συμβάντων Πραγματικού Χρόνου"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_online
+msgid "Real-time Online"
+msgstr "Σε σύνδεση πραγματικού χρόνου"
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -8861,6 +9701,13 @@ msgstr ""
 "αυτήν τη στιγμή σε αυτήν τη ζώνη σε πραγματικό χρόνο. Ενημερώνεται αυτόματα "
 "καθώς οι επαφές εισέρχονται/εξέρχονται. Χρήσιμο για παρακολούθηση επισκεπτών"
 " και λίστες εκκένωσης έκτακτης ανάγκης."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_proto
+msgid "Real-time protocol version negotiated on the last connection."
+msgstr ""
+"Έκδοση του πρωτοκόλλου πραγματικού χρόνου που συμφωνήθηκε στην τελευταία "
+"σύνδεση."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__alarm_line_states
@@ -9001,6 +9848,11 @@ msgid "Relation between access groups and employees"
 msgstr "Σχέση μεταξύ ομάδων πρόσβασης και εργαζομένων"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__relay_output_mask
+msgid "Relay Output Mask"
+msgstr "Μάσκα εξόδων ρελέ"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__relay_time_factor
 msgid "Relay Time Factor"
 msgstr "Παράγοντας Χρόνου Relay"
@@ -9127,6 +9979,11 @@ msgstr ""
 "                    αμέσως μετά την επιβεβαίωση."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__replace_existing
+msgid "Replace Existing"
+msgstr "Αντικατάσταση υπαρχόντων"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_replace_wiz__replace_existing
 msgid ""
 "Replace existing controllers in destination module. \n"
@@ -9183,6 +10040,11 @@ msgstr "Ημερολόγιο Πόρων"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__command_id
 msgid "Response"
 msgstr "Απόκριση"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__activity_user_id
+msgid "Responsible User"
+msgstr "Υπεύθυνος Χρήστης"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__permitted_employee_category_ids
@@ -9314,6 +10176,17 @@ msgstr ""
 "• Ήπιο APB: Η είσοδος επιτρέπεται αλλά η παραβίαση καταγράφεται\n"
 "• Αυστηρό APB: Η είσοδος απορρίπτεται όταν παραβιάζεται ο κανόνας APB\n"
 "• Χρονισμένο APB: Το APB επαναφέρεται αυτόματα μετά από ορισμένο χρόνο"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__key
+msgid ""
+"Security key for device authentication - the channel credential the device "
+"presents on the real-time connection. Blank or 0000 = not securely "
+"provisioned."
+msgstr ""
+"Κλειδί ασφαλείας για τον έλεγχο ταυτότητας της συσκευής - το διαπιστευτήριο "
+"του καναλιού που παρουσιάζει η συσκευή στη σύνδεση Πραγματικού Χρόνου. Κενό "
+"ή 0000 = δεν έχει γίνει ασφαλής παροχή ρυθμίσεων."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__armed
@@ -9599,6 +10472,11 @@ msgid "Sensors"
 msgstr "Αισθητήρες"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_at
+msgid "Sent At"
+msgstr "Στάλθηκε στις"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__single_attempt
 msgid "Sent Once"
 msgstr "Αποστολή μία φορά"
@@ -9731,6 +10609,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_view_partner_form_inherit_hr_rfid
 msgid "Settings"
 msgstr "Ρυθμίσεις"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_provision_pending
+msgid "Settings Pending Delivery"
+msgstr "Ρυθμίσεις σε αναμονή παράδοσης"
 
 #. module: hr_rfid
 #: model:onboarding.onboarding.step,done_text:hr_rfid.onboarding_step_module_settings
@@ -9880,6 +10763,16 @@ msgid "Software Emergency"
 msgstr "Έκτακτη ανάγκη λογισμικού"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_controller_ids
+msgid "Source Controller"
+msgstr "Ελεγκτής προέλευσης"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_replace_wiz__source_webstack_id
+msgid "Source Webstack"
+msgstr "Webstack προέλευσης"
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_notification__notify_partner_ids
 msgid ""
 "Specific people to notify when this event occurs. You can add multiple recipients.\n"
@@ -9923,6 +10816,19 @@ msgstr "Κατάσταση"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "Status"
 msgstr "Κατάσταση"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Κατάσταση βασισμένη σε δραστηριότητες\n"
+"Καθυστερημένη: Η ημερομηνία λήξης έχει ήδη περάσει\n"
+"Σήμερα: Η ημερομηνία δραστηριότητας είναι σήμερα\n"
+"Προγραμματισμένες: Μελλοντικές δραστηριότητες."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_controller_view_form
@@ -10315,6 +11221,15 @@ msgid "The Module was re-keyed from the insecure default."
 msgstr "Η μονάδα ανανέωσε το κλειδί της από το μη ασφαλές προεπιλεγμένο."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__pin_code
+msgid ""
+"The PIN code associated with this card's owner. Used for doors that require "
+"both card and PIN for extra security."
+msgstr ""
+"Ο κωδικός PIN που σχετίζεται με τον κάτοχο αυτής της κάρτας. Χρησιμοποιείται"
+" για πόρτες που απαιτούν κάρτα και PIN για επιπλέον ασφάλεια."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_sys_wiz__card_number
 msgid ""
 "The RFID card number extracted from the system event. This will be "
@@ -10623,6 +11538,25 @@ msgstr ""
 "πρέπει να λήγουν."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_needs_provisioning
+msgid ""
+"The device has no secure key yet (blank or the insecure 0000 placeholder). "
+"Re-key it so it presents a real generated credential."
+msgstr ""
+"Η συσκευή δεν διαθέτει ακόμη ασφαλές κλειδί (κενό ή το μη ασφαλές προσωρινό "
+"0000). Αλλάξτε το κλειδί ώστε η συσκευή να παρουσιάζει πραγματικό παραγόμενο"
+" διαπιστευτήριο."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_online
+msgid ""
+"The device is currently connected in real time (activity within the last two"
+" heartbeat intervals)."
+msgstr ""
+"Η συσκευή είναι αυτή τη στιγμή συνδεδεμένη σε πραγματικό χρόνο "
+"(δραστηριότητα εντός των τελευταίων δύο διαστημάτων heartbeat)."
+
+#. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid ""
@@ -10878,6 +11812,16 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_card.py:0
+msgid ""
+"The number \"%(entered)s\" is longer than the %(limit)d characters a card "
+"number holds. Nothing was saved."
+msgstr ""
+"Ο αριθμός \"%(entered)s\" υπερβαίνει τους %(limit)d χαρακτήρες που χωράει "
+"ένας αριθμός Κάρτας. Δεν έγινε αποθήκευση."
+
+#. module: hr_rfid
+#. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl_time_schedule.py:0
 msgid "The number is not in range"
 msgstr "Ο αριθμός δεν βρίσκεται εντός εύρους"
@@ -10982,6 +11926,14 @@ msgid ""
 msgstr ""
 "Η κύρια πόρτα που ελέγχεται από αυτόν τον αναγνώστη. Αυτό το πεδίο "
 "εμφανίζεται όταν ο αναγνώστης ελέγχει ακριβώς μία πόρτα."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_provision_pending
+msgid ""
+"The real-time settings changed and will be delivered on the next check-in."
+msgstr ""
+"Οι ρυθμίσεις πραγματικού χρόνου άλλαξαν και θα παραδοθούν στην επόμενη "
+"σύνδεση της συσκευής (check-in)."
 
 #. module: hr_rfid
 #. odoo-python
@@ -11373,6 +12325,11 @@ msgid "Time & Attendance control"
 msgstr "Έλεγχος Χρόνου & Παρουσίας"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__time_format
+msgid "Time Format"
+msgstr "Μορφή Ώρας"
+
+#. module: hr_rfid
 #: model:ir.model,name:hr_rfid.model_hr_rfid_time_schedule
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group_wizard__time_schedule_id
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_door_rel__time_schedule_id
@@ -11618,6 +12575,11 @@ msgstr ""
 "έξοδοι) για αυτή την πόρτα. Κάντε κλικ για προβολή ιστορικού συμβάντων."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__ts_data
+msgid "Ts Data"
+msgstr "Δεδομένα TS"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_ts_line__day__1
 msgid "Tuesday"
 msgstr "Τρίτη"
@@ -11676,6 +12638,11 @@ msgstr ""
 "• Θερμοκρασία: Περιβαλλοντική παρακολούθηση\n"
 "• Σφάλμα Καλωδίωσης: Δυσλειτουργία υλικού\n"
 "• Άγνωστη Κάρτα/Πινακίδα: Απόπειρα πρόσβασης μη εγγεγραμμένης κάρτας"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Τύπος της καταγεγραμμένης δραστηριότητας εξαίρεσης."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_webstack__available__u
@@ -11890,6 +12857,17 @@ msgid "User-friendly name combining command code and description"
 msgstr "Φιλικό όνομα που συνδυάζει κωδικό εντολής και περιγραφή"
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__module_username
+msgid ""
+"Username for accessing the module's web interface. Use \"admin\" for full "
+"access or \"SDK\" for API access only. Must match the username configured in"
+" the module."
+msgstr ""
+"Όνομα χρήστη για την πρόσβαση στη διεπαφή web της μονάδας. Χρησιμοποιήστε "
+"\"admin\" για πλήρη πρόσβαση ή \"SDK\" για πρόσβαση μόνο στο API. Πρέπει να "
+"ταιριάζει με το όνομα χρήστη που έχει ρυθμιστεί στη μονάδα."
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__employee_ids
 msgid "Users"
 msgstr "Χρήστες"
@@ -12082,6 +13060,46 @@ msgid "Web"
 msgstr "Web"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_access_group__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card_type__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_alarm_group__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_emergency_group__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_th__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_system__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_event_user__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_reader__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_time_schedule__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_workcode__website_message_ids
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_zone__website_message_ids
+msgid "Website Messages"
+msgstr "Μηνύματα Ιστότοπου"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_access_group__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_card_type__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_alarm_group__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_emergency_group__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_system__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_event_user__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_reader__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_time_schedule__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_workcode__website_message_ids
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__website_message_ids
+msgid "Website communication history"
+msgstr "Ιστορικό επικοινωνίας ιστότοπου"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ws_dedup__webstack_id
 msgid "Webstack"
 msgstr "Webstack"
@@ -12136,6 +13154,11 @@ msgstr "Τετάρτη"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__week_id
 msgid "Week"
 msgstr "Εβδομάδα"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery__what_to_do
+msgid "What To Do"
+msgstr "Τι να γίνει"
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack_discovery__what_to_do
@@ -12257,6 +13280,13 @@ msgstr ""
 "Αν η μονάδα είναι προς το παρόν προσβάσιμη. Ορίζεται όταν επικοινωνεί και "
 "καθαρίζεται από τη σάρωση παρουσίας μόλις παραμείνει σιωπηλή για πολύ χρόνο "
 "- μια μονάδα που γίνεται ανενεργή δεν μπορεί να το αναφέρει η ίδια."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_webstack__ws_enabled
+msgid "Whether the permanent real-time connection is enabled for this device."
+msgstr ""
+"Εάν η μόνιμη σύνδεση Πραγματικού Χρόνου είναι ενεργοποιημένη για αυτή τη "
+"συσκευή."
 
 #. module: hr_rfid
 #. odoo-python
@@ -12428,6 +13458,21 @@ msgstr "Εγγραφή Χρονοδιαγραμμάτων"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__4
 msgid "Wrong Value/Parameter"
 msgstr "Λανθασμένη Τιμή/Παράμετρος"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_auth_fail_count
+msgid "Ws Auth Fail Count"
+msgstr "Πλήθος αποτυχιών ταυτοποίησης WS"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_auth_fail_since
+msgid "Ws Auth Fail Since"
+msgstr "Αποτυχίες ταυτοποίησης WS από"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack__ws_last_n
+msgid "Ws Last N"
+msgstr "Τελευταία N WS"
 
 #. module: hr_rfid
 #. odoo-python

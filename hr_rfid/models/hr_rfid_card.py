@@ -257,6 +257,31 @@ class HrRfidCard(models.Model):
             if card.number:
                 card.number = card.card_type.check_and_fix_card_numer(card.number)
 
+    @api.model
+    def _number_as_kept(self, number, card_type):
+        """The number in the form the card keeps it, or a refusal - BEFORE the ORM takes it.
+
+        The number field holds 10 characters, and whatever is longer the ORM
+        cuts to fit without a word (Char.convert_to_cache), before any check
+        of this model sees it. A number cut short is another card's number:
+        the card was saved under it and every check passed. So the length is
+        looked at here, on what was actually entered, after the card type's
+        own rule: a short number gets its leading zeros, a number plate loses
+        its separators and takes the form the camera reads.
+
+        :param number: what was entered or imported
+        :param card_type: hr.rfid.card.type of the card
+        :return: the number to store
+        """
+        kept = card_type.check_and_fix_card_numer(str(number))
+        limit = self._fields['number'].size
+        if len(kept) > limit:
+            raise exceptions.ValidationError(self.env._(
+                'The number "%(entered)s" is longer than the %(limit)d characters '
+                'a card number holds. Nothing was saved.',
+                entered=number, limit=limit))
+        return kept
+
     @api.constrains('number')
     def _check_number(self):
         for card in self:
@@ -303,6 +328,10 @@ class HrRfidCard(models.Model):
         for val in vals:
             if 'card_type' in val and val['card_type'] == self.env.ref('hr_rfid.hr_rfid_card_type_barcode').id:
                 val['card_input_type'] = 'w34'
+            if val.get('number'):
+                card_type = (self.env['hr.rfid.card.type'].browse(val.get('card_type'))
+                             or self.env.ref('hr_rfid.hr_rfid_card_type_def'))
+                val['number'] = self._number_as_kept(val['number'], card_type)
             card = super(HrRfidCard, self).create([val])
             card._check_len_number()
             records = records + card
@@ -321,6 +350,12 @@ class HrRfidCard(models.Model):
         rel_env = self.env['hr.rfid.card.door.rel']
         invalid_user_and_contact_msg = 'Card user and contact cannot both be set' \
                                        ' in the same time, and cannot both be empty.'
+
+        if vals.get('number'):
+            new_type = self.env['hr.rfid.card.type'].browse(vals.get('card_type'))
+            kept = {self._number_as_kept(vals['number'], new_type or card.card_type) for card in self}
+            if len(kept) == 1:
+                vals = dict(vals, number=kept.pop())
 
         for card in self:
             old_number = str(card.internal_number)[:]
