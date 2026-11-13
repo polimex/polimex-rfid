@@ -1,0 +1,67 @@
+---
+id: hr_rfid_demo
+title: RFID Demo Data
+module: hr_rfid_demo
+doc_type: user_guide
+audience:
+- user
+summary: 'A demo company that keeps working: passages, attendance, lateness and overtime for the RFID
+  set, day after day'
+last_updated: '2026-11-13'
+source_digest: sha256:3c6bd1174600ebc018021bae161a2068a56b29e82df7d29a2e4218cbed217d76
+companion_doc: llms-full.md
+---
+
+
+# RFID Demo Data
+
+> A demo company that keeps working: passages, attendance, lateness and overtime for the RFID set, day after day
+
+
+## What this module does
+
+A demo company that keeps working: passages, attendance, lateness and overtime for the RFID set, day after day.
+
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
+
+
+## How to use it
+
+### RFID Demo Data
+
+#### Overview
+
+A demo company whose doors keep being used. Installed on a demo database, it
+walks the demo staff through the demo doors for the six weeks before today and
+then, every quarter of an hour, for whatever has happened since. Attendance,
+lateness, early arrivals and departures, overtime and night work, the access
+and security dashboards and the environment readings all come out of those
+passages - through the same entry a real access-control module reports to.
+
+It never works on a database with real hardware. One module that is not the
+demo one, or the demo one having been reached by a real device, and the demo
+writes nothing at all.
+
+#### Configuration
+
+Nothing to configure. Install it on a database with demo data. It uses the
+demo hardware of RFID Access Control's demo data and the employees of the
+Employees demo; without them it does nothing.
+
+The scheduled task "RFID Demo: simulate the passages since the last run" runs
+every 15 minutes. Switch it off to freeze the demo where it is.
+
+#### Usage
+
+Open Attendances, the Dashboards or RFID Access Control on the demo database:
+
+* about six weeks of attendance made from door passages, today included;
+* people who come late, early, leave early, stay on, work nights and some
+  Saturdays, and a few who forget to badge out or do not come in;
+* refused cards, a visitor, doors held open or forced, exit buttons and the
+  Monday power-up of the controllers;
+* the server-room sensor reporting every two hours;
+* an hourly cost for each person of the demo, for the labour cost figures.
+
+A person on approved leave does not come in that day, and a day somebody
+already has attendance entered by hand is left to them.

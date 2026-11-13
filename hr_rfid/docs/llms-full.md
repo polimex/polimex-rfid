@@ -1226,10 +1226,6 @@ Python class `CtrlTemperatureAndHumidity` in `models/hr_rfid_ctrl_th.py:13`.  Mo
 - **`write_log(self, timestamp, values)`** - decorators: -
   - effects: `sudo`, `with_context`
   - touches: `hr.rfid.ctrl.th.log`
-- **`_demo_generate_th_readings(self)`** - decorators: `@api.model`
-  - Fill the shipped demo sensor with two weeks of readings.
-  - effects: `log_info`
-  - touches: `ir.config_parameter`
 
 ### `hr.rfid.ctrl.th.log` <a id='model-hr-rfid-ctrl-th-log'></a>
 Python class `CtrlTemperatureAndHumidityLog` in `models/hr_rfid_ctrl_th_log.py:4`.  Model.  Description: *Temperature and Humidity Reading History*.  Default order: `event_time desc, id`.
@@ -1488,10 +1484,6 @@ Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:76`.  Model.
 - **`zone_process_event(self)`** - decorators: -
 - **`write(self, vals)`** - decorators: -
   - calls `super() `write``
-- **`_demo_generate_system_events(self)`** - decorators: `@api.model`
-  - Generate ~30 days of security/device system events for the demo.
-  - effects: `create`, `log_info`
-  - touches: `ir.config_parameter`
 
 ### `hr.rfid.event.sys.wiz` <a id='model-hr-rfid-event-sys-wiz'></a>
 Python class `HrRfidSystemEventWizard` in `models/hr_rfid_event_system.py:486`.  TransientModel (wizard).  Description: *Add card to employee/contact*.
@@ -1577,10 +1569,6 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:35`.  Model.  In
   - effects: `i18n`
 - **`last_event(self, door_ids=None, partner_id=None, employee_id=None, event_action=None, domain=None, limit=1)`** - decorators: `@api.model`
   - Get last event for user
-- **`_demo_generate_events(self)`** - decorators: `@api.model`
-  - Generate ~30 days of realistic demo access events for the dashboards.
-  - effects: `create`, `log_info`
-  - touches: `hr.employee`, `ir.config_parameter`, `res.partner`
 
 ### `hr.rfid.notification` <a id='model-hr-rfid-notification'></a>
 Python class `RFIDNotification` in `models/hr_rfid_notification.py:11`.  Model.  Description: *RFID Notification*.
@@ -2051,25 +2039,16 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 - **`WS_CMD_REPUBLISH_TIMEOUT_S`** *(scalar)* = `15`  - line 25
 - **`WS_CMD_MAX_RETRIES`** *(scalar)* = `5`  - line 26
 
-### `models/hr_rfid_ctrl_th.py`
-
-- **`DEMO_TH_SEED`** *(scalar)* = `20260826`  - line 9
-- **`DEMO_TH_READINGS_FLAG`** *(scalar)* = `'hr_rfid.demo_th_readings_generated'`  - line 10
-
 ### `models/hr_rfid_ctrl_time_schedule.py`
 
 - **`DEFAULT_TS_LINE`** *(expression)* = `'01\n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00\n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 \n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00\n         `  - line 5
 
 ### `models/hr_rfid_event_system.py`
 
-- **`DEMO_SYSTEM_EVENT_SEED`** *(scalar)* = `20260717`  - line 13
-- **`DEMO_SYSTEM_EVENTS_FLAG`** *(scalar)* = `'hr_rfid.demo_system_events_generated'`  - line 14
 - **`SYS_EV_DEDUP_WINDOW_SECONDS`** *(scalar)* = `300`  - line 20
 
 ### `models/hr_rfid_event_user.py`
 
-- **`DEMO_EVENT_SEED`** *(scalar)* = `20260716`  - line 9
-- **`DEMO_EVENTS_FLAG`** *(scalar)* = `'hr_rfid.demo_events_generated'`  - line 10
 - **`ANONYMOUS_EVENT_ACTIONS`** *(collection)* = `('47', '-1')`  - line 15
 
 ### `models/hr_rfid_webstack.py`

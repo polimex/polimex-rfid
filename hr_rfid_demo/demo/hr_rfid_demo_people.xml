@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- The people of the demo company and what they badge with. hr's demo
+         staff come without RFID cards; these are the ones the simulation
+         (hr.rfid.demo) walks through the doors every day. admin, ngh and chs
+         already carry the cards of hr_rfid's own demo. -->
+        <record id="demo_card_mit" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_mit"/>
+            <field name="number">0011122250</field>
+            <field name="card_reference">Badge 50</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_niv" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_niv"/>
+            <field name="number">0011122251</field>
+            <field name="card_reference">Badge 51</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_stw" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_stw"/>
+            <field name="number">0011122252</field>
+            <field name="card_reference">Badge 52</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_fme" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_fme"/>
+            <field name="number">0011122253</field>
+            <field name="card_reference">Badge 53</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_fpi" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_fpi"/>
+            <field name="number">0011122254</field>
+            <field name="card_reference">Badge 54</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_jth" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_jth"/>
+            <field name="number">0011122255</field>
+            <field name="card_reference">Badge 55</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_vad" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_vad"/>
+            <field name="number">0011122256</field>
+            <field name="card_reference">Badge 56</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_han" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_han"/>
+            <field name="number">0011122257</field>
+            <field name="card_reference">Badge 57</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_jve" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_jve"/>
+            <field name="number">0011122258</field>
+            <field name="card_reference">Badge 58</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_jep" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_jep"/>
+            <field name="number">0011122259</field>
+            <field name="card_reference">Badge 59</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_lur" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_lur"/>
+            <field name="number">0011122260</field>
+            <field name="card_reference">Badge 60</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_hne" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_hne"/>
+            <field name="number">0011122261</field>
+            <field name="card_reference">Badge 61</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_jod" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_jod"/>
+            <field name="number">0011122262</field>
+            <field name="card_reference">Badge 62</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+        <record id="demo_card_jgo" model="hr.rfid.card">
+            <field name="employee_id" ref="hr.employee_jgo"/>
+            <field name="number">0011122263</field>
+            <field name="card_reference">Badge 63</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- Two people work nights, ten in the evening to six in the
+             morning, so the demo has night work to show. A night is two
+             lines of a calendar: the evening, and the morning after it. -->
+        <record id="demo_calendar_night" model="resource.calendar">
+            <field name="name">Demo Night Shift 22:00-06:00</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="tz">Europe/Sofia</field>
+            <field name="hours_per_day">8</field>
+            <field name="attendance_ids" eval="[(5, 0, 0)]
+                + [(0, 0, {'name': 'Night %s evening' % day, 'dayofweek': str(day), 'hour_from': 22.0, 'hour_to': 24.0, 'day_period': 'afternoon'}) for day in range(0, 5)]
+                + [(0, 0, {'name': 'Night %s morning' % day, 'dayofweek': str(day), 'hour_from': 0.0, 'hour_to': 6.0, 'day_period': 'morning'}) for day in range(1, 6)]"/>
+        </record>
+        <!-- The people of the demo work ordinary days: morning, break,
+             afternoon, one working day. hr_attendance_late's own showcase
+             turns this core calendar into shifts (each range a shift of its
+             own), and a full day then reads as one shift plus overtime every
+             single day. -->
+        <record id="resource.resource_calendar_std_38h" model="resource.calendar">
+            <field name="daily_ranges_are_shifts" eval="False"/>
+        </record>
+        <record id="hr.employee_jod" model="hr.employee">
+            <field name="resource_calendar_id" ref="demo_calendar_night"/>
+        </record>
+        <record id="hr.employee_jgo" model="hr.employee">
+            <field name="resource_calendar_id" ref="demo_calendar_night"/>
+        </record>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- At install, the weeks before today: the doors are walked through as
+         they would have been, and attendance comes out of them. The
+         scheduled task carries on from there. noupdate: an update never
+         simulates the history a second time; the task fills only what came
+         after the last run anyway. -->
+        <function model="hr.rfid.demo" name="_demo_backfill"/>
+</odoo>

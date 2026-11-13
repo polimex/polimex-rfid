@@ -121,13 +121,3 @@ class TestRfidDashboards(TransactionCase):
         sys_domain = [('timestamp', '>=', datetime.combine(now.date(), datetime.min.time()))]
         self.assertGreater(self.env['hr.rfid.event.system'].search_count(sys_domain), 0,
                            "System Events 'today' click-through target is empty")
-
-    def test_demo_generators_cover_today(self):
-        """The shipped demo generators must include TODAY, so a fresh demo DB's
-        dashboard click-throughs (today-filtered lists) are never empty."""
-        param = self.env['ir.config_parameter'].sudo()
-        if not param.get_param('hr_rfid.demo_events_generated'):
-            self.skipTest('demo data not loaded')
-        today_start = datetime.combine(fields.Date.today(), datetime.min.time())
-        self.assertGreater(
-            self.env['hr.rfid.event.user'].search_count([('event_time', '>=', today_start)]), 0)
