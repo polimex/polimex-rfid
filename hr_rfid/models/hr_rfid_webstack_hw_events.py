@@ -26,15 +26,58 @@ _logger = logging.getLogger(__name__)
 class HrRfidWebstackHwEvents(models.Model):
     _inherit = 'hr.rfid.webstack'
 
-    def _hw_vending_request_for_balance(self):
+    def _hw_vending_request_for_balance(self, controller=None, post_data=None):
         """Hook for the vending ev64 balance flow.
 
         Mirrors the controller-level ``vending_request_for_balance`` stub:
         the base module has no vending logic; ``hr_rfid_vending`` handles
         vending controllers in its own route override before this core is
-        ever reached, so this stays a guard for misconfigured setups.
+        ever reached, so this is what a site without that add-on gets: the
+        request is kept in the controller's log and accepted, with no credit.
+        It used to raise - and an error tells the module to keep the report,
+        so it would have repeated this one for ever and sent nothing after it.
+
+        A site WITH the add-on gets here too when the request did not come
+        through that route: the real-time channel hands its events straight to
+        the core. The log then says that, not that the add-on is missing.
         """
-        raise NotImplementedError('Not implemented')
+        if controller:
+            if 'hr.rfid.vending.event' in self.env:
+                description = self.env._(
+                    'A vending machine asked how much credit a card has, and '
+                    'the request did not reach the vending add-on. Vending is '
+                    'served only over the classic connection: if the module '
+                    'uses real-time, use "Disable real-time" on it.')
+            else:
+                description = self.env._(
+                    'A vending machine asked how much credit a card has, and '
+                    'the vending add-on is not installed here')
+            controller.report_sys_ev(description, post_data=post_data)
+        return self.check_for_unsent_cmd(200)
+
+    def _hw_description_is_on_its_way(self, controller):
+        """Has the controller been asked what it is, with the answer still to come?
+
+        A controller is first known only by its number - from the list of what
+        the module sees on its line, or from its first report. Until it has
+        answered what it is (F0) it has no readers, and a card used at it
+        cannot be placed. If nobody has asked it yet, it is asked here.
+
+        A question that already ended without describing the controller is
+        NOT asked again from here: a controller that will not say what it is
+        must not hold back everything else the module has to report. The
+        operator asks again from the controller's form.
+        """
+        self.ensure_one()
+        asked = self.env['hr.rfid.command'].sudo().search([
+            ('webstack_id', '=', self.id),
+            ('controller_id', '=', controller.id),
+            ('cmd', '=', 'F0'),
+        ], order='id desc', limit=1)
+        if not asked:
+            controller.read_controller_information_cmd()
+            return True
+        return asked.status in ('Wait', 'Process')
 
     def _hw_resolve_workcode(self, event_dict, dt, card_id):
         """Fill the work code of a card event into ``event_dict``.
@@ -78,7 +121,7 @@ class HrRfidWebstackHwEvents(models.Model):
             })
             command = controller_id.read_controller_information_cmd()
             # EXIT New controller and we need setup information first
-            return command.send_command(400)
+            return self._reply_with_command(command, 400)
 
         # Find the Card. The module may be shared with other companies, so the
         # card can belong to the owner OR to any company in the sharing list.
@@ -133,6 +176,16 @@ class HrRfidWebstackHwEvents(models.Model):
         reader_id = controller_id.reader_ids.filtered(lambda r: r.number == reader_num)
 
         if not reader_id and is_card_event:
+            if not controller_id.hw_version and self._hw_description_is_on_its_way(controller_id):
+                # Known only by its number so far, so it has no readers to
+                # find. The module is told to keep the passage (400) until the
+                # controller has said what it is. An old module cannot be told
+                # that, so the report is written down as it came.
+                controller_id.with_context(keep_report=True).report_sys_ev(
+                    self.env._('A card was used at a controller that has not '
+                               'described itself yet. The report is kept here.'),
+                    post_data=post_data)
+                return self.check_for_unsent_cmd(400)
             controller_id.report_sys_ev('Could not find a reader with that id', post_data=post_data)
             return self.check_for_unsent_cmd(200)
 
@@ -314,7 +367,7 @@ class HrRfidWebstackHwEvents(models.Model):
                 sys_ev_dict=sys_event_dict
             )
 
-            return controller_id.read_status().send_command(200)
+            return self._reply_with_command(controller_id.read_status(), 200)
         # Forced Open Door N
         elif event_action in [26]:
             sys_event_dict = {
@@ -328,12 +381,23 @@ class HrRfidWebstackHwEvents(models.Model):
                 sys_ev_dict=sys_event_dict
             )
             return self.check_for_unsent_cmd(200)
-        # DELAY ZONE ON (if out) Z4,Z3,Z2,Z1
-        elif event_action in [27]:
-            raise Exception('Not Implemented (DELAY ZONE ON (if out) Z4,Z3,Z2,Z1)')
-        # DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1
-        elif event_action in [28]:
-            raise Exception('Not Implemented (DELAY ZONE OFF (if out) Z4,Z3,Z2,Z1)')
+        # DELAY ZONE ON / OFF, Z4,Z3,Z2,Z1. Nothing here acts on the delay of
+        # an alarm zone, but the report is a fact about the site and is kept
+        # as one, under its own event name. It used to raise "Not
+        # Implemented", which answers the module with an error: a module that
+        # keeps a report until it is accepted would send this one for ever and
+        # nothing after it.
+        elif event_action in [27, 28]:
+            controller_id.report_sys_ev(
+                description=self.env._('Alarm zone delay reported by the controller'),
+                post_data=post_data,
+                sys_ev_dict={
+                    'door_id': door and door.id or False,
+                    'timestamp': self.get_ws_time_str(post_data=post_data['event']),
+                    'event_action': str(event_action),
+                },
+            )
+            return self.check_for_unsent_cmd(200)
         # External control
         elif event_action in [29]:
             controller_id.report_sys_ev('External control', post_data=post_data)
@@ -341,7 +405,7 @@ class HrRfidWebstackHwEvents(models.Model):
         # Power On controller
         elif event_action in [30]:
             controller_id.report_sys_ev('Controller restarted or Power Fail', post_data=post_data)
-            return controller_id.synchronize_clock_cmd().send_command(200)
+            return self._reply_with_command(controller_id.synchronize_clock_cmd(), 200)
         # Open/Close Door From PC
         elif event_action in [31]:
             # iCON115 Siren Output = 4
@@ -360,7 +424,7 @@ class HrRfidWebstackHwEvents(models.Model):
                 sys_ev_dict=sys_event_dict
             )
 
-            return controller_id.read_status().send_command(200)
+            return self._reply_with_command(controller_id.read_status(), 200)
         # SOT Denied (firmware v7.13+): arm/disarm attempt refused by controller.
         # Same semantics as event 33 (Zone Arm/Disarm Denied) — card event with
         # direction derived from current zone state (line_id.armed).
@@ -426,7 +490,24 @@ class HrRfidWebstackHwEvents(models.Model):
                 event = ev_env.create(event_dict)
                 return self.check_for_unsent_cmd(200)
             else:
-                raise Exception('Wrong event. Non card event for Arm/Disarm denied!')
+                # Refused for a card nobody here knows, or with no card at
+                # all. It is still what the controller reported and is kept
+                # as that. It used to raise, and an error tells the module
+                # to keep the report - so it would have sent this one for
+                # ever and nothing after it.
+                controller_id.report_sys_ev(
+                    description=self.env._('Could not find the card') if is_card_event
+                    else self.env._('Arming or disarming was refused, and the report names no card'),
+                    post_data=post_data,
+                    sys_ev_dict={
+                        'door_id': door and door.id or False,
+                        'timestamp': self.get_ws_time_str(post_data=post_data['event']),
+                        'event_action': str(event_action),
+                        'card_number': card_num or None,
+                        'input_js': card_num,
+                    },
+                )
+                return self.check_for_unsent_cmd(200)
         # Siren On/Off, Zone Alarm, Zone Arm/Disarm
         elif event_action in [20, 34, 35]:
             # reader_num = line_number
@@ -559,7 +640,7 @@ class HrRfidWebstackHwEvents(models.Model):
                 )
                 return self.check_for_unsent_cmd(200)
             if controller_id.is_vending_ctrl():
-                return self._hw_vending_request_for_balance()
+                return self._hw_vending_request_for_balance(controller_id, post_data)
             else:
                 # External db event, controller requests for permission to open or close door
                 ag_ids = card_id.get_owner().hr_rfid_access_group_ids
@@ -603,6 +684,11 @@ class HrRfidWebstackHwEvents(models.Model):
             'cmd': 'DB',
             'status': 'Process',
             'ex_timestamp': fields.Datetime.now(),
+            # The answer to "may this card pass" belongs to the moment the
+            # card was shown. Left without a reply it is closed, never sent
+            # again later: a door must not be released minutes after the
+            # person has walked away.
+            'single_attempt': True,
         }
         if controller.is_relay_ctrl():
             data = 0

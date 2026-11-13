@@ -192,6 +192,11 @@ class HrRfidVending(WebRfidController):
                     'controller_id': controller.id,
                     'cmd': 'DB2',
                     'cmd_data': '4000' + card_number + balance_str,
+                    # The credit answers the card shown at this moment. Left
+                    # without a reply it is closed, never sent again later -
+                    # the machine must not be handed credit for somebody who
+                    # has already walked away.
+                    'single_attempt': True,
                 })
                 ev.command_id = cmd
                 return ret_local(cmd.send_command(status_code))
@@ -299,11 +304,15 @@ class HrRfidVending(WebRfidController):
             return ret_super()
 
         try:
-            if 'event' in post_data:
-                _logger.info('Received=%s', post_data)
-                ret = parse_event()
-            else:
-                ret = ret_super()
+            # A savepoint around the work, as in the base handler: a failed
+            # report is undone as a whole, and the record of the failure can
+            # still be written after an error from the database.
+            with request.env.cr.savepoint():
+                if 'event' in post_data:
+                    _logger.info('Received=%s', post_data)
+                    ret = parse_event()
+                else:
+                    ret = ret_super()
 
             return self._make_response(ret)
         except (KeyError, exceptions.UserError, exceptions.AccessError, exceptions.AccessDenied,
@@ -311,13 +320,13 @@ class HrRfidVending(WebRfidController):
                 psycopg2.DataError, ValueError) as e:
             _logger.error('Vending exception from %s/%s: %s\n%s',
                           webstack_id.name, webstack_id.company_id.name, str(e), traceback.format_exc())
-            webstack_id.report_sys_ev(description=traceback.format_exc(),
+            webstack_id.with_context(keep_report=True).report_sys_ev(description=traceback.format_exc(),
                                       post_data=json.dumps(post_data))
             return self._make_response({'status': 500})
         except BadTimeException:
             t = post_data['event']['date'] + ' ' + post_data['event']['time']
             controller = webstack_id.controllers.filtered(lambda r: r.ctrl_id == post_data['event']['id'])
             _logger.error('Vending bad time from %s: %s', controller.name if controller else '?', t)
-            controller.report_sys_ev(description=f'Controller sent us an invalid date or time: {t}',
+            controller.with_context(keep_report=True).report_sys_ev(description=f'Controller sent us an invalid date or time: {t}',
                                      post_data=json.dumps(post_data))
             return self._make_response({'status': 200})

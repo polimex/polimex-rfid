@@ -16,6 +16,11 @@ _logger = logging.getLogger(__name__)
 # so e.g. a forced door today never disappears into last week's record.
 SYS_EV_DEDUP_WINDOW_SECONDS = 300
 
+# A report kept because it could not be handled is kept up to this length. A
+# real report is a few hundred characters; the limit is there so that a
+# malformed one cannot grow the log without bound.
+KEPT_REPORT_MAX_CHARS = 20000
+
 action_selection = [
         ('0', 'Unknown Event?'),
         ('1', 'DuressOK'),
@@ -306,7 +311,41 @@ class HrRfidSystemEvent(models.Model):
                 record.controller_id.name)
             #               ' at ' + str(record.timestamp)
 
+    @api.model
+    def _report_without_key(self, raw):
+        """A report as the module sent it, without the module's key.
+
+        The kept copy is read by the people who watch the events. The key is
+        what a module proves itself with, and nothing in a failed report needs
+        it to be understood. Anything that is not a report with a key (text
+        that is not JSON, another shape) is returned as it came.
+
+        :param raw: the report as JSON text; the vending route hands it over
+                    already as text, so it may be JSON inside JSON
+        """
+        try:
+            report = json.loads(raw)
+            if isinstance(report, str):
+                report = json.loads(report)
+        except ValueError:
+            return raw
+        if not isinstance(report, dict) or 'key' not in report:
+            return raw
+        return json.dumps({name: value for name, value in report.items() if name != 'key'})
+
     def _check_save_comms(self, vals):
+        """Drop what the module sent, unless the site keeps its communication.
+
+        Except for a report that could not be handled (``keep_report`` in the
+        context): there the raw report is not a debugging aid, it is the only
+        copy. An old module is answered "accepted" either way and forgets the
+        event, so without this a passage that failed here was gone for good -
+        the log kept where it failed and threw away what it was.
+        """
+        if self.env.context.get('keep_report'):
+            if isinstance(vals.get('input_js'), str):
+                vals['input_js'] = self._report_without_key(vals['input_js'])[:KEPT_REPORT_MAX_CHARS]
+            return
         save_comms = self.env['ir.config_parameter'].sudo().get_param('hr_rfid.save_webstack_communications') in [
             'true', 'True']
         if not save_comms:

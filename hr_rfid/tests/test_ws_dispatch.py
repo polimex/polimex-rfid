@@ -58,6 +58,20 @@ class TestWsDispatch(RFIDAppCase):
         # through the real entry point (the ir.websocket extension)
         self.env['ir.websocket']._serve_ir_websocket('hr_rfid', data)
 
+    def _known_controller(self, ws, **hello):
+        """Controller 5 on the module's line, already described.
+
+        The hello only makes it known by its number. Until it has said what
+        it is, a card used at it is kept by the device and not processed
+        (test_ev_from_a_controller_not_yet_described_is_kept) - the tests
+        that are about processing an event need one that has.
+        """
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', ctrl=[5], **hello))
+        ctrl = ws.controllers.filtered(lambda c: c.ctrl_id == 5)
+        ctrl.hw_version = '11'
+        return ctrl
+
     def _event_dict(self, ctrl_id=5, bos=1, card=None, event_n=4, reader=1):
         return {
             'id': ctrl_id, 'event_n': event_n, 'bos': bos, 'tos': bos,
@@ -248,8 +262,7 @@ class TestWsDispatch(RFIDAppCase):
         """On a known controller the same core as HTTP processes the event
         (here: reader-less controller -> system event, status 200 -> ok)."""
         ws = self._enable()
-        with patch.object(type(self.env['bus.bus']), '_sendone'):
-            self._dispatch(self._msg('hello', ctrl=[5]))   # provision ctrl 5
+        self._known_controller(ws)
         Sys = self.env['hr.rfid.event.system']
         before = Sys.search_count([('webstack_id', '=', ws.id)])
         with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
@@ -261,10 +274,34 @@ class TestWsDispatch(RFIDAppCase):
         self.assertEqual(payload['bid'], 102)
         self.assertEqual(payload['res'], [{'i': 0, 'ok': True, 'dup': False}])
 
-    def test_ev_resend_is_deduplicated(self):
+    def test_ev_from_a_controller_not_yet_described_is_kept(self):
+        """A card used at a controller that has not said what it is yet is
+        not consumed: the device keeps it until the description has come.
+        Once that question went unanswered, the events are consumed again,
+        so one silent controller does not hold the device's queue."""
         ws = self._enable()
         with patch.object(type(self.env['bus.bus']), '_sendone'):
-            self._dispatch(self._msg('hello', ctrl=[5]))   # provision ctrl 5
+            self._dispatch(self._msg('hello', ctrl=[5]))
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self._dispatch(self._msg('ev', bid=103, ev=[self._event_dict()]))
+        payload = [c for c in sendone.call_args_list
+                   if c.args[1] == 'hr_rfid.ev_ack'][-1].args[2]
+        self.assertEqual(payload['res'], [{'i': 0, 'ok': False, 'dup': False}],
+                         'kept by the device')
+
+        self.env['hr.rfid.command'].sudo().search([
+            ('webstack_id', '=', ws.id), ('cmd', '=', 'F0'),
+            ('status', 'in', ('Wait', 'Process'))])._close_unanswered()
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self._dispatch(self._msg('ev', bid=104, ev=[self._event_dict()]))
+        payload = [c for c in sendone.call_args_list
+                   if c.args[1] == 'hr_rfid.ev_ack'][-1].args[2]
+        self.assertEqual(payload['res'], [{'i': 0, 'ok': True, 'dup': False}],
+                         'not held back for ever')
+
+    def test_ev_resend_is_deduplicated(self):
+        ws = self._enable()
+        self._known_controller(ws)
         event = self._event_dict(bos=2)
         with patch.object(type(self.env['bus.bus']), '_sendone'):
             self._dispatch(self._msg('ev', bid=201, ev=[event]))
@@ -318,8 +355,7 @@ class TestWsDispatch(RFIDAppCase):
         """A bad controller clock is consumed (ok:true) like the HTTP path's
         status 200, so a permanently-bad-time event does not loop forever."""
         ws = self._enable()
-        with patch.object(type(self.env['bus.bus']), '_sendone'):
-            self._dispatch(self._msg('hello', ctrl=[5]))
+        self._known_controller(ws)
         ev = self._event_dict(ctrl_id=5, bos=7)
         ev['time'] = '99:99:99'   # unparseable -> BadTimeException in the core
         Sys = self.env['hr.rfid.event.system']
@@ -368,8 +404,7 @@ class TestWsDispatch(RFIDAppCase):
         version-derived computes/command builders (F5b): the module still
         works and events still parse."""
         ws = self._enable()
-        with patch.object(type(self.env['bus.bus']), '_sendone'):
-            self._dispatch(self._msg('hello', fw='abc', ctrl=[5]))
+        self._known_controller(ws, fw='abc')
         self.assertEqual(ws.sudo().version, 'abc')
         # version-derived helpers must not raise on the poisoned value
         self.assertIn(ws.is_10_3(), (True, False))

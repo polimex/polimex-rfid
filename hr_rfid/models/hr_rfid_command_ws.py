@@ -16,14 +16,18 @@ import logging
 from datetime import timedelta
 
 from odoo import api, fields, models
+from ..controllers.polimex import (
+    CMD_ANSWER_TIMEOUT_S, CMD_MAX_RETRIES,
+)
 
 _logger = logging.getLogger(__name__)
 
 # How long a published command may stay unanswered before the cron
-# re-publishes it (ARCHITECTURE §10.1 proposal). Retries share the same
-# counter/limit as the HTTP retry path.
-WS_CMD_REPUBLISH_TIMEOUT_S = 15
-WS_CMD_MAX_RETRIES = 5
+# re-publishes it (ARCHITECTURE §10.1 proposal), and how often. One patience
+# and one limit for both deliveries: they are the classic path's own numbers
+# (controllers/polimex.py), under the names this channel knows them by.
+WS_CMD_REPUBLISH_TIMEOUT_S = CMD_ANSWER_TIMEOUT_S
+WS_CMD_MAX_RETRIES = CMD_MAX_RETRIES
 
 
 class HrRfidCommandWs(models.Model):
@@ -79,17 +83,22 @@ class HrRfidCommandWs(models.Model):
             webstack = command.webstack_id
             if not webstack.ws_online:
                 continue
-            if command.retries >= WS_CMD_MAX_RETRIES:
+            if not command._may_be_sent_again():
                 # Permanent delivery failure - persist it AND surface it to
-                # the operator log (a silently dying command is invisible
-                # until someone opens the command list).
+                # the operator (a silently dying command is invisible until
+                # someone opens the command list): the reason goes on the
+                # command and, unless it was routine upkeep, into the
+                # controller's log (_close_unanswered).
                 _logger.warning(
                     'Real-time delivery of command %s (%s) to module %s '
                     'gave up after %d attempts; marked Failure.',
                     command.id, command.cmd, webstack.serial, command.retries)
-                command.write({'status': 'Failure',
-                               'error': 'Real-time delivery gave up after '
-                                        '%d attempts' % command.retries})
+                command._close_unanswered()
+                # The slot is free again. Without this the commands queued
+                # behind it would wait for an answer that is never coming -
+                # only an answer, a new command or a reconnect starts the
+                # next one.
+                webstack._ws_publish_next_command()
                 continue
             # Count the attempt OUTSIDE the publish savepoint so a command that
             # keeps failing still climbs toward the give-up limit (otherwise a

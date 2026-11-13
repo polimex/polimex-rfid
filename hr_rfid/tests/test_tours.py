@@ -66,6 +66,22 @@ class TestHrRfidTours(HttpCase):
             login="admin",
         )
 
+    def test_command_unanswered_tour(self):
+        """Process: an officer opens the commands and reads why one was not carried out.
+
+        Live case, 13.11.2026: on a site whose controller did not answer, the
+        commands that were given up showed "No Error" as their reason.
+        """
+        command = self.controller.read_controller_information_cmd()
+        command.send_command(200)
+        command._close_unanswered()
+        self.assertEqual((command.status, command.error), ("Failure", "30"))
+        self.start_tour(
+            "/odoo/action-hr_rfid.hr_rfid_command_action",
+            "hr_rfid_command_unanswered_tour",
+            login="admin",
+        )
+
     def test_add_webstack_tour(self):
         """Process 1: admin registers a brand-new RFID module."""
         before = self.env["hr.rfid.webstack"].search_count([

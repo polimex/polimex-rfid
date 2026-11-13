@@ -69,6 +69,7 @@ class HrRfidUserEvent(models.Model):
         string='Employee',
         help="The employee who triggered this access event. Automatically populated from the card assignment.",
         ondelete='cascade',
+        index=True,
     )
 
     contact_id = fields.Many2one(
@@ -76,6 +77,7 @@ class HrRfidUserEvent(models.Model):
         string='Contact',
         help="The external contact (visitor, contractor) who triggered this access event. Used for non-employee access tracking.",
         ondelete='cascade',
+        index=True,
     )
 
     department_id = fields.Many2one(

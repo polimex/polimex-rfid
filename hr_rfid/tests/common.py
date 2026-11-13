@@ -251,11 +251,31 @@ class RFIDAppCase(common.TransactionCase):
         # backward-compatible path.
         if controllers is not None:
             payload['controllers'] = controllers
+        before = self._newest_system_event()
         response = self.url_open(self.app_url,
                                  data=json.dumps(payload),
                                  timeout=_TIMEOUT,
                                  headers={'Content-Type': 'application/json'})
+        self._assert_the_report_was_handled(before)
         return self._assertResponse(response)
+
+    def _newest_system_event(self):
+        return self.env['hr.rfid.event.system'].sudo().search([], order='id desc', limit=1).id or 0
+
+    def _assert_the_report_was_handled(self, since):
+        """Fail when the report the fixture module just sent broke something here.
+
+        The fixture is a 10.3 module, and a 10.3 reads an empty reply whether
+        its report was handled or failed - so the reply cannot say which, and
+        a test that looks only at the reply passes over a crash. What the
+        failure does leave behind is its record, with the traceback.
+        """
+        self.env.invalidate_all()
+        failed = self.env['hr.rfid.event.system'].sudo().search([
+            ('id', '>', since),
+            ('error_description', 'like', 'Traceback (most recent call last)'),
+        ], limit=1)
+        self.assertFalse(failed, 'The report failed in Odoo:\n%s' % failed.error_description)
 
     def _count_system_events(self, company_id = None):
         return self.env['hr.rfid.event.system'].with_company(company_id or self.test_company_id).search_count([
@@ -279,16 +299,14 @@ class RFIDAppCase(common.TransactionCase):
 
     def _send_cmd(self, cmd, system_event=False, company_id=None):
         sys_events_count = self._count_system_events(company_id or self.test_company_id)
+        before = self._newest_system_event()
         response = self.url_open(self.app_url,
                                  data=json.dumps(cmd),
                                  timeout=_TIMEOUT,
                                  headers={'Content-Type': 'application/json'})
-        if not response.ok:
-            pass
         self.assertTrue(response.ok)
+        self._assert_the_report_was_handled(before)
         sys_events_count -= self._count_system_events(company_id or self.test_company_id)
-        if sys_events_count != 0 and not system_event:
-            pass
         self.assertTrue(sys_events_count != 0 or not system_event, 'System event generated')
         if response.text != '':
             return self._assertResponse(response)
@@ -426,7 +444,7 @@ class RFIDAppCase(common.TransactionCase):
                 "convertor": ctrl.webstack_id.serial,
                 "event": {"bos": 1,
                           "tos": 1,
-                          "card": card is not None and card or self.test_card_employee.number,
+                          "card": card if card is not None else self.test_card_employee.number,
                           "cmd": "FA",
                           "time": time or self.test_time_10_3,
                           "date": date or self.test_date_10_3,
@@ -443,7 +461,7 @@ class RFIDAppCase(common.TransactionCase):
                 "convertor": ctrl.webstack_id.serial,
                 "event": {"bos": 1,
                           "tos": 1,
-                          "card": card is not None and card or self.test_card_employee.number,
+                          "card": card if card is not None else self.test_card_employee.number,
                           "cmd": "FA",
                           "time": time or self.test_time_10_3,
                           "date": date or self.test_date_10_3,
@@ -488,8 +506,11 @@ class RFIDAppCase(common.TransactionCase):
         self._test_R_event(ctrl, 4)
 
     def _test_Duress(self, ctrl):
-        res = [self._make_event(ctrl, reader=r, event_code=1) for r in range(1, ctrl.readers + 1)]
-        res.append([self._make_event(ctrl, reader=r, event_code=2) for r in range(1, ctrl.readers + 1)])
+        readers = range(1, ctrl.readers + 1)
+        res = self._make_events_that_are_logged(
+            ctrl, 1, [dict(reader=r, event_code=1) for r in readers])
+        res.append(self._make_events_that_are_logged(
+            ctrl, 2, [dict(reader=r, event_code=2) for r in readers]))
         return res
 
     def _test_inputs(self, ctrl):
@@ -500,27 +521,69 @@ class RFIDAppCase(common.TransactionCase):
         ]
         return res
 
+    def _logged(self, ctrl, event_action):
+        """How many times this controller's log holds the event.
+
+        A repeat of the same event within minutes is one row with a counter
+        (hr.rfid.event.system._check_duplicate_sys_ev), so the rows are not
+        counted - what they stand for is.
+        """
+        self.env.invalidate_all()
+        return sum(self.env['hr.rfid.event.system'].sudo().search([
+            ('controller_id', '=', ctrl.id),
+            ('event_action', '=', str(event_action)),
+        ]).mapped('occurrences'))
+
+    def _make_events_that_are_logged(self, ctrl, event_action, events):
+        """Post the events and require each of them in the controller's log.
+
+        These helpers used to post and return: a report that was dropped on
+        the floor passed exactly like one that was recorded.
+
+        :param events: one dict of _make_event arguments per report
+        """
+        before = self._logged(ctrl, event_action)
+        replies = [self._make_event(ctrl, **event) for event in events]
+        self.assertEqual(
+            self._logged(ctrl, event_action) - before, len(events),
+            'event %s is missing from the log of %s' % (event_action, ctrl.name))
+        return replies
+
     def _test_Emergency(self, ctrl):
-        res = [self._make_event(ctrl, card=0, reader=1, event_code=19),
-               self._make_event(ctrl, card=0, reader=1 + 64, event_code=19),
-               self._make_event(ctrl, card=0, reader=0, event_code=19)]  # hardware On
-        return res
+        # No card: an emergency input is not somebody's badge.
+        return self._make_events_that_are_logged(ctrl, 19, [
+            dict(card='0000000000', reader=1, event_code=19),
+            dict(card='0000000000', reader=1 + 64, event_code=19),
+            dict(card='0000000000', reader=0, event_code=19),  # hardware On
+        ])
 
     def _test_Exit_buttons(self, ctrl):
-        return [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=21) for d in ctrl.door_ids]
+        return self._make_events_that_are_logged(ctrl, 21, [
+            dict(reader=d.reader_ids[0].number, event_code=21) for d in ctrl.door_ids])
+
     def _test_External_control(self, ctrl):
-        return [self._make_event(ctrl, reader=0, event_code=29)]
+        return self._make_events_that_are_logged(ctrl, 29, [dict(reader=0, event_code=29)])
 
     def _test_Door_Overtime(self, ctrl):
-        res = [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=25) for d in ctrl.door_ids]
+        res = self._make_events_that_are_logged(ctrl, 25, [
+            dict(reader=d.reader_ids[0].number, event_code=25) for d in ctrl.door_ids])
+        # The first open door has its state read in the reply; a second one
+        # reported while that reading is out waits its turn (one command out
+        # at a time).
+        self.assertEqual(res[0]['cmd']['c'], 'B3', '(%s)' % ctrl.name)
+        self.assertEqual(res[1:], [{}] * (len(res) - 1), '(%s)' % ctrl.name)
         self._clear_ctrl_cmd(ctrl)
         return res
 
     def _test_Force_Door_Open(self, ctrl):
-        return [self._make_event(ctrl, reader=d.reader_ids[0].number, event_code=26) for d in ctrl.door_ids]
+        return self._make_events_that_are_logged(ctrl, 26, [
+            dict(reader=d.reader_ids[0].number, event_code=26) for d in ctrl.door_ids])
 
     def _test_Power_On(self, ctrl):
-        res = self._make_event(ctrl, event_code=30)
+        res = self._make_events_that_are_logged(ctrl, 30, [dict(event_code=30)])[0]
+        # A controller that restarts is given the time in that very reply.
+        self.assertEqual(res['cmd']['c'], 'D7', '(%s)' % ctrl.name)
+        self.assertRegex(res['cmd']['d'], r'^\d{14}$', '(%s)' % ctrl.name)
         self._clear_ctrl_cmd(ctrl)  # Ignore new time sync
         return res
 

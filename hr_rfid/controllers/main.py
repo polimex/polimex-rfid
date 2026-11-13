@@ -93,16 +93,38 @@ class WebRfidController(http.Controller):
         }]
 
     def _decode_post(self, post):
+        """What the module sent, unwrapped - and, settled here once, the
+        shape its reply must have (:meth:`_make_response`).
+
+        The shape is a fact of THIS request, so it is kept on the request. It
+        used to be kept on the controller, which is one object for every
+        request: a reply decided before its own shape was set went out in the
+        shape of whichever module had reported before it. That is what a
+        refusal did when another module's override of the route authenticates
+        first (hr_rfid_vending) - a 100.1 with a wrong key got the empty reply
+        of a 10.3, which it reads as nothing at all.
+
+        Plain wire (owner directive INTEROP 2026-07-13; serial-gate
+        2026-07-14): a 100.1 is known by its SERIAL
+        (:meth:`~hr.rfid.webstack._serial_is_100_1`), which rides in every
+        report, so EVERY exit - the refusals raised while authenticating, the
+        errors, the success - reaches it as a full dict it can parse. JSON-RPC
+        always wraps and is unaffected.
+        """
         if 'jsonrpc' in post:
             # ESP32 JSON-RPC 2.0 format — unwrap params
-            self._is_jsonrpc = True
-            self._jsonrpc_id = post.get('id')
-            return post.get('params', {})
-        self._is_jsonrpc = False
-        if not post:
-            decoded_string = request.httprequest.data.decode('utf-8')
-            return json.loads(decoded_string)
-        return post
+            data = post.get('params', {})
+            shape = {'json_rpc': True, 'id': post.get('id'), 'plain': False}
+        else:
+            data = post or json.loads(request.httprequest.data.decode('utf-8'))
+            serial = data.get('convertor') if isinstance(data, dict) else None
+            shape = {
+                'json_rpc': False,
+                'id': None,
+                'plain': request.env['hr.rfid.webstack']._serial_is_100_1(serial),
+            }
+        request.rfid_reply_shape = shape
+        return data
 
     def _make_response(self, result):
         """Wrap the result for the wire the module speaks. THREE shapes:
@@ -111,12 +133,10 @@ class WebRfidController(http.Controller):
           ``{"jsonrpc":"2.0","id":..,"result":{...}}`` - production default.
         - PLAIN (ESP32 100.1 with ``wire=plain``, owner directive INTEROP
           2026-07-13): the FULL result BARE - ``{"status":..,"cmd":..,"ws":..}``
-          with NO envelope, so ``result.ws`` provisioning survives. The caller
-          (:meth:`post_event`) sets ``_wire_plain`` from the device SERIAL
-          (:meth:`~hr.rfid.webstack._serial_is_100_1`, '4' => 100.1)
-          BEFORE auth/parse, so every exit - including auth-failure 400s and
-          exception 500/200 - reaches a 100.1 as a parseable full dict. It MUST
-          NOT touch the legacy path.
+          with NO envelope, so ``result.ws`` provisioning survives. Which of
+          the three applies was settled for this request by
+          :meth:`_decode_post`, before authentication and parsing. It MUST NOT
+          touch the legacy path.
         - Legacy 10.3 (non-jsonrpc, non-100.1): UNCHANGED - empty body when no
           command, else only ``{"cmd":{...}}`` WITHOUT ``status`` (the 10.3
           firmware JSON parser reads tokens[2] for the cmd; a ``status`` key
@@ -124,25 +144,29 @@ class WebRfidController(http.Controller):
         """
         if isinstance(result, Response):
             return result
-        if getattr(self, '_is_jsonrpc', False):
+        shape = getattr(request, 'rfid_reply_shape', None) or {}
+        if shape.get('json_rpc'):
             return Response(
                 json.dumps({
                     'jsonrpc': '2.0',
-                    'id': self._jsonrpc_id,
+                    'id': shape.get('id'),
                     'result': result,
                 }),
                 content_type='application/json; charset=utf-8',
             )
         # PLAIN wire - ESP32 (WS-capable) ONLY. Full result bare, envelope-free.
-        if getattr(self, '_wire_plain', False):
+        if shape.get('plain'):
             if isinstance(result, dict):
                 return Response(json.dumps(result),
                                 content_type='application/json; charset=utf-8')
             return result
-        # Legacy module (10.3): strip "status" key from response - UNCHANGED.
+        # Legacy module (10.3): the command and nothing else. Its parser finds
+        # the command by position, so any other key in the body - "status",
+        # or the real-time settings meant for a 100.1 - is a body it cannot
+        # read.
         if isinstance(result, dict):
             if 'cmd' in result:
-                body = json.dumps({k: v for k, v in result.items() if k != 'status'})
+                body = json.dumps({'cmd': result['cmd']})
             else:
                 return Response('', status=200)
             return Response(body, content_type='application/json; charset=utf-8')
@@ -182,7 +206,7 @@ class WebRfidController(http.Controller):
                     tz=request.env['res.users'].sudo().browse(2).tz).create({
                         'name': f"Module {post_data['convertor']}",
                         'serial': str(post_data['convertor']),
-                        'key': post_data['key'],
+                        'key': post_data.get('key'),
                         'last_ip': _get_remote_ip_address(),
                         'updated_at': fields.Datetime.now(),
                         'available': 'a',
@@ -222,7 +246,9 @@ class WebRfidController(http.Controller):
             # the classic channel is TLS in production.
             webstack.key = key
             webstack.message_post(body=_("The Module was re-keyed from the insecure default."))
-        elif not consteq(webstack.key, str(post_data['key'])):
+        # A report that shows no key at all is a report with the wrong key:
+        # refused, never an error (anyone can post here without one).
+        elif not consteq(webstack.key, str(post_data.get('key', ''))):
             webstack.report_sys_ev('Webstack key and key in json did not match', post_data=post_data)
             _logger.info(
                 f'Wrong Module key for {webstack.name}/{webstack.company_id.name}! Received=' + str(post_data))
@@ -252,24 +278,21 @@ class WebRfidController(http.Controller):
             return self._parse_raw_data(post_data)
 
         webstack_id = request.env['hr.rfid.webstack']
-        # Plain wire (owner directive INTEROP 2026-07-13; serial-gate
-        # 2026-07-14): fix the response envelope from the device SERIAL right
-        # HERE - before auth and before any parse - so that EVERY exit emits a
-        # parseable full-dict ack to a 100.1: the auth-failure 400s raised INSIDE
-        # _authenticate_webstack (wrong key / inactive / unknown module), the
-        # exception 500/200 in the except blocks below, AND the success path.
-        # Deciding it post-parse (the old code) left auth-failure and Odoo-side
-        # exceptions on the legacy empty-body branch: a 100.1 then saw an empty
-        # body and could not tell "keep the event" (500) from "delete it" (200)
-        # - the exact event loss the 500 exists to prevent. '4' => 100.1 is the
-        # SSOT rule on hr.rfid.webstack; jsonrpc is unaffected (it always wraps).
-        self._wire_plain = (
-            not getattr(self, '_is_jsonrpc', False)
-            and webstack_id._serial_is_100_1(post_data.get('convertor')))
+        # The shape of the reply is already settled (_decode_post), so every
+        # exit below - the refusals raised INSIDE _authenticate_webstack
+        # (wrong key / inactive / unknown module), the 500 and 200 of the
+        # except blocks, and the success - reaches a 100.1 as a full dict. An
+        # empty reply there cannot tell "keep the event" (500) from "delete
+        # it" (200), which is the very loss the 500 exists to prevent.
+        # A report that fails here is written down as it came - but only from
+        # a module that has proved its key. What a stranger posts at this open
+        # endpoint is kept only if the site keeps all its communication.
+        authenticated = False
         try:
             webstack_id, auth_error = self._authenticate_webstack(post_data)
             if auth_error is not None:
                 return auth_error
+            authenticated = True
 
             # From here on the device has proved its key, and only from here.
             #
@@ -292,27 +315,35 @@ class WebRfidController(http.Controller):
             # elevated rights at all.
             request.update_env(user=SUPERUSER_ID)
 
-            result = {
-                'status': 400
-            }
+            # One savepoint around the work on the report. When it fails, what
+            # it had half done is undone, and the record of the failure below
+            # can still be written: after an error from the database nothing
+            # more can be written in the transaction until it is taken back to
+            # a savepoint. The savepoint also sends the pending writes to the
+            # database here, inside the try, so an error that would otherwise
+            # surface only when the request ends is caught and recorded too.
+            with request.env.cr.savepoint():
+                result = {
+                    'status': 400
+                }
 
-            if 'heartbeat' in post_data:
-                _logger.info(f'Heartbeat from {webstack_id.name}/{webstack_id.company_id.name}!')
-                result = webstack_id.parse_heartbeat(post_data=post_data)
-            elif 'event' in post_data:
-                _logger.info(f'Event (%s) from {webstack_id.name}/{webstack_id.company_id.name}' % (
-                    ''.join([a[1] for a in system_action_selection if
-                             a[0] == str(post_data['event']['event_n'])])
-                )
-                             )
-                result = self._parse_event(post_data=post_data, webstack=webstack_id)
-            elif 'response' in post_data:
-                _logger.info(f'Command response from {webstack_id.name}/{webstack_id.company_id.name}')
-                result = webstack_id.parse_response(post_data=post_data)
-            if not post and 'cmd' in result:
-                result = {'cmd': result['cmd']}
-            result = webstack_id._ws_provision_payload(result)
-            webstack_id._touch_from_device(_ws_db_update_dict())
+                if 'heartbeat' in post_data:
+                    _logger.info('Heartbeat from %s/%s!', webstack_id.name, webstack_id.company_id.name)
+                    result = webstack_id.parse_heartbeat(post_data=post_data)
+                elif 'event' in post_data:
+                    _logger.info(
+                        'Event (%s) from %s/%s',
+                        ''.join(a[1] for a in system_action_selection
+                                if a[0] == str(post_data['event']['event_n'])),
+                        webstack_id.name, webstack_id.company_id.name)
+                    result = self._parse_event(post_data=post_data, webstack=webstack_id)
+                elif 'response' in post_data:
+                    _logger.info('Command response from %s/%s', webstack_id.name, webstack_id.company_id.name)
+                    result = webstack_id.parse_response(post_data=post_data)
+                if not post and 'cmd' in result:
+                    result = {'cmd': result['cmd']}
+                result = webstack_id._ws_provision_payload(result)
+                webstack_id._touch_from_device(_ws_db_update_dict())
             return self._make_response(result)
         except (*PG_CONCURRENCY_EXCEPTIONS_TO_RETRY, exceptions.ConcurrencyError):
             # Odoo replays the whole request (odoo/service/model.py, retrying),
@@ -331,7 +362,7 @@ class WebRfidController(http.Controller):
                 traceback.format_exc())
 
             # _logger.error('Caught an exception, returning status=500 and creating a system event (%s)' % str(e))
-            request.env['hr.rfid.event.system'].sudo().create({
+            request.env['hr.rfid.event.system'].sudo().with_context(keep_report=authenticated).create({
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
                 'error_description': traceback.format_exc() or str(e),
@@ -352,16 +383,19 @@ class WebRfidController(http.Controller):
                 'error_description': 'Controller sent us an invalid date or time: ' + t,
                 'input_js': json.dumps(post_data),
             }
-            request.env['hr.rfid.event.system'].sudo().create(sys_ev_dict)
+            request.env['hr.rfid.event.system'].sudo().with_context(keep_report=authenticated).create(sys_ev_dict)
             return self._make_response({'status': 200})
         except Exception as e:
             _logger.error(f'Caught an exception from {webstack_id.name}/{webstack_id.company_id.name}, returning '
                           f'status=500 and creating a system event: %s\n%s', str(e),
                           traceback.format_exc())
-            request.env['hr.rfid.event.system'].sudo().create([{
+            # With where it happened, like the handler above: on a module that
+            # cannot be told about the error (10.3 reads an empty reply as
+            # "accepted"), this record is the only place the report survives.
+            request.env['hr.rfid.event.system'].sudo().with_context(keep_report=authenticated).create([{
                 'webstack_id': webstack_id and webstack_id.id,
                 'timestamp': fields.Datetime.now(),
-                'error_description': str(e),
+                'error_description': traceback.format_exc() or str(e),
                 'input_js': json.dumps(post_data),
             }])
             return self._make_response({'status': 500})

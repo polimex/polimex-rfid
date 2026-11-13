@@ -7,3 +7,4 @@ from . import test_vending_key_auth
 from . import test_vending_new_firmwares
 from . import test_vending_event_search
 from . import test_vending_problem_events
+from . import test_a_vending_machine_is_answered

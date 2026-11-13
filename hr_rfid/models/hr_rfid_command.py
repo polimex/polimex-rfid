@@ -210,6 +210,22 @@ class HrRfidCommands(models.Model):
         default=0,
     )
 
+    sent_at = fields.Datetime(
+        help='When the command was last handed to the module. A command that gets no answer '
+             'shortly after that is handed over again, or closed as failed.',
+        readonly=True,
+        copy=False,
+    )
+
+    single_attempt = fields.Boolean(
+        string='Sent Once',
+        help='Set on a command that is handed to the module only once: an answer to something '
+             'the controller asked at that moment (may this card open the door, how much credit '
+             'does it have), or routine upkeep that its schedule repeats anyway. Left without an '
+             'answer, it is closed as failed instead of being sent again later.',
+        readonly=True,
+    )
+
     pin_code = fields.Char(
         string='Pin Code (debug info)',
         help='PIN code associated with the card for this command. Used for debugging purposes.',
@@ -389,7 +405,7 @@ class HrRfidCommands(models.Model):
                 'status': 'Wait',
                 'retries': 0,
                 'response': None,
-                'error': 0,
+                'error': '0',
             })
         return self.balloon_success(
             title=_("Command resend"),
@@ -682,29 +698,117 @@ class HrRfidCommands(models.Model):
             alarm_right=card_door_rel_id.alarm_right
         )
 
+    # ------------------------------------------------------------------
+    # The queue: which command is next, and when one is given up
+    # ------------------------------------------------------------------
     @api.model
-    def _update_commands(self):
-        failed_commands = self.search([
-            ('status', '=', 'Process'),
-            ('create_date', '<', str(fields.Datetime.now() - timedelta(minutes=1)))
-        ])
+    def _next_waiting(self, webstack):
+        """The next command to hand to this module: the oldest one that waits.
 
-        for it in failed_commands:
-            it.write({
-                'status': 'Failure',
-                'error': '30',
-            })
-
-        failed_commands = self.search([
+        In the order they were asked for - the set-up of a controller is a
+        sequence, and so is what happens to one card. One rule for both
+        deliveries: the answer to a module's report and the real-time channel
+        ask it here.
+        """
+        return self.search([
+            ('webstack_id', '=', webstack.id),
             ('status', '=', 'Wait'),
-            ('create_date', '<', str(fields.Datetime.now() - timedelta(minutes=1)))
-        ])
+        ], order='id asc', limit=1)
 
-        for it in failed_commands:
-            it.write({
+    def _is_still_awaited(self):
+        """Handed over so recently that the module may still be carrying it out.
+
+        A command from before this was recorded has no time of sending; it is
+        treated as long overdue, which is how it was treated until now. So is
+        one whose time of sending lies ahead of the clock by more than the
+        patience itself: a server clock that was set back must not hold the
+        queue until it catches up.
+        """
+        self.ensure_one()
+        patience = timedelta(seconds=polimex.CMD_ANSWER_TIMEOUT_S)
+        now = fields.Datetime.now()
+        return bool(self.sent_at) and now - patience < self.sent_at < now + patience
+
+    def _may_be_sent_again(self):
+        self.ensure_one()
+        return not self.single_attempt and self.retries < polimex.CMD_MAX_RETRIES
+
+    def _close_unanswered(self, error=polimex.ERROR_NO_ANSWER):
+        """Give up commands that got no answer, and say so.
+
+        The reason goes on the command, and the controller's log gets a line
+        an operator can act on: a change of somebody's access that never
+        reached the controller must not be something they find only by opening
+        the list of commands. Routine upkeep repeats on its schedule, so it
+        gets its line once - when the controller stops answering - and not
+        again for every clock setting after that.
+
+        The line says what is known: no answer came. Whether the controller
+        carried the command out is not known here.
+
+        The command is closed whatever happens to that line: a queue must not
+        stay stuck because a note about it could not be written.
+
+        :param error: the code from ``errors`` - '30' when the module never
+                      answered, '20' when it said the controller was silent
+        """
+        cmd_names = dict(self._fields['cmd']._description_selection(self.env))
+        # Only a command that is still open: one already finished is not
+        # closed, or reported, a second time.
+        for command in self.filtered(lambda c: c.status in ('Wait', 'Process')):
+            routine = command.cmd in polimex.ROUTINE_COMMANDS
+            was_answering = command._controller_was_answering()
+            command.write({
                 'status': 'Failure',
-                'error': '30',
+                'error': error,
+                'ex_timestamp': fields.Datetime.now(),
             })
+            if routine and not was_answering:
+                continue
+            attempts = command.retries + 1
+            what = cmd_names.get(command.cmd, command.cmd)
+            if routine:
+                description = self.env._(
+                    'No answer came to "%(command)s". Check that the module is '
+                    'in touch and that the controller answers it.',
+                    command=what)
+            elif command.card_number:
+                description = self.env._(
+                    'No answer came to "%(command)s" for card %(card)s after '
+                    '%(attempts)d attempts, so it may not have been carried out. '
+                    'Check that the module is in touch and that the controller '
+                    'answers it.',
+                    command=what, card=command.card_number, attempts=attempts)
+            else:
+                description = self.env._(
+                    'No answer came to "%(command)s" after %(attempts)d attempts, '
+                    'so it may not have been carried out. Check that the module '
+                    'is in touch and that the controller answers it.',
+                    command=what, attempts=attempts)
+            try:
+                with self.env.cr.savepoint():
+                    command.controller_id.report_sys_ev(description)
+            except Exception:
+                _logger.warning(
+                    'Command %s (%s) was closed without an answer, but the line '
+                    'for the log of controller %s could not be written.',
+                    command.id, command.cmd, command.controller_id.id,
+                    exc_info=True)
+
+    def _controller_was_answering(self):
+        """Did the controller answer the last command before this one?
+
+        True also when there is none before it. Used to tell the moment a
+        controller goes silent from the silence that follows it.
+        """
+        self.ensure_one()
+        previous = self.sudo().search([
+            ('controller_id', '=', self.controller_id.id),
+            ('id', '<', self.id),
+            ('status', 'in', ('Success', 'Failure')),
+        ], order='id desc', limit=1)
+        return not (previous.status == 'Failure' and previous.error in (
+            polimex.ERROR_NO_ANSWER, polimex.ERROR_CONTROLLER_SILENT))
 
     @api.model
     def _sync_clocks(self):
@@ -755,6 +859,7 @@ class HrRfidCommands(models.Model):
             self._check_save_comms(vals)
 
             cmd = vals['cmd']
+            vals.setdefault('single_attempt', cmd in polimex.ROUTINE_COMMANDS)
 
             if cmd not in ['DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC', 'D6', 'B3']:
                 records += super(HrRfidCommands, self).create([vals])
@@ -1116,7 +1221,7 @@ class HrRfidCommands(models.Model):
             command = self[0]
         else:
             command = self
-        command.status = 'Process'
+        command.write({'status': 'Process', 'sent_at': fields.Datetime.now()})
         cmd = {
             'cmd': {
                 'id': command.controller_id.ctrl_id,

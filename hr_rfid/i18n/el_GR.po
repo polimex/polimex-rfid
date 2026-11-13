@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-12 14:52\n"
+"PO-Revision-Date: 2026-11-13 14:18\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el_GR\n"
@@ -926,6 +926,16 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid ""
+"A card was used at a controller that has not described itself yet. The "
+"report is kept here."
+msgstr ""
+"Χρησιμοποιήθηκε μια κάρτα σε ελεγκτή που δεν έχει δηλώσει ακόμη τα στοιχεία "
+"του. Η αναφορά διατηρείται εδώ."
+
+#. module: hr_rfid
+#. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid ""
 "A controller with serial number %s is already registered in the system. It "
@@ -995,6 +1005,30 @@ msgstr ""
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_webstack_serial_uniq
 msgid "A module with this serial number already exists!"
 msgstr "Υπάρχει ήδη ένα module με αυτόν τον σειριακό αριθμό!"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid ""
+"A vending machine asked how much credit a card has, and the request did not "
+"reach the vending add-on. Vending is served only over the classic "
+"connection: if the module uses real-time, use \"Disable real-time\" on it."
+msgstr ""
+"Ένα μηχάνημα αυτόματης πώλησης ζήτησε το διαθέσιμο υπόλοιπο μιας κάρτας και "
+"το αίτημα δεν έφτασε στην πρόσθετη μονάδα αυτόματης πώλησης. Η αυτόματη "
+"πώληση εξυπηρετείται μόνο μέσω της κλασικής σύνδεσης: εάν η μονάδα "
+"χρησιμοποιεί πραγματικό χρόνο, χρησιμοποιήστε την «Απενεργοποίηση "
+"πραγματικού χρόνου» σε αυτήν."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid ""
+"A vending machine asked how much credit a card has, and the vending add-on "
+"is not installed here"
+msgstr ""
+"Αυτόματο μηχάνημα πώλησης ζήτησε το υπόλοιπο πίστωσης μιας κάρτας, αλλά η "
+"πρόσθετη μονάδα αυτόματων πωλήσεων δεν είναι εγκατεστημένη εδώ"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__apb_mode
@@ -1612,6 +1646,12 @@ msgid "Alarm system groups"
 msgstr "Ομάδες συστήματος συναγερμού"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid "Alarm zone delay reported by the controller"
+msgstr "Καθυστέρηση ζώνης συναγερμού όπως αναφέρθηκε από τον ελεγκτή"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__27
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__28
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__29
@@ -1858,6 +1898,13 @@ msgstr "Όπλιση του συναγερμού πόρτας"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Armed"
 msgstr "Ενεργοποιημένος"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid "Arming or disarming was refused, and the report names no card"
+msgstr ""
+"Ο οπλισμός ή ο αφοπλισμός απορρίφθηκε και η αναφορά δεν αναφέρει κάρτα"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
@@ -7053,6 +7100,40 @@ msgid "No alarm lines configured yet"
 msgstr "Δεν έχουν ρυθμιστεί γραμμές συναγερμού ακόμα"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"No answer came to \"%(command)s\" after %(attempts)d attempts, so it may not"
+" have been carried out. Check that the module is in touch and that the "
+"controller answers it."
+msgstr ""
+"Δεν ελήφθη απάντηση στην εντολή «%(command)s» μετά από %(attempts)d "
+"προσπάθειες, επομένως ενδέχεται να μην εκτελέστηκε. Ελέγξτε ότι η μονάδα "
+"επικοινωνεί και ότι ο ελεγκτής την απαντά."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"No answer came to \"%(command)s\" for card %(card)s after %(attempts)d "
+"attempts, so it may not have been carried out. Check that the module is in "
+"touch and that the controller answers it."
+msgstr ""
+"Δεν ελήφθη απάντηση στην εντολή «%(command)s» για την κάρτα %(card)s μετά "
+"από %(attempts)d προσπάθειες, επομένως ενδέχεται να μην εκτελέστηκε. Ελέγξτε"
+" ότι η μονάδα επικοινωνεί και ότι ο ελεγκτής την απαντά."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"No answer came to \"%(command)s\". Check that the module is in touch and "
+"that the controller answers it."
+msgstr ""
+"Δεν ελήφθη απάντηση στην εντολή «%(command)s». Ελέγξτε ότι η μονάδα "
+"επικοινωνεί και ότι ο ελεγκτής την απαντά."
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_card_door_rel_action
 msgid "No card/door relations found"
 msgstr "Δεν βρέθηκαν σχέσεις κάρτας/πόρτας"
@@ -9518,6 +9599,11 @@ msgid "Sensors"
 msgstr "Αισθητήρες"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__single_attempt
+msgid "Sent Once"
+msgstr "Αποστολή μία φορά"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -9589,6 +9675,21 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 msgid "Set friendly name"
 msgstr "Ορισμός φιλικού ονόματος"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__single_attempt
+msgid ""
+"Set on a command that is handed to the module only once: an answer to "
+"something the controller asked at that moment (may this card open the door, "
+"how much credit does it have), or routine upkeep that its schedule repeats "
+"anyway. Left without an answer, it is closed as failed instead of being sent"
+" again later."
+msgstr ""
+"Ορίζεται σε εντολή που παραδίδεται στη μονάδα μόνο μία φορά: απάντηση σε "
+"κάτι που ο ελεγκτής ζήτησε εκείνη τη στιγμή (αν επιτρέπεται σε μια κάρτα να "
+"ανοίξει την πόρτα, πόση πίστωση διαθέτει) ή τακτική συντήρηση που το "
+"χρονοπρόγραμμά της επαναλαμβάνει ούτως ή άλλως. Αν μείνει χωρίς απάντηση, "
+"κλείνει ως αποτυχημένη αντί να σταλεί ξανά αργότερα."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_department_change_default_access_group_action
@@ -12106,6 +12207,16 @@ msgstr ""
 "Όταν είναι ενεργοποιημένο, αυτή η κάρτα μπορεί να ενεργοποιεί/απενεργοποιεί "
 "το σύστημα συναγερμού για αυτή την πόρτα. Χορηγείται συνήθως σε προσωπικό "
 "ασφάλειας ή διαχειριστές που χρειάζεται να ελέγχουν το σύστημα συναγερμού."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_at
+msgid ""
+"When the command was last handed to the module. A command that gets no "
+"answer shortly after that is handed over again, or closed as failed."
+msgstr ""
+"Η χρονική στιγμή που η εντολή παραδόθηκε τελευταία φορά στη μονάδα. Μια "
+"εντολή που δεν λαμβάνει απάντηση λίγο μετά από αυτήν παραδίδεται ξανά ή "
+"κλείνει ως αποτυχημένη."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__active

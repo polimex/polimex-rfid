@@ -71,6 +71,23 @@ class TestTheDemoKeepsWorking(TransactionCase):
         self.Demo._cron_simulate()
         self.assertEqual(self._passages_since(two_hours_ago), added)
 
+    def test_the_demo_hardware_answers_what_it_is_asked(self):
+        """The list of commands of the demo shows hardware that answers, not a queue that only grows."""
+        self.env.ref("hr_rfid.demo_ctrl_icon110").synchronize_clock_cmd()
+        since = fields.Datetime.now() - timedelta(hours=26)
+        self.params.set_param(SIMULATED_UNTIL, fields.Datetime.to_string(since))
+
+        self.Demo._cron_simulate()
+
+        self.assertFalse(
+            self.env["hr.rfid.command"].search(
+                [
+                    ("webstack_id", "=", self.webstack.id),
+                    ("status", "in", ("Wait", "Process")),
+                ]
+            )
+        )
+
     def test_a_real_module_stops_the_demo(self):
         """NEGATIVE: once a real module is attached, the demo writes nothing."""
         since = fields.Datetime.now() - timedelta(hours=26)

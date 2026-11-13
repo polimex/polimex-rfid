@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-12 14:52\n"
+"PO-Revision-Date: 2026-11-13 14:19\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -929,6 +929,16 @@ msgstr ""
 
 #. module: hr_rfid
 #. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid ""
+"A card was used at a controller that has not described itself yet. The "
+"report is kept here."
+msgstr ""
+"Se usó una tarjeta en un controlador que aún no se ha descrito a sí mismo. "
+"El informe se conserva aquí."
+
+#. module: hr_rfid
+#. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid ""
 "A controller with serial number %s is already registered in the system. It "
@@ -998,6 +1008,29 @@ msgstr ""
 #: model:ir.model.constraint,message:hr_rfid.constraint_hr_rfid_webstack_serial_uniq
 msgid "A module with this serial number already exists!"
 msgstr "¡Ya existe un módulo con este número de serie!"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid ""
+"A vending machine asked how much credit a card has, and the request did not "
+"reach the vending add-on. Vending is served only over the classic "
+"connection: if the module uses real-time, use \"Disable real-time\" on it."
+msgstr ""
+"Una máquina expendedora consultó cuánto crédito tiene una tarjeta, y la "
+"solicitud no llegó al complemento de venta. La venta solo se atiende a "
+"través de la conexión clásica: si el módulo usa tiempo real, utilice "
+"\"Desactivar tiempo real\" en él."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid ""
+"A vending machine asked how much credit a card has, and the vending add-on "
+"is not installed here"
+msgstr ""
+"Una máquina expendedora consultó cuánto crédito tiene una tarjeta, y el "
+"complemento de máquinas expendedoras no instalado aquí"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_door__apb_mode
@@ -1662,6 +1695,12 @@ msgid "Alarm system groups"
 msgstr "Grupos del sistema de alarma"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid "Alarm zone delay reported by the controller"
+msgstr "Retardo de zona de alarma informado por el controlador"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__27
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__28
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__29
@@ -1903,6 +1942,13 @@ msgstr "Armar la alarma de la puerta"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_door_view_kanban
 msgid "Armed"
 msgstr "Armado"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_webstack_hw_events.py:0
+msgid "Arming or disarming was refused, and the report names no card"
+msgstr ""
+"Se rechazó el armado o desarmado, y el informe no indica ninguna tarjeta"
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
@@ -7751,6 +7797,40 @@ msgid "No alarm lines configured yet"
 msgstr "Aún no hay líneas de alarma configuradas"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"No answer came to \"%(command)s\" after %(attempts)d attempts, so it may not"
+" have been carried out. Check that the module is in touch and that the "
+"controller answers it."
+msgstr ""
+"No hubo respuesta a \"%(command)s\" tras %(attempts)d intentos, por lo que "
+"es posible que no se haya ejecutado. Compruebe que el módulo está en "
+"contacto y que el controlador responde."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"No answer came to \"%(command)s\" for card %(card)s after %(attempts)d "
+"attempts, so it may not have been carried out. Check that the module is in "
+"touch and that the controller answers it."
+msgstr ""
+"No hubo respuesta a \"%(command)s\" para la tarjeta %(card)s tras "
+"%(attempts)d intentos, por lo que es posible que no se haya ejecutado. "
+"Compruebe que el módulo está en contacto y que el controlador responde."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"No answer came to \"%(command)s\". Check that the module is in touch and "
+"that the controller answers it."
+msgstr ""
+"No hubo respuesta a \"%(command)s\". Compruebe que el módulo está en "
+"contacto y que el controlador responde."
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_card_door_rel_action
 msgid "No card/door relations found"
 msgstr "No se encontraron relaciones tarjeta/puerta"
@@ -10372,6 +10452,16 @@ msgid "Sensors"
 msgstr "Sensores"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_at
+msgid "Sent At"
+msgstr "Enviado el"
+
+#. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__single_attempt
+msgid "Sent Once"
+msgstr "Enviado una sola vez"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -10441,6 +10531,21 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_form_view
 msgid "Set friendly name"
 msgstr "Establecer nombre descriptivo"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__single_attempt
+msgid ""
+"Set on a command that is handed to the module only once: an answer to "
+"something the controller asked at that moment (may this card open the door, "
+"how much credit does it have), or routine upkeep that its schedule repeats "
+"anyway. Left without an answer, it is closed as failed instead of being sent"
+" again later."
+msgstr ""
+"Se activa en un comando que se entrega al módulo una sola vez: una respuesta"
+" a algo que el controlador preguntó en ese momento (si esta tarjeta puede "
+"abrir la puerta, cuánto crédito tiene) o un mantenimiento rutinario que su "
+"programación repite de todos modos. Si queda sin respuesta, se cierra como "
+"fallido en lugar de enviarse de nuevo más tarde."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_department_change_default_access_group_action
@@ -13076,6 +13181,16 @@ msgstr ""
 "Cuando está habilitado, esta tarjeta puede armar/desarmar el sistema de "
 "alarma de esta puerta. Normalmente se concede al personal de seguridad o a "
 "los responsables que necesitan controlar el sistema de alarma."
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_at
+msgid ""
+"When the command was last handed to the module. A command that gets no "
+"answer shortly after that is handed over again, or closed as failed."
+msgstr ""
+"Momento en que el comando se entregó al módulo por última vez. Un comando "
+"que no recibe respuesta poco después se entrega de nuevo o se cierra como "
+"fallido."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl_th__active

@@ -1,7 +1,7 @@
 # noinspection PyStatementEffect
 {
     "name": "RFID Demo Data",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Human Resources",
     "summary": "A demo company that keeps working: passages, attendance, "
     "lateness and overtime for the RFID set, day after day",

@@ -29,6 +29,11 @@ def take_everyone_off_auto_refill(env):
     ).write({"hr_rfid_vending_auto_refill": False})
 
 
+# A known good price table of a machine, with the scale factor (5) at
+# position (8*2)*(0x14-1)+6*2 = 316.
+IO_TABLE_SCALE_FACTOR_5 = "000400030002000100080007000600050F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F000000000000000F0000000000000005"
+
+
 class VendingFlowMixin:
     """Products in the price table, machine events and balance checks."""
 
@@ -86,6 +91,13 @@ class VendingFlowMixin:
     # ------------------------------------------------------------------
     # What the machine sends
     # ------------------------------------------------------------------
+
+    def _machine_counts_in_fives(self):
+        """Give the machine a price table whose unit is 0.05 (scale factor 5)."""
+        self.c_vending.with_context(from_controller=True).write(
+            {"io_table": IO_TABLE_SCALE_FACTOR_5}
+        )
+        self.c_vending.invalidate_recordset()
 
     def _vending_event(
         self,

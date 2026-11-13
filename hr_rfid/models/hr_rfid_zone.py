@@ -8,6 +8,12 @@ from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
 
 _logger = logging.getLogger(__name__)
 
+# A passage this old when it reaches us did not come as it happened: a module
+# in touch delivers within seconds, and the controllers' clocks are set from
+# here on a schedule. Only such a passage can have been overtaken by a newer
+# one (_passage_is_overtaken); a live one always moves the zone.
+LATE_PASSAGE_AFTER_MINUTES = 10
+
 
 class HrRfidZone(models.Model):
     _name = 'hr.rfid.zone'
@@ -145,11 +151,57 @@ class HrRfidZone(models.Model):
             else:
                 zone.person_entered(person, event)
 
+    def _passage_is_overtaken(self, person, event):
+        """Has this person passed a door of this zone AFTER the passage in hand?
+
+        A module that was out of touch delivers its passages late, sometimes
+        days late, and controllers do not deliver in step with one another. A
+        passage that arrives after a newer one of the same person is history:
+        it is recorded, and attendance is worked out from its own time. But
+        where the person is NOW - who is in the zone, which way anti-passback
+        lets their card go next - was settled by the newer passage, and the
+        older one must not turn it back. It did: an entry two days old, sent
+        in while the person was already out again, put them back in the zone
+        and told the other doors of the zone to let that card out only.
+
+        Two things keep a wrong clock from freezing a zone. Only a passage
+        that reached us late is weighed at all, so what happens now always
+        counts. And a "newer" passage stamped later than this server's own
+        time is not believed: one controller with its clock ahead would
+        otherwise overtake everything the person does until time catches up.
+
+        :param event: the passage (hr.rfid.event.user); empty when the caller
+                      acts on its own clock, which is never overtaken
+        """
+        self.ensure_one()
+        if not event or not event.event_time:
+            return False
+        now = fields.Datetime.now()
+        if event.event_time > now - relativedelta(minutes=LATE_PASSAGE_AFTER_MINUTES):
+            return False
+        whose = 'employee_id' if person._name == 'hr.employee' else 'contact_id'
+        newer = self.env['hr.rfid.event.user'].sudo().search([
+            (whose, '=', person.id),
+            ('door_id', 'in', self.door_ids.ids),
+            ('event_action', '=', '1'),
+            ('event_time', '>', event.event_time),
+            ('event_time', '<=', now),
+        ], order='event_time desc', limit=1)
+        if newer:
+            _logger.info(
+                'Zone %s: passage %s of %s (%s) arrived after the newer passage '
+                '%s (%s); recorded, the zone is left as the newer one set it.',
+                self.id, event.id, person.display_name, event.event_time,
+                newer.id, newer.event_time)
+        return bool(newer)
+
     def person_entered(self, person, event):
         is_employee = isinstance(person, type(self.env['hr.employee']))
 
         for zone in self:
             if is_employee and not zone._check_employee_permit(person):
+                continue
+            if zone._passage_is_overtaken(person, event):
                 continue
             if (is_employee and person in zone.employee_ids) \
                     or (not is_employee and person in zone.contact_ids):
@@ -168,6 +220,8 @@ class HrRfidZone(models.Model):
 
         for zone in self:
             if is_employee and not zone._check_employee_permit(person):
+                continue
+            if zone._passage_is_overtaken(person, event):
                 continue
             if (is_employee and person not in zone.employee_ids) \
                     or (not is_employee and person not in zone.contact_ids):

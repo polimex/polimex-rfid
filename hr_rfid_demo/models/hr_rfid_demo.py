@@ -134,6 +134,7 @@ class HrRfidDemo(models.AbstractModel):
             self._demo_report(webstack, ctrl, reader, card, moment, event_n)
         readings = self._demo_environment_readings(since, until)
         self._demo_hourly_costs()
+        self._demo_answer_commands(webstack)
         params.set_param(SIMULATED_UNTIL, fields.Datetime.to_string(until))
         _logger.info(
             "RFID demo: %d passages and %d sensor readings simulated from %s to %s",
@@ -143,6 +144,29 @@ class HrRfidDemo(models.AbstractModel):
             until,
         )
         return len(passages)
+
+    @api.model
+    def _demo_answer_commands(self, webstack):
+        """Close what the system asked of the demo module, as hardware would.
+
+        Passages, schedules and changes of access queue commands for the
+        controllers - the clock, the status reading, the cards. A real module
+        carries each out and answers; the demo one has nobody behind it, so
+        they would pile up for ever and the list of commands would show a
+        site whose hardware never answers.
+        """
+        commands = (
+            self.env["hr.rfid.command"]
+            .sudo()
+            .search(
+                [
+                    ("webstack_id", "=", webstack.id),
+                    ("status", "in", ("Wait", "Process")),
+                ]
+            )
+        )
+        commands.write({"status": "Success", "ex_timestamp": fields.Datetime.now()})
+        return len(commands)
 
     @api.model
     def _demo_environment_readings(self, since, until):

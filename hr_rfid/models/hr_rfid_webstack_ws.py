@@ -26,7 +26,7 @@ polimex_iot both depend on ``polimex_ws`` but never on each other.
 """
 import logging
 
-from odoo import fields, models
+from odoo import fields, models, tools
 from odoo.addons.bus.websocket import CloseCode, _websocket_instances
 
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
@@ -241,10 +241,8 @@ class HrRfidWebstackWs(models.Model):
             return
         if rec.in_cmd_execution():
             return  # a command is still in flight - its rsp will chain us
-        command = self.env['hr.rfid.command'].sudo().search([
-            ('webstack_id', '=', rec.id),
-            ('status', '=', 'Wait'),
-        ], order='id', limit=1)
+        # The same rule as the classic delivery: the oldest that waits.
+        command = self.env['hr.rfid.command'].sudo()._next_waiting(rec)
         if not command:
             return
         try:
@@ -269,10 +267,25 @@ class HrRfidWebstackWs(models.Model):
         by ``cid``, so a command already delivered over a previous
         connection is acknowledged, not re-executed."""
         self.ensure_one()
-        commands = self.env['hr.rfid.command'].sudo().search([
+        Command = self.env['hr.rfid.command'].sudo()
+        out = Command.search([
             ('webstack_id', '=', self.id),
-            ('status', 'in', ('Wait', 'Process')),
-        ], order='id', limit=1)
+            ('status', '=', 'Process'),
+        ], order='id')
+        # An answer of the moment (a door release, a vending credit) and a
+        # command that has used its attempts are never handed over again: a
+        # door must not open when the module comes back minutes later. Past
+        # its time it is closed here; within it, its answer may still come
+        # and it keeps the one place a module has for a command.
+        spent = out.filtered(lambda c: not c._may_be_sent_again())
+        expired = spent.filtered(lambda c: not c._is_still_awaited())
+        expired._close_unanswered()
+        if spent - expired:
+            return
+        # The command that was out when the connection dropped goes first (the
+        # device recognises it by its id); otherwise the next one in the queue,
+        # in the order the classic delivery uses.
+        commands = (out - spent)[:1] or Command._next_waiting(self)
         for command in commands:
             # Per-command savepoint: one command with corrupt data (send_command
             # can raise on e.g. an empty pin/rights field) must not abort the
@@ -387,20 +400,26 @@ class HrRfidWebstackWs(models.Model):
                 _logger.warning(
                     'WS: event %s of batch %s from %s has an invalid date/time',
                     i, bid, rec.serial)
+                # keep_report: the event is consumed, so what is written down
+                # here is its only copy (as on the HTTP path).
                 self._ws_report_sys_ev(
-                    rec, 'Controller sent an invalid date or time',
+                    rec.with_context(keep_report=True),
+                    'Controller sent an invalid date or time',
                     {'bid': bid, 'event': event})
                 entry['ok'] = True   # consume like HTTP status 200
-            except Exception:
+            except Exception as error:
                 # ok:false -> the device keeps the event and re-sends it
                 # later; the failure is visible in the log and as a system
-                # event. Same recovery shape as the HTTP path's 500.
+                # event, with what was sent and what went wrong. Same recovery
+                # shape as the HTTP path's 500.
                 _logger.warning(
                     'WS: event %s of batch %s from %s failed to parse',
                     i, bid, rec.serial, exc_info=True)
                 self._ws_report_sys_ev(
-                    rec, 'Real-time event could not be processed',
-                    {'bid': bid, 'event': event})
+                    rec.with_context(keep_report=True),
+                    'Real-time event could not be processed',
+                    {'bid': bid, 'event': event,
+                     'error': tools.exception_to_unicode(error)})
                 entry['ok'] = False
             results.append(entry)
         ack = {'bid': bid, 'res': results}

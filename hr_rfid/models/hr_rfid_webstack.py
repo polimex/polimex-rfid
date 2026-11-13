@@ -978,9 +978,19 @@ class HrRfidWebstack(models.Model):
         self.ensure_one()
         return self.get_ws_time(post_data).strftime('%Y-%m-%d %H:%M:%S')
 
-    def _retry_command(self, status_code, cmd, event=None):
-        if cmd.retries >= 5:
-            cmd.status = 'Failure'
+    def _retry_command(self, status_code, cmd, event=None, error=polimex.ERROR_NO_ANSWER):
+        """A command went without an answer: hand it over again, or give it up.
+
+        Reached two ways: the module says the controller stayed silent (e=20),
+        or the command has outlived the time a module needs to answer
+        (check_for_unsent_cmd). Given up, it is closed with its reason
+        (hr.rfid.command._close_unanswered) and the queue moves on in the same
+        reply.
+
+        :param error: the reason recorded if this is the end of the command
+        """
+        if not cmd._may_be_sent_again():
+            cmd._close_unanswered(error)
             return self.check_for_unsent_cmd(status_code, event)
 
         cmd.retries = cmd.retries + 1
@@ -989,14 +999,40 @@ class HrRfidWebstack(models.Model):
             event.command_id = cmd
         return cmd.send_command(status_code)
 
-    def check_for_unsent_cmd(self, status_code, event=None):
-        """
-        :param status_code: The status code of the command to be checked.
-        :param event: The corresponding event object. Defaults to None.
-        :return: If there are processing commands, it retries the command based on the status code and event.
-                 If there are waiting commands, it sends the command based on the status code and event.
-                 If there are no commands, it returns the status code.
+    def _reply_with_command(self, command, status_code):
+        """Answer the module's report with this command - if it is free to take it.
 
+        Some reports are answered with a command of their own: a controller
+        that has just powered up gets the clock, an unknown one is asked what
+        it is, a door left open has its state read. While another command is
+        still out, a second one handed over next to it could not be told apart
+        when the answers come back (they are matched by controller and kind of
+        command), and the first would be sent again in its place. So it then
+        waits its turn in the queue like any other.
+
+        A command that is no longer waiting was already delivered straight to
+        the module on the way here (hr.rfid.ctrl._base_command, for a module
+        Odoo can reach) and must not go out a second time.
+        """
+        self.ensure_one()
+        if command.status == 'Wait' and not self.in_cmd_execution():
+            return command.send_command(status_code)
+        return self.check_for_unsent_cmd(status_code)
+
+    def check_for_unsent_cmd(self, status_code, event=None):
+        """What goes back to a module that has just reported: a command, or nothing.
+
+        One command is out at a time. While the module may still be carrying it
+        out (hr.rfid.command._is_still_awaited) nothing else is handed over and
+        it is not sent again - a module flushing a backlog of events reports
+        many times a second, and each of those reports used to resend the same
+        command and count as a failed attempt. Once it has clearly gone
+        unanswered it is sent again or given up, and the next one in the queue
+        (hr.rfid.command._next_waiting) takes its place.
+
+        :param status_code: what the module is told about its own report
+        :param event: the passage this reply answers, linked to the command
+        :return: {'status': ..} with 'cmd' when a command goes out
         """
         self.ensure_one()
 
@@ -1012,18 +1048,29 @@ class HrRfidWebstack(models.Model):
             return {'status': status_code}
 
         commands_env = self.env['hr.rfid.command'].sudo()
-        processing_comm = commands_env.search([
+        out = commands_env.search([
             ('webstack_id', '=', self.id),
             ('status', '=', 'Process'),
-        ], order='id asc', limit=1)
+        ], order='id asc')
 
-        if processing_comm:
-            return self._retry_command(status_code, processing_comm, event)
+        # Normally one. More than one is what an answer bound to a moment
+        # leaves behind when its own reply never came (a door release the
+        # controller asked for), next to a queued command.
+        # One command out at a time: while the module may still be working on
+        # any of them, nothing else goes out - not even a retry of an older one.
+        if any(command._is_still_awaited() for command in out):
+            return {'status': status_code}
 
-        command_id = commands_env.search([
-            ('webstack_id', '=', self.id),
-            ('status', '=', 'Wait'),
-        ], order='id asc', limit=1)
+        overdue = commands_env
+        for command in out:
+            if command._may_be_sent_again():
+                overdue |= command
+            else:
+                command._close_unanswered()
+        if overdue:
+            return self._retry_command(status_code, overdue[0], event)
+
+        command_id = commands_env._next_waiting(self)
 
         if not command_id:
             return {'status': status_code}
@@ -1217,20 +1264,31 @@ class HrRfidWebstack(models.Model):
 
         # controller not response!
         if response['e'] != 0:
-            if response['e'] == 20:  # controller not response!
-                return self._retry_command(200, command)
-            if response['e'] == 24 and command.retries < 5:
-                # Device command buffer momentarily full (NO_QUADRANT - the
-                # module stages at most 4 commands; INTEROP 2026-07-13):
-                # transient by contract, so queue again instead of Failure.
-                # The websocket chain (_ws_publish_next_command) or the
-                # republish cron delivers it once a slot frees.
+            if response['e'] == 20 and not direct_cmd:  # controller not response!
+                return self._retry_command(200, command, error=polimex.ERROR_CONTROLLER_SILENT)
+            if response['e'] in (20, 24) and command._may_be_sent_again():
+                # Back to wait its turn instead of Failure.
+                # e=24: device command buffer momentarily full (NO_QUADRANT -
+                # the module stages at most 4 commands; INTEROP 2026-07-13),
+                # transient by contract.
+                # e=20 on this path: the controller stayed silent to a command
+                # that was delivered on its own (the real-time channel, or a
+                # module Odoo reaches). No reply of ours carries a command
+                # there, so handing it over again in place would only mark it
+                # sent, and the queue would wait for an answer to nothing.
+                # The websocket chain (_ws_publish_next_command), the
+                # republish cron or the module's next report delivers it.
+                # A command that goes out once (an answer of the moment) or
+                # has used its attempts falls through and is closed.
                 command.write({
                     'status': 'Wait',
                     'retries': command.retries + 1,
                     'response': json.dumps(post_data),
                 })
                 return not direct_cmd and self.check_for_unsent_cmd(200)
+            if response['e'] == 20:
+                command._close_unanswered(polimex.ERROR_CONTROLLER_SILENT)
+                return False
             command.write({
                 'status': 'Failure',
                 'error': str(response['e']),

@@ -890,7 +890,34 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inheri
   - touches: `hr.rfid.door`
 - **`change_apb_flag(self, door, card, can_exit=True)`** - decorators: `@api.model`
   - touches: `hr.rfid.card.door.rel`
-- **`_update_commands(self)`** - decorators: `@api.model`
+- **`_next_waiting(self, webstack)`** - decorators: `@api.model`
+  - The next command to hand to a module: the oldest in `Wait`. The one rule
+    for both deliveries - `hr.rfid.webstack.check_for_unsent_cmd` (the reply
+    to a module's report) and the real-time channel
+    (`_ws_publish_next_command`, `_ws_on_connect_sync`).
+- **`_is_still_awaited(self)`** - decorators: -
+  - True while less than `CMD_ANSWER_TIMEOUT_S` (15 s, `controllers/polimex.py`)
+    has passed since `sent_at`: the module may still be carrying the command
+    out. A command with no `sent_at` (from before the field existed) counts
+    as overdue.
+- **`_may_be_sent_again(self)`** - decorators: -
+  - False for a `single_attempt` command and once `retries` reached
+    `CMD_MAX_RETRIES` (5).
+- **`_close_unanswered(self, error='30')`** - decorators: -
+  - Gives a command up: `status='Failure'`, the reason in `error` ('30' no
+    answer from the module, '20' the module said the controller was silent),
+    `ex_timestamp`. The controller's log gets a system event naming the
+    command, the card and the number of attempts ("No answer came to ..." -
+    whether the controller carried it out is not known). Routine upkeep
+    (`ROUTINE_COMMANDS`: D7, B3) gets its event once, when the controller
+    stops answering (`_controller_was_answering`), not at every failure after
+    it. The event is written inside a savepoint: a failure to write it is
+    logged and never keeps the command open.
+- **`_controller_was_answering(self)`** - decorators: -
+  - True unless the controller's previous finished command was closed for no
+    answer ('30' or '20'); True when there is none before.
+  - effects: `write`
+  - touches: `hr.rfid.event.system`
 - **`_sync_clocks(self)`** - decorators: `@api.model`
   - touches: `hr.rfid.webstack`
 - *9 more not listed*
@@ -2036,8 +2063,30 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 ### `models/hr_rfid_command_ws.py`
 
-- **`WS_CMD_REPUBLISH_TIMEOUT_S`** *(scalar)* = `15`  - line 25
-- **`WS_CMD_MAX_RETRIES`** *(scalar)* = `5`  - line 26
+- **`WS_CMD_REPUBLISH_TIMEOUT_S`** *(scalar)* = `CMD_ANSWER_TIMEOUT_S` (15)
+- **`WS_CMD_MAX_RETRIES`** *(scalar)* = `CMD_MAX_RETRIES` (5)
+
+### `controllers/polimex.py` - the command queue
+
+- **`CMD_ANSWER_TIMEOUT_S`** *(scalar)* = `15` - how long a command handed to a module may stay unanswered before it counts as lost; shared by the classic delivery and the real-time channel
+- **`CMD_MAX_RETRIES`** *(scalar)* = `5` - how many times a lost command is handed over again
+- **`ROUTINE_COMMANDS`** *(collection)* = `('D7', 'B3')` - the clock and the status reading: `single_attempt`, one system event when the controller stops answering them
+- **`ERROR_NO_ANSWER`** = `'30'`, **`ERROR_CONTROLLER_SILENT`** = `'20'` - the reasons a command is closed for
+
+### The conversation with a module (`controllers/main.py`, `models/hr_rfid_webstack.py`)
+
+- **The shape of the reply** is settled per request by `_decode_post` and kept on the request (`request.rfid_reply_shape`: `json_rpc`, `id`, `plain`), never on the controller object, which is shared by every request. `_make_response` reads it: JSON-RPC envelope, plain JSON for a 100.1 (serial starting with '4'), and for a 10.3 an empty body or `{"cmd": {...}}` and nothing else - no `status`, no `ws` block.
+- **One command out at a time** (`check_for_unsent_cmd`): while ANY command in `Process` is still awaited nothing is handed over and none is re-sent; once all are overdue, those that may not be sent again are closed (`_close_unanswered`), the oldest of the rest is re-sent (`retries + 1`), and with none left the next waiting one goes out in the same reply.
+- **What the module answers to a command** (`parse_response`): `e=20` (controller silent) in the reply to a report re-sends the command in place (`_retry_command`) or closes it with '20'; on a delivery of its own (`direct_cmd=True`: the real-time channel, a module Odoo reaches) it goes back to `Wait` with `retries + 1` or is closed, because no reply carries a command there. `e=24` (module full) puts the command back to `Wait`. Neither re-queues a `single_attempt` command: it is closed.
+- **On reconnect** (`_ws_on_connect_sync`): a `Process` command that may not be sent again is closed if its time is up, and holds the slot if it is still awaited; otherwise the oldest `Process` command is published again, else the next waiting one.
+- **A controller that has not described itself** (`_hw_description_is_on_its_way`): a card event for a controller with no `hw_version` is answered 400 while its F0 is `Wait`/`Process` (asked here if it never was), with a system event that keeps the report. After an F0 that ended without describing it, the event is noted ("Could not find a reader with that id") and accepted, so the module is not held back.
+- **`_reply_with_command(command, status_code)`** - used by the reports that are answered with a command of their own (event 30 the clock, event 25/31 the status reading, an unknown controller its F0): the command goes out in the reply only when nothing else is out; otherwise it waits its turn.
+- **`single_attempt`** commands are never re-sent: the answer to event 64 (DB, and DB2 for vending credit) and routine upkeep.
+- **A report that fails here** is recorded as a system event with the traceback AND the raw report (`with_context(keep_report=True)` bypasses the "save communications" setting, up to `KEPT_REPORT_MAX_CHARS` = 20000): a 10.3 reads an empty reply as "accepted" and forgets the event, so this record is its only copy. The kept copy leaves out the module's key (`_report_without_key`). Only for a module that has proved its key; before that the report is kept only if the site keeps its communication. The work on the report runs inside a savepoint (`post_event`, and the vending override): a failure undoes what was half done, and the record can still be written after a database error. The real-time channel does the same per event (`_ws_on_event_batch`).
+- **A report with no key** is refused like a wrong key (400, "Webstack key and key in json did not match"); it used to raise.
+- **Events 27/28** (alarm zone delay) are logged and acknowledged; they used to raise.
+- **A late passage** (`hr.rfid.zone._passage_is_overtaken`): a granted passage more than `LATE_PASSAGE_AFTER_MINUTES` (10) old on arrival, with a newer one of the same person through a door of the zone, does not change the zone's people or the anti-passback flags; it is still recorded and still counts for attendance by its own time. A "newer" passage stamped after the server's own time is not counted (a controller with its clock ahead), and a passage that is not late always moves the zone. Each skip is logged at INFO with both passages.
+- **Vending without a server for it** (`_hw_vending_request_for_balance`): logged and accepted; the text says "not installed" only when `hr.rfid.vending.event` is not in the registry, otherwise that vending is served over the classic connection only.
 
 ### `models/hr_rfid_ctrl_time_schedule.py`
 

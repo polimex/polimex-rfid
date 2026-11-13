@@ -264,6 +264,45 @@ class TestWsCommands(RFIDAppCase):
         self.assertFalse([c for c in sendone.call_args_list
                           if c.args[1] == 'hr_rfid.cmd'])
         self.assertEqual(cmd.status, 'Failure')
+        self.assertEqual(cmd.error, '30', 'closed for "no response from the module"')
+
+    def test_a_command_given_up_over_real_time_lets_the_next_one_go(self):
+        """A command nobody answers over the real-time connection must not hold the rest.
+
+        Only an answer, a new command or a reconnect started the next command
+        in the queue. A command that was given up produces none of those, so
+        everything behind it waited for an answer that was never coming.
+        """
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            dead = self._mk_cmd(ctrl, cmd='D1', card_number='0012340001',
+                                pin_code='0000', ts_code='00000000',
+                                rights_data='3', rights_mask='3')
+            waiting = self._mk_cmd(ctrl, cmd='D1', card_number='0012340002',
+                                   pin_code='0000', ts_code='00000000',
+                                   rights_data='3', rights_mask='3')
+        self.assertEqual((dead.status, waiting.status), ('Process', 'Wait'))
+        dead.retries = WS_CMD_MAX_RETRIES
+        self.env.flush_all()
+        self.env.cr.execute(
+            'UPDATE hr_rfid_command SET write_date=%s WHERE id=%s',
+            (fields.Datetime.now() - timedelta(seconds=WS_CMD_REPUBLISH_TIMEOUT_S + 5), dead.id))
+        dead.invalidate_recordset(['write_date'])
+
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self.env['hr.rfid.command']._ws_republish_cron()
+
+        self.assertEqual((dead.status, dead.error), ('Failure', '30'))
+        self.assertEqual(waiting.status, 'Process')
+        self.assertEqual(
+            [c.args[2]['cid'] for c in sendone.call_args_list if c.args[1] == 'hr_rfid.cmd'],
+            [waiting.id])
+        self.assertTrue(
+            self.env['hr.rfid.event.system'].search([
+                ('controller_id', '=', ctrl.id),
+                ('error_description', 'like', '0012340001'),
+            ]), 'the operator is told which card was not written')
 
     def test_rsp_cid_targets_exact_command(self):
         ws = self._ws()
@@ -284,3 +323,145 @@ class TestWsCommands(RFIDAppCase):
                          'cid correlation targets the exact command')
         self.assertEqual(first.status, 'Process',
                          'the other identical command is untouched')
+
+    # -- answers of the moment, and a silent controller, over real time ----
+
+    def _hello(self, ws):
+        """The module (re)connects. Returns the ids of the commands it is handed."""
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'hello'})
+        return [c.args[2]['cid'] for c in sendone.call_args_list
+                if c.args[1] == 'hr_rfid.cmd']
+
+    def _door_answer(self, ctrl):
+        """The answer to a card shown at a door, out to the module."""
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            answer = self._mk_cmd(ctrl, single_attempt=True)
+        self.assertEqual(answer.status, 'Process')
+        return answer
+
+    def _past_its_time(self, command):
+        stale = fields.Datetime.now() - timedelta(
+            seconds=WS_CMD_REPUBLISH_TIMEOUT_S + 5)
+        command.sent_at = stale
+        self.env.flush_all()
+        self.env.cr.execute(
+            'UPDATE hr_rfid_command SET write_date=%s WHERE id=%s',
+            (stale, command.id))
+        command.invalidate_recordset(['write_date'])
+
+    def test_a_door_answer_is_not_republished_over_real_time(self):
+        """NEGATIVE: the answer to a card shown at a door is closed when its time is up, never published again."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        answer = self._door_answer(ctrl)
+        self._past_its_time(answer)
+
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self.env['hr.rfid.command']._ws_republish_cron()
+
+        self.assertFalse([c for c in sendone.call_args_list
+                          if c.args[1] == 'hr_rfid.cmd'])
+        self.assertEqual((answer.status, answer.error, answer.retries),
+                         ('Failure', '30', 0))
+
+    def test_a_reconnect_does_not_bring_back_an_old_door_answer(self):
+        """NEGATIVE: a module that comes back is not handed the door answer it missed.
+
+        The command that was out when the connection dropped goes first on
+        reconnect. For the answer to a card that would release a door for
+        somebody who walked away minutes ago.
+        """
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        answer = self._door_answer(ctrl)
+        self._past_its_time(answer)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            waiting = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
+        self.assertEqual(waiting.status, 'Wait')
+
+        handed = self._hello(ws)
+
+        self.assertEqual(answer.status, 'Failure')
+        self.assertEqual(handed, [waiting.id], 'the queue moves on instead')
+
+    def test_a_reconnect_within_the_moment_leaves_the_door_answer_out(self):
+        """A reconnect seconds after a card was shown hands over nothing new: the answer may still arrive."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        answer = self._door_answer(ctrl)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            waiting = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
+
+        handed = self._hello(ws)
+
+        self.assertEqual(handed, [])
+        self.assertEqual((answer.status, waiting.status), ('Process', 'Wait'))
+
+    def _answers(self, ws, command, error):
+        with patch.object(type(self.env['bus.bus']), '_sendone') as sendone:
+            self.env['ir.websocket']._serve_ir_websocket('hr_rfid', {
+                'v': 3, 's': ws.serial, 'k': ws.sudo().key, 't': 'rsp',
+                'cid': command.id,
+                'r': {'id': 5, 'c': command.cmd[:2], 'e': error, 'd': ''}})
+        return [c.args[2]['cid'] for c in sendone.call_args_list
+                if c.args[1] == 'hr_rfid.cmd']
+
+    def test_a_silent_controller_over_real_time_is_tried_again_and_then_given_up(self):
+        """ "The controller is silent" puts the command back in the queue; after its attempts it is closed as that.
+
+        Handing it over in place - the way a reply to a report does - marked
+        it sent while nothing went out, and the queue waited for an answer to
+        nothing.
+        """
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            command = self._mk_cmd(ctrl, cmd='D7', cmd_data='', single_attempt=False)
+        self.assertEqual(command.status, 'Process')
+
+        published = self._answers(ws, command, 20)
+
+        self.assertEqual(published, [command.id], 'it really goes out again')
+        self.assertEqual((command.status, command.retries), ('Process', 1))
+
+        command.retries = WS_CMD_MAX_RETRIES
+        published = self._answers(ws, command, 20)
+
+        self.assertEqual(published, [])
+        self.assertEqual((command.status, command.error), ('Failure', '20'))
+
+    def test_a_door_answer_met_with_silence_over_real_time_is_closed(self):
+        """NEGATIVE: "the controller is silent" does not publish the answer to a card a second time."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        answer = self._door_answer(ctrl)
+
+        published = self._answers(ws, answer, 20)
+
+        self.assertEqual(published, [])
+        self.assertEqual((answer.status, answer.error, answer.retries),
+                         ('Failure', '20', 0))
+
+    def test_an_event_that_fails_over_real_time_keeps_what_was_sent(self):
+        """A passage that could not be handled over real time is written down with what went wrong.
+
+        Also on a site that does not keep its communication: the record of a
+        failure is not a debugging aid.
+        """
+        self.env['ir.config_parameter'].sudo().set_param(
+            'hr_rfid.save_webstack_communications', 'false')
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        with patch.object(type(ws), '_hw_parse_event',
+                          side_effect=ValueError('it could not be placed')):
+            self._dispatch_ev(ws, 31, [self._event(ctrl, 7)])
+
+        kept = self.env['hr.rfid.event.system'].search([
+            ('webstack_id', '=', ws.id),
+            ('error_description', '=', 'Real-time event could not be processed'),
+        ], order='id desc', limit=1)
+        self.assertTrue(kept)
+        self.assertIn(self.test_card_employee.number, kept.input_js or '')
+        self.assertIn('it could not be placed', kept.input_js or '')

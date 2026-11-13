@@ -3,6 +3,23 @@ import math
 MAX_DIRECT_EXECUTE = 10  # command count for direct execute
 MAX_DIRECT_EXECUTE_TIME = 5  # last X seconds for counting executed cmds
 
+# The command queue (hr.rfid.command, hr.rfid.webstack.check_for_unsent_cmd).
+#: How long a command handed to a module may stay without an answer before it
+#: counts as lost. A module carries a command out on its controller line and
+#: answers within a second or two, so this is patience, not a deadline. The
+#: classic delivery and the real-time channel share it.
+CMD_ANSWER_TIMEOUT_S = 15
+#: How many times a lost command is handed over again before it is given up.
+CMD_MAX_RETRIES = 5
+#: Routine upkeep: the clock and the status reading. Their own schedule repeats
+#: them, so each is handed over once and never sent again - a controller that
+#: does not answer them holds the queue for one turn, not for six.
+ROUTINE_COMMANDS = ('D7', 'B3')
+#: Reasons a command is closed for, from hr.rfid.command.errors: the module
+#: never came back with an answer / it said the controller stayed silent.
+ERROR_NO_ANSWER = '30'
+ERROR_CONTROLLER_SILENT = '20'
+
 """Polimex Hardware version list"""
 HW_TYPES = [('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'),
             ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'),

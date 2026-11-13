@@ -64,8 +64,10 @@
                             </group>
                             <group string="When">
                                 <field name="create_date" readonly="1"/>
+                                <field name="sent_at" readonly="1"/>
                                 <field name="ex_timestamp" readonly="1"/>
                                 <field name="retries" readonly="1"/>
+                                <field name="single_attempt" readonly="1"/>
                             </group>
                             <group string="Debug Information" groups="base.group_no_one" colspan="4">
                                 <field name="request" readonly="1"/>
@@ -100,6 +102,7 @@
                     />
 
                     <field name="create_date" optional="show"/>
+                    <field name="sent_at" optional="hide"/>
                     <field name="ex_timestamp" optional="show"/>
                     <field name="error" optional="show"/>
                     <field name="retries" optional="show"/>

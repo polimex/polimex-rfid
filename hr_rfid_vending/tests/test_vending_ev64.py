@@ -67,11 +67,7 @@ class TestVendingEv64(VendingFlowMixin, RFIDController, HttpCase):
 
     def test_ev64_grant_with_balance(self):
         """Employee with balance -> grant (DB2 command with balance)."""
-        # io_table with scale_factor=5 at position (8*2)*(0x14-1)+6*2 = 316
-        # Using known good io_table from test_vending_functionality
-        io = '000400030002000100080007000600050F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F000000000000000F0000000000000005'
-        self.c_vending.with_context(from_controller=True).write({'io_table': io})
-        self.c_vending.invalidate_recordset()
+        self._machine_counts_in_fives()
         self.test_employee_id.hr_rfid_vending_add_to_balance(0.15)
         count_before = self._vending_event_count()
         response = self._ev64(self.test_card_employee.number)
