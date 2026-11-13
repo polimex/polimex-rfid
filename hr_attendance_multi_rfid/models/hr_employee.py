@@ -398,10 +398,46 @@ class HrEmployee(models.Model):
             # never be replayed again.
             ('in_mode', '!=', 'technical'),
         ])
+        # A stay that began BEFORE the period and reaches into it. The clearing
+        # above leaves it alone, because it began before the period, so the
+        # passages inside the period that it already accounts for must not be
+        # replayed a second time. They were: the entry inside it and its own
+        # exit became a stay of their own over the first one, the day held
+        # two overlapping records, and core's overtime engine fell over on
+        # them ("Expected singleton", hr_attendance_overtime_rule.py) - the
+        # person came out "Not rebuilt". Measured on a customer copy with the
+        # rebuild starting on the 2nd of a month: 88 stays crossed the start,
+        # 2 people failed that way, and the exits of the others were written
+        # off as "Nothing open to close".
+        carried = self.env['hr.attendance'].search([
+            ('employee_id', '=', employee_id.id),
+            ('check_in', '<', period_start),
+            '|', ('check_out', '=', False), ('check_out', '>=', period_start),
+            ('in_mode', '!=', 'technical'),
+        ], order='check_in')
+        # A person's record from before the period is their word exactly like
+        # one inside it, and is treated the same way below.
+        carried_by_hand = carried.filtered(lambda a: a.in_mode != 'rfid')
+        carried_ours = carried - carried_by_hand
+        carried_spans = [(a.check_in, a.check_out) for a in carried_ours if a.check_out]
+        # One of ours still open when the period starts is the stay the
+        # person is in: the replay carries on from it, as the live machinery
+        # would at their next passage, instead of leaving it open under every
+        # stay that follows (the automatic check-out then failed on that day
+        # with the same overtime error). Only the latest can be carried on -
+        # the live machinery also settles the last open stay
+        # (_last_open_checkin).
+        ongoing = carried_ours.filtered(lambda a: not a.check_out)[-1:]
+
         # An open record (no check-out) runs to STILL_OPEN, so both questions
         # below are ordinary interval arithmetic on closed spans.
         preserved_spans = [(a.check_in, a.check_out or STILL_OPEN)
-                           for a in preserved]
+                           for a in preserved | carried_by_hand]
+
+        def within_an_earlier_stay(moment):
+            return any(start <= moment <= stop for start, stop in carried_spans)
+
+        earlier_exits = {stop for _start, stop in carried_spans}
 
         def settled_by_a_person(moment):
             return any(start <= moment <= stop for start, stop in preserved_spans)
@@ -433,6 +469,29 @@ class HrEmployee(models.Model):
         # Process events to create attendance records
         presence = [None, None]  # [check_in, check_out]
         in_zone = self.env['hr.rfid.zone']
+        if ongoing:
+            presence[0] = ongoing.check_in
+            in_zone = ongoing.in_zone_id
+
+        def recorded_stay(check_in, check_out):
+            """The record of a stay the replay has just settled.
+
+            The stay carried on from before the period is that same record,
+            written; any other stay is a new record.
+            """
+            nonlocal ongoing
+            if not ongoing:
+                return self._replayed_stay(check_in, check_out, in_zone)
+            stay, ongoing = ongoing, self.env['hr.attendance']
+            vals = {}
+            if check_in != stay.check_in:
+                vals['check_in'] = check_in
+            if check_out and check_out != stay.check_out:
+                vals['check_out'] = check_out
+            if vals:
+                stay.with_context(no_validity_check=True, rfid_machinery_write=True).write(vals)
+            return stay
+
         previous_attendance_id = None
         # The passage that opened the presence currently being built. Kept so
         # that when it turns out to stand for nothing, the reason lands on THE
@@ -448,6 +507,16 @@ class HrEmployee(models.Model):
         for e in event_ids:
             if e.door_id.id not in permitted_door_ids:
                 e._rewrite_no_attendance('not_tracked_here')
+                continue
+
+            # Events the stay from before the period already accounts for.
+            # Its own exit says so; an entry inside it was made by someone
+            # already inside; anything else keeps what it says.
+            if within_an_earlier_stay(e.event_time):
+                if e.reader_id.id in in_reader_ids:
+                    e._rewrite_no_attendance('already_inside')
+                elif e.reader_id.id in out_reader_ids and e.event_time in earlier_exits:
+                    e._mark_attendance('out')
                 continue
 
             # Events already accounted for by a person's record are consumed.
@@ -467,8 +536,9 @@ class HrEmployee(models.Model):
                         # their statement stands, the machine writes nothing
                         # around it.
                         checkin_event._rewrite_no_attendance('manual_record')
+                        ongoing = self.env['hr.attendance']
                     else:
-                        previous_attendance_id = self._replayed_stay(presence[0], False, in_zone)
+                        previous_attendance_id = recorded_stay(presence[0], False)
                         previous_attendance_id._at_new_entry(e.event_time).autoclose_attendance()
                         attendance_count += 1
                     presence = [None, None]
@@ -528,8 +598,9 @@ class HrEmployee(models.Model):
                     checkin_event._rewrite_no_attendance('manual_record')
                     presence = [None, None]
                     checkin_event = self.env['hr.rfid.event.user']
+                    ongoing = self.env['hr.attendance']
                     continue
-                previous_attendance_id = self._replayed_stay(presence[0], presence[1], in_zone)
+                previous_attendance_id = recorded_stay(presence[0], presence[1])
                 attendance_count += 1
                 presence = [None, None]
                 checkin_event = self.env['hr.rfid.event.user']
@@ -542,7 +613,7 @@ class HrEmployee(models.Model):
                 # ending the day as an unexplained blank.
                 checkin_event._rewrite_no_attendance('manual_record')
             else:
-                self._replayed_stay(presence[0], False, in_zone)
+                recorded_stay(presence[0], False)
                 attendance_count += 1
 
         if without_direction:

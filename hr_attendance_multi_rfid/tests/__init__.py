@@ -11,3 +11,4 @@ from . import test_regenerate_puts_figures_right
 from . import test_the_day_of_a_stay
 from . import test_a_new_entry_after_a_forgotten_badge
 from . import test_hours_for_a_forgotten_badge
+from . import test_a_rebuild_that_starts_inside_a_stay

@@ -400,6 +400,16 @@ Python class `HrEmployee` in `models/hr_employee.py:11`.  Model.  Inherits: `hr.
     have become forbidden while it was queued. Returns
     `{'event_count': N, 'attendance_count': M}` - the numbers the rebuild
     reports per person.
+  - A stay with `check_in` before the period and `check_out` in it (or none)
+    is not cleared, so it is settled ground: passages inside a closed one are
+    skipped (an entry is rewritten `already_inside`, its own exit marked
+    `out`), and the latest open rfid one is carried on - the replay starts
+    with it as the presence and writes its check-out instead of creating a
+    second record. A typed-in stay from before the period joins the
+    preserved spans like one inside it. Before this, the entry inside such a
+    stay and its exit were replayed into an overlapping record, and core's
+    overtime engine raised `Expected singleton` (the person came out
+    "Not rebuilt").
   - touches: `hr.attendance`, `hr.rfid.event.user`
 - **`_recalc_attendance_context(self)`** - decorators: `@api.model`
   - Resolves once what counts as an attendance door: `{'zones', 'doors',
