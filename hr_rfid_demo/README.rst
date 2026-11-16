@@ -38,6 +38,12 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   Monday power-up of the controllers;
 * the server-room sensor reporting every two hours;
 * an hourly cost for each person of the demo, for the labour cost figures.
+* where the Vending add-on is installed, a vending machine people buy from:
+  on most days a card is shown and an item bought, paid from the person's
+  credit; some sales are paid in coins and fill the machine's cash; and
+  somebody whose credit has run out is sold nothing until the monthly refill;
+* the customer with a portal login (Joel Willis, login ``portal``) dropping by
+  on some days, so the portal has recent passages under their events.
 
 A person on approved leave does not come in that day, and a day somebody
 already has attendance entered by hand is left to them.
@@ -56,6 +62,17 @@ Technical
 * ``hr.rfid.demo._demo_hardware()`` - the guard: the demo module
   (``hr_rfid.demo_module``) when it is the only module and was never reached
   by a device; otherwise nothing.
+* The vending machine (``hr_rfid_vending.demo_ctrl_vending``) and the portal
+  customer joined the demo after the doors and keep a mark of their own
+  (``hr_rfid_demo.vending_and_portal_simulated_until``): a demo that was
+  already running gets their six weeks at its next run, and the days at the
+  doors are not walked again. The machine reports through the same
+  ``_hw_parse_event`` as a real one (credit request 64, sale 47), from a seed
+  of its own, and a sale is reported only for a buyer who has the credit
+  (``_demo_can_pay``). The demo people get their starting credit and a
+  monthly refill once (``_demo_vending_credit``); the vending add-on's own
+  refill task keeps them going. Without the Vending add-on, or once its demo
+  machine is moved off the demo module, nothing of this runs.
 
 Credits
 =======

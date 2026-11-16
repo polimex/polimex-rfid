@@ -26,6 +26,8 @@ _logger = logging.getLogger(__name__)
 BACKFILL_DAYS = 45
 #: The moment the simulation has reached (naive UTC, as Odoo stores time).
 SIMULATED_UNTIL = "hr_rfid_demo.simulated_until"
+#: The same for what joined later: the portal customer and the vending machine.
+ALSO_SIMULATED_UNTIL = "hr_rfid_demo.vending_and_portal_simulated_until"
 #: The demo module and controllers of hr_rfid's demo data.
 DEMO_WEBSTACK = "hr_rfid.demo_module"
 ENTRANCE_CTRL = "hr_rfid.demo_ctrl_icon110"
@@ -53,6 +55,11 @@ DAY_WORKERS = (
 NIGHT_WORKERS = ("hr.employee_jod", "hr.employee_jgo")
 SATURDAY_WORKERS = ("hr.employee_han", "hr.employee_jve")
 VISITOR_CARD = "hr_rfid.demo_card_2"
+#: The customer with a portal login (hr_rfid_portal's demo): what they see
+#: under "my events" has to move as well.
+PORTAL_GUEST_CARD = "hr_rfid_portal.demo_portal_card"
+#: The vending machine of hr_rfid_vending's demo, on the demo module.
+VENDING_MACHINE = "hr_rfid_vending.demo_ctrl_vending"
 SENSOR = "hr_rfid.demo_th_sensor_server_room"
 #: Controller event codes (hr_rfid/models/hr_rfid_webstack_hw_events.py).
 GRANTED = 3
@@ -61,6 +68,15 @@ EXIT_BUTTON = 21
 DOOR_HELD_OPEN = 25
 DOOR_FORCED = 26
 POWER_ON = 30
+CREDIT_REQUEST = 64
+SALE = 47
+CREDIT_RETURNED = 49
+#: What a report carries when it has nothing of its own to say.
+NO_DATA = "00000000000000"
+NO_CARD = "0000000000"
+#: What a demo person starts with at the machine, and gets again every month
+#: through the vending add-on's own refill.
+VENDING_STARTING_CREDIT = 30.0
 #: Readers of the entrance controller: 1 lets people in, 2 lets them out
 #: (hr_attendance_multi_rfid's demo makes it the exit of the attendance zone).
 WAY_IN = 1
@@ -121,29 +137,45 @@ class HrRfidDemo(models.AbstractModel):
             )
             return 0
         params = self.env["ir.config_parameter"].sudo()
-        since = params.get_param(SIMULATED_UNTIL)
-        since = (
-            fields.Datetime.to_datetime(since)
-            if since
-            else until - timedelta(days=BACKFILL_DAYS)
-        )
-        if since >= until:
+        since = self._demo_simulated_until(SIMULATED_UNTIL, until)
+        # The vending machine and the portal customer joined the demo after
+        # the doors. They keep a mark of their own, so a demo that was already
+        # running gets their weeks of history at its next run instead of none.
+        also_since = self._demo_simulated_until(ALSO_SIMULATED_UNTIL, until)
+        if since >= until and also_since >= until:
             return 0
-        passages = self._demo_passages(since, until)
-        for moment, ctrl, reader, card, event_n in passages:
-            self._demo_report(webstack, ctrl, reader, card, moment, event_n)
+        machine = self._demo_vending_machine(webstack)
+        self._demo_vending_credit(machine)
+        reports = self._demo_passages(since, until)
+        reports += self._demo_also(also_since, until, machine)
+        reports.sort(key=lambda report: report[0])
+        for moment, ctrl, reader, card, event_n, *data in reports:
+            if event_n == SALE and card and not self._demo_can_pay(card, ctrl, *data):
+                # The machine sells on the credit it was told. Out of credit,
+                # the person's request is all that is left of the visit.
+                continue
+            self._demo_report(webstack, ctrl, reader, card, moment, event_n, *data)
         readings = self._demo_environment_readings(since, until)
         self._demo_hourly_costs()
         self._demo_answer_commands(webstack)
-        params.set_param(SIMULATED_UNTIL, fields.Datetime.to_string(until))
+        for mark in (SIMULATED_UNTIL, ALSO_SIMULATED_UNTIL):
+            params.set_param(mark, fields.Datetime.to_string(until))
         _logger.info(
-            "RFID demo: %d passages and %d sensor readings simulated from %s to %s",
-            len(passages),
+            "RFID demo: %d reports and %d sensor readings simulated from %s to %s",
+            len(reports),
             readings,
-            since,
+            min(since, also_since),
             until,
         )
-        return len(passages)
+        return len(reports)
+
+    @api.model
+    def _demo_simulated_until(self, mark, until):
+        """Where a part of the demo has got to; its first run starts weeks back."""
+        reached = self.env["ir.config_parameter"].sudo().get_param(mark)
+        if reached:
+            return fields.Datetime.to_datetime(reached)
+        return until - timedelta(days=BACKFILL_DAYS)
 
     @api.model
     def _demo_answer_commands(self, webstack):
@@ -211,11 +243,14 @@ class HrRfidDemo(models.AbstractModel):
         )._compute_actual_work_time_cost()
 
     @api.model
-    def _demo_report(self, webstack, ctrl, reader, card, moment, event_n):
+    def _demo_report(self, webstack, ctrl, reader, card, moment, event_n, data=NO_DATA):
         """One report of the demo module, as the device sends it.
 
         The device speaks its own local time; the webstack turns it back into
         UTC with the same offset (hr.rfid.webstack.get_ws_time).
+
+        :param data: what the report says besides who and when - a vending
+                     machine names the item and the price there
         """
         local = moment + webstack._get_tz_offset()
         date_format, time_format = webstack.time_format.split(" ")
@@ -225,12 +260,12 @@ class HrRfidDemo(models.AbstractModel):
                 "event": {
                     "bos": 1,
                     "tos": 1,
-                    "card": card.number if card else "0000000000",
+                    "card": card.number if card else NO_CARD,
                     "cmd": "FA",
                     "date": local.strftime(date_format),
                     "time": local.strftime(time_format),
                     "day": local.isoweekday() % 7,
-                    "dt": "00000000000000",
+                    "dt": data,
                     "err": 0,
                     "event_n": event_n,
                     "id": ctrl.ctrl_id,
@@ -240,11 +275,15 @@ class HrRfidDemo(models.AbstractModel):
         )
 
     @api.model
-    def _demo_passages(self, since, until):
-        """Every passage of the window, in the order the doors saw them.
+    def _demo_days(self, since, until):
+        """The days of a window, each with who is in on it.
 
         Each person's day is drawn from a seed of the person and the day, so a
-        day comes out the same whichever run reaches it first.
+        day comes out the same whichever run reaches it first, and whoever
+        asks for it.
+
+        :return: [(day, people, present)] - people as _demo_people gives them,
+                 present as (employee, card, that person's day at the doors)
         """
         entrance = self.env.ref(ENTRANCE_CTRL, raise_if_not_found=False)
         inner = self.env.ref(INNER_CTRL, raise_if_not_found=False)
@@ -267,25 +306,60 @@ class HrRfidDemo(models.AbstractModel):
                 ]
             )
         }
-        passages = []
+        days = []
         day = since.date() - timedelta(days=1)
         while day <= until.date():
-            for employee, card, kind in people:
-                if (employee.id, day) in handwritten or employee._demo_is_away(day):
-                    continue
-                for moment, ctrl, reader, event_n in self._demo_day(
-                    employee, kind, day, entrance, inner
-                ):
-                    if since < moment <= until:
-                        passages.append((moment, ctrl, reader, card, event_n))
-            passages.extend(
-                p
-                for p in self._demo_day_extras(day, entrance, inner, people)
-                if since < p[0] <= until
-            )
+            present = [
+                (employee, card, self._demo_day(employee, kind, day, entrance, inner))
+                for employee, card, kind in people
+                if (employee.id, day) not in handwritten
+                and not employee._demo_is_away(day)
+            ]
+            days.append((day, people, present))
             day += timedelta(days=1)
-        passages.sort(key=lambda p: p[0])
-        return passages
+        return days
+
+    @api.model
+    def _demo_passages(self, since, until):
+        """Every passage of the window, in the order the doors saw them.
+
+        :return: [(moment, controller, reader, card, event)]
+        """
+        entrance = self.env.ref(ENTRANCE_CTRL, raise_if_not_found=False)
+        inner = self.env.ref(INNER_CTRL, raise_if_not_found=False)
+        passages = []
+        for day, people, present in self._demo_days(since, until):
+            for _employee, card, at_the_doors in present:
+                passages += [
+                    (moment, ctrl, reader, card, event_n)
+                    for moment, ctrl, reader, event_n in at_the_doors
+                ]
+            passages += self._demo_day_extras(day, entrance, inner, people)
+        return sorted(
+            (p for p in passages if since < p[0] <= until), key=lambda p: p[0]
+        )
+
+    @api.model
+    def _demo_also(self, since, until, machine):
+        """What joined the demo after the doors: the portal customer and the vending machine.
+
+        :param machine: the demo vending machine, when there is one
+        :return: [(moment, controller, reader, card, event)], with the
+                 report's data as a sixth item where the machine speaks
+        """
+        entrance = self.env.ref(ENTRANCE_CTRL, raise_if_not_found=False)
+        inner = self.env.ref(INNER_CTRL, raise_if_not_found=False)
+        reports = []
+        for day, _people, present in self._demo_days(since, until):
+            reports += self._demo_portal_guest(day, entrance, inner)
+            if not machine:
+                continue
+            for employee, card, at_the_doors in present:
+                reports += self._demo_at_the_machine(
+                    employee, card, day, at_the_doors, machine
+                )
+            reports += self._demo_machine_extras(day, machine)
+        return [report for report in reports if since < report[0] <= until]
 
     @api.model
     def _demo_people(self):
@@ -486,6 +560,200 @@ class HrRfidDemo(models.AbstractModel):
                     0,
                     None,
                     POWER_ON,
+                )
+            )
+        return extras
+
+    @api.model
+    def _demo_portal_guest(self, day, entrance, inner):
+        """The customer with a portal login drops by on some days.
+
+        Drawn from a seed of its own, so the rest of the day's extras come out
+        as they did before this visitor existed.
+        """
+        guest = self.env.ref(PORTAL_GUEST_CARD, raise_if_not_found=False)
+        if not guest or not guest.active:
+            return []
+        rng = random.Random("%s-portal-%s" % (SEED, day.isoformat()))
+        if rng.random() >= 0.45:
+            return []
+        come = datetime.combine(day, time(9, 30)) + timedelta(
+            minutes=rng.randint(0, 300)
+        )
+        visit = [
+            (come, entrance, WAY_IN, guest, GRANTED),
+            (
+                come + timedelta(minutes=rng.randint(25, 110)),
+                entrance,
+                WAY_OUT,
+                guest,
+                GRANTED,
+            ),
+        ]
+        if inner and rng.random() < 0.3:
+            # Tries a door that is not for visitors.
+            visit.append(
+                (come + timedelta(minutes=rng.randint(5, 20)), inner, 1, guest, DENIED)
+            )
+        return visit
+
+    # ------------------------------------------------------------------
+    # The vending machine
+    # ------------------------------------------------------------------
+    @api.model
+    def _demo_vending_machine(self, webstack):
+        """The demo vending machine, or nothing.
+
+        Nothing where the vending add-on is not installed, where its demo
+        machine is gone or was moved off the demo module, and for a machine
+        that keeps its own prices - there the simulation has nothing to sell.
+        """
+        if "hr.rfid.vending.event" not in self.env:
+            return self.env["hr.rfid.ctrl"]
+        machine = self.env.ref(VENDING_MACHINE, raise_if_not_found=False)
+        if (
+            not machine
+            or machine.webstack_id != webstack
+            or not machine._vending_has_price_table()
+            or not self._demo_on_sale(machine)
+        ):
+            return self.env["hr.rfid.ctrl"]
+        return machine.sudo()
+
+    @api.model
+    def _demo_on_sale(self, machine):
+        """What the machine sells: (item number, price in the machine's units).
+
+        The item number is the one the buyer presses (four to a row); the
+        price is the product's own, in the units the machine counts in. A
+        price the machine cannot count is left out.
+        """
+        scale = machine.scale_factor or 0
+        if not scale:
+            return []
+        on_sale = []
+        rows = (
+            self.env["hr.rfid.ctrl.vending.row"]
+            .sudo()
+            .search([("controller_id", "=", machine.id)], order="row_num")
+        )
+        for row in rows:
+            for position in (1, 2, 3, 4):
+                item = row["item%d" % position]
+                units = round(item.list_price * 100 / scale) if item else 0
+                if 0 < units <= 0xFF:
+                    on_sale.append(((row.row_num - 1) * 4 + position, units))
+        return on_sale
+
+    @api.model
+    def _demo_sale_data(self, item_number, units):
+        """A completed sale as the machine words it: the item, then its price."""
+        price = "%02x" % units
+        return "0000%02x0%s0%s0000" % (item_number, price[0], price[1])
+
+    @api.model
+    def _demo_vending_credit(self, machine):
+        """The demo people get credit at the machine, once.
+
+        Only those who have nothing there and are on no refill yet: credit
+        somebody entered is theirs. From then on the vending add-on's own
+        monthly refill keeps them going.
+        """
+        if not machine:
+            return
+        for employee, _card, _kind in self._demo_people():
+            employee = employee.sudo()
+            if (
+                employee.hr_rfid_vending_auto_refill
+                or employee.hr_rfid_vending_balance
+                or employee.hr_rfid_vending_recharge_balance
+            ):
+                continue
+            employee.write(
+                {
+                    "hr_rfid_vending_auto_refill": True,
+                    "hr_rfid_vending_refill_type": "fixed",
+                    "hr_rfid_vending_refill_amount": VENDING_STARTING_CREDIT,
+                }
+            )
+            employee.hr_rfid_vending_add_to_balance(VENDING_STARTING_CREDIT)
+
+    @api.model
+    def _demo_can_pay(self, card, machine, data=NO_DATA):
+        """Whether the card holder has the credit for the sale a report names."""
+        units = int(data[6:8], 16) * 0x10 + int(data[8:10], 16)
+        price = units * machine.scale_factor / 100
+        _as_sent, credit = card.employee_id.sudo().get_employee_balance(machine)
+        return credit >= price
+
+    @api.model
+    def _demo_at_the_machine(self, employee, card, day, at_the_doors, machine):
+        """What one person does at the vending machine on a day they are in.
+
+        A card shown and an item bought, once or twice on some days, between
+        coming in and going home. Drawn from a seed of its own: the person's
+        day at the doors comes out as it did before the machine existed.
+        """
+        if len(at_the_doors) < 2:
+            return []
+        arrival = min(moment for moment, *_rest in at_the_doors)
+        leaving = max(moment for moment, *_rest in at_the_doors)
+        if leaving - arrival < timedelta(hours=3):
+            return []
+        on_sale = self._demo_on_sale(machine)
+        rng = random.Random("%s-vending-%s-%s" % (SEED, employee.id, day.isoformat()))
+        draw = rng.random()
+        visits = 0 if draw < 0.35 else 1 if draw < 0.8 else 2
+        reports = []
+        free = int((leaving - arrival).total_seconds() // 60) - 75
+        for _visit in range(visits):
+            shown = arrival + timedelta(minutes=45 + rng.randint(0, max(free, 1)))
+            item_number, units = rng.choice(on_sale)
+            reports.append((shown, machine, 1, card, CREDIT_REQUEST, NO_DATA))
+            reports.append(
+                (
+                    shown + timedelta(seconds=rng.randint(15, 50)),
+                    machine,
+                    1,
+                    card,
+                    SALE,
+                    self._demo_sale_data(item_number, units),
+                )
+            )
+        return reports
+
+    @api.model
+    def _demo_machine_extras(self, day, machine):
+        """What the machine sees besides the staff: coins, and second thoughts."""
+        if day.weekday() > 4:
+            return []
+        rng = random.Random("%s-machine-%s" % (SEED, day.isoformat()))
+        on_sale = self._demo_on_sale(machine)
+        opening = datetime.combine(day, time(7, 0))
+        extras = []
+        for _coins in range(rng.randint(0, 3)):
+            item_number, units = rng.choice(on_sale)
+            extras.append(
+                (
+                    opening + timedelta(minutes=rng.randint(0, 600)),
+                    machine,
+                    1,
+                    None,
+                    SALE,
+                    self._demo_sale_data(item_number, units),
+                )
+            )
+        if rng.random() < 0.12:
+            # Somebody put credit on the machine and chose nothing: it went
+            # back, and the machine says so.
+            extras.append(
+                (
+                    opening + timedelta(minutes=rng.randint(0, 600)),
+                    machine,
+                    1,
+                    None,
+                    CREDIT_RETURNED,
+                    NO_DATA,
                 )
             )
         return extras

@@ -11,7 +11,7 @@ from datetime import timedelta
 from odoo import fields
 from odoo.tests.common import TransactionCase, tagged
 
-from ..models.hr_rfid_demo import SIMULATED_UNTIL
+from ..models.hr_rfid_demo import ALSO_SIMULATED_UNTIL, SIMULATED_UNTIL
 
 
 @tagged("post_install", "-at_install", "rfid_demo")
@@ -141,3 +141,189 @@ class TestTheDemoKeepsWorking(TransactionCase):
         first = self.Demo._demo_day(employee, "day", day, entrance, inner)
         second = self.Demo._demo_day(employee, "day", day, entrance, inner)
         self.assertEqual(first, second)
+
+
+@tagged("post_install", "-at_install", "rfid_demo", "rfid_demo_vending")
+class TestTheDemoShowsTheVendingMachine(TransactionCase):
+    """The demo has a vending machine people buy from.
+
+    The owner, looking at the demo server (16.11.2026): "I see no demo events
+    for the vending. Why do we have none?" - and, when the machine was
+    promised: "think of the portal user as well, there is functionality there
+    we have to show".
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.machine = cls.env.ref(
+            "hr_rfid_vending.demo_ctrl_vending", raise_if_not_found=False
+        )
+        if not cls.machine or not cls.env.ref(
+            "hr_rfid.demo_module", raise_if_not_found=False
+        ):
+            cls.skipTest(cls, "the vending add-on's demo is not loaded")
+        cls.Demo = cls.env["hr.rfid.demo"]
+        cls.params = cls.env["ir.config_parameter"].sudo()
+        cls.weeks_ago = fields.Datetime.now() - timedelta(days=40)
+
+    def _sales(self, since, extra=()):
+        """The sales the machine reported - not the handful the vending add-on's
+        own demo data writes down as records."""
+        written_down = (
+            self.env["ir.model.data"]
+            .sudo()
+            .search(
+                [
+                    ("model", "=", "hr.rfid.vending.event"),
+                    ("module", "=", "hr_rfid_vending"),
+                ]
+            )
+            .mapped("res_id")
+        )
+        return self.env["hr.rfid.vending.event"].search(
+            [
+                ("controller_id", "=", self.machine.id),
+                ("event_action", "=", "47"),
+                ("event_time", ">", since),
+                ("id", "not in", written_down),
+                *extra,
+            ]
+        )
+
+    def _simulate_the_last_day_again(self):
+        since = fields.Datetime.now() - timedelta(hours=26)
+        for mark in (SIMULATED_UNTIL, ALSO_SIMULATED_UNTIL):
+            self.params.set_param(mark, fields.Datetime.to_string(since))
+        self._sales(since).unlink()
+        self.Demo._cron_simulate()
+        return since
+
+    def test_the_last_day_simulated_again_has_sales(self):
+        """The premise of the negatives below: a day simulated again does sell."""
+        since = self._simulate_the_last_day_again()
+
+        if fields.Datetime.now().weekday() < 5 and since.weekday() < 5:
+            self.assertTrue(self._sales(since))
+
+    def test_a_demo_already_running_gets_the_machines_weeks_at_its_next_run(self):
+        """A demo installed before it had a machine: the next run fills the machine's weeks in.
+
+        The doors' days are not walked again - nobody passes a door twice
+        because the machine arrived.
+        """
+        an_hour_ago = fields.Datetime.now() - timedelta(hours=1)
+        self.params.set_param(SIMULATED_UNTIL, fields.Datetime.to_string(an_hour_ago))
+        self.params.search([("key", "=", ALSO_SIMULATED_UNTIL)]).unlink()
+        self._sales(self.weeks_ago).unlink()
+        staff_passages = [
+            ("employee_id", "!=", False),
+            ("event_time", "<", an_hour_ago),
+        ]
+        at_the_doors = self.env["hr.rfid.event.user"].search_count(staff_passages)
+
+        self.Demo._cron_simulate()
+
+        self.assertGreater(
+            len(self._sales(self.weeks_ago, [("event_time", "<", an_hour_ago)])), 50
+        )
+        self.assertEqual(
+            self.env["hr.rfid.event.user"].search_count(staff_passages), at_the_doors
+        )
+
+    def test_people_buy_at_the_machine_and_their_credit_goes_down(self):
+        """Weeks of sales, each with what was bought and by whom, paid from the buyer's credit."""
+        by_card = self._sales(self.weeks_ago, [("employee_id", "!=", False)])
+
+        self.assertGreater(len(by_card), 50)
+        self.assertGreater(len(by_card.mapped("employee_id")), 5)
+        self.assertFalse(
+            by_card.filtered(lambda sale: not sale.item_sold_id),
+            "a sale that does not say what was bought",
+        )
+        paid = self.env["hr.rfid.vending.balance.history"].search(
+            [("vending_event_id", "in", by_card.ids)]
+        )
+        self.assertEqual(len(paid), len(by_card), "every card sale is paid for")
+        self.assertFalse(paid.filtered(lambda line: line.balance_change >= 0))
+
+    def test_the_list_of_the_last_days_is_never_empty(self):
+        """Whoever opens the vending events finds sales of the last working days."""
+        self.assertTrue(self._sales(fields.Datetime.now() - timedelta(days=4)))
+
+    def test_coins_end_up_in_the_machine(self):
+        """Sales without a card are paid in coins, and the machine's cash says so."""
+        in_coins = self._sales(self.weeks_ago, [("employee_id", "=", False)])
+
+        self.assertTrue(in_coins)
+        self.assertGreater(
+            self.machine.cash_contained,
+            sum(in_coins.mapped("transaction_price")) - 0.01,
+        )
+
+    def test_nobody_buys_on_credit_they_do_not_have(self):
+        """NEGATIVE: somebody with nothing left at the machine is sold nothing."""
+        people = [employee for employee, _card, _kind in self.Demo._demo_people()]
+        for employee in people:
+            employee.sudo().write(
+                {
+                    "hr_rfid_vending_balance": 0,
+                    "hr_rfid_vending_recharge_balance": 0,
+                    "hr_rfid_vending_negative_balance": False,
+                }
+            )
+
+        since = self._simulate_the_last_day_again()
+
+        self.assertFalse(self._sales(since, [("employee_id", "!=", False)]))
+
+    def test_a_real_module_stops_the_machine_too(self):
+        """NEGATIVE: once a real module is attached, the demo machine sells nothing."""
+        self.env["hr.rfid.webstack"].create(
+            {
+                "name": "A real module",
+                "serial": "777778",
+                "company_id": self.env.company.id,
+            }
+        )
+
+        since = self._simulate_the_last_day_again()
+
+        self.assertFalse(self._sales(since))
+
+    def test_a_machine_moved_to_real_hardware_is_left_alone(self):
+        """NEGATIVE: the demo machine, once it is no longer on the demo module, is not the demo's."""
+        elsewhere = self.env["hr.rfid.ctrl"].search(
+            [("id", "!=", self.machine.id)], limit=1
+        )
+        self.assertFalse(
+            self.Demo._demo_vending_machine(elsewhere.webstack_id.browse()),
+            "no demo module, no demo machine",
+        )
+
+    def test_the_customer_with_a_portal_login_has_passages_of_their_own(self):
+        """What the portal shows under "my events" moves: the customer came by in the last weeks.
+
+        Asked of a demo that was running before this visitor existed, so the
+        passages are the ones the next run of the task makes.
+        """
+        customer = self.env.ref("base.partner_demo_portal", raise_if_not_found=False)
+        card = self.env.ref("hr_rfid_portal.demo_portal_card", raise_if_not_found=False)
+        if not customer or not card:
+            self.skipTest("the portal add-on's demo is not loaded")
+        theirs = [("contact_id", "=", customer.id), ("event_time", ">", self.weeks_ago)]
+        self.env["hr.rfid.event.user"].search(theirs).unlink()
+        self.params.search([("key", "=", ALSO_SIMULATED_UNTIL)]).unlink()
+
+        self.Demo._cron_simulate()
+
+        passages = self.env["hr.rfid.event.user"].search(theirs)
+        self.assertGreater(len(passages), 10)
+        self.assertEqual(passages.mapped("card_id"), card)
+        self.assertTrue(
+            passages.filtered(
+                lambda event: event.event_time
+                > fields.Datetime.now() - timedelta(days=8)
+            ),
+            "nothing of the last week",
+        )

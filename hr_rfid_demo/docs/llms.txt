@@ -62,6 +62,12 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   Monday power-up of the controllers;
 * the server-room sensor reporting every two hours;
 * an hourly cost for each person of the demo, for the labour cost figures.
+* where the Vending add-on is installed, a vending machine people buy from:
+  on most days a card is shown and an item bought, paid from the person's
+  credit; some sales are paid in coins and fill the machine's cash; and
+  somebody whose credit has run out is sold nothing until the monthly refill;
+* the customer with a portal login (Joel Willis, login ``portal``) dropping by
+  on some days, so the portal has recent passages under their events.
 
 A person on approved leave does not come in that day, and a day somebody
 already has attendance entered by hand is left to them.
