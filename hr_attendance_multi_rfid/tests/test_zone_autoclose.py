@@ -50,6 +50,9 @@ class TestZoneAutoClose(TransactionCase):
             'name': 'Forgetful Employee',
             'company_id': cls.company.id,
             'resource_calendar_id': cls.calendar.id,
+            # The hour somebody came in is measured against the schedule on
+            # the person's own clock, so the tests say which clock that is.
+            'tz': 'UTC',
         })
 
     def _open_attendance(self, hours_ago, zone=None):
@@ -57,6 +60,22 @@ class TestZoneAutoClose(TransactionCase):
         return self.env['hr.attendance'].create({
             'employee_id': self.employee.id,
             'check_in': fields.Datetime.now() - timedelta(hours=hours_ago),
+            'in_zone_id': zone.id if zone else False,
+        })
+
+    def _forgotten_since_the_day_began(self, zone=None):
+        """In at eight the day before yesterday, when the schedule starts, never out.
+
+        The hour is fixed because the hour decides what is credited: whoever
+        came in while the schedule was running is credited to its end, so a
+        check-in at "some hours ago" would be a different day every time the
+        tests run.
+        """
+        day_began = (fields.Datetime.now() - timedelta(days=2)).replace(
+            hour=8, minute=0, second=0, microsecond=0)
+        return self.env['hr.attendance'].create({
+            'employee_id': self.employee.id,
+            'check_in': day_began,
             'in_zone_id': zone.id if zone else False,
         })
 
@@ -69,7 +88,7 @@ class TestZoneAutoClose(TransactionCase):
         day. Where they happen to be now was never the question; the old code
         asked it and could not close anybody who had walked away.
         """
-        attendance = self._open_attendance(hours_ago=20, zone=self.zone)
+        attendance = self._forgotten_since_the_day_began(zone=self.zone)
         self.assertNotIn(self.employee, self.zone.employee_ids,
                          "the person is no longer in the zone - exactly the "
                          "situation the old code could not close")
@@ -94,7 +113,7 @@ class TestZoneAutoClose(TransactionCase):
         """
         self.company.write({'forgotten_badge_policy': 'penalty',
                             'forgotten_badge_penalty_hours': 2.0})
-        attendance = self._open_attendance(hours_ago=20, zone=self.zone)
+        attendance = self._forgotten_since_the_day_began(zone=self.zone)
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
@@ -142,11 +161,11 @@ class TestZoneAutoClose(TransactionCase):
         An attendance carrying no zone at all (typed in, made by a kiosk, or
         brought over from an older system) is judged exactly like any other:
         the schedule says seven hours, the tolerance four, and a stay of
-        thirty hours is a badge-out that never happened. The old code let
+        two days is a badge-out that never happened. The old code let
         these grow forever, and a customer database ended up with 1827 of
         them, the longest 361 days.
         """
-        attendance = self._open_attendance(hours_ago=30, zone=None)
+        attendance = self._forgotten_since_the_day_began(zone=None)
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
@@ -262,7 +281,7 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
             'forgotten_badge_policy': 'credit_schedule'})
         cls.employee = cls.env['hr.employee'].create({
             'name': 'Night Worker', 'company_id': cls.company.id,
-            'resource_calendar_id': cls.calendar.id})
+            'resource_calendar_id': cls.calendar.id, 'tz': 'UTC'})
 
     def _stay(self, start, hours):
         """Closed by the machinery. What an operator typed is left alone."""
@@ -297,7 +316,8 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
         that - so the day they were supposed to work is what they are
         credited: eight hours, from their own working schedule.
         """
-        start = fields.Datetime.now() - timedelta(days=300)
+        start = (fields.Datetime.now() - timedelta(days=300)).replace(
+            hour=8, minute=0, second=0, microsecond=0)
         forgotten = self._stay(start, 300 * 24)
         was = forgotten.check_out
 
@@ -353,10 +373,11 @@ class TestAStayNobodyCouldHaveHad(TransactionCase):
 
         self.env['hr.attendance'].check_for_incomplete_attendances()
 
-        self.assertEqual(forgotten.check_out, start + timedelta(hours=9),
+        self.assertEqual(forgotten.check_out, start.replace(hour=17, minute=0),
                          "and it is settled all the same, because the RECORD "
-                         "spans more than the schedule allows - credited the "
-                         "working day, break included, as any other day is")
+                         "spans more than the schedule allows - credited to "
+                         "the end of the schedule they came in under, as any "
+                         "other day somebody came in late is")
 
     def test_a_stay_that_cannot_be_judged_is_left_for_a_person(self):
         """NEGATIVE: with no working schedule for the day, hands off.

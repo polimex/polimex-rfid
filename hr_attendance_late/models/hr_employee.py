@@ -202,6 +202,9 @@ class HrEmployee(models.Model):
                 
                 # Process attendances, including those without check_out
                 attendance_ranges = []
+                # The stays that can earn overtime: all of them, except what
+                # the system only estimated after a schedule (see below).
+                overtime_ranges = []
                 now = fields.Datetime.now()
                 
                 for att in attendances:
@@ -228,12 +231,30 @@ class HrEmployee(models.Model):
                     # hand this day the hours such a record carries - and where
                     # the company counts nothing for a forgotten badge, the day
                     # gets nothing, which is the point of that setting.
-                    if att.forgotten_badge or att.stay_is_not_credible():
+                    never_badged_out = att.forgotten_badge or att.stay_is_not_credible()
+                    if never_badged_out:
                         settled = att._settled_check_out()
                         if not settled:
                             continue
                         check_out = min(check_out, settled)
                     attendance_ranges.append((check_in, check_out))
+                    # Nor overtime for what the system estimated: such a stay
+                    # earns nothing past the end of the schedule the person
+                    # came in under (owner's decision, 16.11.2026). Credited
+                    # to that end, it has nothing after it. Where no end lay
+                    # ahead - somebody in for the evening, after their
+                    # schedule - every credited hour is the estimate, and
+                    # nobody is paid a premium for an estimate. An operator
+                    # who enters the real check-out takes the mark off, and
+                    # the hours earn what they earn.
+                    #
+                    # A stay credited to the end of its schedule stays among
+                    # those that can: on a schedule that runs past midnight
+                    # this measurement reads the hours after it as overtime
+                    # (it knows the day, not the shift), and they are
+                    # scheduled work that must not fall off the row.
+                    if not never_badged_out or att._end_of_the_schedule_ahead():
+                        overtime_ranges.append((check_in, check_out))
 
                 # Scheduled work ranges for the day (empty on a non-working
                 # day). Built on the core calendar intervals so lunch breaks
@@ -301,6 +322,7 @@ class HrEmployee(models.Model):
                         work_time_ranges=work_time_ranges,
                         owed_ranges=owed_ranges,
                         attendance_ranges=attendance_ranges,
+                        overtime_ranges=overtime_ranges,
                         day_period=convert_day_period_to_utc(
                             (time(6, 0), time(22, 0)), tz, current_date)
                     )
@@ -363,7 +385,7 @@ class HrEmployee(models.Model):
     @api.model
     def get_work_time_details(self, for_date, work_time_ranges, attendance_ranges,
                               day_period=(time(6, 0), time(22, 0)),
-                              owed_ranges=None):
+                              owed_ranges=None, overtime_ranges=None):
         """Calculate detailed work time metrics for a specific date.
         
         This method analyzes attendance records against work schedules to calculate:
@@ -376,6 +398,10 @@ class HrEmployee(models.Model):
         :param work_time_ranges: List of scheduled work periods
         :param attendance_ranges: List of actual attendance periods
         :param day_period: Time range considered as "day" (vs "night")
+        :param overtime_ranges: The attendance periods that can earn overtime;
+                                all of them when not given. The caller leaves
+                                out what the system only estimated after a
+                                schedule had ended.
         :return: Dictionary with calculated time metrics in hours
         """
 
@@ -433,8 +459,8 @@ class HrEmployee(models.Model):
             if not work_time_ranges or not attendance_ranges:
                 return 0
             overtime_intersec = [(work_time_ranges[-1][1], work_time_ranges[-1][1] + timedelta(days=1))]
-            overtime_ranges = self._intersection_time(attendance_ranges, overtime_intersec)
-            return self._total_time(overtime_ranges)
+            after_the_schedule = self._intersection_time(attendance_ranges, overtime_intersec)
+            return self._total_time(after_the_schedule)
 
         def overtime_night(work_time_ranges, attendance_ranges):
             """Calculate night portion of overtime."""
@@ -448,9 +474,9 @@ class HrEmployee(models.Model):
             # with a window that starts where the attendance ends is always
             # empty, which made night overtime permanently zero.
             overtime_intersec = [(work_time_ranges[-1][1], work_time_ranges[-1][1] + timedelta(days=1))]
-            overtime_ranges = self._intersection_time(attendance_ranges, overtime_intersec)
-            overtime_day_ranges = self._intersection_time(overtime_ranges, day_time_intersection())
-            return self._total_time(overtime_ranges) - self._total_time(overtime_day_ranges)
+            after_the_schedule = self._intersection_time(attendance_ranges, overtime_intersec)
+            overtime_day_ranges = self._intersection_time(after_the_schedule, day_time_intersection())
+            return self._total_time(after_the_schedule) - self._total_time(overtime_day_ranges)
 
         def extra_time(work_time_ranges, attendance_ranges):
             """Calculate extra time (attendance on non-working day)."""
@@ -508,8 +534,9 @@ class HrEmployee(models.Model):
             early_come_time = early_time(work_time_ranges, attendance_ranges)
             late_time_value = late_time(work_time_ranges, attendance_ranges)
             early_leave_time_value = early_leave_time(work_time_ranges, attendance_ranges)
-            overtime_value = overtime(work_time_ranges, attendance_ranges)
-            overtime_night_time = overtime_night(work_time_ranges, attendance_ranges)
+            earning_overtime = attendance_ranges if overtime_ranges is None else overtime_ranges
+            overtime_value = overtime(work_time_ranges, earning_overtime)
+            overtime_night_time = overtime_night(work_time_ranges, earning_overtime)
 
         # Calculate actual work time
         list_of_intersection = self._intersection_time(work_time_ranges, attendance_ranges)

@@ -11,3 +11,4 @@ from . import test_menus_are_in_order
 from . import test_recalc_refreshes_the_whole_period
 from . import test_the_day_is_the_persons_own
 from . import test_the_operators_hours_count
+from . import test_a_forgotten_badge_earns_no_overtime

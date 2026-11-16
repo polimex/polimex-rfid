@@ -182,7 +182,8 @@ This module reads no system parameters. What decides how passages become
 attendance is on `hr.rfid.zone`: `attendance`, `overwrite_check_in`,
 `overwrite_check_out`. When a stay is a forgotten badge and what it is credited
 is core's Automatic Check-Out with the company's `forgotten_badge_policy`, and
-per schedule `resource.calendar.forgotten_badge_hours`. The
+per schedule `resource.calendar.forgotten_badge_hours`; a forgotten day is
+never credited past the end of the schedule the person came in under. The
 tolerances for small deviations are on `hr.department` (hr_attendance_late:
 `ignore_late_time`, `ignore_early_come_time`, `ignore_early_leave_time`,
 `ignore_overtime`, `ignore_extra_time`) and work on AMOUNTS OF TIME, never on
@@ -471,15 +472,38 @@ re-credits them.
 - **`_max_allowed_stay_hours(self)`** - scheduled hours + the company's
   tolerance; `0.0` when Automatic Check-Out is off or the day was not
   scheduled, and then nothing is ever settled.
+- **`_end_of_the_schedule_ahead(self)`** - where the schedule the person came
+  in under ends, when that still lay ahead of the check-in: the last scheduled
+  minute of the stay's day (`_expected_work_on`, core's intervals, own leave
+  taken off). A schedule that reaches midnight and goes straight on the next
+  morning is one shift (22:00-06:00 ends at 06:00); a check-in after midnight
+  while last evening's shift was still running ends with that shift, the same
+  morning. `False` when the check-in is after the schedule's end, on an
+  unscheduled day and on a floating schedule (core describes a stand-in
+  window around noon for it, `resource_calendar.py:419`). On a schedule that
+  runs round the clock the end found is a day or more ahead and holds nothing
+  back. Module-level helpers: `reaches_midnight` (a row to 24:00 ends at
+  23:59:59.999999 in core, and one typed as 23:59 a minute short:
+  `A_SCHEDULE_REACHES_MIDNIGHT_WITHIN`), `work_goes_on_until` (a break the
+  schedule declares - core's lunch rows, `_breaks_on` - does not end the
+  shift), `last_scheduled_moment`. Only the END
+  is read by the shift; whether a stay is forgotten at all is still judged
+  by the hours of its calendar day (`_max_allowed_stay_hours`).
 - **`_settled_check_out(self)`** - when the stay is taken to have ended:
   check-in + the SPAN of the scheduled day (break included, so a settled day
   is worth a normal one), or, after an earlier stay that day, what is left of
-  the day's hours (`_hours_earlier_that_day`); with the schedule's
+  the day's hours (`_hours_earlier_that_day`); never past
+  `_end_of_the_schedule_ahead`, so a forgotten badge-out pays no more than a
+  day badged out when the schedule ended (owner's decision, 16.11.2026: in at
+  09:07 on an 08:00-17:00 day is credited to 17:00, not 18:07) - counted from
+  the check-in alone only where no end of the schedule lies ahead; with the schedule's
   `forgotten_badge_hours` set, that number (at most the day's hours) less the
   earlier stays, ended at the first second core's own count reaches it
   (`_end_after_worked_hours`: core's `_get_worked_hours_in_range` on a probe,
   halving a window of `UNPAID_TIME_A_CREDITED_DAY_MAY_SPAN` when check-in plus
-  the hours falls short, so an end inside a break moves past it);
+  the hours falls short, so an end inside a break moves past it), the number
+  capped as well by what the schedule still held at the check-in
+  (`_worth_as_core_counts` up to `_end_of_the_schedule_ahead`);
   less the penalty where the policy
   sets one, and never past `_latest_end_of_stay` (the moment judged, or the
   person's next stay, core's absence marks included, because its overtime engine

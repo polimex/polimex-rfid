@@ -69,6 +69,24 @@ for the person.
 Rows computed before this rule keep their figures until their day is
 computed again (**Recompute Extra Attendance** for those days).
 
+## A day nobody badged out of
+
+A stay the system had to close by itself (marked **Forgotten Badge**) is
+counted only up to the end the company's Forgotten Badge setting credits, and
+that is never past the end of the schedule the person came in under. The
+lateness of that morning stays on the row. Somebody in at 09:07 on an
+08:00-17:00 schedule who never badged out is late by 1:07, worked 6:53 and
+has no overtime. Where the person came in after their schedule had ended - in
+for the evening - every credited hour is the system's estimate, and none of
+it is overtime: nobody is paid a premium for an estimate. Once somebody
+enters the real check-out on the attendance record, the day is measured by
+it, overtime included. Other stays of the same day, badged in and out, keep
+their overtime. A stay measured before the scheduled task has closed it reads
+the same way.
+
+Rows computed before this rule keep their figures until their day is computed
+again (**Recompute Extra Attendance** for those days).
+
 ## How to use it
 
 ### Late Attendance

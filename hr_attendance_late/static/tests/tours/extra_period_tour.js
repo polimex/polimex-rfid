@@ -34,5 +34,14 @@ registry.category("web_tour.tours").add("hr_extra_previous_month_tour", {
             content: "The person whose only roll-up is six months old is not",
             trigger: ".o_pivot_view table:not(:contains(Pivot LongAgo))",
         },
+        {
+            content: "The period is a starting point: one click takes it off",
+            trigger: ".o_searchview .o_searchview_facet .o_facet_remove",
+            run: "click",
+        },
+        {
+            content: "And everything recorded is there, the six-month-old roll-up too",
+            trigger: ".o_pivot_view table:contains(Pivot LongAgo)",
+        },
     ],
 });

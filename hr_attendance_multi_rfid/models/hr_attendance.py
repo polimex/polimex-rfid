@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools.date_utils import sum_intervals
+from odoo.tools.date_utils import localized, sum_intervals, to_timezone
 from odoo.tools.float_utils import float_compare
 
 _logger = logging.getLogger(__name__)
@@ -34,6 +34,12 @@ SETTLING_REFUSED = (UserError, ValueError)
 # breaks come nowhere near it, and the search is seventeen halvings.
 UNPAID_TIME_A_CREDITED_DAY_MAY_SPAN = timedelta(hours=24)
 
+# Core ends a schedule row that runs to 24:00 on the last microsecond of the
+# day, not at midnight (odoo/tools/date_utils.py:75, float_to_time), and a row
+# somebody typed as 23:59 ends a minute before it. A day whose schedule ends
+# within this of the next day has reached midnight.
+A_SCHEDULE_REACHES_MIDNIGHT_WITHIN = timedelta(minutes=1)
+
 
 def stay_outlasts(start, end, allowed, earlier=0.0):
     """Whether a stay from start to end ran past what the person's day allows.
@@ -51,6 +57,43 @@ def stay_outlasts(start, end, allowed, earlier=0.0):
         return False
     stayed = (end - start).total_seconds() / 3600.0 + earlier
     return float_compare(stayed, allowed, precision_digits=2) > 0
+
+
+def reaches_midnight(moment, midnight):
+    """Whether a scheduled end is that midnight, as core writes one.
+
+    :param moment: the end of a schedule interval, at or before the midnight
+    :param midnight: the first moment of the day after it
+    """
+    return midnight - moment <= A_SCHEDULE_REACHES_MIDNIGHT_WITHIN
+
+
+def last_scheduled_moment(intervals):
+    """Where the scheduled work in core's intervals of a day ends."""
+    return max(stop for _start, stop, _meta in intervals)
+
+
+def work_goes_on_until(intervals, moment, breaks=()):
+    """Where the scheduled work that goes straight on from a moment ends.
+
+    A break the schedule itself declares does not end the work: ten at night
+    to six with half an hour off at two is still one night.
+
+    :param intervals: core's work intervals of one day
+    :param breaks: core's break intervals of the same day
+    :return: the moment itself when nothing is scheduled to go on from it
+    """
+    scheduled = sorted(
+        [(start, stop, True) for start, stop, _meta in intervals]
+        + [(start, stop, False) for start, stop, _meta in breaks])
+    reached = end = moment
+    for start, stop, is_work in scheduled:
+        if start > reached:
+            break
+        reached = max(reached, stop)
+        if is_work:
+            end = max(end, stop)
+    return end
 
 
 class HrAttendance(models.Model):
@@ -197,18 +240,101 @@ class HrAttendance(models.Model):
                  it as such.
         """
         self.ensure_one()
-        employee = self.employee_id
-        # The day the stay belongs to, handed to core in the person's own
-        # zone (hr.employee._local_days_bounds).
-        day = employee._local_day(self.check_in)
-        intervals = list(employee._get_expected_attendances(
-            *employee._local_days_bounds(day, day)))
+        intervals = self._expected_work_on(
+            self.employee_id._local_day(self.check_in))
         if not intervals:
             return 0.0, 0.0
         hours = sum_intervals(intervals)
         first = min(start for start, _stop, _meta in intervals)
-        last = max(stop for _start, stop, _meta in intervals)
+        last = last_scheduled_moment(intervals)
         return hours, (last - first).total_seconds() / 3600.0
+
+    def _expected_work_on(self, day):
+        """What this person was scheduled to work on one day of their calendar.
+
+        Core's intervals, asked for in the person's own zone
+        (hr.employee._local_days_bounds). Empty on a day they were not
+        scheduled. For a floating schedule core answers with a stand-in: the
+        hours of a day laid around noon, for as long as the week's hours last
+        (resource_calendar.py:419). Its length is the day's; where it starts
+        and ends says nothing about the person.
+
+        :param day: date - a day of the person's own calendar
+        :return: [(start, stop, records)] - zone-aware, in order
+        """
+        self.ensure_one()
+        employee = self.employee_id
+        return list(employee._get_expected_attendances(
+            *employee._local_days_bounds(day, day)))
+
+    def _breaks_on(self, day):
+        """The breaks this person's schedule declares on one day of their calendar.
+
+        Core's own (hr.employee._employee_attendance_intervals), the ones it
+        takes out of a stay's worked hours.
+
+        :param day: date - a day of the person's own calendar
+        :return: [(start, stop, records)] - zone-aware
+        """
+        self.ensure_one()
+        employee = self.employee_id
+        return list(employee._employee_attendance_intervals(
+            *employee._local_days_bounds(day, day), lunch=True))
+
+    def _end_of_the_schedule_ahead(self):
+        """Where the schedule the person came in under ends - if it still lay ahead.
+
+        The last scheduled minute of the day the stay belongs to. A schedule
+        that reaches midnight and goes straight on the next morning is one
+        shift: ten at night to six ends at six, not at midnight. And whoever
+        came in after midnight, while last evening's shift was still running,
+        came in under that one - it ends at six the same morning, not with
+        the shift that begins at ten that evening.
+
+        On a schedule that never stops, the end found is a day or more ahead
+        and holds nothing back: a day's credit is never longer than the day.
+
+        :return: a naive UTC datetime; False when the person came in after
+                 their schedule had ended, on a day they were not scheduled,
+                 or works a floating schedule - then there is no end ahead of
+                 them, and the day is counted from the moment they came in.
+        """
+        self.ensure_one()
+        if self._calendar_of_the_day().flexible_hours:
+            # A frame people may work in, not hours they are late for: what
+            # core describes for such a day is a stand-in around noon
+            # (_expected_work_on), and its end is the end of nothing.
+            return False
+        employee = self.employee_id
+        day = employee._local_day(self.check_in)
+        intervals = self._expected_work_on(day)
+        if not intervals:
+            return False
+        one_day = timedelta(days=1)
+        day_begins, next_day_begins = employee._local_days_bounds(day, day)
+        came_in = localized(self.check_in)
+        as_stored = to_timezone(None)
+
+        if intervals[0][0] <= day_begins:
+            # The day opens at work. Where yesterday's schedule ran up to this
+            # midnight, that is the rest of last evening's shift.
+            the_day_before = self._expected_work_on(day - one_day)
+            if the_day_before and reaches_midnight(
+                    last_scheduled_moment(the_day_before), day_begins):
+                rest_of_last_night = work_goes_on_until(
+                    intervals, day_begins, self._breaks_on(day))
+                # A shift, not a schedule that fills the whole day.
+                a_shift = not reaches_midnight(rest_of_last_night, next_day_begins)
+                if a_shift and came_in < rest_of_last_night:
+                    return as_stored(rest_of_last_night)
+
+        end = last_scheduled_moment(intervals)
+        if reaches_midnight(end, next_day_begins):
+            tomorrow = day + one_day
+            end = work_goes_on_until(
+                self._expected_work_on(tomorrow), next_day_begins,
+                self._breaks_on(tomorrow))
+        return as_stored(end) if came_in < end else False
 
     def _scheduled_hours_of_the_day(self):
         """Just the hours of work - see _scheduled_day."""
@@ -294,10 +420,18 @@ class HrAttendance(models.Model):
         paid hours would leave every settled day an hour short of a normal
         one, and the payroll clerk would have to explain why.
 
-        Measured FROM THE CHECK-IN rather than to the end of the schedule, so
-        that somebody who came in for an evening performance - after their
-        schedule had ended - is credited a working day too, instead of
-        nothing.
+        But never past the end of the schedule they came in under
+        (_end_of_the_schedule_ahead): a forgotten badge-out pays no more than
+        a day badged out when the schedule ended (owner's decision,
+        16.11.2026). Somebody in at 09:07 on that schedule is credited to five
+        as well, not to 18:07 - the hour they were late is not made up by
+        forgetting, and nothing of the day lies after the schedule for the
+        daily figures to read as overtime.
+
+        The day is measured FROM THE CHECK-IN alone only where no end of the
+        schedule lies ahead: somebody who came in for an evening performance -
+        after their schedule had ended - is credited a working day too,
+        instead of nothing.
 
         After an earlier stay the same day, only what is left of the day's
         hours is credited: a day is worth what a normal one is worth, however
@@ -313,8 +447,10 @@ class HrAttendance(models.Model):
         as core counts a stay, so the schedule's unpaid break inside it is
         added on rather than taken out of it.
 
-        The penalty option takes its hours off that, for companies that treat
-        a forgotten badge as time off site. The third credits nothing at all.
+        The penalty option takes its hours off that - off the day as it ends
+        with the schedule, so being late cannot swallow it - for companies
+        that treat a forgotten badge as time off site. The third credits
+        nothing at all.
 
         A stay never ends after the moment it is judged at, nor after the
         person's next stay began: with a small tolerance the limit can pass
@@ -333,14 +469,21 @@ class HrAttendance(models.Model):
         if float_compare(span, 0.0, precision_digits=2) <= 0:
             return False
         earlier = self._hours_earlier_that_day()
+        scheduled_end = self._end_of_the_schedule_ahead()
         forgotten_badge_hours = self._calendar_of_the_day().forgotten_badge_hours
         if forgotten_badge_hours:
             # Never more than the day itself: the number can only lower what a
             # forgotten day pays, and so the credited end stays inside the
             # limit the stay was judged by, whenever the task runs.
             credit = min(forgotten_badge_hours, hours) - earlier
+            if scheduled_end:
+                # Nor more than the schedule still held when they came in -
+                # counted as the number is, in hours core would pay.
+                credit = min(credit, self._worth_as_core_counts()(scheduled_end))
         else:
             credit = hours - earlier if earlier else span
+            if scheduled_end:
+                credit = min(credit, (scheduled_end - self.check_in).total_seconds() / 3600.0)
         if company.forgotten_badge_policy == 'penalty':
             credit -= company.forgotten_badge_penalty_hours or 0.0
         if float_compare(credit, 0.0, precision_digits=2) <= 0:
@@ -385,16 +528,7 @@ class HrAttendance(models.Model):
         then still ends after it, never in it.
         """
         self.ensure_one()
-        probe = self.new({
-            'employee_id': self.employee_id.id,
-            'check_in': self.check_in,
-            'check_out': self.check_in,
-        })
-
-        def worth(end):
-            probe.check_out = end
-            return probe._get_worked_hours_in_range(self.check_in, end)
-
+        worth = self._worth_as_core_counts()
         first_guess = self.check_in + timedelta(hours=hours)
         if float_compare(worth(first_guess), hours, precision_digits=4) >= 0:
             return first_guess
@@ -406,6 +540,28 @@ class HrAttendance(models.Model):
             else:
                 short = middle
         return first_guess + timedelta(seconds=enough)
+
+    def _worth_as_core_counts(self):
+        """What this stay would be worth if it ended at a given moment.
+
+        Core's own count of a stay (hr_attendance._get_worked_hours_in_range),
+        asked of a record that is never saved: the hours payroll would read,
+        the schedule's unpaid break left out.
+
+        :return: a function of the end - a naive UTC datetime - giving hours
+        """
+        self.ensure_one()
+        probe = self.new({
+            'employee_id': self.employee_id.id,
+            'check_in': self.check_in,
+            'check_out': self.check_in,
+        })
+
+        def worth(end):
+            probe.check_out = end
+            return probe._get_worked_hours_in_range(self.check_in, end)
+
+        return worth
 
     def _judged_at(self):
         """The moment an open stay is judged at.

@@ -84,6 +84,7 @@ Configure in Settings → Technical → Resource Calendar:
 - Define break times
 - Configure holidays
 - Set each employee's **Timezone** (employee form, *Settings* tab): every daily figure is read in it. A stay belongs, whole, to the day it began on there; night work (22:00-06:00) is counted by that day's own clock; a day with no badge is an absence only once it is over for the person
+- A stay nobody badged out of (marked **Forgotten Badge**) is counted up to the end the company's Forgotten Badge setting credits, never past the end of the schedule; hours the system estimated after a schedule are not overtime until the real check-out is entered
 
 ## 📖 Usage
 

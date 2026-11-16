@@ -60,6 +60,7 @@ msgid ""
 "        • Calculation: Actual work time minus theoretical work time (when positive)\n"
 "        • Format: Hours in decimal format (e.g., 2.0 = 2 hours overtime)\n"
 "        • Compensation: Usually paid at premium rate (1.5x or 2x base rate)\n"
+"        • Forgotten badge: hours the system estimated after the end of the schedule are not overtime until the real check-out is entered\n"
 "        \n"
 "        Note: Overtime calculation may vary based on daily vs. weekly limits and labor agreements."
 msgstr ""
@@ -776,11 +777,6 @@ msgstr ""
 msgid ""
 "Relevant only for additive amount coefficients (e.g. the night-shift "
 "supplement per hour). Multipliers ignore it."
-msgstr ""
-
-#. module: hr_attendance_late
-#: model:ir.ui.menu,name:hr_attendance_late.menu_hr_attendance_report
-msgid "Reports"
 msgstr ""
 
 #. module: hr_attendance_late

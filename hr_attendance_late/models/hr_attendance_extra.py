@@ -139,6 +139,7 @@ class HrAttendanceExtra(models.Model):
         • Calculation: Actual work time minus theoretical work time (when positive)
         • Format: Hours in decimal format (e.g., 2.0 = 2 hours overtime)
         • Compensation: Usually paid at premium rate (1.5x or 2x base rate)
+        • Forgotten badge: hours the system estimated after the end of the schedule are not overtime until the real check-out is entered
         
         Note: Overtime calculation may vary based on daily vs. weekly limits and labor agreements.""")
     overtime_night = fields.Float(

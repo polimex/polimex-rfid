@@ -141,9 +141,33 @@ Right under it, **Forgotten badge** decides WHAT is then recorded:
 
 | Setting | What the person gets |
 |---|---|
-| Credit the scheduled day | Their working day, counted from the moment they came in - the unpaid break included, so the day is worth exactly what a normal one is worth. |
+| Credit the scheduled day | Their working day - the unpaid break included, so the day is worth exactly what a normal one is worth - and never past the end of the schedule they came in under. |
 | Credit the scheduled day, minus a penalty | The same, less the hours set beside it - for companies that treat a forgotten badge as time off site. |
 | Count nothing for that day | No working time at all. The stay is marked as a forgotten badge and the real hours have to be entered by hand - which is the point: the person has to say why they forgot. |
+
+### Never more than a day badged out of
+
+A forgotten badge-out pays no more than a day the person badged out of when
+their schedule ended. Somebody in at 08:00 on an 08:00-17:00 schedule is
+credited to 17:00. Somebody in at 09:07 is credited to 17:00 as well, not to
+18:07: the hour they were late is not made up by forgetting, and nothing of
+the day lies after the schedule. The penalty, where the company takes one,
+comes off the day as it ends with the schedule, and the schedule's own
+**Hours for a Forgotten Badge** stop there too.
+
+The day is counted from the moment the person came in only where no end of
+their schedule lay ahead of them: somebody called in for the evening, after
+their schedule had ended, is credited a working day from then instead of
+nothing. The same holds on a day off, on a floating schedule (a frame people
+may work in, with no hour to be late for) and on a schedule that runs round
+the clock.
+
+Somebody in a quarter of an hour before the schedule ends is credited that
+quarter of an hour. If they really stayed on, the hours are entered by hand on
+the record: it is marked **Forgotten Badge**, so it can be found.
+
+Days settled before this rule keep their check-out; a rebuild of the period
+(Re-create Attendance records) settles them again by it.
 
 ### What a forgotten day is worth on one schedule
 

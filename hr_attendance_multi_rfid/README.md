@@ -90,7 +90,10 @@ attendance is on the zone: **Attendance**, **Overwrite Check-In** and
 **Overwrite Check-Out**. When a stay counts as a forgotten badge and what is
 then recorded is in **Settings → Attendances**: Automatic Check-Out with its
 tolerance, and Forgotten Badge right under it; a working schedule can set its
-own number of hours for a forgotten day.
+own number of hours for a forgotten day. A forgotten day is never credited
+past the end of the schedule the person came in under: late in the morning and
+no badge-out is credited to the end of the schedule, not a full day from the
+hour they came.
 
 ## 📖 Usage
 
