@@ -531,7 +531,11 @@ class TestTheDemoLoginHasAServiceRunning(
         entries = self._passages(since, way="0")
         self.assertTrue(entries, "nobody came in twelve days")
         self.assertEqual(service.access_group_contact_rel.visits_counter, len(entries))
-        self.assertEqual(service.visits, len(entries))
+        self.assertEqual(
+            service.visits,
+            service.access_group_contact_rel.permitted_visits - len(entries),
+            "the visits left",
+        )
         self.assertIn(
             len(self._passages(since, way="1")),
             (len(entries), len(entries) - 1),

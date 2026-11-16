@@ -42,7 +42,7 @@
                             <th>Service</th>
                             <th>Valid From</th>
                             <th>Valid To</th>
-                            <th>Visits</th>
+                            <th>Remaining Visits</th>
                             <th>State</th>
                         </tr>
                     </thead>
@@ -51,7 +51,7 @@
                         <td><t t-out="service.service_id.name"/></td>
                         <td><span t-field="service.start_date" t-options='{"widget": "datetime", "hide_seconds": True}'/></td>
                         <td><span t-field="service.end_date" t-options='{"widget": "datetime", "hide_seconds": True}'/></td>
-                        <td><t t-out="service.visits"/></td>
+                        <td><t t-if="service.access_group_contact_rel.visits_counting" t-out="service.visits"/></td>
                         <td><span t-field="service.state"/></td>
                     </tr>
                 </t>

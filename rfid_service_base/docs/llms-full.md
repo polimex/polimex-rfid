@@ -552,7 +552,7 @@ Python class `BaseRFIDService` in `models/rfid_service_sale.py:11`.  Model.  Inh
 | `card_id` | Many2one → \`hr.rfid.card\` | RFID Card |  | ✓ | Physical or digital card assigned to the customer for access.          • Access  |
 | `card_number` | Char | Card Number |  | — | Unique identifier/number of the card assigned to this service sale. |
 | `access_group_contact_rel` | Many2one → \`hr.rfid.access.group.contact.rel\` | Access Permission |  | ✓ | Technical link between customer and access group that grants permissions.        |
-| `visits` | Integer | Remaining Visits |  | — | Number of visits remaining for this service (for visit-based services).  • Purpo |
+| `visits` | Integer | Remaining Visits |  | — | How many more times the customer can come in on this service: permitted visits minus those used (computed from the access). 0 for a service with no limit on visits. |
 
 #### Notable methods
 

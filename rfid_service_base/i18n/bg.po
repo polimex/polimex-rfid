@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-15 12:11+0000\n"
-"PO-Revision-Date: 2026-08-15 15:11\n"
+"PO-Revision-Date: 2026-11-16 17:49\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -683,6 +683,17 @@ msgid "Hours"
 msgstr "Часове"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
+msgid ""
+"How many more times the customer can come in on this service. Every entry "
+"through a door of the service takes one; at zero the service is over. A "
+"service sold for a period only, with no limit on visits, shows 0."
+msgstr ""
+"Колко пъти още клиентът може да влезе по тази услуга. Всяко влизане през "
+"врата на услугата отнема по едно; при нула услугата приключва. Услуга, "
+"продадена само за период, без ограничение на посещенията, показва 0."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__service_type
 msgid ""
 "How this service controls customer access duration and usage.\n"
@@ -716,7 +727,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale_wiz__id
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_tags__id
 msgid "ID"
-msgstr "Номер (ID)"
+msgstr "ID"
 
 #. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_exception_icon
@@ -736,9 +747,7 @@ msgstr "Ако е избрано новите съобщения ще изиск
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_error
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_sms_error
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Ако е избрано някой съобщения имат грешка при доставка."
 
@@ -921,11 +930,6 @@ msgid "New Sale - %s"
 msgstr "Нова продажба - %s"
 
 #. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr "Следващо календарно събитие за дейност"
-
-#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "Краен Срок на Следващо Действие"
@@ -987,20 +991,6 @@ msgstr ""
 "към историята на продажбите."
 
 #. module: rfid_service_base
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
-msgid ""
-"Number of visits remaining for this service (for visit-based services).\n"
-"\n"
-"• Purpose: Shows how many times customer can still access with this service\n"
-"• Countdown: Automatically decreases each time customer uses their card\n"
-"• Zero means: No more visits remaining (service access blocked)\n"
-"• Unlimited: Visit-based services show actual count, time-based services may "
-"show 0\n"
-"\n"
-"Only relevant for 'Visits based' and 'Time and Visits based' service types."
-msgstr "Реалните посещения на тази група ще бъдат деактивирани. 0 mean"
-
-#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
 msgid ""
 "Numeric part of the service duration (combined with Duration Unit).\n"
@@ -1026,12 +1016,12 @@ msgstr "Старо начало"
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_onboarding_onboarding
 msgid "Onboarding"
-msgstr "Въвеждане в длъжност"
+msgstr "Въвеждане"
 
 #. module: rfid_service_base
 #: model:ir.model,name:rfid_service_base.model_onboarding_onboarding_step
 msgid "Onboarding Step"
-msgstr "Стъпка за въвеждане"
+msgstr "Стъпка при внедряване"
 
 #. module: rfid_service_base
 #: model:ir.model.constraint,message:rfid_service_base.constraint_rfid_service_sale_check_duplicates
@@ -1436,12 +1426,6 @@ msgstr "Отговорен потребител"
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
 msgid "Rfid Service Sale"
 msgstr "Продажба на RFID услуга"
-
-#. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_sms_error
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Грешка при доставка на SMS"
 
 #. module: rfid_service_base
 #: model:ir.actions.act_window,name:rfid_service_base.sale_wiz_action

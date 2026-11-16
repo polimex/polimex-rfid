@@ -7,7 +7,7 @@ audience:
 - user
 summary: "\n        RFID Service System Portal plugin\n    "
 last_updated: '2026-11-16'
-source_digest: sha256:b0b464fac255aea18ff26e2f09a708b160e7c4d980cf88b577e1ef96e42c6894
+source_digest: sha256:8219563dcebbf7c94bd94bd15e4ed16e2d10cd8a4b9b58490bc606a666e09996
 companion_doc: llms-full.md
 ---
 
@@ -55,9 +55,9 @@ Usage).
 * The portal home page shows the card **RFID Services** with the number of
   services sold to the customer.
 * **RFID Services** lists them, the newest first: the reference of the sale,
-  the service, from when and until when it is valid, the visits counted on it
-  and its state (Registered, Active, Finished or Canceled). The hours are
-  shown on the customer's own clock.
+  the service, from when and until when it is valid, the visits left on it
+  (for a service sold by visits) and its state (Registered, Active, Finished
+  or Canceled). The hours are shown on the customer's own clock.
 * A badge shared with the customer opens as a page with the barcode of the
   card and the period the card is valid for. The link carries its own access
   key, so it opens without a login.

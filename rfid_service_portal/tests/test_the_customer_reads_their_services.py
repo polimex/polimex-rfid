@@ -38,6 +38,19 @@ class TestTheCustomerReadsTheirServices(HttpCase):
                 "access_group_id": access_group.id,
             }
         )
+        cls.visit_card = cls.env["rfid.service"].create(
+            {
+                "name": "10-Visit Gym Card",
+                "company_id": company.id,
+                "service_type": "time_count",
+                "visits": 10,
+                "time_interval_number": 1,
+                "time_interval_type": "months",
+                "access_group_id": cls.env["hr.rfid.access.group"]
+                .create({"name": "Gym visitors", "company_id": company.id})
+                .id,
+            }
+        )
         cls.customer = new_test_user(
             cls.env,
             login="pool_customer",
@@ -56,24 +69,28 @@ class TestTheCustomerReadsTheirServices(HttpCase):
         cls._sell(somebody, "POOL-0002")
 
     @classmethod
-    def _sell(cls, partner, reference):
+    def _sell(cls, partner, reference, visits=0, used=0, service=None):
+        service = service or cls.service
         period = {
             "start": cls.started,
             "end": cls.started + timedelta(days=30),
         }
         access = cls.env["hr.rfid.access.group.contact.rel"].create(
             {
-                "access_group_id": cls.service.access_group_id.id,
+                "access_group_id": service.access_group_id.id,
                 "contact_id": partner.id,
                 "activate_on": period["start"],
                 "expiration": period["end"],
+                "visits_counting": visits > 0,
+                "permitted_visits": visits,
+                "visits_counter": used,
             }
         )
         return cls.env["rfid.service.sale"].create(
             {
                 "name": reference,
-                "service_id": cls.service.id,
-                "company_id": cls.service.company_id.id,
+                "service_id": service.id,
+                "company_id": service.company_id.id,
                 "partner_id": partner.id,
                 "start_date": period["start"],
                 "end_date": period["end"],
@@ -116,6 +133,34 @@ class TestTheCustomerReadsTheirServices(HttpCase):
 
         self.assertTrue(re.search(r">\s*Active\s*<", page), "the name of the state")
         self.assertFalse(re.search(r">\s*progress\s*<", page), "the code is shown")
+
+    def _visits_cell(self, page, reference):
+        """The cell before the state, in the row of that service."""
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", page, re.DOTALL)
+        row = [row for row in rows if reference in row]
+        self.assertEqual(len(row), 1, "%s is not listed once" % reference)
+        cells = [
+            re.sub(r"<[^>]+>|\s+", " ", cell).strip()
+            for cell in re.findall(r"<td[^>]*>(.*?)</td>", row[0], re.DOTALL)
+        ]
+        self.assertEqual(len(cells), 6, cells)
+        return cells[4]
+
+    def test_the_customer_sees_how_many_visits_are_left(self):
+        """A card for 10 visits, 3 of them used: the customer reads 7."""
+        self._sell(
+            self.customer.partner_id,
+            "GYM-0001",
+            visits=10,
+            used=3,
+            service=self.visit_card,
+        )
+
+        self.assertEqual(self._visits_cell(self._the_page(), "GYM-0001"), "7")
+
+    def test_a_service_with_no_limit_on_visits_shows_no_count(self):
+        """NEGATIVE: a pass for a period only has no visits to count - the cell is empty, not 0."""
+        self.assertEqual(self._visits_cell(self._the_page(), "POOL-0001"), "")
 
     def test_somebody_elses_service_is_not_listed(self):
         """NEGATIVE: the page lists the customer's own services and nobody else's."""

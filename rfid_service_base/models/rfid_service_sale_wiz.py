@@ -235,9 +235,16 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             'create_uid': self.env.user.id,
             'write_uid': self.env.user.id,
         })
-        existing_card_id = self.env['hr.rfid.card'].sudo().with_context(active_test=False).search([
+        # A card number is unique within a company (hr.rfid.card _card_uniq):
+        # the card is the one of the service's company, or one that belongs
+        # to no company. Another company's card with the same number is not
+        # this customer's, and its holder is none of this cashier's business.
+        company = self.service_id.company_id
+        cards = self.env['hr.rfid.card'].sudo().with_context(active_test=False).search([
             ('number', '=', self.card_number),
-        ])
+            ('company_id', 'in', [company.id, False]),
+        ], order='id')
+        existing_card_id = cards.filtered(lambda c: c.company_id == company)[:1] or cards[:1]
         if existing_card_id.employee_id:
             raise UserError(
                 _("The card %s is already used by employee %s") % (self.card_number, existing_card_id.employee_id.name)

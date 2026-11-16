@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-15 12:12+0000\n"
-"PO-Revision-Date: 2026-08-15 15:12\n"
+"PO-Revision-Date: 2026-11-16 17:50\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: el\n"
+"Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -733,6 +733,18 @@ msgid "Hours"
 msgstr "Ώρες"
 
 #. module: rfid_service_base
+#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
+msgid ""
+"How many more times the customer can come in on this service. Every entry "
+"through a door of the service takes one; at zero the service is over. A "
+"service sold for a period only, with no limit on visits, shows 0."
+msgstr ""
+"Πόσες φορές ακόμη μπορεί να εισέλθει ο πελάτης με αυτή την υπηρεσία. Κάθε "
+"είσοδος από πόρτα της υπηρεσίας αφαιρεί μία· όταν φτάσει στο μηδέν, η "
+"υπηρεσία έχει λήξει. Μια υπηρεσία που πωλείται μόνο για συγκεκριμένο χρονικό "
+"διάστημα, χωρίς όριο επισκέψεων, εμφανίζει 0."
+
+#. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__service_type
 msgid ""
 "How this service controls customer access duration and usage.\n"
@@ -787,9 +799,7 @@ msgstr "Εάν είναι επιλεγμένο, τα νέα μηνύματα α�
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_error
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service__message_has_sms_error
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_error
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Εάν είναι επιλεγμένο, ορισμένα μηνύματα παρουσιάζουν σφάλμα παράδοσης."
 
@@ -1025,11 +1035,6 @@ msgid "New Sale - %s"
 msgstr "Νέα Πώληση - %s"
 
 #. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr "Επόμενο Συμβάν Ημερολογίου Δραστηριότητας"
-
-#. module: rfid_service_base
 #: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "Προθεσμία Επόμενης Δραστηριότητας"
@@ -1089,34 +1094,6 @@ msgstr ""
 "Αριθμός πωλήσεων υπηρεσιών επισκέπτη που έχουν καταχωρηθεί για αυτήν την "
 "επαφή σε όλες τις υπηρεσίες. Χρησιμοποιείται από το έξυπνο κουμπί για να "
 "οδηγήσει τον χρήστη στο ιστορικό πωλήσεων."
-
-#. module: rfid_service_base
-#: model:ir.model.fields,help:rfid_service_base.field_rfid_service_sale__visits
-msgid ""
-"Number of visits remaining for this service (for visit-based services).\n"
-"\n"
-"• Purpose: Shows how many times customer can still access with this service\n"
-"• Countdown: Automatically decreases each time customer uses their card\n"
-"• Zero means: No more visits remaining (service access blocked)\n"
-"• Unlimited: Visit-based services show actual count, time-based services may "
-"show 0\n"
-"\n"
-"Only relevant for 'Visits based' and 'Time and Visits based' service types."
-msgstr ""
-"Αριθμός επισκέψεων που απομένουν για αυτή την υπηρεσία (για υπηρεσίες βάσει "
-"επισκέψεων).\n"
-"\n"
-"• Σκοπός: Εμφανίζει πόσες φορές ο πελάτης μπορεί ακόμα να έχει πρόσβαση με "
-"αυτή την υπηρεσία\n"
-"• Αντίστροφη μέτρηση: Μειώνεται αυτόματα κάθε φορά που ο πελάτης "
-"χρησιμοποιεί την κάρτα του\n"
-"• Μηδέν σημαίνει: Δεν απομένουν άλλες επισκέψεις (η πρόσβαση στην υπηρεσία "
-"αποκλείεται)\n"
-"• Απεριόριστο: Οι υπηρεσίες βάσει επισκέψεων εμφανίζουν τον πραγματικό "
-"αριθμό, οι υπηρεσίες βάσει χρόνου μπορεί να εμφανίζουν 0\n"
-"\n"
-"Ισχύει μόνο για τύπους υπηρεσίας 'Βάσει επισκέψεων' και 'Βάσει χρόνου και "
-"επισκέψεων'."
 
 #. module: rfid_service_base
 #: model:ir.model.fields,help:rfid_service_base.field_rfid_service__time_interval_number
@@ -1568,12 +1545,6 @@ msgstr "Υπεύθυνος Χρήστης"
 #: model:ir.model.fields,field_description:rfid_service_base.field_hr_rfid_access_group_contact_rel__rfid_service_sale_id
 msgid "Rfid Service Sale"
 msgstr "Πώληση Υπηρεσίας RFID"
-
-#. module: rfid_service_base
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service__message_has_sms_error
-#: model:ir.model.fields,field_description:rfid_service_base.field_rfid_service_sale__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Σφάλμα Παράδοσης SMS"
 
 #. module: rfid_service_base
 #: model:ir.actions.act_window,name:rfid_service_base.sale_wiz_action

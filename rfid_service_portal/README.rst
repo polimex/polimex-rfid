@@ -30,9 +30,9 @@ For the customer
 * The portal home page shows the card **RFID Services** with the number of
   services sold to the customer.
 * **RFID Services** lists them, the newest first: the reference of the sale,
-  the service, from when and until when it is valid, the visits counted on it
-  and its state (Registered, Active, Finished or Canceled). The hours are
-  shown on the customer's own clock.
+  the service, from when and until when it is valid, the visits left on it
+  (for a service sold by visits) and its state (Registered, Active, Finished
+  or Canceled). The hours are shown on the customer's own clock.
 * A badge shared with the customer opens as a page with the barcode of the
   card and the period the card is valid for. The link carries its own access
   key, so it opens without a login.

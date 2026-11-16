@@ -143,16 +143,26 @@ This is the technical record that enables physical access for the customer."""
     )
     visits = fields.Integer(
         string='Remaining Visits',
-        related='access_group_contact_rel.visits_counter',
-        help="""Number of visits remaining for this service (for visit-based services).
-
-• Purpose: Shows how many times customer can still access with this service
-• Countdown: Automatically decreases each time customer uses their card
-• Zero means: No more visits remaining (service access blocked)
-• Unlimited: Visit-based services show actual count, time-based services may show 0
-
-Only relevant for 'Visits based' and 'Time and Visits based' service types."""
+        compute='_compute_visits',
+        # The cashier reads the sale without the rights on the access behind
+        # it, as the related field it replaces did.
+        compute_sudo=True,
+        help="How many more times the customer can come in on this service. Every "
+             "entry through a door of the service takes one; at zero the service "
+             "is over. A service sold for a period only, with no limit on visits, "
+             "shows 0.",
     )
+
+    @api.depends('access_group_contact_rel.visits_counting',
+                 'access_group_contact_rel.permitted_visits',
+                 'access_group_contact_rel.visits_counter')
+    def _compute_visits(self):
+        for sale in self:
+            access = sale.access_group_contact_rel
+            if access.visits_counting and access.permitted_visits > 0:
+                sale.visits = max(access.permitted_visits - access.visits_counter, 0)
+            else:
+                sale.visits = 0
 
     # @api.depends('partner_id.hr_rfid_card_ids', 'partner_id.hr_rfid_access_group_ids')
     @api.depends('access_group_contact_rel', 'start_date', 'end_date')

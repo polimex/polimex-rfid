@@ -11,13 +11,15 @@ making the sale.
 from datetime import timedelta
 
 from odoo import fields
-from odoo.tests.common import TransactionCase, tagged
+from odoo.exceptions import UserError
+from odoo.tests.common import TransactionCase, new_test_user, tagged
 
 from odoo.addons.hr_rfid.tests.hardware import one_door
 
 
-@tagged("post_install", "-at_install", "rfid_service_lifecycle", "rfid_service_till")
-class TestACustomerWithACardBuysAService(TransactionCase):
+class _AtTheTill(TransactionCase):
+    """A pool with one door, a monthly pass, and a customer with a card."""
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -68,6 +70,9 @@ class TestACustomerWithACardBuysAService(TransactionCase):
             [("partner_id", "=", self.customer.id)]
         )
 
+
+@tagged("post_install", "-at_install", "rfid_service_lifecycle", "rfid_service_till")
+class TestACustomerWithACardBuysAService(_AtTheTill):
     def test_a_card_that_never_expires_buys_a_service(self):
         """The customer's card has no end date: the sale is made and the card still has none."""
         self.assertFalse(self.card.deactivate_on, "the starting point")
@@ -97,3 +102,151 @@ class TestACustomerWithACardBuysAService(TransactionCase):
         self._sold_at_the_till()
 
         self.assertEqual(self.card.deactivate_on, in_three_months)
+
+
+@tagged("post_install", "-at_install", "rfid_service_lifecycle", "rfid_service_till")
+class TestTheCardIsTheOneOfTheServicesCompany(_AtTheTill):
+    """A card number is unique within a company, not across companies.
+
+    The owner, 16.11.2026 (open item 193): the till looked for the card in
+    every company - with the same number in two companies the sale stopped
+    with an error, and a number taken in another company showed the cashier
+    the name of that company's customer.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.other_company = cls.env["res.company"].create({"name": "Another Tenant"})
+        cls.their_customer = cls.env["res.partner"].create(
+            {"name": "Their Customer", "company_id": cls.other_company.id}
+        )
+        cls.their_card = cls.env["hr.rfid.card"].create(
+            {
+                "number": "5544332211",
+                "contact_id": cls.their_customer.id,
+                "company_id": cls.other_company.id,
+            }
+        )
+
+    def _sold_with_number(self, number):
+        self.env["rfid.service.sale.wiz"].create(
+            {
+                "service_id": self.service.id,
+                "partner_id": self.customer.id,
+                "mobile": self.customer.phone,
+                "email": self.customer.email,
+                "card_number": number,
+            }
+        ).write_card()
+        return self.env["rfid.service.sale"].search(
+            [("partner_id", "=", self.customer.id)]
+        )
+
+    def test_a_number_another_company_uses_is_sold_here_on_a_card_of_this_company(self):
+        """The same number in another company does not stop the sale: the customer gets a card of this company."""
+        sale = self._sold_with_number("5544332211")
+
+        self.assertEqual(sale.state, "progress")
+        self.assertEqual(sale.card_id.number, "5544332211")
+        self.assertEqual(sale.card_id.company_id, self.env.company)
+        self.assertEqual(sale.card_id.contact_id, self.customer)
+
+    def test_the_other_companys_card_is_left_as_it_was(self):
+        """NEGATIVE: the other company's card keeps its holder and its period."""
+        before = (
+            self.their_card.contact_id,
+            self.their_card.activate_on,
+            self.their_card.deactivate_on,
+        )
+
+        self._sold_with_number("5544332211")
+
+        after = (
+            self.their_card.contact_id,
+            self.their_card.activate_on,
+            self.their_card.deactivate_on,
+        )
+        self.assertEqual(after, before)
+
+    def test_a_number_taken_in_this_company_is_still_refused(self):
+        """NEGATIVE: a card of this company held by somebody else is not handed to the customer."""
+        somebody = self.env["res.partner"].create({"name": "Somebody Here"})
+        self.env["hr.rfid.card"].create(
+            {
+                "number": "5544332299",
+                "contact_id": somebody.id,
+                "company_id": self.env.company.id,
+            }
+        )
+
+        with self.assertRaisesRegex(UserError, "already used by partner Somebody Here"):
+            self._sold_with_number("5544332299")
+
+    def test_a_card_of_no_company_is_the_customers_card(self):
+        """A card that belongs to no company is found by its number, as before."""
+        loose = self.env["hr.rfid.card"].create(
+            {
+                "number": "5544332277",
+                "contact_id": self.customer.id,
+                "company_id": False,
+            }
+        )
+
+        sale = self._sold_with_number("5544332277")
+
+        self.assertEqual(sale.card_id, loose)
+
+
+@tagged("post_install", "-at_install", "rfid_service_lifecycle", "rfid_service_till")
+class TestTheVisitsLeftOnAService(_AtTheTill):
+    """The sale shows how many more times the customer can come in.
+
+    The owner, 16.11.2026 (open item 185): "Remaining Visits" showed the
+    visits used - 0 on a new 10-visit card, 10 on one used up.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.service.write({"service_type": "time_count", "visits": 10})
+
+    def test_a_new_service_has_all_its_visits_left(self):
+        sale = self._sold_at_the_till()
+
+        self.assertEqual(sale.visits, 10)
+
+    def test_every_entry_takes_one_visit(self):
+        sale = self._sold_at_the_till()
+
+        sale.access_group_contact_rel.visits_counter = 3
+
+        self.assertEqual(sale.visits, 7)
+
+    def test_a_service_used_up_has_none_left_and_is_over(self):
+        sale = self._sold_at_the_till()
+
+        sale.access_group_contact_rel.visits_counter = 10
+
+        self.assertEqual(sale.visits, 0)
+        self.assertEqual(sale.state, "finished")
+
+    def test_the_cashier_reads_the_visits_left(self):
+        """A cashier with the rights of the services only reads the sale and its visits left."""
+        sale = self._sold_at_the_till()
+        sale.access_group_contact_rel.visits_counter = 2
+        cashier = new_test_user(
+            self.env,
+            login="pool_cashier",
+            groups="base.group_user,rfid_service_base.group_card_user",
+        )
+
+        self.assertEqual(sale.with_user(cashier).visits, 8)
+
+    def test_a_service_for_a_period_only_shows_no_visits(self):
+        """NEGATIVE: a service with no limit on visits has nothing to count down."""
+        self.service.write({"service_type": "time", "visits": 0})
+        sale = self._sold_at_the_till()
+        sale.access_group_contact_rel.visits_counter = 4
+
+        self.assertEqual(sale.visits, 0)
