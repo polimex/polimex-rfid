@@ -43,7 +43,13 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   credit; some sales are paid in coins and fill the machine's cash; and
   somebody whose credit has run out is sold nothing until the monthly refill;
 * the customer with a portal login (Joel Willis, login ``portal``) dropping by
-  on some days, so the portal has recent passages under their events.
+  on some days, so the portal has recent passages under their events;
+* where the Services add-ons are installed, a service that is running for the
+  demo login (Marc Demo, login ``demo``): "RFID Services" in the portal shows
+  it next to the ones that ended, and its badge is valid. The demo sells it
+  the way the till does whenever the customer has none; they come in on some
+  evenings, every entry is counted as a visit, and when the visits or the
+  month run out the next one is sold.
 
 A person on approved leave does not come in that day, and a day somebody
 already has attendance entered by hand is left to them.
@@ -73,6 +79,20 @@ Technical
   monthly refill once (``_demo_vending_credit``); the vending add-on's own
   refill task keeps them going. Without the Vending add-on, or once its demo
   machine is moved off the demo module, nothing of this runs.
+
+* The customer of the services is the demo login
+  (``rfid_service_portal.demo_portal_service_card``, the badge of
+  ``base.partner_demo``). ``_demo_keep_a_service_running`` sells them
+  ``rfid_service_base.demo_service_gym_combo`` through the till's own wizard
+  (``rfid.service.sale.wiz``, ``write_card``) when no service of theirs runs
+  or is still ahead. A refusal of the sale - the till's (``UserError``) or
+  the database's one service per customer and period - is logged and the run
+  goes on. Their evenings at the entrance come from a seed of their own;
+  ``_demo_may_pass`` lets an entry through only with a valid badge while a
+  service runs at that moment, and an exit only when they are in, so the
+  system counts the visits and closes the service itself. Without the
+  Services add-ons, or once the badge belongs to another contact, nothing of
+  this runs.
 
 Credits
 =======

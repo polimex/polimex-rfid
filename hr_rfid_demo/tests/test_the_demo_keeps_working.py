@@ -8,10 +8,14 @@ work only on demo data".
 
 from datetime import timedelta
 
+from freezegun import freeze_time
+
 from odoo import fields
-from odoo.tests.common import TransactionCase, tagged
+from odoo.tests.common import HttpCase, TransactionCase, tagged
 
 from ..models.hr_rfid_demo import ALSO_SIMULATED_UNTIL, SIMULATED_UNTIL
+
+DEMO_LOG = "odoo.addons.hr_rfid_demo.models.hr_rfid_demo"
 
 
 @tagged("post_install", "-at_install", "rfid_demo")
@@ -327,3 +331,385 @@ class TestTheDemoShowsTheVendingMachine(TransactionCase):
             ),
             "nothing of the last week",
         )
+
+
+class _TheDemoLoginIsACustomerOfTheServices:
+    """What the demo login's portal has, on a demo that was installed long ago."""
+
+    @classmethod
+    def _find_the_customer(cls):
+        cls.customer = cls.env.ref("base.partner_demo", raise_if_not_found=False)
+        cls.badge = cls.env.ref(
+            "rfid_service_portal.demo_portal_service_card", raise_if_not_found=False
+        )
+        cls.service = cls.env.ref(
+            "rfid_service_base.demo_service_gym_combo", raise_if_not_found=False
+        )
+        if not (
+            cls.customer
+            and cls.badge
+            and cls.service
+            and cls.env.ref("hr_rfid.demo_module", raise_if_not_found=False)
+        ):
+            cls.skipTest(cls, "the services add-on's demo is not loaded")
+        cls.Demo = cls.env["hr.rfid.demo"]
+        cls.params = cls.env["ir.config_parameter"].sudo()
+        cls.Sale = cls.env["rfid.service.sale"].sudo()
+
+    @classmethod
+    def _long_after_the_install(cls):
+        """Everything the customer ever had is long over.
+
+        The demo sale of the services add-on lasts four hours from the
+        install. Whatever the demo itself has sold them since - at the install
+        or at any run of the task on this database - is put in the past with
+        it: the services, the access behind each, the badge and its passages.
+        """
+        long_ago = fields.Datetime.now() - timedelta(days=100)
+        services = cls.Sale.search([("partner_id", "=", cls.customer.id)], order="id")
+        for days, service in enumerate(services):
+            # A day apart: one service per customer and period.
+            start = long_ago + timedelta(days=days)
+            end = start + timedelta(hours=4)
+            service.access_group_contact_rel.write(
+                {"activate_on": start, "expiration": end}
+            )
+            service.write({"start_date": start, "end_date": end})
+        cls.env["hr.rfid.event.user"].search([("card_id", "=", cls.badge.id)]).unlink()
+        cls.badge.write(
+            {"activate_on": long_ago, "deactivate_on": long_ago + timedelta(hours=4)}
+        )
+        cls._the_card_task_runs()
+
+    @classmethod
+    def _the_card_task_runs(cls):
+        """What the system's own task does every minute: badges wake and go to sleep by their period."""
+        cls.env["hr.rfid.card"]._update_cards()
+
+    def _the_task_runs_again(self):
+        """The next run of the task, a while later.
+
+        Two runs within the same second are one run to the task (it has
+        nothing new to simulate and stops at once), so the mark of the last
+        run is put back as far as the task's own interval.
+        """
+        earlier = fields.Datetime.now() - timedelta(minutes=15)
+        for mark in (SIMULATED_UNTIL, ALSO_SIMULATED_UNTIL):
+            self.params.set_param(mark, fields.Datetime.to_string(earlier))
+        self.Demo._cron_simulate()
+
+    def _next_sale_number(self):
+        """The number the till gives the next sale. A sale that is tried and
+        refused uses one up all the same."""
+        numbering = (
+            self.env["ir.sequence"].sudo().search([("code", "=", "base.rfid.service")])
+        )
+        self.assertEqual(len(numbering), 1)
+        return numbering.number_next_actual
+
+    def _in_the_portal(self):
+        """The services the portal lists for the demo login (/my/rfid_services)."""
+        return self.Sale.search([("partner_id", "=", self.customer.id)])
+
+    def _running(self):
+        return self._in_the_portal().filtered(lambda sale: sale.state == "progress")
+
+    def _as_if_sold_days_ago(self, days, badge_awake=True):
+        """The running service, as the task would have sold it that many days ago
+        and then not run since."""
+        service = self._running()
+        back = timedelta(days=days)
+        access = service.access_group_contact_rel
+        service.write({"start_date": service.start_date - back})
+        access.write({"activate_on": access.activate_on - back})
+        self.badge.write({"activate_on": self.badge.activate_on - back})
+        if badge_awake:
+            self._the_card_task_runs()
+        since = fields.Datetime.now() - back - timedelta(days=5)
+        for mark in (SIMULATED_UNTIL, ALSO_SIMULATED_UNTIL):
+            self.params.set_param(mark, fields.Datetime.to_string(since))
+        return service, since
+
+    def _passages(self, since, way=None):
+        passages = self.env["hr.rfid.event.user"].search(
+            [("card_id", "=", self.badge.id), ("event_time", ">", since)]
+        )
+        if way is None:
+            return passages
+        return passages.filtered(lambda event: event.reader_id.reader_type == way)
+
+
+@tagged("post_install", "-at_install", "rfid_demo")
+class TestTheDemoLoginHasAServiceRunning(
+    _TheDemoLoginIsACustomerOfTheServices, TransactionCase
+):
+    """Whoever logs in to the demo finds a service that is running in their portal.
+
+    The owner, when the vending machine was promised (16.11.2026): "think of
+    the portal user as well, there is functionality there we have to show".
+    On the demo server the only service of the demo login had ended in the
+    summer, four hours after the install.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._find_the_customer()
+        cls._long_after_the_install()
+
+    def test_the_demo_login_has_a_service_that_runs_now(self):
+        """The portal lists a service running today, next to the one that ended long ago."""
+        ended = self._in_the_portal()
+        self.assertTrue(ended)
+        self.assertFalse(self._running(), "the starting point: nothing is running")
+
+        self.Demo._cron_simulate()
+
+        running = self._running()
+        now = fields.Datetime.now()
+        self.assertEqual(len(running), 1)
+        self.assertEqual(running.service_id, self.service)
+        self.assertEqual(running.card_id, self.badge)
+        self.assertLessEqual(running.start_date, now)
+        self.assertGreater(running.end_date, now + timedelta(days=20))
+        self.assertEqual(self._in_the_portal(), ended | running)
+        self.assertEqual(set(ended.mapped("state")), {"finished"}, "history stays")
+
+    def test_the_badge_in_the_portal_is_valid_again(self):
+        """The barcode the portal shows for the service opens the door: the badge is valid for the whole period."""
+        self.assertFalse(self.badge.active, "the starting point: the badge ran out")
+
+        self.Demo._cron_simulate()
+        self._the_card_task_runs()
+
+        self.assertTrue(self.badge.active)
+        self.assertGreaterEqual(self.badge.deactivate_on, self._running().end_date)
+
+    def test_a_badge_made_permanent_still_gets_its_service(self):
+        """Somebody trying the demo makes the badge a card that never expires.
+        The customer is sold the service all the same, and the badge keeps no
+        end date."""
+        self.badge.write({"deactivate_on": False, "active": True})
+
+        self.Demo._cron_simulate()
+
+        self.assertEqual(len(self._running()), 1)
+        self.assertFalse(self.badge.deactivate_on)
+
+    def test_a_running_service_is_not_sold_twice(self):
+        """NEGATIVE: the task runs every quarter of an hour and the customer still
+        has one service - and the till's sale numbers are not used up on tries."""
+        self.Demo._cron_simulate()
+        listed = self._in_the_portal()
+        self._the_card_task_runs()
+        number = self._next_sale_number()
+
+        self._the_task_runs_again()
+
+        self.assertEqual(self._in_the_portal(), listed)
+        self.assertEqual(len(self._running()), 1)
+        self.assertEqual(self._next_sale_number(), number, "the till was not asked")
+
+    def test_nobody_else_is_sold_anything(self):
+        """NEGATIVE: only the demo login buys, and their phone and e-mail stay as they were."""
+        others = [("partner_id", "!=", self.customer.id)]
+        sold_to_others = self.Sale.search(others)
+        contact = (self.customer.phone, self.customer.email)
+
+        self.Demo._cron_simulate()
+
+        self.assertEqual(self.Sale.search(others), sold_to_others)
+        self.assertEqual((self.customer.phone, self.customer.email), contact)
+
+    def test_the_customer_comes_and_every_entry_is_a_visit(self):
+        """The service is used: the customer comes in on some evenings and the visits are counted."""
+        self.Demo._cron_simulate()
+        service, since = self._as_if_sold_days_ago(12)
+
+        self.Demo._cron_simulate()
+
+        entries = self._passages(since, way="0")
+        self.assertTrue(entries, "nobody came in twelve days")
+        self.assertEqual(service.access_group_contact_rel.visits_counter, len(entries))
+        self.assertEqual(service.visits, len(entries))
+        self.assertIn(
+            len(self._passages(since, way="1")),
+            (len(entries), len(entries) - 1),
+            "whoever came in leaves, unless they are still inside",
+        )
+        self.assertEqual(set(self._passages(since).mapped("event_action")), {"1"})
+
+    def test_nobody_gets_in_without_a_service(self):
+        """NEGATIVE: in the days before the service was sold the badge opens nothing."""
+        self.Demo._cron_simulate()
+        service, since = self._as_if_sold_days_ago(12)
+
+        self.Demo._cron_simulate()
+
+        self.assertFalse(
+            self._passages(since).filtered(
+                lambda event: event.event_time < service.start_date
+            )
+        )
+
+    def test_a_badge_that_is_asleep_opens_nothing(self):
+        """NEGATIVE: until the system has woken the badge for the new period, the
+        customer does not come - no passage, and no "unknown card" at the door."""
+        self.Demo._cron_simulate()
+        _service, since = self._as_if_sold_days_ago(12, badge_awake=False)
+        self.assertFalse(self.badge.active)
+
+        self.Demo._cron_simulate()
+
+        self.assertFalse(self._passages(since))
+        self.assertFalse(
+            self.env["hr.rfid.event.system"].search_count(
+                [
+                    ("card_number", "=", self.badge.number),
+                    ("timestamp", ">", since),
+                ]
+            )
+        )
+
+    def test_a_service_that_starts_later_is_not_sold_again(self):
+        """NEGATIVE: a service bought for later is the customer's service - the
+        task does not sell another one every quarter of an hour until it starts."""
+        self.Demo._cron_simulate()
+        ahead = self._running()
+        later = fields.Datetime.now() + timedelta(hours=2)
+        ahead.write({"start_date": later})
+        ahead.access_group_contact_rel.write({"activate_on": later})
+        self.assertEqual(ahead.state, "registered")
+        listed = self._in_the_portal()
+        number = self._next_sale_number()
+
+        self._the_task_runs_again()
+
+        self.assertEqual(self._in_the_portal(), listed)
+        self.assertEqual(self._next_sale_number(), number, "the till was not asked")
+
+    def test_the_last_visit_closes_the_service(self):
+        """NEGATIVE: once the visits are used up the service is over and nobody gets in on it."""
+        self.Demo._cron_simulate()
+        service, since = self._as_if_sold_days_ago(20)
+        access = service.access_group_contact_rel
+        access.visits_counter = access.permitted_visits - 1
+
+        self.Demo._cron_simulate()
+
+        self.assertEqual(len(self._passages(since, way="0")), 1, "one visit was left")
+        self.assertEqual(len(self._passages(since, way="1")), 1, "and they left")
+        self.assertEqual(service.state, "finished")
+        self.assertFalse(self._running())
+
+    def test_a_used_up_service_is_followed_by_a_new_one(self):
+        """The service that ran out stays in the list as finished and the next run sells a new one."""
+        self.Demo._cron_simulate()
+        used_up, _since = self._as_if_sold_days_ago(3)
+        access = used_up.access_group_contact_rel
+        access.visits_counter = access.permitted_visits
+        self.assertEqual(used_up.state, "finished", "the system closes it itself")
+
+        self._the_task_runs_again()
+
+        running = self._running()
+        self.assertEqual(len(running), 1)
+        self.assertNotEqual(running, used_up)
+        self.assertIn(used_up, self._in_the_portal())
+
+    def test_a_real_module_stops_the_sales_too(self):
+        """NEGATIVE: once a real module is attached, the demo sells nothing."""
+        self.env["hr.rfid.webstack"].create(
+            {
+                "name": "A real module",
+                "serial": "777779",
+                "company_id": self.env.company.id,
+            }
+        )
+        listed = self._in_the_portal()
+
+        self.Demo._cron_simulate()
+
+        self.assertEqual(self._in_the_portal(), listed)
+
+    def test_a_badge_handed_to_somebody_else_is_left_alone(self):
+        """NEGATIVE: the badge, once it belongs to another contact, is not the demo's - nobody is sold anything."""
+        somebody = self.env["res.partner"].create({"name": "A real customer"})
+        self.badge.contact_id = somebody
+        sold = self.Sale.search([])
+
+        self.Demo._cron_simulate()
+
+        self.assertEqual(self.Sale.search([]), sold)
+
+    def test_the_till_refusing_does_not_stop_the_demo(self):
+        """Somebody trying the demo gives the customer permanent access; the till
+        then sells them no service - and the doors of the demo go on working."""
+        self.env["hr.rfid.access.group.contact.rel"].create(
+            {
+                "access_group_id": self.service.access_group_id.id,
+                "contact_id": self.customer.id,
+            }
+        )
+        listed = self._in_the_portal()
+        since = fields.Datetime.now() - timedelta(hours=26)
+        self.params.set_param(SIMULATED_UNTIL, fields.Datetime.to_string(since))
+        staff = [("employee_id", "!=", False), ("event_time", ">", since)]
+        self.env["hr.rfid.event.user"].search(staff).unlink()
+
+        with self.assertLogs(DEMO_LOG, level="WARNING") as said:
+            self.Demo._cron_simulate()
+
+        self.assertIn("was not sold to the demo customer", said.output[0])
+        self.assertEqual(self._in_the_portal(), listed, "the till refused")
+        self.assertTrue(self.env["hr.rfid.event.user"].search_count(staff))
+        self.assertGreater(
+            fields.Datetime.to_datetime(self.params.get_param(SIMULATED_UNTIL)), since
+        )
+
+    def test_a_service_for_the_very_same_period_does_not_stop_the_demo(self):
+        """Somebody trying the demo cancels the service the moment it is sold. The
+        system keeps one service per customer and period, so the same one cannot
+        be sold again - and the doors of the demo go on working."""
+        with freeze_time(fields.Datetime.now()):
+            self.Demo._cron_simulate()
+            self._running().cancel_sale()
+            listed = self._in_the_portal()
+            self.assertFalse(self._running())
+
+            with self.assertLogs(DEMO_LOG, level="WARNING") as said:
+                self._the_task_runs_again()
+
+            self.assertIn("was not sold to the demo customer", said.output[0])
+            self.assertEqual(self._in_the_portal(), listed, "the same period again")
+            self.assertEqual(
+                fields.Datetime.to_datetime(self.params.get_param(SIMULATED_UNTIL)),
+                fields.Datetime.now(),
+                "the task went on to its end",
+            )
+
+
+@tagged("post_install", "-at_install", "rfid_demo")
+class TestTheDemoLoginSeesTheServiceInThePortal(
+    _TheDemoLoginIsACustomerOfTheServices, HttpCase
+):
+    """The page itself, as the person who logs in to the demo gets it."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._find_the_customer()
+        cls._long_after_the_install()
+
+    def test_the_services_page_of_the_demo_login_lists_the_running_service(self):
+        """Logged in as demo, "RFID Services" in the portal shows the service sold today."""
+        self.Demo._cron_simulate()
+        running = self._running()
+        self.assertEqual(len(running), 1)
+
+        self.authenticate("demo", "demo")
+        page = self.url_open("/my/rfid_services")
+
+        self.assertEqual(page.status_code, 200)
+        self.assertIn(running.name, page.text)
+        self.assertIn(self.service.name, page.text)

@@ -18,7 +18,11 @@ import random
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
+from psycopg2 import errors as pgerrors
+
 from odoo import api, fields, models
+from odoo.exceptions import UserError
+from odoo.tools import mute_logger
 
 _logger = logging.getLogger(__name__)
 
@@ -58,6 +62,12 @@ VISITOR_CARD = "hr_rfid.demo_card_2"
 #: The customer with a portal login (hr_rfid_portal's demo): what they see
 #: under "my events" has to move as well.
 PORTAL_GUEST_CARD = "hr_rfid_portal.demo_portal_card"
+#: The demo login (rfid_service_portal's demo gives it a service badge) is the
+#: customer of the services: the demo sells them this service whenever they
+#: have none, so their portal shows one that is running.
+SERVICE_CUSTOMER = "base.partner_demo"
+SERVICE_BADGE = "rfid_service_portal.demo_portal_service_card"
+SERVICE_SOLD = "rfid_service_base.demo_service_gym_combo"
 #: The vending machine of hr_rfid_vending's demo, on the demo module.
 VENDING_MACHINE = "hr_rfid_vending.demo_ctrl_vending"
 SENSOR = "hr_rfid.demo_th_sensor_server_room"
@@ -146,15 +156,26 @@ class HrRfidDemo(models.AbstractModel):
             return 0
         machine = self._demo_vending_machine(webstack)
         self._demo_vending_credit(machine)
+        badge = self._demo_service_badge()
+        self._demo_keep_a_service_running(badge)
         reports = self._demo_passages(since, until)
-        reports += self._demo_also(also_since, until, machine)
+        reports += self._demo_also(also_since, until, machine, badge)
         reports.sort(key=lambda report: report[0])
+        reported = 0
         for moment, ctrl, reader, card, event_n, *data in reports:
             if event_n == SALE and card and not self._demo_can_pay(card, ctrl, *data):
                 # The machine sells on the credit it was told. Out of credit,
                 # the person's request is all that is left of the visit.
                 continue
+            if (
+                badge
+                and card == badge
+                and not self._demo_may_pass(badge, reader, moment)
+            ):
+                # No service running at that moment, no visit.
+                continue
             self._demo_report(webstack, ctrl, reader, card, moment, event_n, *data)
+            reported += 1
         readings = self._demo_environment_readings(since, until)
         self._demo_hourly_costs()
         self._demo_answer_commands(webstack)
@@ -162,12 +183,12 @@ class HrRfidDemo(models.AbstractModel):
             params.set_param(mark, fields.Datetime.to_string(until))
         _logger.info(
             "RFID demo: %d reports and %d sensor readings simulated from %s to %s",
-            len(reports),
+            reported,
             readings,
             min(since, also_since),
             until,
         )
-        return len(reports)
+        return reported
 
     @api.model
     def _demo_simulated_until(self, mark, until):
@@ -340,10 +361,14 @@ class HrRfidDemo(models.AbstractModel):
         )
 
     @api.model
-    def _demo_also(self, since, until, machine):
-        """What joined the demo after the doors: the portal customer and the vending machine.
+    def _demo_also(self, since, until, machine, badge):
+        """What joined the demo after the doors.
+
+        The portal customer, the vending machine and the customer of the
+        services.
 
         :param machine: the demo vending machine, when there is one
+        :param badge: the badge of the service customer, when there is one
         :return: [(moment, controller, reader, card, event)], with the
                  report's data as a sixth item where the machine speaks
         """
@@ -352,6 +377,7 @@ class HrRfidDemo(models.AbstractModel):
         reports = []
         for day, _people, present in self._demo_days(since, until):
             reports += self._demo_portal_guest(day, entrance, inner)
+            reports += self._demo_service_customer(day, entrance, badge)
             if not machine:
                 continue
             for employee, card, at_the_doors in present:
@@ -596,6 +622,139 @@ class HrRfidDemo(models.AbstractModel):
                 (come + timedelta(minutes=rng.randint(5, 20)), inner, 1, guest, DENIED)
             )
         return visit
+
+    # ------------------------------------------------------------------
+    # The customer of the services
+    # ------------------------------------------------------------------
+    @api.model
+    def _demo_service_badge(self):
+        """The badge of the demo's service customer, or nothing.
+
+        Nothing where the services add-on or its portal demo is not installed,
+        and for a badge that has been handed to somebody else since.
+        """
+        Card = self.env["hr.rfid.card"]
+        if "rfid.service.sale.wiz" not in self.env:
+            return Card
+        badge = self.env.ref(SERVICE_BADGE, raise_if_not_found=False)
+        customer = self.env.ref(SERVICE_CUSTOMER, raise_if_not_found=False)
+        if not badge or not customer or badge.contact_id != customer:
+            return Card
+        return badge.sudo()
+
+    @api.model
+    def _demo_services_not_over(self, badge):
+        """The services of the badge's owner that run now or are still ahead."""
+        return (
+            self.env["rfid.service.sale"]
+            .sudo()
+            .search(
+                [
+                    ("partner_id", "=", badge.contact_id.id),
+                    ("state", "in", ("registered", "progress")),
+                    ("end_date", ">=", fields.Datetime.now()),
+                ]
+            )
+        )
+
+    @api.model
+    def _demo_keep_a_service_running(self, badge):
+        """Sell the service customer a service once they have none.
+
+        The services add-on's own demo sale lasts a few hours from the
+        install; after that the portal of the demo login shows a service that
+        ended long ago. So it is sold again here, the way the till sells it
+        (rfid.service.sale.wiz, the button the cashier presses): the sale, the
+        access and the badge's period are what a real sale leaves.
+
+        The sale may be refused - somebody trying the demo gave the customer
+        permanent access or took the doors out of the access group (the till
+        says no), or the customer already has this service for the very same
+        period, cancelled (the database keeps one per period). Nothing is sold
+        then and the reason is logged; the rest of the demo goes on. While
+        the refusal lasts every run asks the till again, and each asking uses
+        up one of its sale numbers - hence the warning, every time.
+        """
+        if not badge or self._demo_services_not_over(badge):
+            return
+        service = self.env.ref(SERVICE_SOLD, raise_if_not_found=False)
+        if not service or not service.active:
+            _logger.info(
+                "RFID demo: the service the demo sells is archived or gone, "
+                "so the demo customer is sold none."
+            )
+            return
+        customer = badge.contact_id
+        # What is still waiting to be written goes first: if that fails, it is
+        # not this sale that was refused.
+        self.env.flush_all()
+        try:
+            with self.env.cr.savepoint(), mute_logger("odoo.sql_db"):
+                self.env["rfid.service.sale.wiz"].sudo().create(
+                    {
+                        "service_id": service.id,
+                        "partner_id": customer.id,
+                        # The form fills these from the customer; left empty,
+                        # the sale would empty them on the customer too.
+                        "mobile": customer.phone,
+                        "email": customer.email,
+                        "card_number": badge.number,
+                    }
+                ).write_card()
+        except (UserError, pgerrors.UniqueViolation) as refusal:
+            _logger.warning(
+                "RFID demo: %s was not sold to the demo customer (%s): %s",
+                service.display_name,
+                type(refusal).__name__,
+                refusal,
+            )
+
+    @api.model
+    def _demo_service_customer(self, day, entrance, badge):
+        """The customer of the services comes to use what they bought.
+
+        In and out through the entrance on some evenings. Whether a passage
+        happens is settled when its turn comes (_demo_may_pass): the service
+        may have been sold, used up or sold again by then. Drawn from a seed
+        of its own.
+        """
+        if not badge:
+            return []
+        rng = random.Random("%s-service-%s" % (SEED, day.isoformat()))
+        if rng.random() >= 0.6:
+            return []
+        come = datetime.combine(day, time(16, 0)) + timedelta(
+            minutes=rng.randint(0, 150)
+        )
+        leave = come + timedelta(minutes=rng.randint(45, 100))
+        return [
+            (come, entrance, WAY_IN, badge, GRANTED),
+            (leave, entrance, WAY_OUT, badge, GRANTED),
+        ]
+
+    @api.model
+    def _demo_may_pass(self, badge, way, moment):
+        """Whether a passage of the service customer happens.
+
+        In: with a badge that is valid, while a service of theirs runs at that
+        moment - every entry is a visit the system counts, and it closes the
+        service itself when the visits are used up. Out: whenever they are in.
+        """
+        if way == WAY_OUT:
+            last = (
+                self.env["hr.rfid.event.user"]
+                .sudo()
+                .search(
+                    [("card_id", "=", badge.id)],
+                    order="event_time desc, id desc",
+                    limit=1,
+                )
+            )
+            return last.event_action == "1" and last.reader_id.reader_type == "0"
+        return badge.active and any(
+            service.state == "progress" and service.start_date <= moment
+            for service in self._demo_services_not_over(badge)
+        )
 
     # ------------------------------------------------------------------
     # The vending machine

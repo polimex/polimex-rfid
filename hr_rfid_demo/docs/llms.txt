@@ -7,8 +7,8 @@ audience:
 - user
 summary: 'A demo company that keeps working: passages, attendance, lateness and overtime for the RFID
   set, day after day'
-last_updated: '2026-11-13'
-source_digest: sha256:3c6bd1174600ebc018021bae161a2068a56b29e82df7d29a2e4218cbed217d76
+last_updated: '2026-11-16'
+source_digest: sha256:76da4dbcee8152efb7e43e6b558d3dbce9d897019e9057a10ca3e4446710bd6d
 companion_doc: llms-full.md
 ---
 
@@ -67,7 +67,13 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   credit; some sales are paid in coins and fill the machine's cash; and
   somebody whose credit has run out is sold nothing until the monthly refill;
 * the customer with a portal login (Joel Willis, login ``portal``) dropping by
-  on some days, so the portal has recent passages under their events.
+  on some days, so the portal has recent passages under their events;
+* where the Services add-ons are installed, a service that is running for the
+  demo login (Marc Demo, login ``demo``): "RFID Services" in the portal shows
+  it next to the ones that ended, and its badge is valid. The demo sells it
+  the way the till does whenever the customer has none; they come in on some
+  evenings, every entry is counted as a visit, and when the visits or the
+  month run out the next one is sold.
 
 A person on approved leave does not come in that day, and a day somebody
 already has attendance entered by hand is left to them.

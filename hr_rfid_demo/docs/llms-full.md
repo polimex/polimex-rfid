@@ -2,7 +2,7 @@
 id: hr_rfid_demo
 title: RFID Demo Data
 module: hr_rfid_demo
-module_version: 19.0.1.0.0
+module_version: 19.0.1.2.0
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -12,8 +12,8 @@ audience:
 companion_doc: llms.txt
 summary: 'A demo company that keeps working: passages, attendance, lateness and overtime for the RFID
   set, day after day'
-last_updated: '2026-11-13'
-source_digest: sha256:3c6bd1174600ebc018021bae161a2068a56b29e82df7d29a2e4218cbed217d76
+last_updated: '2026-11-16'
+source_digest: sha256:76da4dbcee8152efb7e43e6b558d3dbce9d897019e9057a10ca3e4446710bd6d
 depends:
 - hr_rfid
 - hr_attendance_multi_rfid
@@ -58,7 +58,7 @@ chunking:
 ---
 
 
-# RFID Demo Data - `hr_rfid_demo` v19.0.1.0.0
+# RFID Demo Data - `hr_rfid_demo` v19.0.1.2.0
 
 A demo company that keeps working: passages, attendance, lateness and overtime for the RFID set, day after day
 
@@ -70,7 +70,7 @@ A demo company that keeps working: passages, attendance, lateness and overtime f
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_demo`
-- **Version**: `19.0.1.0.0`
+- **Version**: `19.0.1.2.0`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -126,7 +126,13 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   credit; some sales are paid in coins and fill the machine's cash; and
   somebody whose credit has run out is sold nothing until the monthly refill;
 * the customer with a portal login (Joel Willis, login ``portal``) dropping by
-  on some days, so the portal has recent passages under their events.
+  on some days, so the portal has recent passages under their events;
+* where the Services add-ons are installed, a service that is running for the
+  demo login (Marc Demo, login ``demo``): "RFID Services" in the portal shows
+  it next to the ones that ended, and its badge is valid. The demo sells it
+  the way the till does whenever the customer has none; they come in on some
+  evenings, every entry is counted as a visit, and when the visits or the
+  month run out the next one is sold.
 
 A person on approved leave does not come in that day, and a day somebody
 already has attendance entered by hand is left to them.
@@ -157,6 +163,20 @@ Technical
   refill task keeps them going. Without the Vending add-on, or once its demo
   machine is moved off the demo module, nothing of this runs.
 
+* The customer of the services is the demo login
+  (``rfid_service_portal.demo_portal_service_card``, the badge of
+  ``base.partner_demo``). ``_demo_keep_a_service_running`` sells them
+  ``rfid_service_base.demo_service_gym_combo`` through the till's own wizard
+  (``rfid.service.sale.wiz``, ``write_card``) when no service of theirs runs
+  or is still ahead. A refusal of the sale - the till's (``UserError``) or
+  the database's one service per customer and period - is logged and the run
+  goes on. Their evenings at the entrance come from a seed of their own;
+  ``_demo_may_pass`` lets an entry through only with a valid badge while a
+  service runs at that moment, and an exit only when they are in, so the
+  system counts the visits and closes the service itself. Without the
+  Services add-ons, or once the badge belongs to another contact, nothing of
+  this runs.
+
 Credits
 =======
 
@@ -184,7 +204,7 @@ Installation requirements and configuration entry points. Use this section to an
 Each model below is an atomic concept: one H3 per model. Inherited models (extending core) are marked explicitly.
 
 ### `hr.rfid.demo` <a id='model-hr-rfid-demo'></a>
-Python class `HrRfidDemo` in `models/hr_rfid_demo.py:71`.  AbstractModel.  Description: *RFID demo simulation*.
+Python class `HrRfidDemo` in `models/hr_rfid_demo.py:97`.  AbstractModel.  Description: *RFID demo simulation*.
 
 #### Notable methods
 
@@ -199,6 +219,14 @@ Python class `HrRfidDemo` in `models/hr_rfid_demo.py:71`.  AbstractModel.  Descr
 - **`_demo_simulate_until(self, until)`** - decorators: `@api.model`
   - effects: `log_info`
   - touches: `ir.config_parameter`
+- **`_demo_simulated_until(self, mark, until)`** - decorators: `@api.model`
+  - Where a part of the demo has got to; its first run starts weeks back.
+  - effects: `sudo`
+  - touches: `ir.config_parameter`
+- **`_demo_answer_commands(self, webstack)`** - decorators: `@api.model`
+  - Close what the system asked of the demo module, as hardware would.
+  - effects: `sudo`
+  - touches: `hr.rfid.command`
 - **`_demo_environment_readings(self, since, until)`** - decorators: `@api.model`
   - The server-room sensor of the demo reports every two hours.
   - effects: `sudo`
@@ -206,23 +234,39 @@ Python class `HrRfidDemo` in `models/hr_rfid_demo.py:71`.  AbstractModel.  Descr
   - The demo people get an hourly cost, so the labour cost has figures.
   - effects: `sudo`
   - touches: `hr.attendance.extra`, `hr.employee`
-- **`_demo_report(self, webstack, ctrl, reader, card, moment, event_n)`** - decorators: `@api.model`
+- **`_demo_report(self, webstack, ctrl, reader, card, moment, event_n, data=NO_DATA)`** - decorators: `@api.model`
   - One report of the demo module, as the device sends it.
   - effects: `with_context`
-- **`_demo_passages(self, since, until)`** - decorators: `@api.model`
-  - Every passage of the window, in the order the doors saw them.
+- **`_demo_days(self, since, until)`** - decorators: `@api.model`
+  - The days of a window, each with who is in on it.
   - effects: `sudo`
   - touches: `hr.attendance`
+- **`_demo_passages(self, since, until)`** - decorators: `@api.model`
+  - Every passage of the window, in the order the doors saw them.
+- **`_demo_also(self, since, until, machine, badge)`** - decorators: `@api.model`
+  - What joined the demo after the doors.
 - **`_demo_people(self)`** - decorators: `@api.model`
   - (employee, card, 'day' | 'night' | 'saturday') for who has a badge.
   - touches: `hr.rfid.card`
 - **`_demo_day(self, employee, kind, day, entrance, inner)`** - decorators: `@api.model`
   - The passages of one person on one day: (utc moment, ctrl, reader, code).
+- **`_demo_night(self, rng, at, weekday, entrance)`** - decorators: `@api.model`
+  - Monday to Friday nights, from ten in the evening to six.
+- **`_demo_working_day(self, rng, at, employee, weekday, entrance, inner)`** - decorators: `@api.model`
+  - A day by the person's own schedule, with its usual deviations.
+- **`_demo_moving_about(self, rng, arrival, leaving, inner)`** - decorators: `@api.model`
+  - Moving about inside: the inner doors, in and back out again.
 - **`_demo_day_extras(self, day, entrance, inner, people)`** - decorators: `@api.model`
   - What the doors see besides people at work: refusals, a visitor, alarms.
+- **`_demo_portal_guest(self, day, entrance, inner)`** - decorators: `@api.model`
+  - The customer with a portal login drops by on some days.
+- **`_demo_service_badge(self)`** - decorators: `@api.model`
+  - The badge of the demo's service customer, or nothing.
+  - touches: `hr.rfid.card`
+- *11 more not listed*
 
 ### `hr.employee` <a id='model-hr-employee'></a>
-Python class `HrEmployee` in `models/hr_rfid_demo.py:412`.  Model.  Inherits: `hr.employee`.
+Python class `HrEmployee` in `models/hr_rfid_demo.py:921`.  Model.  Inherits: `hr.employee`.
 
 
 ## Module Constants <a id='constants'></a>
@@ -232,25 +276,37 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 ### `models/hr_rfid_demo.py`
 
-- **`BACKFILL_DAYS`** *(scalar)* = `45`  - line 26
-- **`SIMULATED_UNTIL`** *(scalar)* = `'hr_rfid_demo.simulated_until'`  - line 28
-- **`DEMO_WEBSTACK`** *(scalar)* = `'hr_rfid.demo_module'`  - line 30
-- **`ENTRANCE_CTRL`** *(scalar)* = `'hr_rfid.demo_ctrl_icon110'`  - line 31
-- **`INNER_CTRL`** *(scalar)* = `'hr_rfid.demo_ctrl_icon115'`  - line 32
-- **`DAY_WORKERS`** *(collection)* = `('hr.employee_admin', 'hr.employee_ngh', 'hr.employee_chs', 'hr.employee_mit', 'hr.employee_niv', 'hr.employee_stw', 'hr.employee_fme', 'hr.employee_fpi', 'hr.employee_jth', 'hr.employee_vad', 'hr.employee_han', 'hr.employee_jve', 'hr.emplo  # ...truncated`  - line 36
-- **`NIGHT_WORKERS`** *(collection)* = `('hr.employee_jod', 'hr.employee_jgo')`  - line 53
-- **`SATURDAY_WORKERS`** *(collection)* = `('hr.employee_han', 'hr.employee_jve')`  - line 54
-- **`VISITOR_CARD`** *(scalar)* = `'hr_rfid.demo_card_2'`  - line 55
-- **`SENSOR`** *(scalar)* = `'hr_rfid.demo_th_sensor_server_room'`  - line 56
-- **`GRANTED`** *(scalar)* = `3`  - line 58
-- **`DENIED`** *(scalar)* = `4`  - line 59
-- **`EXIT_BUTTON`** *(scalar)* = `21`  - line 60
-- **`DOOR_HELD_OPEN`** *(scalar)* = `25`  - line 61
-- **`DOOR_FORCED`** *(scalar)* = `26`  - line 62
-- **`POWER_ON`** *(scalar)* = `30`  - line 63
-- **`WAY_IN`** *(scalar)* = `1`  - line 66
-- **`WAY_OUT`** *(scalar)* = `2`  - line 67
-- **`SEED`** *(scalar)* = `20261113`  - line 68
+- **`BACKFILL_DAYS`** *(scalar)* = `45`  - line 30
+- **`SIMULATED_UNTIL`** *(scalar)* = `'hr_rfid_demo.simulated_until'`  - line 32
+- **`ALSO_SIMULATED_UNTIL`** *(scalar)* = `'hr_rfid_demo.vending_and_portal_simulated_until'`  - line 34
+- **`DEMO_WEBSTACK`** *(scalar)* = `'hr_rfid.demo_module'`  - line 36
+- **`ENTRANCE_CTRL`** *(scalar)* = `'hr_rfid.demo_ctrl_icon110'`  - line 37
+- **`INNER_CTRL`** *(scalar)* = `'hr_rfid.demo_ctrl_icon115'`  - line 38
+- **`DAY_WORKERS`** *(collection)* = `('hr.employee_admin', 'hr.employee_ngh', 'hr.employee_chs', 'hr.employee_mit', 'hr.employee_niv', 'hr.employee_stw', 'hr.employee_fme', 'hr.employee_fpi', 'hr.employee_jth', 'hr.employee_vad', 'hr.employee_han', 'hr.employee_jve', 'hr.emplo  # ...truncated`  - line 42
+- **`NIGHT_WORKERS`** *(collection)* = `('hr.employee_jod', 'hr.employee_jgo')`  - line 59
+- **`SATURDAY_WORKERS`** *(collection)* = `('hr.employee_han', 'hr.employee_jve')`  - line 60
+- **`VISITOR_CARD`** *(scalar)* = `'hr_rfid.demo_card_2'`  - line 61
+- **`PORTAL_GUEST_CARD`** *(scalar)* = `'hr_rfid_portal.demo_portal_card'`  - line 64
+- **`SERVICE_CUSTOMER`** *(scalar)* = `'base.partner_demo'`  - line 68
+- **`SERVICE_BADGE`** *(scalar)* = `'rfid_service_portal.demo_portal_service_card'`  - line 69
+- **`SERVICE_SOLD`** *(scalar)* = `'rfid_service_base.demo_service_gym_combo'`  - line 70
+- **`VENDING_MACHINE`** *(scalar)* = `'hr_rfid_vending.demo_ctrl_vending'`  - line 72
+- **`SENSOR`** *(scalar)* = `'hr_rfid.demo_th_sensor_server_room'`  - line 73
+- **`GRANTED`** *(scalar)* = `3`  - line 75
+- **`DENIED`** *(scalar)* = `4`  - line 76
+- **`EXIT_BUTTON`** *(scalar)* = `21`  - line 77
+- **`DOOR_HELD_OPEN`** *(scalar)* = `25`  - line 78
+- **`DOOR_FORCED`** *(scalar)* = `26`  - line 79
+- **`POWER_ON`** *(scalar)* = `30`  - line 80
+- **`CREDIT_REQUEST`** *(scalar)* = `64`  - line 81
+- **`SALE`** *(scalar)* = `47`  - line 82
+- **`CREDIT_RETURNED`** *(scalar)* = `49`  - line 83
+- **`NO_DATA`** *(scalar)* = `'00000000000000'`  - line 85
+- **`NO_CARD`** *(scalar)* = `'0000000000'`  - line 86
+- **`VENDING_STARTING_CREDIT`** *(scalar)* = `30.0`  - line 89
+- **`WAY_IN`** *(scalar)* = `1`  - line 92
+- **`WAY_OUT`** *(scalar)* = `2`  - line 93
+- **`SEED`** *(scalar)* = `20261113`  - line 94
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -303,6 +359,6 @@ No FAQ candidates have been mined yet. Run the skill with the `chat_history` min
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid_demo`
-- Source digest: `sha256:3c6bd1174600ebc018021bae161a2068a56b29e82df7d29a2e4218cbed217d76`
-- Generated at: `2026-11-13T10:32:19+00:00`
+- Source digest: `sha256:76da4dbcee8152efb7e43e6b558d3dbce9d897019e9057a10ca3e4446710bd6d`
+- Generated at: `2026-11-16T14:27:03+00:00`
 - Generator: `polimex_module_knowledge`
