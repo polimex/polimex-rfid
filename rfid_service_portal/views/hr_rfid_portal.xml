@@ -49,10 +49,10 @@
                     <tr t-foreach="services" t-as="service">
                         <td><t t-out="service.name"/></td>
                         <td><t t-out="service.service_id.name"/></td>
-                        <td><t t-out="service.start_date"/></td>
-                        <td><t t-out="service.end_date"/></td>
+                        <td><span t-field="service.start_date" t-options='{"widget": "datetime", "hide_seconds": True}'/></td>
+                        <td><span t-field="service.end_date" t-options='{"widget": "datetime", "hide_seconds": True}'/></td>
                         <td><t t-out="service.visits"/></td>
-                        <td><t t-out="service.state"/></td>
+                        <td><span t-field="service.state"/></td>
                     </tr>
                 </t>
             </t>

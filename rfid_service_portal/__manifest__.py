@@ -5,16 +5,12 @@
         RFID Service System Portal plugin
     """,
 
-    'description': """
-        RFID Service System Portal plugin
-    """,
-
     'author': "Polimex Dev Team",
     'website': "https://polimex.co",
     'license': 'AGPL-3',
 
     'category': "Generic Modules/Property Management System",
-    'version': '19.0.0.2.3',
+    'version': '19.0.0.2.4',
 
     'depends': ['rfid_service_base', 'hr_rfid_portal'],
 

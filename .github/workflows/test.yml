@@ -175,7 +175,7 @@ jobs:
           # rfid_wizards / rfid_hardware) — ~163 tests in one tag.
           # 'rfid_vending' covers the full vending suite incl. auto-refill
           # and ev64. Sister modules each carry their own dedicated tag.
-          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
           python odoo/odoo-bin \
             -d polimex_test \
             --test-enable --test-tags="$TAGS" \
@@ -234,7 +234,7 @@ jobs:
           psql -c "DROP DATABASE IF EXISTS polimex_cov;" postgres
           psql -c "CREATE DATABASE polimex_cov OWNER odoo;" postgres
           # Same tag list as the regular run.
-          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
           coverage run --source=addons/polimex --omit='*/tests/*,*/__pycache__/*' \
             odoo/odoo-bin \
               -d polimex_cov \

@@ -6,19 +6,24 @@
 
             Retargets the rfid_service_base card+sale demo pattern at the
             login-able core account Marc Demo (base.user_demo / partner
-            base.partner_demo, login "demo"). This makes the PORTAL pages
-            demonstrable end-to-end for a real login:
+            base.partner_demo, login "demo"). This gives the PORTAL pages
+            something to show for a real login:
               - /my                     -> non-zero "service_count" badge
-              - /my/rfid_services       -> a live service sale row
-              - /my/rfid_service<id>    -> a currently-valid barcode badge
+              - /my/rfid_services       -> a service sale row
+              - /my/rfid_service<id>    -> the barcode badge of that sale
+
+            The sale below has no access behind it and a period of four
+            hours from the install, so it reads as a service that ended.
+            The one that is running comes from the RFID Demo Data module
+            (hr_rfid_demo), which sells this customer a service through
+            the till whenever they have none.
 
             All hardware (barcode card type, access group) and the sold
             service (Half Day ticket) are reused from hr_rfid /
             rfid_service_base demo - no new hardware, service, or tag.
 
-            Time windows span the present (eval'd on every install) so the
-            badge stays valid instead of expiring against a fixed date,
-            mirroring rfid_service_base/demo/rfid_service_demo.xml.
+            Time windows start at the install (eval'd then), mirroring
+            rfid_service_base/demo/rfid_service_demo.xml.
         -->
 
         <!-- Barcode service badge held by the login-able demo partner. -->
@@ -32,7 +37,7 @@
             <field name="deactivate_on" eval="datetime.now() + timedelta(hours=3)"/>
         </record>
 
-        <!-- Half-Day service sale for Marc Demo, valid right now (state=active). -->
+        <!-- Half-Day service sale for Marc Demo: the one that ended. -->
         <record id="demo_portal_service_sale" model="rfid.service.sale">
             <field name="name">DEMO-PORTAL-0001</field>
             <field name="service_id" ref="rfid_service_base.demo_service_half_day"/>

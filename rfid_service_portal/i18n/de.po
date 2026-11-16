@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-05 16:24+0000\n"
-"PO-Revision-Date: 2026-03-06 16:49\n"
+"PO-Revision-Date: 2026-11-16 16:14\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -19,7 +19,7 @@ msgstr ""
 #. module: rfid_service_portal
 #: model:ir.model,name:rfid_service_portal.model_rfid_service_sale_wiz
 msgid "Base RFID Service Sale Wizard"
-msgstr "Basis-RFID-Dienst-Verkaufsassistent"
+msgstr "Basis-RFID-Dienstleistungsverkauf-Assistent"
 
 #. module: rfid_service_portal
 #: model:ir.model.fields,field_description:rfid_service_portal.field_rfid_service_sale_wiz__display_name
@@ -107,3 +107,15 @@ msgstr "Gültig bis"
 #: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
 msgid "Visits"
 msgstr "Besuche"
+
+#. module: rfid_service_portal
+#: model:ir.model.fields,help:rfid_service_portal.field_rfid_service_sale_wiz__invite_in_portal
+msgid ""
+"When checked, the visitor receives a portal access invitation by email right"
+" after the card is issued. They can then sign in to /my and see the card's "
+"validity, scan history, and barcode for the access page."
+msgstr ""
+"Wenn aktiviert, erhält der Besucher unmittelbar nach der Ausstellung der "
+"Karte per E-Mail eine Einladung zum Portalzugang. Anschließend kann er sich "
+"unter /my anmelden und die Gültigkeit der Karte, den Scanverlauf sowie den "
+"Barcode für die Zugangsseite einsehen."

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-19 13:49+0000\n"
-"PO-Revision-Date: 2025-01-19 15:51+0200\n"
+"PO-Revision-Date: 2026-11-16 16:14\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -21,6 +21,28 @@ msgstr ""
 #: model:ir.model,name:rfid_service_portal.model_rfid_service_sale_wiz
 msgid "Base RFID Service Sale Wizard"
 msgstr "Съветник за продажба на базова услуга RFID"
+
+#. module: rfid_service_portal
+#: model:ir.model.fields,field_description:rfid_service_portal.field_rfid_service_sale_wiz__display_name
+msgid "Display Name"
+msgstr "Име за показване"
+
+#. module: rfid_service_portal
+#. odoo-python
+#: code:addons/rfid_service_portal/models/rfid_service_sale_wiz.py:0
+msgid "Email is required to share the card. Please fill the email address."
+msgstr ""
+"За споделяне на картата е необходим имейл. Моля, попълнете имейл адреса."
+
+#. module: rfid_service_portal
+#: model:ir.model.fields,field_description:rfid_service_portal.field_rfid_service_sale_wiz__id
+msgid "ID"
+msgstr "Номер (ID)"
+
+#. module: rfid_service_portal
+#: model:ir.model.fields,field_description:rfid_service_portal.field_rfid_service_sale_wiz__invite_in_portal
+msgid "Invite in Portal"
+msgstr "Покани в портала"
 
 #. module: rfid_service_portal
 #: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
@@ -60,15 +82,15 @@ msgid "Share"
 msgstr "Сподели"
 
 #. module: rfid_service_portal
-#. odoo-python
-#: code:addons/rfid_service_portal/models/rfid_service_sale_wiz.py:0
-msgid "Share web card %s to %s"
-msgstr "Споделяне на уеб карта %s до %s"
-
-#. module: rfid_service_portal
 #: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
 msgid "State"
 msgstr "Статус"
+
+#. module: rfid_service_portal
+#. odoo-python
+#: code:addons/rfid_service_portal/models/rfid_service_sale_wiz.py:0
+msgid "The partner must have an email address to share the card."
+msgstr "Партньорът трябва да има имейл адрес, за да споделите картата."
 
 #. module: rfid_service_portal
 #: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
@@ -79,3 +101,20 @@ msgstr "Валиден от"
 #: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
 msgid "Valid To"
 msgstr "Валидно до"
+
+#. module: rfid_service_portal
+#: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
+msgid "Visits"
+msgstr "Посещения"
+
+#. module: rfid_service_portal
+#: model:ir.model.fields,help:rfid_service_portal.field_rfid_service_sale_wiz__invite_in_portal
+msgid ""
+"When checked, the visitor receives a portal access invitation by email right"
+" after the card is issued. They can then sign in to /my and see the card's "
+"validity, scan history, and barcode for the access page."
+msgstr ""
+"Когато е отметнато, посетителят получава по имейл покана за достъп до "
+"портала веднага след издаването на картата. След това може да влезе в /my и "
+"да види валидността на картата, историята на сканиранията и баркода за "
+"страницата за достъп."

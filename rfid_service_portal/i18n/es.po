@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-06 13:24+0000\n"
-"PO-Revision-Date: 2026-03-06 15:27\n"
+"PO-Revision-Date: 2026-11-16 16:15\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -19,12 +19,12 @@ msgstr ""
 #. module: rfid_service_portal
 #: model:ir.model,name:rfid_service_portal.model_rfid_service_sale_wiz
 msgid "Base RFID Service Sale Wizard"
-msgstr "Asistente base de venta de servicio RFID"
+msgstr "Asistente de venta de servicio RFID base"
 
 #. module: rfid_service_portal
 #: model:ir.model.fields,field_description:rfid_service_portal.field_rfid_service_sale_wiz__display_name
 msgid "Display Name"
-msgstr "Nombre mostrado"
+msgstr "Nombre para mostrar"
 
 #. module: rfid_service_portal
 #. odoo-python
@@ -110,3 +110,15 @@ msgstr "Válido hasta"
 #: model_terms:ir.ui.view,arch_db:rfid_service_portal.portal_rfid_service_sale_table
 msgid "Visits"
 msgstr "Visitas"
+
+#. module: rfid_service_portal
+#: model:ir.model.fields,help:rfid_service_portal.field_rfid_service_sale_wiz__invite_in_portal
+msgid ""
+"When checked, the visitor receives a portal access invitation by email right"
+" after the card is issued. They can then sign in to /my and see the card's "
+"validity, scan history, and barcode for the access page."
+msgstr ""
+"Si se marca, el visitante recibe por correo electrónico una invitación de "
+"acceso al portal justo después de emitirse la tarjeta. Luego podrá iniciar "
+"sesión en /my y ver la validez de la tarjeta, el historial de escaneos y el "
+"código de barras para la página de acceso."
