@@ -39,6 +39,11 @@ class TestRfidServiceOnboarding(TransactionCase):
         self.assertIn('o_onboarding_main', html)
 
     def test_define_step_completes_when_service_exists(self):
+        # The second step speaks for the whole company: it is not done only
+        # while the company has sold nothing. A database with demo data has.
+        self.env["rfid.service.sale"].search(
+            [("company_id", "=", self.company.id)]
+        ).unlink()
         ag = self.env["hr.rfid.access.group"].create({
             "name": "OnbVisitorAG", "company_id": self.company.id,
         })

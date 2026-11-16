@@ -101,7 +101,7 @@ class RFIDServices(RFIDController, HttpCase):
         self.assertNotEqual(sale_wiz_id.end_date, False, 'End Date must be set')
         sale_wiz_id.write_card()
 
-        sales_ids = self.env['rfid.service.sale'].search([('service_id.company_id', '=', self.test_company_id)])
+        sales_ids = self.env['rfid.service.sale'].search([('service_id', '=', service_id.id)])
         self.assertEqual(len(sales_ids), 1)
         self.assertEqual(len(self.test_partner.hr_rfid_access_group_ids), 2)
         self.assertEqual(len(self.test_partner.hr_rfid_access_group_ids.filtered(lambda agr: agr.state)), 1)
@@ -135,7 +135,7 @@ class RFIDServices(RFIDController, HttpCase):
         self.assertEqual(sale_wiz_id.card_number, num, 'Same number as provided')
         self.assertEqual(len(sale_wiz_id.partner_id.hr_rfid_access_group_ids.filtered(lambda agr: agr.state)), 1)
 
-        sales_ids = self.env['rfid.service.sale'].search([('service_id.company_id', '=', self.test_company_id)])
+        sales_ids = self.env['rfid.service.sale'].search([('service_id', '=', service_id.id)])
         self.assertEqual(len(sales_ids), 2)
         self.assertEqual(sales_ids[-1].state, 'progress')
         self._check_cmd_add_card_and_remove(self.c_110, count=1, rights=3)

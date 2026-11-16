@@ -265,8 +265,13 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
             existing_card_id.sudo().write({
                 'card_reference': '%s (%s)' % (partner_id.name, self.service_id.name),
                 'company_id': self.service_id.company_id.id,
-                'activate_on': min( self.start_date, existing_card_id.activate_on),
-                'deactivate_on': max( self.end_date, existing_card_id.deactivate_on),
+                # The card is valid at least as long as the service. A card
+                # with no end date does not expire, and stays that way.
+                'activate_on': min(
+                    self.start_date,
+                    existing_card_id.activate_on or self.start_date),
+                'deactivate_on': existing_card_id.deactivate_on and max(
+                    self.end_date, existing_card_id.deactivate_on),
                 'write_uid': self.env.user.id,
             })
             card_id = existing_card_id
