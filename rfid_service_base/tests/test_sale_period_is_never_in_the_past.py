@@ -20,6 +20,7 @@ from datetime import date, datetime, timedelta
 import pytz
 from freezegun import freeze_time
 
+from odoo.tests import Form
 from odoo.tests.common import TransactionCase, tagged
 
 #: Часът на обекта. Дефектът е в разминаването между него и UTC.
@@ -116,3 +117,72 @@ class TestSalePeriodIsNeverInThePast(TransactionCase):
             'зареждане на модула, не при продажбата',
         )
         self.assertGreater(second_end, second_start)
+
+
+@tagged("post_install", "-at_install", "rfid_service", "rfid_service_hours")
+class TestTheScreenOffersAPeriodThatIsNotOver(TransactionCase):
+    """Касиерът продава от формата - и вечер тя предлага период, който не е минал.
+
+    Намерено на 16.11.2026: обиколката на касата падаше след 18:00, защото
+    формата предлагаше днешния период 08:00-18:00, вече изтекъл, и касата
+    отказваше записа с „периодът изтича в миналото". Формата смята периода
+    два пъти, а вторият път взимаше края от вече преместеното начало.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env.user.tz = SITE_TZ
+        access_group = cls.env["hr.rfid.access.group"].create(
+            {
+                "name": "Басейн",
+                "company_id": cls.env.company.id,
+            }
+        )
+        cls.services = cls.env["rfid.service"].create(
+            [
+                {
+                    "name": name,
+                    "company_id": cls.env.company.id,
+                    "access_group_id": access_group.id,
+                    "fixed_time": True,
+                    "time_interval_start": 8.0,
+                    "time_interval_end": 18.0,
+                    "time_interval_type": interval,
+                    "time_interval_number": number,
+                }
+                for name, interval, number in (
+                    ("Половин ден", "hours", 4),
+                    ("Дневна карта", "days", 1),
+                )
+            ]
+        )
+
+    def test_the_period_on_the_screen_is_not_over_at_any_hour(self):
+        tz = pytz.timezone(SITE_TZ)
+        broken = []
+        for service in self.services:
+            for hour in range(24):
+                local = tz.localize(
+                    datetime.combine(date(2026, 8, 20), datetime.min.time())
+                    + timedelta(hours=hour, minutes=10)
+                )
+                now = local.astimezone(pytz.UTC).replace(tzinfo=None)
+                with freeze_time(now):
+                    form = Form(
+                        self.env["rfid.service.sale.wiz"].with_context(
+                            default_service_id=service.id
+                        )
+                    )
+                    if not form.end_date or form.end_date <= now:
+                        broken.append(
+                            "%s, %02d:10 -> %s .. %s"
+                            % (service.name, hour, form.start_date, form.end_date)
+                        )
+                    elif form.start_date > form.end_date:
+                        broken.append(
+                            "%s, %02d:10 -> starts after it ends" % (service.name, hour)
+                        )
+        self.assertFalse(
+            broken, "Формата предлага изтекъл период:\n" + "\n".join(broken)
+        )

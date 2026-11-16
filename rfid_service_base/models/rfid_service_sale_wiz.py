@@ -71,7 +71,12 @@ class RfidServiceBaseSaleWiz(models.TransientModel):
         time_interval_number = service_id.time_interval_number
         time_interval_end = service_id.time_interval_end
 
-        start = self.start_date or start_date
+        # The start being offered comes first: the screen works the period out
+        # twice (when the service is picked, then again on its own change), and
+        # the second time the start on the record is the one moved to the next
+        # day - the end worked from it would not need moving, and the start put
+        # back to today then kept a period that is already over.
+        start = start_date or self.start_date
         if self.fixed_time:
             # The last day of the pass, and the hour the site closes on it -
             # both read on the SITE's calendar. Taken from the UTC date, a pass
