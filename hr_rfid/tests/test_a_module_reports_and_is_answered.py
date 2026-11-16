@@ -1129,10 +1129,10 @@ class TestRefusalsTheControllerReports(ConversationCase):
     def test_a_vending_machine_nobody_serves_here_is_not_an_error(self):
         """NEGATIVE: a vending machine asking for credit that nobody here answers is logged and let go.
 
-        Asked of the model: that is where a request lands on a site without
-        the vending add-on, and on a site with it when the request comes
-        over the real-time connection, past the add-on's own route. The log
-        says which of the two it was.
+        Asked of the model, where every report of a module is read. On a site
+        without the vending add-on the log says that it is not installed; on
+        a site with it the add-on answers, and what it says is its own tests'
+        business - only never that it is missing.
         """
         self.new_ctrl.hw_version = "16"
 
@@ -1159,8 +1159,7 @@ class TestRefusalsTheControllerReports(ConversationCase):
         self.assertEqual(told, {"status": 200})
         said = self.log_of(self.new_ctrl)[-1:].error_description
         if "hr.rfid.vending.event" in self.env:
-            self.assertIn("did not reach the vending add-on", said)
-            self.assertNotIn("not installed", said)
+            self.assertNotIn("not installed", said or "")
         else:
             self.assertIn("vending add-on is not installed", said)
 

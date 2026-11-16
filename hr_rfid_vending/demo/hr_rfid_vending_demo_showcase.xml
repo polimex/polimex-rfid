@@ -170,7 +170,7 @@
         </record>
         <!-- Anonymous cash purchase: the machine reports no card, so the sale
              is booked with nobody attached and the money goes into the cash
-             box (controllers/main.py, the else branch of the cash handler).
+             box (models/hr_rfid_webstack.py, _hw_vending_sale without a card).
              This is the one person-less shape the hardware really produces -
              a machine error is NOT one: the controller answers events 48 and
              49 with a system event, which is why one is shipped below. -->

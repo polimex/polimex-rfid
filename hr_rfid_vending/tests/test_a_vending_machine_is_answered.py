@@ -2,10 +2,10 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 """What a vending machine is told, where its conversation differs from a door's.
 
-The vending add-on answers the machine in its own route, in front of the one
-every other controller goes through. So what that route promises - the reply
-in the shape the module reads, an answer of the moment never given later, a
-failed report kept - has to hold here too.
+The vending add-on answers the machine's reports itself, before the core reads
+them. So what every report of a module is promised - the reply in the shape
+the module reads, an answer of the moment never given later, a failed report
+kept - has to hold for a machine too.
 """
 
 import json
@@ -128,25 +128,120 @@ class TestAVendingMachineIsAnswered(VendingFlowMixin, RFIDController, HttpCase):
         refused = self._post(old.serial, "DEAD", FW="1.3400", heartbeat=2)
         self.assertEqual((refused.status_code, refused.text), (200, ""))
 
-    def test_a_request_past_the_add_on_is_not_blamed_on_a_missing_add_on(self):
-        """NEGATIVE: a credit request that did not come through the add-on's route is not logged as "not installed".
+    def test_a_credit_request_handed_to_the_core_is_answered_by_the_add_on(self):
+        """A credit request read where every report is read gets the machine its credit.
 
-        The real-time connection hands its events straight to the core. The
-        log then has to say that vending is served the classic way only.
+        That is where the real-time connection hands its reports. The add-on
+        answers there, and the log is not told that vending is missing or
+        that real time has to be switched off.
         """
+        self._machine_counts_in_fives()
+        self.test_employee_id.hr_rfid_vending_add_to_balance(0.15)
         module = self.c_vending.webstack_id
 
-        told = module.with_context(
-            ws_skip_piggyback=True
-        )._hw_vending_request_for_balance(self.c_vending, {"convertor": module.serial})
-
-        self.assertEqual(told, {"status": 200})
-        said = (
-            self.env["hr.rfid.event.system"]
-            .search(
-                [("controller_id", "=", self.c_vending.id)], order="id desc", limit=1
-            )
-            .error_description
+        told = module.with_context(ws_skip_piggyback=True)._hw_parse_event(
+            {"convertor": module.serial, "event": self._machine_report(64)}
         )
-        self.assertIn("did not reach the vending add-on", said)
+
+        self.assertEqual((told["status"], told["cmd"]["c"]), (200, "DB"))
+        said = " ".join(
+            self.env["hr.rfid.event.system"]
+            .search([("controller_id", "=", self.c_vending.id)])
+            .mapped(lambda event: event.error_description or "")
+        )
         self.assertNotIn("not installed", said)
+        self.assertNotIn("did not reach", said)
+
+    def _with_credit(self):
+        self._machine_counts_in_fives()
+        self.test_employee_id.hr_rfid_vending_add_to_balance(0.15)
+
+    def test_a_credit_request_that_arrives_late_gets_no_credit(self):
+        """NEGATIVE: a card shown ten minutes ago is not given credit now.
+
+        The report was held up on its way. Whoever showed the card has walked
+        away from the machine: the request is recorded and nothing is sent.
+        """
+        self._with_credit()
+        shown = self.test_now - timedelta(minutes=10)
+        self.test_date_10_3 = "%02d.%02d.%02d" % (
+            shown.day,
+            shown.month,
+            shown.year - 2000,
+        )
+        self.test_time_10_3 = "%02d:%02d:%02d" % (
+            shown.hour,
+            shown.minute,
+            shown.second,
+        )
+
+        response = self._ev64()
+
+        self._assert_deny(response)
+        self.assertEqual(self._vending_event_count(), 1, "and it is on record")
+
+    def test_a_credit_request_the_machine_has_already_moved_past_gets_no_credit(self):
+        """NEGATIVE: a request that is not the machine's newest event is history.
+
+        The controller counts what it has recorded (the top) and what it has
+        reported (the bottom). A request reported from below the top was made
+        before other things happened at the machine, so no credit goes out
+        for it.
+        """
+        self._with_credit()
+
+        response = self._ev64(bos=3, tos=9)
+
+        self._assert_deny(response)
+        self.assertEqual(self._vending_event_count(), 1, "and it is on record")
+
+    def test_a_sale_on_a_card_nobody_here_knows_is_not_booked_as_cash(self):
+        """NEGATIVE: the machine reports a sale on a card this company does not have.
+
+        It is not a coin sale: the cash in the machine does not grow, and no
+        sale is recorded for nobody. The report is the core's to deal with,
+        as an unknown card is at any door.
+        """
+        self._machine_counts_in_fives()
+        self.c_vending.write({"cash_contained": 0})
+
+        self._ev47(product_slot=0, price_units=1, card_number="0099887766")
+
+        self.c_vending.invalidate_recordset()
+        self.assertEqual(self.c_vending.cash_contained, 0)
+        self.assertFalse(
+            self.env["hr.rfid.vending.event"].search(
+                [
+                    ("controller_id", "=", self.c_vending.id),
+                    ("event_action", "=", "47"),
+                ]
+            )
+        )
+
+    def test_the_kept_copy_of_a_report_carries_no_key(self):
+        """NEGATIVE: on a site that keeps its communication, the sale's copy of the report is without the module's key.
+
+        The copy is read by whoever looks at the vending events. The key is
+        what the module proves itself with, and nobody needs it to read a sale.
+        """
+        self.env["ir.config_parameter"].sudo().set_param(
+            "hr_rfid.save_webstack_communications", "true"
+        )
+        self._with_credit()
+        module = self.c_vending.webstack_id
+
+        self._ev47(product_slot=0, price_units=1)
+
+        kept = (
+            self.env["hr.rfid.vending.event"]
+            .search(
+                [
+                    ("controller_id", "=", self.c_vending.id),
+                    ("event_action", "=", "47"),
+                ]
+            )
+            .input_js
+        )
+        self.assertIn(module.serial, kept, "the report itself is kept")
+        self.assertNotIn('"key"', kept)
+        self.assertNotIn(module.key, json.loads(kept).values())

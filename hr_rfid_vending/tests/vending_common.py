@@ -99,6 +99,35 @@ class VendingFlowMixin:
         )
         self.c_vending.invalidate_recordset()
 
+    def _machine_report(
+        self, event_n, dt="00000000000000", card_number=None, ctrl_id=None, bos=1, tos=1
+    ):
+        """One machine event (FA) as the controller reports it, whichever way it travels."""
+        ctrl_id = ctrl_id or self.c_vending
+        return {
+            "bos": bos,
+            "tos": tos,
+            "card": card_number or self.test_card_employee.number,
+            "cmd": "FA",
+            "date": self.test_date_10_3,
+            "day": self.test_dow_10_3,
+            "dt": dt,
+            "time": self.test_time_10_3,
+            "err": 0,
+            "event_n": event_n,
+            "id": ctrl_id.ctrl_id,
+            "reader": 1,
+        }
+
+    @staticmethod
+    def _sale_dt(product_slot, price_units, change_units=0):
+        """The data of a completed sale: slot, price and change (or credit left) in units."""
+        return "0000%02x%s%s" % (
+            product_slot,
+            units_hex(price_units),
+            units_hex(change_units),
+        )
+
     def _vending_event(
         self,
         event_n,
@@ -115,20 +144,14 @@ class VendingFlowMixin:
         return self._send_cmd(
             {
                 "convertor": ctrl_id.webstack_id.serial,
-                "event": {
-                    "bos": bos,
-                    "tos": tos,
-                    "card": card_number or self.test_card_employee.number,
-                    "cmd": "FA",
-                    "date": self.test_date_10_3,
-                    "day": self.test_dow_10_3,
-                    "dt": dt,
-                    "time": self.test_time_10_3,
-                    "err": 0,
-                    "event_n": event_n,
-                    "id": ctrl_id.ctrl_id,
-                    "reader": 1,
-                },
+                "event": self._machine_report(
+                    event_n,
+                    dt,
+                    card_number=card_number,
+                    ctrl_id=ctrl_id,
+                    bos=bos,
+                    tos=tos,
+                ),
                 "key": ctrl_id.webstack_id.key if key is None else key,
             },
             system_event=system_event,
@@ -144,12 +167,12 @@ class VendingFlowMixin:
         self, product_slot, price_units, change_units=0, card_number=None, ctrl_id=None
     ):
         """Purchase complete: slot, price and change (or credit left) in units."""
-        dt = "0000%02x%s%s" % (
-            product_slot,
-            units_hex(price_units),
-            units_hex(change_units),
+        return self._vending_event(
+            47,
+            self._sale_dt(product_slot, price_units, change_units),
+            card_number=card_number,
+            ctrl_id=ctrl_id,
         )
-        return self._vending_event(47, dt, card_number=card_number, ctrl_id=ctrl_id)
 
     def _ev49(self, card_number=None, ctrl_id=None):
         """Vend failed."""

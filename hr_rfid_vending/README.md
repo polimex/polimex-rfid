@@ -62,6 +62,10 @@ A refused card on any vending machine (unknown, archived, without an
 employee, or an employee who must be checked in first) leaves a system event
 on the controller with the card number and the reason.
 
+A machine is served the same whichever way its module talks to Odoo: over the
+classic connection or in real time. On a real-time module the credit reaches
+the machine with the acknowledgement of the card that asked for it.
+
 ### Dependencies
 ```python
 'depends': ['hr_rfid', 'product', 'hr']

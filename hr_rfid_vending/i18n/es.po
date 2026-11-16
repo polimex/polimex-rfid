@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-06 13:24+0000\n"
-"PO-Revision-Date: 2026-11-12 16:27\n"
+"PO-Revision-Date: 2026-11-16 15:14\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,13 +15,23 @@ msgstr ""
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
 msgid ""
 "%(employee)s is not checked in, and gets vending credit only after a check-"
 "in."
 msgstr ""
 "%(employee)s no ha fichado la entrada y solo recibe crédito de venta "
 "automática después de fichar."
+
+#. module: hr_rfid_vending
+#. odoo-python
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
+msgid ""
+"%(item)s costs %(price).2f in Odoo, but the machine reported a sale at "
+"%(reported).2f. The price in Odoo was charged."
+msgstr ""
+"%(item)s cuesta %(price).2f en Odoo, pero la máquina informó de una venta de"
+" %(reported).2f. Se cobró el precio de Odoo."
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_employee_form_inherit_hr_rfid_vending
@@ -597,7 +607,7 @@ msgstr "ID del controlador"
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
 msgid "Could not find the card"
 msgstr "No se pudo encontrar la tarjeta"
 
@@ -752,6 +762,7 @@ msgstr "Resumen"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__display_name
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_webstack__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__display_name
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__display_name
 msgid "Display Name"
@@ -1008,6 +1019,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_balance_history__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event_reverse__id
+#: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_webstack__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_product_template__id
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_res_company__id
 msgid "ID"
@@ -1083,14 +1095,6 @@ msgid ""
 msgstr "El producto %(item)d no salió y el crédito fue devuelto a la tarjeta."
 
 #. module: hr_rfid_vending
-#. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
-msgid "Item %s has the cost of %f but vending reported it costs %f!"
-msgstr ""
-"¡El artículo %s tiene un coste de %f pero la máquina expendedora ha indicado"
-" que cuesta %f!"
-
-#. module: hr_rfid_vending
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__item_sold
 msgid "Item Slot Number"
 msgstr "Número de ranura del artículo"
@@ -1104,7 +1108,7 @@ msgstr "Artículo vendido"
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
 msgid "Item number %d missing from vending machine configuration"
 msgstr ""
 "El artículo número %d no se encuentra en la configuración de la máquina "
@@ -1305,6 +1309,11 @@ msgstr "Error de entrega de mensajes"
 #: model:ir.model.fields,field_description:hr_rfid_vending.field_hr_rfid_vending_event__message_ids
 msgid "Messages"
 msgstr "Mensajes"
+
+#. module: hr_rfid_vending
+#: model:ir.model,name:hr_rfid_vending.model_hr_rfid_webstack
+msgid "Module"
+msgstr "Módulo"
 
 #. module: hr_rfid_vending
 #: model_terms:ir.ui.view,arch_db:hr_rfid_vending.hr_rfid_vending_balance_history_search
@@ -2147,7 +2156,7 @@ msgstr ""
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
 msgid ""
 "The card is archived or belongs to no employee, so it gets no vending "
 "credit."
@@ -2283,7 +2292,7 @@ msgstr "Това събитие вече е върнато."
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
 msgid ""
 "This vending machine keeps its own prices, and Odoo cannot record its sales "
 "yet, so it gets no credit for cards."
@@ -2293,7 +2302,7 @@ msgstr ""
 
 #. module: hr_rfid_vending
 #. odoo-python
-#: code:addons/hr_rfid_vending/controllers/main.py:0
+#: code:addons/hr_rfid_vending/models/hr_rfid_webstack.py:0
 msgid ""
 "This vending machine reported a transaction (card %(card)s, item %(item)s, "
 "data %(data)s) that Odoo does not record, because the machine keeps its own "

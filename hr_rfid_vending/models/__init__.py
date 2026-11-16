@@ -11,3 +11,4 @@ from . import auto_refill
 from . import digest
 from . import res_company
 from . import ctrl_cash_collect_wizard
+from . import hr_rfid_webstack

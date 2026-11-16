@@ -169,6 +169,10 @@ A refused card on any vending machine (unknown, archived, without an
 employee, or an employee who must be checked in first) leaves a system event
 on the controller with the card number and the reason.
 
+A machine is served the same whichever way its module talks to Odoo: over the
+classic connection or in real time. On a real-time module the credit reaches
+the machine with the acknowledgement of the card that asked for it.
+
 ###### Dependencies
 ```python
 'depends': ['hr_rfid', 'product', 'hr']
@@ -756,9 +760,18 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 
 ### Public helpers
 
-- **`HrRfidVending.post_event(self, **post)`** (`@http.route`) - `controllers/main.py:22`
-  - super-split (super): pre=- · post=`log_error`, `log_info`, `log_warn`, `with_company`, `with_context`
-  - effects: `log_error`, `log_info`, `log_warn`, `with_company`, `with_context`
+- **`hr.rfid.webstack._hw_parse_event(self, post_data)`** - `models/hr_rfid_webstack.py`.
+  The add-on answers the reports of a vending controller where every report of
+  a module is read, before the core does, so the answer is the same over the
+  classic route (`/hr/rfid/event`), the real-time connection and the demo.
+  There is no route of the add-on's own any more: the module's key, the
+  savepoint around the work and the record of a failed report are the core
+  route's.
+  - `_hw_vending_event(controller, post_data)` - the reply, or `None` for a
+    report that is not vending's (the core reads it)
+  - `_hw_vending_credit_request` (event 64: `DB2` with the balance,
+    `single_attempt`), `_hw_vending_sale` (47), `_hw_vending_cash_on_card`
+    (50); events 48 and 49 become system events
   - touches: `hr.rfid.card`, `hr.rfid.command`, `hr.rfid.ctrl.vending.row`, `hr.rfid.event.system`, `hr.rfid.vending.event`
 
 
@@ -932,31 +945,13 @@ Visual assets shipped with the module.
 ## FAQ & Troubleshooting <a id='faq'></a>
 Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `code_comments` (9)
-
-#### TODO: Move into function "deal_with_ev_64"
-
-**TODO** in `controllers/main.py:144`
-
-> Move into function "deal_with_ev_64"
-
-#### TODO: Move into function "deal_with_ev_47"
-
-**TODO** in `controllers/main.py:198`
-
-> Move into function "deal_with_ev_47"
+### From `code_comments` (6)
 
 #### TODO: Reduce item quantity
 
-**TODO** in `controllers/main.py:265`
+**TODO** in `models/hr_rfid_webstack.py` (`_hw_vending_sale`)
 
 > Reduce item quantity
-
-#### TODO: Move into function "deal_with_err_evs"
-
-**TODO** in `controllers/main.py:280`
-
-> Move into function "deal_with_err_evs"
 
 #### TODO: What type of error?
 

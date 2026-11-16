@@ -27,32 +27,20 @@ class HrRfidWebstackHwEvents(models.Model):
     _inherit = 'hr.rfid.webstack'
 
     def _hw_vending_request_for_balance(self, controller=None, post_data=None):
-        """Hook for the vending ev64 balance flow.
+        """A vending machine asks for credit on a site without the vending add-on.
 
-        Mirrors the controller-level ``vending_request_for_balance`` stub:
-        the base module has no vending logic; ``hr_rfid_vending`` handles
-        vending controllers in its own route override before this core is
-        ever reached, so this is what a site without that add-on gets: the
-        request is kept in the controller's log and accepted, with no credit.
-        It used to raise - and an error tells the module to keep the report,
-        so it would have repeated this one for ever and sent nothing after it.
-
-        A site WITH the add-on gets here too when the request did not come
-        through that route: the real-time channel hands its events straight to
-        the core. The log then says that, not that the add-on is missing.
+        The base module has no vending logic. ``hr_rfid_vending`` answers the
+        reports of vending controllers before the core reads them
+        (its own ``_hw_parse_event``), whichever way they came, so only a
+        site without that add-on gets here: the request is kept in the
+        controller's log and accepted, with no credit. It used to raise - and
+        an error tells the module to keep the report, so it would have
+        repeated this one for ever and sent nothing after it.
         """
         if controller:
-            if 'hr.rfid.vending.event' in self.env:
-                description = self.env._(
-                    'A vending machine asked how much credit a card has, and '
-                    'the request did not reach the vending add-on. Vending is '
-                    'served only over the classic connection: if the module '
-                    'uses real-time, use "Disable real-time" on it.')
-            else:
-                description = self.env._(
-                    'A vending machine asked how much credit a card has, and '
-                    'the vending add-on is not installed here')
-            controller.report_sys_ev(description, post_data=post_data)
+            controller.report_sys_ev(self.env._(
+                'A vending machine asked how much credit a card has, and '
+                'the vending add-on is not installed here'), post_data=post_data)
         return self.check_for_unsent_cmd(200)
 
     def _hw_description_is_on_its_way(self, controller):

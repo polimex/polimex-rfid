@@ -2094,7 +2094,7 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 - **A report with no key** is refused like a wrong key (400, "Webstack key and key in json did not match"); it used to raise.
 - **Events 27/28** (alarm zone delay) are logged and acknowledged; they used to raise.
 - **A late passage** (`hr.rfid.zone._passage_is_overtaken`): a granted passage more than `LATE_PASSAGE_AFTER_MINUTES` (10) old on arrival, with a newer one of the same person through a door of the zone, does not change the zone's people or the anti-passback flags; it is still recorded and still counts for attendance by its own time. A "newer" passage stamped after the server's own time is not counted (a controller with its clock ahead), and a passage that is not late always moves the zone. Each skip is logged at INFO with both passages.
-- **Vending without a server for it** (`_hw_vending_request_for_balance`): logged and accepted; the text says "not installed" only when `hr.rfid.vending.event` is not in the registry, otherwise that vending is served over the classic connection only.
+- **Vending without a server for it** (`_hw_vending_request_for_balance`): logged as "the vending add-on is not installed here" and accepted. Reached only on a site without `hr_rfid_vending`: the add-on overrides `_hw_parse_event` and answers the reports of vending controllers itself, on the classic route and in real time alike.
 
 ### `models/hr_rfid_ctrl_time_schedule.py`
 
