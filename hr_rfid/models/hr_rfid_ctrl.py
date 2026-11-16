@@ -1002,18 +1002,30 @@ class HrRfidController(models.Model):
                         c.alarm_line_ids[number].write(ctrlB0[number])
 
     # Commands to controllers
-    def _base_command(self, cmd: str, cmd_data: str = None, cmd_dict: dict = None):
+    def _base_command(self, cmd: str, cmd_data: str = None, cmd_dict: dict = None,
+                      single_attempt=False):
+        """Queue a command for each controller and hand it over at once where Odoo reaches the module.
+
+        :param single_attempt: the command is meant for this moment (a door
+            opened from the screen): left without an answer it is closed, never
+            handed over again later (hr.rfid.command.single_attempt)
+        """
         commands = self.env['hr.rfid.command']
         # Generate commands
         for c in self:
-            new_cmd = cmd_dict or {'webstack_id': c.webstack_id.id,
-                                   'controller_id': c.id,
-                                   'cmd': cmd,
-                                   }
+            new_cmd = dict(cmd_dict) if cmd_dict else {'webstack_id': c.webstack_id.id,
+                                                       'controller_id': c.id,
+                                                       'cmd': cmd,
+                                                       }
             if cmd and not cmd_dict and cmd_data:
                 new_cmd.update({'cmd_data': cmd_data})
-            commands += self.env['hr.rfid.command'].find_last_wait(new_cmd) or self.env['hr.rfid.command'].with_user(
-                SUPERUSER_ID).create([new_cmd])
+            # Routine upkeep is sent once anyway (hr.rfid.command.create).
+            new_cmd['single_attempt'] = bool(single_attempt or new_cmd.get('single_attempt')) \
+                or new_cmd.get('cmd') in polimex.ROUTINE_COMMANDS
+            # Only a waiting command of the same kind is reused: the second
+            # click on "Open" is the same moment, a state to keep is not.
+            commands += self.env['hr.rfid.command'].find_last_wait(new_cmd) or self.env[
+                'hr.rfid.command'].with_user(SUPERUSER_ID).create([new_cmd])
         # Execute commands
         for c in commands:
             # When the module holds a live real-time socket (ws_online), the
@@ -1029,6 +1041,9 @@ class HrRfidController(models.Model):
                     c.webstack_id.direct_execute({}, c)
                 except Exception as e:
                     _logger.error('Direct execute failed for %s: %s', c.controller_id.name, e)
+                    if c._meant_for_the_moment():
+                        c._close_unanswered()
+                        continue
                     if c.status == 'Process':
                         c.status = 'Wait'
                         c.retries += 1
@@ -1042,6 +1057,15 @@ class HrRfidController(models.Model):
         """
         :param out: 0 to open door, 1 to close door
         :param time: Range: [0, 99]
+
+        With ``rfid_output_once`` in the context the change is meant for this
+        moment and is never handed over again without an answer; the door's
+        Open and Close buttons and "Open / close doors" set it. A state the
+        output is to keep (the door kept unlocked, a hotel button, an alarm or
+        siren output, the emergency) is sent without it, again until it is
+        taken. A context key and not an argument: other modules override this
+        method with its old signature (a ZKTeco controller opens its door its
+        own way).
         """
         _logger.info('Change Output %d state to %d for %d seconds.', out_number, out_state, time)
         self.ensure_one()
@@ -1063,7 +1087,11 @@ class HrRfidController(models.Model):
         else:
             cmd_data = '%02x%02d%02d' % (out_number, out_state, time)
 
-        res = self.with_user(SUPERUSER_ID)._base_command('DB', cmd_data)
+        once = bool(self.env.context.get('rfid_output_once'))
+        # The screens link to the command it made (open_door / close_door).
+        # The key goes no further: what answering it brings is not "once".
+        return self.with_context(rfid_output_once=False).with_user(
+            SUPERUSER_ID)._base_command('DB', cmd_data, single_attempt=once)
 
     def read_controller_information_cmd(self):
         return self._base_command('F0')

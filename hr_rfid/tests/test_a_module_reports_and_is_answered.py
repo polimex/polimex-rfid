@@ -1290,3 +1290,174 @@ class TestAModuleOdooCanReach(ConversationCase):
 
         self.assertEqual((asked.status, asked.retries), ("Wait", 1))
         self.assertEqual(self.heartbeat(self.new).command["c"], "F0")
+
+
+@tagged("post_install", "-at_install", "rfid", "rfid_conversation")
+class TestADoorOpenedFromTheScreen(ConversationCase):
+    """A door the operator opens or closes from the screen is an action of that moment.
+
+    The owner, 16.11.2026 (open item 182): an open from the screen whose
+    answer got lost was handed to the module up to five more times, every
+    15 seconds - the door could open again after the person had walked
+    through. Like the answer to a card shown at a door, it now goes out once.
+    A state the output is to keep (unlocked until further notice) is still
+    sent until the controller takes it.
+    """
+
+    def _the_door_command(self, module):
+        return self.Command.search(
+            [("webstack_id", "=", module.id), ("cmd", "=", "DB")],
+            order="id desc",
+            limit=1,
+        )
+
+    def _left_without_an_answer(self, module):
+        """The module takes the command, its answer never comes, time passes, it reports again."""
+        handed = self.heartbeat(module)
+        self.assertEqual(handed.command["c"], "DB")
+        command = self._the_door_command(module)
+        self.grow_old(command)
+        return command, self.heartbeat(module)
+
+    def test_a_door_opened_from_the_screen_is_not_opened_again_later(self):
+        """NEGATIVE: the open whose answer was lost is closed, not handed over again - and the log says so."""
+        self.new_door.open_door()
+
+        command, later = self._left_without_an_answer(self.new)
+
+        self.assertTrue(command.single_attempt)
+        self.assertEqual(later.told, {"status": 200}, "the door was opened again")
+        self.assertEqual(
+            (command.status, command.error, command.retries), ("Failure", "30", 0)
+        )
+        said = self.log_of(self.new_ctrl).mapped("error_description")
+        self.assertTrue(
+            [line for line in said if "It is not sent again" in line],
+            "nothing in the controller's log: %s" % said,
+        )
+
+    def test_a_door_closed_from_the_screen_is_not_closed_again_later(self):
+        """NEGATIVE: the same for closing a door from the screen - and the
+        operator is shown the command to follow while the module calls in."""
+        shown = self.old_door.close_door()
+
+        command, later = self._left_without_an_answer(self.old)
+
+        told = shown["params"]
+        self.assertEqual(
+            told["links"],
+            [
+                {
+                    "label": command.name,
+                    "url": "/odoo/action-hr_rfid.hr_rfid_command_action/%d"
+                    % command.id,
+                }
+            ],
+        )
+        self.assertTrue(told["message"].endswith(" %s"), "the link has no place")
+        # An old module is told "nothing to do" with an empty reply.
+        self.assertFalse(later.command, "the door was closed again")
+        self.assertEqual((command.status, command.retries), ("Failure", 0))
+
+    def test_doors_opened_together_are_not_opened_again_later(self):
+        """NEGATIVE: the doors opened with "Open / close doors" go out once as well."""
+        self.env["hr.rfid.door.open.close.wiz"].create(
+            {"doors": [(6, 0, self.new_door.ids)], "time": 3}
+        ).open_doors()
+
+        command, later = self._left_without_an_answer(self.new)
+
+        self.assertTrue(command.single_attempt)
+        self.assertEqual(later.told, {"status": 200})
+        self.assertEqual(command.status, "Failure")
+
+    def test_a_door_opened_and_answered_is_done(self):
+        """The open the controller answers is done like any other command."""
+        self.new_door.open_door()
+        handed = self.heartbeat(self.new)
+
+        self.answer(self.new_ctrl, handed.command, data=handed.command["d"])
+
+        self.assertEqual(self._the_door_command(self.new).status, "Success")
+
+    def test_a_door_another_module_opens_its_own_way_still_opens(self):
+        """A controller another module drives (a ZKTeco terminal) overrides the
+        output change with its old signature and makes no command here: the
+        door is opened all the same, and the operator is shown no link to a
+        command that does not exist."""
+
+        def opens_its_own_way(ctrl, out_number, out_state, time=0):
+            return True
+
+        with patch.object(
+            type(self.new_ctrl), "change_output_state", opens_its_own_way
+        ):
+            shown = self.new_door.open_door()
+
+        self.assertNotIn("links", shown["params"])
+        self.assertFalse(self._the_door_command(self.new))
+
+    def test_an_open_does_not_take_over_a_state_still_waiting(self):
+        """NEGATIVE: "stay unlocked" waits for the module; the operator then opens
+        the door for 99 seconds - the same data. The state keeps its retries
+        and the open is a command of its own."""
+        self.new_door.lock_state = True
+        state = self._the_door_command(self.new)
+        self.env["hr.rfid.door.open.close.wiz"].create(
+            {"doors": [(6, 0, self.new_door.ids)], "time": 99}
+        ).open_doors()
+
+        opened = self._the_door_command(self.new)
+
+        self.assertNotEqual(opened, state)
+        self.assertEqual(opened.cmd_data, state.cmd_data, "the case is the same data")
+        self.assertEqual((state.single_attempt, opened.single_attempt), (False, True))
+
+    def test_a_state_does_not_ride_an_open_still_waiting(self):
+        """NEGATIVE: the reverse order - the open waits, then "stay unlocked" is
+        set: the state is a command of its own, sent until it is taken."""
+        self.env["hr.rfid.door.open.close.wiz"].create(
+            {"doors": [(6, 0, self.new_door.ids)], "time": 99}
+        ).open_doors()
+        opened = self._the_door_command(self.new)
+
+        self.new_door.lock_state = True
+
+        state = self._the_door_command(self.new)
+        self.assertNotEqual(state, opened)
+        self.assertFalse(state.single_attempt)
+
+    def test_a_door_kept_unlocked_is_sent_until_the_controller_takes_it(self):
+        """A door set to stay unlocked is a state, not a moment: without an answer it goes out again."""
+        self.new_door.lock_state = True
+
+        command, later = self._left_without_an_answer(self.new)
+
+        self.assertFalse(command.single_attempt)
+        self.assertEqual(later.command["c"], "DB")
+        self.assertEqual((command.status, command.retries), ("Process", 1))
+
+    def test_a_door_opened_on_a_module_odoo_reaches_is_not_kept_for_later(self):
+        """NEGATIVE: Odoo hands the open straight to a module it reaches; when that
+        fails, the open does not wait for the module's next report."""
+        self.new.behind_nat = False
+        with patch.object(
+            type(self.new),
+            "_execute_direct_cmd",
+            side_effect=ConnectionError("no route"),
+        ):
+            self.new_door.open_door()
+        command = self._the_door_command(self.new)
+
+        self.assertEqual((command.status, command.error), ("Failure", "30"))
+        self.assertEqual(self.heartbeat(self.new).told, {"status": 200})
+
+    def test_a_state_odoo_could_not_hand_over_waits_for_the_next_report(self):
+        """A state the output is to keep still reaches the module with its next report."""
+        self.new.behind_nat = False
+        with patch.object(type(self.new), "_execute_direct_cmd", return_value=None):
+            self.new_door.lock_state = True
+        command = self._the_door_command(self.new)
+
+        self.assertEqual(command.status, "Wait")
+        self.assertEqual(self.heartbeat(self.new).command["c"], "DB")

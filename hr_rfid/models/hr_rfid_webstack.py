@@ -861,11 +861,11 @@ class HrRfidWebstack(models.Model):
                 if cmd_response:
                     command_id.webstack_id.parse_response(cmd_response, direct_cmd=True)
                 else:
-                    command_id.status = 'Wait'
+                    command_id._not_delivered_directly()
             except Exception as e:
                 _logger.error('Direct execute failed for command %s on %s: %s',
                               command_id.cmd, command_id.controller_id.name, e)
-                command_id.status = 'Wait'
+                command_id._not_delivered_directly()
             return cmd_response
         else:
             for ws in self:

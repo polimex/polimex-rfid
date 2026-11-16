@@ -396,6 +396,17 @@ class HrRfidDoor(models.Model):
                 ret.append((card, ts_id, alarm_right))
         return ret
 
+    @api.model
+    def _command_of(self, result):
+        """The command an output change made, or nothing.
+
+        A controller another module drives (a ZKTeco terminal) opens its
+        door its own way and has no command here to show.
+        """
+        if isinstance(result, models.BaseModel) and result._name == 'hr.rfid.command':
+            return result
+        return None
+
     def open_door(self):
         self.ensure_one()
         if not self.controller_id:
@@ -403,7 +414,8 @@ class HrRfidDoor(models.Model):
                 title=_('Door open'),
                 message=_('Door is controller from camera. THis function is not supported yet.')
             )
-        cmd_id = self.controller_id.change_output_state(self.lock_output, 1, self.lock_time)
+        cmd_id = self._command_of(self.controller_id.with_context(rfid_output_once=True).change_output_state(
+            self.lock_output, 1, self.lock_time))
         self.log_door_change(1, self.lock_time, cmd_id)
         webstack = self.controller_id.webstack_id
         if webstack.ws_online:
@@ -439,7 +451,8 @@ class HrRfidDoor(models.Model):
                 title=_('Door close'),
                 message=_('Door is controller from camera. THis function is not supported yet.')
             )
-        cmd_id = self.controller_id.change_output_state(self.lock_output, 0, self.lock_time)
+        cmd_id = self._command_of(self.controller_id.with_context(rfid_output_once=True).change_output_state(
+            self.lock_output, 0, self.lock_time))
         self.log_door_change(0, self.lock_time, cmd_id)
         webstack = self.controller_id.webstack_id
         if webstack.ws_online:
@@ -454,12 +467,12 @@ class HrRfidDoor(models.Model):
                 title=_('Close door command success'),
                 message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
                           'so we created a command. The door will open/close as soon as possible.'),
-                links=[{
+                links=cmd_id and [{
                     'label': cmd_id.name,
                     'model': 'hr.rfid.command',
                     'res_id': cmd_id.id,
                     'action': 'hr_rfid.hr_rfid_command_action'
-                }]
+                }] or None
             )
         return self.balloon_success(
             title=_('Close door command success'),
@@ -653,7 +666,8 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
 
     def open_doors(self):
         for door in self.doors:
-            door.controller_id.change_output_state(door.lock_output, 1, time=self.time)
+            door.controller_id.with_context(rfid_output_once=True).change_output_state(
+                door.lock_output, 1, time=self.time)
         return self.balloon_success(
             title=_('Doors opened'),
             message=_('Doors successfully opened')
@@ -661,7 +675,8 @@ class HrRfidDoorOpenCloseWiz(models.TransientModel):
 
     def close_doors(self):
         for door in self.doors:
-            door.controller_id.change_output_state(door.lock_output, 0, time=self.time)
+            door.controller_id.with_context(rfid_output_once=True).change_output_state(
+                door.lock_output, 0, time=self.time)
         return self.balloon_success(
             title=_('Doors closed'),
             message=_('Doors successfully closed')

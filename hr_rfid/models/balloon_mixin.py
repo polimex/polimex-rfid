@@ -57,14 +57,15 @@ class AliasMixin(models.AbstractModel):
                 'sticky': sticky,
             }}
         if links:
-            f_links = []
-            for l in links:
-                action = self.env.ref(l['action']).sudo()
-                f_links.append({
-                    'label': l['label'],
-                    'url' : f"#action={action.id}&id={l['res_id']}&model={l['model']}&view_type=form"
-                })
-            action['params']['links']=f_links
+            # The web client puts each link where the message has a %s
+            # (web/static/src/webclient/actions/client_actions.js,
+            # displayNotificationAction); the address is the record's own, as
+            # core gives it (mrp/models/stock_orderpoint.py).
+            action['params']['message'] = ' '.join([message] + ['%s'] * len(links))
+            action['params']['links'] = [{
+                'label': link['label'],
+                'url': f"/odoo/action-{link['action']}/{link['res_id']}",
+            } for link in links]
         return action
 
         # cmd_id = cmd_env.create([cmd_dict])

@@ -6869,6 +6869,15 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
 msgid ""
+"No answer came to \"%(command)s\", so it may not have been carried out. It "
+"is not sent again, because it was meant for that moment. Check that the "
+"module is in touch and that the controller answers it."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
 "No answer came to \"%(command)s\". Check that the module is in touch and "
 "that the controller answers it."
 msgstr ""
@@ -9237,9 +9246,9 @@ msgstr ""
 msgid ""
 "Set on a command that is handed to the module only once: an answer to "
 "something the controller asked at that moment (may this card open the door, "
-"how much credit does it have), or routine upkeep that its schedule repeats "
-"anyway. Left without an answer, it is closed as failed instead of being sent"
-" again later."
+"how much credit does it have), a door opened or closed from the screen, or "
+"routine upkeep that its schedule repeats anyway. Left without an answer, it "
+"is closed as failed instead of being sent again later."
 msgstr ""
 
 #. module: hr_rfid

@@ -221,8 +221,9 @@ class HrRfidCommands(models.Model):
         string='Sent Once',
         help='Set on a command that is handed to the module only once: an answer to something '
              'the controller asked at that moment (may this card open the door, how much credit '
-             'does it have), or routine upkeep that its schedule repeats anyway. Left without an '
-             'answer, it is closed as failed instead of being sent again later.',
+             'does it have), a door opened or closed from the screen, or routine upkeep that its '
+             'schedule repeats anyway. Left without an answer, it is closed as failed instead of '
+             'being sent again later.',
         readonly=True,
     )
 
@@ -733,6 +734,28 @@ class HrRfidCommands(models.Model):
         self.ensure_one()
         return not self.single_attempt and self.retries < polimex.CMD_MAX_RETRIES
 
+    def _meant_for_the_moment(self):
+        """Sent once because it belongs to a moment - not routine upkeep.
+
+        Routine upkeep (the clock, the status reading) is sent once too, but a
+        late delivery of it harms nobody; a door released minutes late does.
+        """
+        self.ensure_one()
+        return self.single_attempt and self.cmd not in polimex.ROUTINE_COMMANDS
+
+    def _not_delivered_directly(self):
+        """Odoo could not hand the command to a module it reaches.
+
+        It waits for the module's next report, like any queued command -
+        unless it was meant for that moment: then it is closed here, with its
+        line in the controller's log, and never goes out later.
+        """
+        for command in self:
+            if command._meant_for_the_moment():
+                command._close_unanswered()
+            else:
+                command.status = 'Wait'
+
     def _close_unanswered(self, error=polimex.ERROR_NO_ANSWER):
         """Give up commands that got no answer, and say so.
 
@@ -771,6 +794,13 @@ class HrRfidCommands(models.Model):
                 description = self.env._(
                     'No answer came to "%(command)s". Check that the module is '
                     'in touch and that the controller answers it.',
+                    command=what)
+            elif command.single_attempt:
+                description = self.env._(
+                    'No answer came to "%(command)s", so it may not have been '
+                    'carried out. It is not sent again, because it was meant '
+                    'for that moment. Check that the module is in touch and '
+                    'that the controller answers it.',
                     command=what)
             elif command.card_number:
                 description = self.env._(
@@ -843,6 +873,12 @@ class HrRfidCommands(models.Model):
         ]
         if 'cmd_data' in vals.keys():
             domain.append(('cmd_data', '=', vals['cmd_data']))
+        if 'single_attempt' in vals:
+            # A command of the moment and a state to keep are not one command,
+            # even with the same data (an open for 99 seconds and "stay
+            # unlocked" are; a relay output ignores state and time): merged,
+            # one would take the other's retries or lose its own.
+            domain.append(('single_attempt', '=', bool(vals['single_attempt'])))
         ret = self.search(domain)
         if len(ret) > 0:
             return ret[-1]

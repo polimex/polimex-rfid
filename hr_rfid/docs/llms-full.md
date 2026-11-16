@@ -920,7 +920,15 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inheri
     (`ROUTINE_COMMANDS`: D7, B3) gets its event once, when the controller
     stops answering (`_controller_was_answering`), not at every failure after
     it. The event is written inside a savepoint: a failure to write it is
-    logged and never keeps the command open.
+    logged and never keeps the command open. A `single_attempt` command that
+    is not upkeep (a door opened or closed from the screen, an answer to a
+    card) says instead that it is not sent again, because it was meant for
+    that moment.
+- **`_meant_for_the_moment(self)`** - decorators: -
+  - `single_attempt` and not routine upkeep. Such a command that Odoo could
+    not hand straight to a module it reaches (`_not_delivered_directly`,
+    `hr.rfid.ctrl._base_command`) is closed at once instead of waiting for
+    the module's next report; upkeep still waits.
 - **`_controller_was_answering(self)`** - decorators: -
   - True unless the controller's previous finished command was closed for no
     answer ('30' or '20'); True when there is none before.
