@@ -160,6 +160,13 @@ class RFIDAppCase(common.TransactionCase):
             self.test_now.second,
         )
 
+    def _schedule(self, number):
+        """The test company's time schedule with this number."""
+        return self.env["hr.rfid.time.schedule"].search(
+            [("number", "=", number), ("company_id", "=", self.test_company_id)],
+            limit=1,
+        )
+
     def _get_id_num(self):
         self.id_num += 1
         return self.id_num - 1
@@ -603,17 +610,21 @@ class RFIDAppCase(common.TransactionCase):
         while response != {} and response['cmd']['c'] == 'D9':
             response = self._send_cmd_response(response)  # IO table update commands
 
+    def _switch_to_external_db(self, ctrl):
+        """Put the controller in the mode where it keeps no cards and asks
+        Odoo about every card (event 64), the way the module is told so."""
+        ctrl.external_db = True
+        response = self._hearbeat(ctrl.webstack_id)
+        self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'D5', 'd': '2%d' % ctrl.mode}},
+                         '(%s)' % ctrl.name)
+        response = self._send_cmd_response(response)
+        self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'F0', 'd': ''}}, '(%s)' % ctrl.name)
+        response = self._send_cmd_response(response, self._make_F0(mode=2 + ctrl.mode, ctrl=ctrl))
+        self.assertEqual(response, {}, '(%s)' % ctrl.name)
+
     def _ev64(self, ctrl):
         if not ctrl.external_db:
-            # Prepare controller for External DB
-            ctrl.external_db = True
-            response = self._hearbeat(ctrl.webstack_id)
-            self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'D5', 'd': '2%d' % ctrl.mode}},
-                             '(%s)' % ctrl.name)
-            response = self._send_cmd_response(response)
-            self.assertEqual(response, {'cmd': {'id': ctrl.ctrl_id, 'c': 'F0', 'd': ''}}, '(%s)' % ctrl.name)
-            response = self._send_cmd_response(response, self._make_F0(mode=2 + ctrl.mode, ctrl=ctrl))
-            self.assertEqual(response, {}, '(%s)' % ctrl.name)
+            self._switch_to_external_db(ctrl)
             # Try before grand access (expected Denied)
             response = self._make_event(ctrl, card=self.test_card_employee.number, reader=1, event_code=64)
             if ctrl.is_relay_ctrl():

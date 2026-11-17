@@ -202,6 +202,48 @@ class HrRfidCard(models.Model):
         door_rel_ids = access_groups.sudo().mapped('all_door_ids')
         return [(rel.door_id, rel.time_schedule_id, rel.alarm_rights) for rel in door_rel_ids]
 
+    def _doors_it_opens_now(self, doors, local_dt):
+        """The doors among ``doors`` this card opens now.
+
+        A controller that keeps no cards (external database) asks Odoo about
+        every card shown to it (event 64). The answer follows the same
+        rights Odoo writes to the controllers that keep their cards, so a
+        card does not pass on one controller where it would be stopped on
+        another: the card itself is valid now and of the door's card type,
+        the owner's place in the
+        access group has started, has not expired and has visits left, the
+        doors of inherited groups count, and the door's time schedule in
+        that group covers ``local_dt``, the controller's local time. A group
+        with a minimum time between passes that is not over yet opens
+        nothing.
+        """
+        self.ensure_one()
+        no_doors = self.env['hr.rfid.door']
+        if not self.card_ready():
+            return no_doors
+        owner = self.get_owner()
+        memberships = owner.hr_rfid_access_group_ids._filter_active().filtered(
+            lambda rel: rel.active_for_visits())
+        opened = no_doors
+        granting = self.env['hr.rfid.access.group']
+        for group in memberships.mapped('access_group_id').sudo():
+            for door_rel in group.all_door_ids:
+                door = door_rel.door_id
+                # The card type alone, not door_compatible(): that one also
+                # refuses a cloud card on an external database controller,
+                # which is every card asked about here.
+                if (door in doors and self.card_type == door.card_type
+                        and door_rel.time_schedule_id._lets_in_at(local_dt)):
+                    opened |= door
+                    # The minimum time between passes is the member's group's
+                    # and that of the group the door comes from, when the
+                    # door is inherited.
+                    granting |= group | door_rel.access_group_id
+        if granting._calc_last_user_event_in_ag(
+                employee_id=self.employee_id or None, partner_id=self.contact_id or None):
+            return no_doors
+        return opened
+
     def door_compatible(self, door_id):
         # door_id = self.env['hr.rfid.door'].sudo().browse(door_id.id)
         return self.card_type == door_id.card_type \

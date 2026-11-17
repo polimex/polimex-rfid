@@ -431,6 +431,12 @@ class HrRfidWebstack(models.Model):
         tz_m = int(self.tz_offset[3:], 10)
         return timedelta(hours=tz_h, minutes=tz_m)
 
+    def _local_now(self):
+        """The time on the module's controllers now: the clock they are set
+        to (D7) and the time their schedules are read against."""
+        self.ensure_one()
+        return fields.Datetime.now() + self._get_tz_offset()
+
     def action_set_webstack_settings(self):
         """
         Set webstack settings for the module.
@@ -1515,7 +1521,10 @@ class HrRfidWebstack(models.Model):
             if out_num == 99:  # emergency control
                 controller._update_input_state(14, out_state)
                 # _logger.info('After DB Controller %s emergency state %s', controller.name, controller.emergency_state)
-            elif not out_timer:
+            elif not out_timer and not controller.is_relay_ctrl():
+                # A relay controller's DB is not "output N to state S": it is
+                # 0x1F (reader and relay mask) or 0x40, the answer to a card
+                # it asked about (event 64).
                 controller._update_output_state(out_num, out_state)
 
         return not direct_cmd and self.check_for_unsent_cmd(200)

@@ -737,13 +737,11 @@ class HrRfidAccessGroupRelations(models.AbstractModel):
         records_for_check._compute_state()
 
     def filter_by_door(self, door_id, active_only=True):
-        res = self.env[self._name]
-        if active_only:
-            return self.filtered(
-                lambda agr: door_id in agr.access_group_id.door_ids.mapped('door_id') and agr.state)
-        else:
-            return self.filtered(
-                lambda agr: door_id in agr.access_group_id.door_ids.mapped('door_id'))
+        """The memberships that give ``door_id``, inherited doors included:
+        a pass through a door that comes from an inherited group is still a
+        visit of the membership that gave it."""
+        return self.filtered(
+            lambda agr: door_id in agr.access_group_id.all_door_ids.door_id and (not active_only or agr.state))
 
     def _filter_active(self, dt=None):
         res = self.env[self._name]

@@ -57,12 +57,6 @@ class TestCardScheduleFitsTheController(RFIDAppCase):
             )
         return door
 
-    def _schedule(self, number):
-        return self.env["hr.rfid.time.schedule"].search(
-            [("number", "=", number), ("company_id", "=", self.test_company_id)],
-            limit=1,
-        )
-
     def _group_on(self, door, schedule):
         group = self.env["hr.rfid.access.group"].create(
             {
@@ -140,14 +134,17 @@ class TestCardScheduleFitsTheController(RFIDAppCase):
         )
 
     def test_a_schedule_interval_outside_its_slots_is_refused(self):
-        """A day holds intervals 0-3, and hours run 0-24; anything else is refused."""
+        """A day holds periods 1-4, as the editor numbers them, and hours run
+        0-24; anything else is refused."""
         Line = self.env["hr.rfid.ctrl.ts.line"]
         with self.assertRaises(exceptions.ValidationError):
-            Line.create({"number": 4, "begin": 8.0, "end": 12.0})
+            Line.create({"number": 5, "begin": 8.0, "end": 12.0})
         with self.assertRaises(exceptions.ValidationError):
-            Line.create({"number": 0, "begin": 8.0, "end": 25.0})
-        line = Line.create({"number": 3, "begin": 8.0, "end": 12.0})
-        self.assertEqual(line.number, 3, "NEGATIVE: a valid interval is kept")
+            Line.create({"number": 0, "begin": 8.0, "end": 12.0})
+        with self.assertRaises(exceptions.ValidationError):
+            Line.create({"number": 1, "begin": 8.0, "end": 25.0})
+        line = Line.create({"number": 4, "begin": 8.0, "end": 12.0})
+        self.assertEqual(line.number, 4, "NEGATIVE: a valid interval is kept")
 
     def _refused_card_write(self, door, ts_code):
         return self.env["hr.rfid.command"].create(

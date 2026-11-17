@@ -239,6 +239,7 @@ access_group.emergency_open()
    - Verify card is active
    - Check access group assignments
    - Confirm time schedules
+   - A controller in external database mode asks the system about every card and gets the same answer the written rights give: a card is stopped after its access in the group expires, before it starts, when its visits are used up, when it is not of the door's card type, and outside the door's time schedule (at the controller's local time)
 
 3. **Events not appearing**
    - Check controller online status

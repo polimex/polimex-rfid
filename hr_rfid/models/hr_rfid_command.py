@@ -1,4 +1,3 @@
-import datetime
 import json
 from datetime import timedelta
 
@@ -1309,8 +1308,7 @@ class HrRfidCommands(models.Model):
                     json_cmd['cmd']['d'] = card_num + pin_code + ts_code + rights_data + rights_mask
 
         if command.cmd == 'D7':
-            dt = datetime.datetime.now()
-            dt += command.webstack_id._get_tz_offset()
+            dt = command.webstack_id._local_now()
 
             json_cmd['cmd']['d'] = '{:02}{:02}{:02}{:02}{:02}{:02}{:02}'.format(
                 dt.second, dt.minute, dt.hour, dt.weekday() + 1, dt.day, dt.month, dt.year % 100

@@ -630,22 +630,11 @@ class HrRfidWebstackHwEvents(models.Model):
             if controller_id.is_vending_ctrl():
                 return self._hw_vending_request_for_balance(controller_id, post_data)
             else:
-                # External db event, controller requests for permission to open or close door
-                ag_ids = card_id.get_owner().hr_rfid_access_group_ids
-                ret = self.env['hr.rfid.access.group.door.rel'].sudo().search([
-                    ('access_group_id', 'in', ag_ids.mapped('access_group_id.id')),
-                    ('door_id', 'in', reader_id.door_ids.mapped('id'))
-                ])
-                flag = True
-                if len(ret) > 0:
-                    if card_id.get_owner()._name == 'hr.employee':
-                        flag = 0 == len(
-                            ret.access_group_id._calc_last_user_event_in_ag(employee_id=card_id.get_owner()))
-                    else:
-                        flag = 0 == len(ret.access_group_id._calc_last_user_event_in_ag(partner_id=card_id.get_owner()))
-
-                return self._hw_respond_to_ev_64(len(ret) > 0 and card_id.active is True and flag,
-                                              controller_id, reader_id, card_id, post_data)
+                # External db event: the controller keeps no cards and asks
+                # whether this one may pass, at the controller's local time.
+                doors = card_id._doors_it_opens_now(reader_id.door_ids, controller_id.webstack_id._local_now())
+                return self._hw_respond_to_ev_64(bool(doors), controller_id, reader_id, card_id, post_data,
+                                                 doors=doors)
         # Don't know what is this. Just report it
         else:
             try:
@@ -653,13 +642,15 @@ class HrRfidWebstackHwEvents(models.Model):
             finally:
                 return self.check_for_unsent_cmd(200)
 
-    def _hw_respond_to_ev_64(self, open_door, controller, reader, card, post_data):
+    def _hw_respond_to_ev_64(self, open_door, controller, reader, card, post_data, doors=None):
         """
         :param open_door: True if door should be opened, False otherwise
         :param controller: The RFID controller object
         :param reader: The RFID reader object
         :param card: The RFID card object
         :param post_data: The data received from the POST request
+        :param doors: The doors the card opens now (relay controllers open
+            only these). Without it, every door of the owner's groups.
 
         :return: Response code from sending the command
         """
@@ -681,7 +672,7 @@ class HrRfidWebstackHwEvents(models.Model):
         if controller.is_relay_ctrl():
             data = 0
             if open_door == 3:
-                user_doors = card.get_owner().get_doors()
+                user_doors = card.get_owner().get_doors() if doors is None else doors
                 for door in reader.door_ids.filtered(lambda d: d in user_doors):
                     data |= 1 << (door.number - 1)
             cmd['cmd_data'] = '4000' + controller.convert_int_to_cmd_data_for_output_control(data)

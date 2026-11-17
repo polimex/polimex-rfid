@@ -1,6 +1,5 @@
 from odoo import fields, models, api, _, exceptions
 from odoo.exceptions import ValidationError
-import math
 
 DEFAULT_TS_LINE = '''01
                    00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00
@@ -78,10 +77,9 @@ class HrRfidTimeSchedule(models.Model):
         self.ensure_one()
         if day and day > 7:
             raise exceptions.ValidationError(_('The requested day is not in the range!'))
-        if day is None:
-            return self.ts_data.replace(' ', '').replace('\n', '')[2:]
-        else:
-            return self.ts_data.replace(' ', '').replace('\n', '')[2 + day * 32:1 + day * 32 + 32]
+        data = self.ts_data.replace(' ', '').replace('\n', '')[2:]
+        # A day is 32 digits: four intervals of HHMMHHMM.
+        return data if day is None else data[day * 32:(day + 1) * 32]
 
     def _get_interval_from_day_str(self, day: int, number: int):
         self.ensure_one()
@@ -91,6 +89,35 @@ class HrRfidTimeSchedule(models.Model):
         self.ensure_one()
         interval = self._get_interval_from_day_str(day, number)
         return (int(interval[:2]) + int(interval[2:4]) / 60, int(interval[4:6]) + int(interval[6:8]) / 60)
+
+    def _lets_in_at(self, local_dt):
+        """Whether this schedule lets a card in at ``local_dt``, the
+        controller's own local time, the way the controller decides it.
+
+        Schedule 0 is "Not using TS": a card bound to it passes at any time.
+        Otherwise the weekday row applies (Monday first, as written to the
+        controller) and the card passes when the minute falls inside one of
+        its four intervals, the last minute included: the controller
+        compares hour and minute with "start <= now <= stop"
+        (iCON180 firmware, ``set_ts_flag``). An interval of 00:00-00:00 is
+        taken as unused, as the schedule editor means it; here Odoo departs
+        from the firmware on purpose, which matches such an interval during
+        the minute 00:00 and so lets a card in then. The holiday row is not
+        read: no holiday calendar is written to the controllers, so they
+        never use it either.
+        """
+        self.ensure_one()
+        if self.number == 0:
+            return True
+        now = local_dt.hour * 100 + local_dt.minute
+        for number in range(4):
+            interval = self._get_interval_from_day_str(local_dt.weekday(), number)
+            if len(interval) < 8 or interval == '00000000':
+                continue
+            start, stop = int(interval[:4]), int(interval[4:])
+            if start <= now <= stop:
+                return True
+        return False
 
     def reset_ts_data(self):
         for ts in self:
@@ -193,7 +220,8 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
                 raise ValidationError(_("Begin is not in range"))
             if not 0 <= record.end <= 24:
                 raise ValidationError(_("End is not in range"))
-            if not 0 <= record.number <= 3:
+            # The editor numbers a day's periods 1-4 (_default_interval_ids).
+            if not 1 <= record.number <= 4:
                 raise ValidationError(_("The number is not in range"))
             if record.begin >= record.end != 0:
                 raise ValidationError(_("The begin time have to be before end time"))
@@ -205,8 +233,8 @@ class HrRfidTimeScheduleWizDayLine(models.TransientModel):
 
     @api.model
     def _get_float_to_str(self, f: float):
-        frac, whole = math.modf(f)
-        return '%02d%02d' % (int(whole), int(frac * 60))
+        # Rounded to whole minutes: 17:20 is 17.333... as a float.
+        return '%02d%02d' % divmod(round(f * 60), 60)
 
     def get_interval_str(self):
         self.ensure_one()

@@ -591,15 +591,18 @@ class HrRfidController(models.Model):
             a.user_event_count = self.env['hr.rfid.event.user'].search_count(
                 [('reader_id', 'in', a.reader_ids.mapped('id'))])
 
+    def _siren_output(self):
+        self.ensure_one()
+        return 4 if self.alarm_lines == 1 else 10
+
     @api.depends('output_states')
     def _compute_siren_state(self):
         for c in self:
-            siren_out = (c.alarm_lines == 1) and 4 or 10
-            c.siren_state = c._get_output_state(siren_out)
+            c.siren_state = c._get_output_state(c._siren_output())
 
     def _set_siren_state(self):
         for c in self:
-            siren_out = (c.alarm_lines == 1) and 4 or 10
+            siren_out = c._siren_output()
             if not self.env.context.get('no_output', False):
                 c.change_output_state(siren_out, int(c.siren_state), 99)
             c._update_output_state(siren_out, c.siren_state)
@@ -877,11 +880,12 @@ class HrRfidController(models.Model):
         return (self.input_states & pow(2, input_number - 1)) == pow(2, input_number - 1)
 
     def _update_input_state(self, input_number, state: bool):
+        bit = 1 << (input_number - 1)
         for c in self.with_user(SUPERUSER_ID):
             if state:
-                c.input_states = c.input_states | pow(2, input_number - 1)
-            elif (c.input_states & pow(2, input_number - 1)) == pow(2, input_number - 1):
-                c.input_states = c.input_states - pow(2, input_number - 1)
+                c.input_states |= bit
+            else:
+                c.input_states &= ~bit
 
     def _get_output_state(self, output_number):
         self.ensure_one()
@@ -892,12 +896,15 @@ class HrRfidController(models.Model):
         Output Number from 1
         State 0 or 1, True or False
         '''
+        # One bit per output; the column holds outputs 1-31.
+        if not 1 <= output_number <= 31:
+            return
+        bit = 1 << (output_number - 1)
         for c in self.with_user(SUPERUSER_ID):
             if state:  # !=0
-                if c.output_states and (2 ** (output_number - 1)) != (2 ** (output_number - 1)):
-                    c.output_states += (2 ** (output_number - 1))
-            elif c.output_states and (2 ** (output_number - 1)) == (2 ** (output_number - 1)):
-                c.output_states -= (2 ** (output_number - 1))
+                c.output_states |= bit
+            else:
+                c.output_states &= ~bit
 
     def convert_int_to_cmd_data_for_output_control(self, data):
         self.ensure_one()
