@@ -1,8 +1,10 @@
 from odoo import api, models, _
 from odoo.exceptions import UserError
+from odoo.tools import float_round
 from datetime import date, datetime, time, timedelta
 import calendar
 import pytz
+from markupsafe import Markup
 
 
 class ReportForm76(models.AbstractModel):
@@ -11,7 +13,10 @@ class ReportForm76(models.AbstractModel):
 
     @api.model
     def vertical_text(self, text):
-        return '<br/>'.join(text)
+        # One letter per line for the printed headers. The template prints it
+        # with t-out, which escapes a plain str: the line breaks must be
+        # markup and the letters escaped text.
+        return Markup('<br/>').join(text)
 
     def _get_attendance_data(self, data):
         """Извлича данни от hr_attendance_extra и hr_leave с параметризиран SQL."""
@@ -25,17 +30,43 @@ class ReportForm76(models.AbstractModel):
         date_from = date(report_year, report_month, 1)
         date_to = date(report_year, report_month, last_day_num)
 
+        # The sheet of a past month shows the person's department and position
+        # of that month: the version in force on its last day, as core picks
+        # it (hr.employee._get_version), not the one in force today.
+        month_versions = {
+            employee.id: employee._get_version(date_to)
+            for employee in self.env['hr.employee'].sudo().search([('company_id', '=', company_id)])
+        }
+        month_versions = {
+            employee_id: version for employee_id, version in month_versions.items()
+            if version.department_id.id in department_ids
+        }
+        if not month_versions:
+            return last_day_num, []
+
         # Flush ORM cache to ensure DB consistency
         self.env['hr.employee'].flush_model(['name', 'active', 'corporate_internal_number'])
-        self.env['hr.version'].flush_model(['department_id', 'job_title', 'employee_id'])
         self.env['hr.leave'].flush_model(['employee_id', 'request_date_from', 'request_date_to', 'date_from', 'date_to', 'state', 'holiday_status_id'])
+        self.env['hr.leave.type'].flush_model()
 
-        # Dynamic day columns with parameterized precision
+        # The Bulgarian time-off catalog (l10n_bg_hr_holidays) carries its own
+        # form 76 letter on the same time-off type; the one HR filled in there
+        # is the type's letter, ours (always set, 'NA' by default) otherwise.
+        code_sql = (
+            "COALESCE(NULLIF(lt.l10n_bg_form76_code, ''), lt.form76_code)"
+            if 'l10n_bg_form76_code' in self.env['hr.leave.type']._fields
+            else "lt.form76_code"
+        )
+
+        # Dynamic day columns with parameterized precision. A working day
+        # shows every hour worked that day: the daily figures keep the hours
+        # inside the schedule (actual_work_time) apart from the overtime after
+        # it (hr_attendance_late, get_work_time_details).
         q_dates = ','.join([
             f"MAX(CASE WHEN dates.for_date = %s THEN COALESCE("
             f"ROUND(NULLIF(att.extra_time, 0), %s)::float::text, "
-            f"ROUND(NULLIF(att.actual_work_time, 0), %s)::float::text, "
-            f"lt.form76_code, 'С'"
+            f"ROUND(NULLIF(att.actual_work_time + COALESCE(att.overtime, 0), 0), %s)::float::text, "
+            f"{code_sql}, 'С'"
             f") END) as day_{i}"
             for i in range(1, last_day_num + 1)
         ])
@@ -52,14 +83,11 @@ class ReportForm76(models.AbstractModel):
             )
             SELECT
                 emp.id as employee_id,
-                ver.department_id,
                 emp.name as employee_name,
-                ver.job_title,
                 COALESCE(emp.corporate_internal_number, '-') as corporate_id,
                 {q_dates}
             FROM dates
             CROSS JOIN hr_employee emp
-            JOIN hr_version ver ON ver.id = emp.current_version_id
             LEFT JOIN hr_attendance_extra att
                 ON dates.for_date = att.for_date AND emp.id = att.employee_id
             LEFT JOIN hr_leave lv
@@ -71,17 +99,18 @@ class ReportForm76(models.AbstractModel):
                 AND emp.id = lv.employee_id
                 AND lv.state = 'validate'
             LEFT JOIN hr_leave_type lt ON lv.holiday_status_id = lt.id
-            WHERE ver.department_id IN %s
-                AND emp.active = TRUE
-                AND emp.company_id = %s
-            GROUP BY ver.department_id, emp.id, emp.corporate_internal_number,
-                     emp.name, ver.job_title
+            WHERE emp.id IN %s
+            GROUP BY emp.id, emp.corporate_internal_number, emp.name
             ORDER BY emp.id
         """
 
-        params = [date_from, date_to] + day_params + [tuple(department_ids), company_id]
+        params = [date_from, date_to] + day_params + [tuple(month_versions)]
         self.env.cr.execute(query, params)
-        rows = self.env.cr.fetchall()
+        rows = []
+        for employee_id, name, corporate_id, *days in self.env.cr.fetchall():
+            version = month_versions[employee_id]
+            rows.append((employee_id, version.department_id.id, name,
+                         version.job_title, corporate_id, *days))
         return last_day_num, rows
 
     def _get_holiday_map(self, employee_ids, date_from, date_to):
@@ -164,6 +193,30 @@ class ReportForm76(models.AbstractModel):
             depts = self.env['hr.department'].browse(dept_ids)
             dept_name_map = {d.id: d.complete_name for d in depts}
 
+        # Overtime on a working day belongs in "в т.ч. извънредни", and the
+        # hours missed on a day the person came (late arrival, early leave)
+        # in "Неотработени човекочасове: частични" (НСИ, form 76, appendix 1).
+        # With the hours replaced by a fixed figure the sheet shows that
+        # figure for the day, so neither is taken from the real day.
+        day_figures = {}
+        if data['set_hours_to'] <= 0 and employee_ids:
+            for figure in self.env['hr.attendance.extra'].sudo().search_read(
+                    [('employee_id', 'in', employee_ids),
+                     ('for_date', '>=', date_from), ('for_date', '<=', date_to)],
+                    ['employee_id', 'for_date', 'overtime', 'late_time', 'early_leave_time']):
+                day_figures[figure['employee_id'][0], figure['for_date']] = figure
+        precision = data['precision']
+
+        def day_hours_rounded(value):
+            # Each day is rounded as its cell is (SQL ROUND: half up), so a
+            # total column agrees with the cells it sums.
+            return float_round(value, precision_digits=precision)
+
+        def shown(value):
+            # Whole hours print as the cells do: "8", not "8.0".
+            rounded = float_round(value, precision_digits=precision)
+            return int(rounded) if precision == 0 else rounded
+
         # Process rows into named dicts
         departments = {}
         for row in rows:
@@ -179,12 +232,14 @@ class ReportForm76(models.AbstractModel):
             # Merge SQL data with holiday calendar
             new_days = []
             extr_hours = 0
-            for i, (d, dt) in enumerate(zip(sql_days, date_list)):
+            off_day_hours = 0
+            partial_hours = 0
+            for d, dt in zip(sql_days, date_list, strict=True):
                 a = emp_holidays.get(dt, False)
                 if d != 'С' and a == 'Н':
                     # Working day hours on a holiday — count as extra
                     try:
-                        extr_hours += float(d)
+                        off_day_hours += float(d)
                     except (ValueError, TypeError):
                         pass
                     new_days.append('Н')
@@ -198,16 +253,22 @@ class ReportForm76(models.AbstractModel):
                         new_days.append(data['set_hours_to'])
                     else:
                         new_days.append((d != 'С' and d) or a or d)
+                    figure = day_figures.get((emp_id, dt)) if day_hours is not None else None
+                    if figure:
+                        extr_hours += day_hours_rounded(figure['overtime'])
+                        partial_hours += day_hours_rounded(
+                            figure['late_time'] + figure['early_leave_time'])
+            # Hours on days off and holidays are overtime too, and, like the
+            # overtime of a working day, part of the hours worked: "в т.ч.
+            # извънредни" is a part of "Всичко".
+            extr_hours += off_day_hours
 
             # Calculate summary columns
             covekodni = 0
-            covekochasove = 0
-            covekodni_celi = 0
+            covekochasove = off_day_hours
             for element in new_days:
                 try:
                     number = float(element)
-                    if number >= work_hours_daily:
-                        covekodni_celi += 1
                     covekodni += 1
                     if data['precision'] != 0:
                         covekochasove += number
@@ -225,7 +286,11 @@ class ReportForm76(models.AbstractModel):
                 'corporate_id': corporate_id,
                 'days': new_days,
                 'covekodni': covekodni,
-                'covekodni_celi': covekodni_celi,
+                # "в т.ч. целодневен престой": days of standstill the employer
+                # caused. Nothing in the system records them, so the column
+                # stays empty for the person who keeps the sheet to fill in;
+                # a count of full working days here read as idle days.
+                'covekodni_celi': '',
                 'otpusk_o': new_days.count('О'),
                 'otpusk_m': new_days.count('М'),
                 'otpusk_b': new_days.count('Б'),
@@ -233,9 +298,9 @@ class ReportForm76(models.AbstractModel):
                 'otpusk_a': new_days.count('А'),
                 'samootluchka': new_days.count('С'),
                 'pochivni': new_days.count('Н'),
-                'hours_summary': f"{covekochasove}/{work_days_count * work_hours_daily}",
-                'extra_hours': extr_hours,
-                'partial': 0,
+                'hours_summary': f"{shown(covekochasove)}/{work_days_count * work_hours_daily}",
+                'extra_hours': shown(extr_hours),
+                'partial': shown(partial_hours),
             }
 
             if dept_name not in departments:

@@ -88,6 +88,34 @@ the days of the employee's schedule as they live them, in their own
 hours in the form are filed under. A night shift that begins at midnight
 is therefore marked on its own day, not on the evening before.
 
+## What the columns hold
+
+The columns follow the NSI template of the attendance sheet
+("Таблица за отчитане явяването/неявяването на работа").
+
+- **Days of leave** show the Form 76 letter of the time-off type. With the
+  Bulgarian time-off catalog installed, a time-off type has two Form 76
+  letter fields; the letter filled in the catalog's field is printed, the
+  sheet's own field is used when the catalog's one is empty.
+- **Position and department** are those of the employee's contract version
+  in force on the last day of the month, so the sheet of a past month shows
+  the position held then, not today's.
+- **A working day** shows every hour worked that day, overtime included.
+- **"Всичко"** (hours worked) holds the hours of the working days plus the
+  hours worked on days off and holidays; **"в т.ч. извънредни"** is the part
+  of it that is overtime: overtime on working days plus the hours on days off
+  and holidays.
+- Hours are rounded day by day, half up, as the day cells are; with
+  precision 0 every column prints whole numbers.
+- **"Частични"** (under "Неотработени човекочасове") holds the hours missed
+  on days the person came: late arrival and early leave.
+- **"в т.ч. целодневен престой"** stays empty: standstill caused by the
+  employer is not recorded in the system; fill it in by hand if there was
+  any.
+- With **fixed hours per day** set in the wizard, every worked day shows that
+  figure, and neither the overtime nor the missed hours of a working day are
+  counted; hours worked on a day off still are.
+
 ## Installation & Configuration <a id='install'></a>
 
 Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.

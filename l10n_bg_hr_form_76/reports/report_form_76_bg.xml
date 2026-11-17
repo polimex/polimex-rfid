@@ -37,7 +37,7 @@
             <t t-set="data_report_landscape" t-value="True"/>
             <t t-set="full_width" t-value="True"/>
             <t t-set="multi_department" t-value="len(departments) > 1"/>
-            <div t-call="web.html_container">
+            <t t-call="web.html_container">
                 <t t-call="web.internal_layout">
                     <div class="page">
                         <t t-call="l10n_bg_hr_form_76.report_f76_header"/>
@@ -48,7 +48,8 @@
                                     <th t-att-colspan="last_day_num" style="padding: 0; text-align: center; white-space: nowrap;">ДНИ ОТ МЕСЕЦА</th>
                                     <th colspan="2" style="padding: 0; text-align: center; white-space: nowrap;">Явяване на работа</th>
                                     <th colspan="7" style="padding: 0; text-align: center; white-space: nowrap;">Неявяване на работа</th>
-                                    <th colspan="2" style="padding: 0; text-align: center; white-space: nowrap;">Отработени часове</th>
+                                    <th colspan="2" style="padding: 0; text-align: center; white-space: nowrap;">Отработени човекочасове</th>
+                                    <th style="padding: 0; text-align: center; white-space: nowrap;">Неотработени човекочасове</th>
                                 </tr>
                                 <tr>
                                     <th style="width: 1px; padding: 0; text-align: center; white-space: nowrap;"></th>
@@ -113,7 +114,7 @@
                         <t t-call="l10n_bg_hr_form_76.report_f76_footer"/>
                     </div>
                 </t>
-            </div>
+            </t>
         </template>
 
         <template id="report_f76_department">
