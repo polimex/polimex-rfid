@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 08:12+0000\n"
-"PO-Revision-Date: 2026-09-05 08:12+0000\n"
+"POT-Creation-Date: 2026-11-13 12:13+0000\n"
+"PO-Revision-Date: 2026-11-13 12:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -96,6 +96,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/hw_import_group.py:0
 msgid "%(ctrl)s door %(door)s"
 msgstr ""
@@ -226,8 +227,25 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 msgid ""
+"%(ctrl)s: anti-passback is switched on for a reader pair whose readers are "
+"on separate doors in this controller mode. The controller does not check it "
+"there, and it was not imported."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid ""
 "%(ctrl)s: output %(output)s follows schedule %(n)s, which this company does "
 "not have; that output schedule was not imported."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid ""
+"%(ctrl)s: the controller treats its two reader pairs as one anti-passback "
+"zone. Anti-passback is kept per door here, so that setting was not imported."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -274,7 +292,13 @@ msgstr ""
 #. module: hr_rfid_hardware_import
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "%(n)s cards were created."
+msgid "%(n)s cards are in place."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "%(n)s cards; the Cards sheet gives the groups of every card."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -302,7 +326,58 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 msgid ""
+"%(name)s also holds cards that were not read on these controllers "
+"(%(numbers)s). In this system those cards now open the doors of the groups "
+"given here as well; the controllers do not know that yet."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid ""
 "%(name)s has no department, so the membership in %(group)s is left out."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"'%(ip)s' carries a network zone (the part after %%); a module address never "
+"needs it, remove it."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"'%(ip)s' is not a module address. Enter only the IP address or the name of "
+"the module, e.g. 192.168.1.50, and the port in its own field."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"'%(ip)s' is not a valid IP address; write it as four numbers from 0 to 255 "
+"without leading zeros, e.g. 192.168.1.50."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "(always)"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "(schedule %(n)s)"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "+ alarm"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -380,6 +455,14 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid ""
+"A value in the sheet '%(sheet)s' is too long for an Excel cell. Export as "
+"JSON instead; it has no such limit."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_ctrl__family__access
 msgid "Access control"
 msgstr ""
@@ -416,6 +499,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__group_ids
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_run__state__grouping
@@ -482,6 +566,8 @@ msgid "Added by address"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__ip
 msgid "Address"
 msgstr ""
@@ -497,6 +583,8 @@ msgid "Address of the module, e.g. 10.20.30.40."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__address
 msgid "Address on the bus"
 msgstr ""
@@ -537,6 +625,8 @@ msgid "Alarm zone setup as read (decoded)."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__alarm_bits
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__alarm_lines
 msgid "Alarm zones"
@@ -590,13 +680,15 @@ msgid "Anomaly"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
-#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
-msgid "Anti-passback enabled per door (bit per door)."
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
+msgid "Anti-passback setting"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
-#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
-msgid "Anti-passback per door"
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
+msgid ""
+"Anti-passback setting as read: 1 = readers 1 and 2, 2 = readers 3 and 4, 4 ="
+" one zone for both pairs; the values add up."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -610,11 +702,15 @@ msgid "Anti-passback state"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__apb1
 msgid "Anti-passback state 1"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__apb2
 msgid "Anti-passback state 2"
 msgstr ""
@@ -656,6 +752,8 @@ msgid "Attachment Count"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__attempt
 msgid "Attempt"
 msgstr ""
@@ -695,6 +793,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_add_ip_wiz_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_group_merge_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_names_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_options_wiz_form
@@ -776,6 +875,8 @@ msgid "Card already registered"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__max_cards
 msgid "Card capacity"
 msgstr ""
@@ -788,6 +889,8 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__number_display
 msgid "Card number"
 msgstr ""
@@ -803,6 +906,12 @@ msgid "Card number in the file"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Card numbers"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__card_count
 msgid ""
 "Card numbers found on the controllers that were read. Far fewer than the "
@@ -810,6 +919,8 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__card_record_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
 msgid "Card records"
@@ -822,6 +933,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__card_ids
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__card_ids
@@ -838,6 +950,8 @@ msgid "Cards of one person differ"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__card_count_device
 msgid "Cards on the device"
 msgstr ""
@@ -848,6 +962,8 @@ msgid "Cards open different doors"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__cards_read
 msgid "Cards read"
 msgstr ""
@@ -900,20 +1016,46 @@ msgid "Clock (raw)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__clock_drift_seconds
 msgid "Clock difference (seconds)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__opcode
 msgid "Command"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_cmd_log_list
-#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
 msgid "Command log"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Commands"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_count
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
+msgid "Commands sent"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_count
+msgid ""
+"Commands sent to the hardware during the survey; every one of them is a "
+"read. Open them to see each reply: rows in yellow are replies meant for "
+"another command, and many of them point at another program on the module or "
+"a badly wired bus."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -985,6 +1127,8 @@ msgid "Continue without names"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__ctrl_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
 msgid "Controller"
@@ -1038,6 +1182,8 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__address
 msgid "Controller address"
 msgstr ""
@@ -1058,11 +1204,15 @@ msgid "Controller and door, in words."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__clock_read
 msgid "Controller clock"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__ctrl_ids
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__ctrl_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_list
@@ -1096,6 +1246,8 @@ msgid "Controllers read on"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__dev_found
 msgid "Controllers seen"
 msgstr ""
@@ -1127,6 +1279,13 @@ msgid "Controllers: %(n)s"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__create_date
+msgid "Create Date"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__owner_type
 msgid "Create as"
 msgstr ""
@@ -1194,6 +1353,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__create_uid
@@ -1213,8 +1373,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_add_ip_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__create_date
-#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__create_date
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__create_date
@@ -1301,6 +1461,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__display_name
@@ -1358,6 +1519,8 @@ msgid "Doors are interlocked: one opens only when the other is closed."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__door_rights_json
 msgid "Doors opened"
 msgstr ""
@@ -1397,6 +1560,8 @@ msgid "Employees"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__is_empty
 msgid "Empty"
 msgstr ""
@@ -1428,10 +1593,10 @@ msgid "Every card number found, with the doors it opens and who will own it."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__include_commands
 msgid ""
-"Every command sent to the hardware and its reply. All of them are read "
-"commands."
+"Every command sent to the hardware and its reply, as proof that only read "
+"commands were used. Long on a large site."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -1466,8 +1631,20 @@ msgid "Every record the import creates belongs to this company."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
+msgid ""
+"Everything the survey read goes into a file you can keep or hand on. Nothing is\n"
+"                        imported and nothing is sent to the controllers."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
 msgid "Evidence"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_export_wiz__file_format__xlsx
+msgid "Excel workbook (one sheet per kind of thing)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -1478,6 +1655,24 @@ msgstr ""
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__existing_ctrl_id
 msgid "Existing controller"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
+msgid "Export"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model,name:hr_rfid_hardware_import.model_hr_rfid_hw_import_export_wiz
+msgid "Export what the survey read"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
+msgid "Export what was read"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -1497,6 +1692,11 @@ msgid "File"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__file_format
+msgid "File Format"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_names_wiz__file_name
 msgid "File Name"
 msgstr ""
@@ -1508,6 +1708,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__issue_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_issue_list
@@ -1542,6 +1743,8 @@ msgid "Fire panel"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__sw_version
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__fw_version
 msgid "Firmware"
@@ -1654,6 +1857,12 @@ msgid "HTTP port; 80 unless the router forwards another."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Hardware"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model,name:hr_rfid_hardware_import.model_hr_rfid_hw_import_run
 msgid "Hardware Survey"
 msgstr ""
@@ -1694,6 +1903,8 @@ msgid "Hardware type code the controller reports."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__hw_version
 msgid "Hardware version"
 msgstr ""
@@ -1714,6 +1925,8 @@ msgid "Has Read Failures"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__holiday_ref
 msgid "Holiday list"
 msgstr ""
@@ -1809,11 +2022,6 @@ msgid "How many events the controller can buffer."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
-#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__discovery_timeout
-msgid "How many seconds to wait for modules to answer the network search."
-msgstr ""
-
-#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__time_schedules
 msgid "How many time schedule slots the controller holds."
 msgstr ""
@@ -1836,6 +2044,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__id
@@ -1918,6 +2127,11 @@ msgid "Import into this system"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__step_cursor
+msgid "Import step position"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__phase_done_json
 msgid ""
 "Import steps already finished, so a resumed import does not repeat them."
@@ -1971,18 +2185,27 @@ msgid "In progress"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__summary
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts_slot__summary
 msgid "In words"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__include
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__include
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__include
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__include
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__include
 msgid "Include"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__include_commands
+msgid "Include the command log"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -2036,6 +2259,8 @@ msgid "Input/output table rows"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__inputs
 msgid "Inputs"
 msgstr ""
@@ -2056,6 +2281,11 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_export_wiz__file_format__json
+msgid "JSON (everything, raw replies included, for another system)"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts_slot__keep_existing
 msgid "Keep this company's"
 msgstr ""
@@ -2066,6 +2296,8 @@ msgid "Keep this company's schedule and do not take the controllers' one."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__kind
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_person_search
 msgid "Kind"
@@ -2088,6 +2320,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__write_uid
@@ -2109,6 +2342,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__write_date
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__write_date
@@ -2171,6 +2405,12 @@ msgid "Matched card"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid "Members of the access groups"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_group_merge_wiz_form
 msgid "Merge"
 msgstr ""
@@ -2200,6 +2440,8 @@ msgid "Merged from"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__message
 msgid "Message"
 msgstr ""
@@ -2232,6 +2474,8 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__module_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__module_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__module_id
@@ -2241,6 +2485,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "Module %(ip)s could not be read: %(reason)s."
 msgstr ""
@@ -2265,6 +2510,14 @@ msgstr ""
 msgid ""
 "Module %(ip)s stopped answering while controller %(ctrl)s was being read: "
 "%(reason)s."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"Module %(ip)s was already registered in this system before the survey; it is"
+" not pointed again."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -2362,6 +2615,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__module_ids
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_run__state__draft
@@ -2424,6 +2678,8 @@ msgid "Must be resolved before the import"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__name
@@ -2599,6 +2855,15 @@ msgid "Noted"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
+#: code:addons/hr_rfid_hardware_import/wizards/hw_import_export_wiz.py:0
+msgid "Nothing has been read yet; read the controllers first."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__number
 msgid "Number (as stored)"
 msgstr ""
@@ -2619,6 +2884,8 @@ msgid "Number of access groups"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__card_count
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__card_count
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__card_count
@@ -2632,6 +2899,8 @@ msgid "Number of controllers"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__door_count
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__door_count
 msgid "Number of doors"
@@ -2708,6 +2977,8 @@ msgid "Opens no door"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__mode
 msgid "Operating mode"
 msgstr ""
@@ -2743,6 +3014,8 @@ msgid "Output schedules (raw)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__outputs
 msgid "Outputs"
 msgstr ""
@@ -2753,6 +3026,8 @@ msgid "Owner and groups"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__pin
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__pin
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__pin
@@ -2787,6 +3062,8 @@ msgid "PIN differs between controllers"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__data_sent
 msgid "Parameters"
 msgstr ""
@@ -2811,6 +3088,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__person_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_options_wiz_form
@@ -2844,6 +3122,8 @@ msgid "People: %(n)s"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__person_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__person_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_name__person_id
@@ -2851,6 +3131,8 @@ msgid "Person"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__phase
 msgid "Phase"
 msgstr ""
@@ -2915,6 +3197,8 @@ msgid "Position in the module list"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__position
 msgid "Position in the table"
 msgstr ""
@@ -3025,6 +3309,12 @@ msgid "Raw reader modes reply."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Raw replies"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__b3_hex
 msgid "Raw status reply."
 msgstr ""
@@ -3091,11 +3381,15 @@ msgid "Reader settings (raw)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__readers
 msgid "Readers"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__rights
 msgid "Readers accepting the card"
 msgstr ""
@@ -3111,6 +3405,8 @@ msgid "Readers per door"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_issue__phase__read
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_module__read_state__reading
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
@@ -3135,6 +3431,8 @@ msgid "Reading position"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__read_error
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__read_error
 msgid "Reading problem"
@@ -3161,6 +3459,8 @@ msgid "Ready"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__raw_hex
 msgid "Record (raw)"
 msgstr ""
@@ -3207,11 +3507,15 @@ msgid "Reopen the survey"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__response_hex
 msgid "Reply (raw)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__e_code
 msgid "Reply code"
 msgstr ""
@@ -3229,6 +3533,8 @@ msgid "Reply for another command"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__duration_ms
 msgid "Reply time (ms)"
 msgstr ""
@@ -3245,6 +3551,8 @@ msgid "Report line"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__server_url
 msgid "Reports to today"
 msgstr ""
@@ -3272,15 +3580,19 @@ msgstr ""
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 msgid ""
 "Result: %(modules)s modules, %(ctrls)s controllers, %(cards)s cards, "
-"%(rights)s door rights. No command was sent to the hardware."
+"%(rights)s door rights. Nothing was written to the controllers."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__review_state
 msgid "Review"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__right_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_card_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_group_form
@@ -3308,6 +3620,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__run_id
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__run_id
@@ -3333,6 +3646,8 @@ msgid "Same door, different schedules"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__raw_hex
 msgid "Schedule (raw)"
 msgstr ""
@@ -3388,6 +3703,8 @@ msgid "Schedule slot %(n)s: this company's schedule was kept."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__time_schedules
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__ts_slot_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ts_slot_list
@@ -3395,26 +3712,36 @@ msgid "Schedule slots"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r1
 msgid "Schedule, reader 1"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r2
 msgid "Schedule, reader 2"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r3
 msgid "Schedule, reader 3"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r4
 msgid "Schedule, reader 4"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
 msgid "Schedules"
 msgstr ""
@@ -3432,8 +3759,9 @@ msgstr ""
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__discovery_broadcast
 msgid ""
-"Search the local network for modules. Modules behind a router are added by "
-"address."
+"Search the local network for modules, the way the access control module "
+"does. Modules already registered here and modules behind a router do not "
+"answer; add them by address."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -3454,6 +3782,8 @@ msgid "Sequence"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__serial
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__serial
 msgid "Serial number"
@@ -3470,6 +3800,12 @@ msgid "Serial number the controller reports."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Setting"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__imported_without_doors
 msgid "Settings only, no doors"
 msgstr ""
@@ -3480,6 +3816,8 @@ msgid "Settings read"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__gaps_json
 msgid "Settings the controller cannot report"
 msgstr ""
@@ -3490,6 +3828,8 @@ msgid "Several lines of the names file were merged into this person."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__severity
 msgid "Severity"
 msgstr ""
@@ -3500,6 +3840,8 @@ msgid "Skipped"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__slot_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__number
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts_slot__number
@@ -3534,6 +3876,8 @@ msgid "Something unusual about this record, if anything."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__source
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__source
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_person_search
@@ -3567,6 +3911,8 @@ msgid "State"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__status
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_name__status
 msgid "Status"
@@ -3855,6 +4201,14 @@ msgid "The controllers this module sees on its bus."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
+msgid ""
+"The department %(department)s belongs to %(other)s; choose a department of "
+"%(company)s."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__door_rec_id
 msgid "The door record the right was granted on, after the import."
 msgstr ""
@@ -3931,7 +4285,7 @@ msgstr ""
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_options_wiz_form
 msgid ""
-"The import creates records here. No command is sent to the controllers, and a\n"
+"The import creates records here. Nothing is written to the controllers, and a\n"
 "                        module keeps reporting to its current server until you point it here afterwards."
 msgstr ""
 
@@ -3939,14 +4293,14 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 msgid ""
-"The import finished. Nothing was sent to the controllers. To hand a module "
-"over to this system, use 'Point to this server' on the module."
+"The import finished. Nothing was written to the controllers. To hand a "
+"module over to this system, use 'Point to this server' on the module."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
 msgid ""
-"The import finished; nothing was sent to the controllers. To hand a module over,\n"
+"The import finished; nothing was written to the controllers. To hand a module over,\n"
 "                            use \"Point to this server\" on its row, then \"Enable here\"."
 msgstr ""
 
@@ -3954,6 +4308,13 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__io_table_hex
 msgid ""
 "The input/output table in the form the access control module stores it."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__step_cursor
+msgid ""
+"The last row the current import step finished, so a step that runs over "
+"several passes continues after it."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4149,6 +4510,12 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid "The port must be a number from 1 to 65535."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__group_id
 msgid "The proposed access group this finding is about, if any."
 msgstr ""
@@ -4246,6 +4613,14 @@ msgstr ""
 msgid ""
 "The serial number of module %(serial)s is longer than this system can hold "
 "(%(size)s characters); the module cannot be registered by this import."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid ""
+"The sheet '%(sheet)s' would have %(count)s rows; an Excel sheet holds at "
+"most %(limit)s. Export as JSON instead; it has no such limit."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4353,6 +4728,11 @@ msgid "The survey this slot belongs to."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__run_id
+msgid "The survey to export."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_options_wiz__run_id
 msgid "The survey to import."
 msgstr ""
@@ -4404,9 +4784,12 @@ msgid "The uploaded names file, kept for reference."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
-msgid "The wait for answers must be between 1 and %(max)s seconds."
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__file_format
+msgid ""
+"The workbook is for people: modules, controllers, schedules, cards, card "
+"records, access groups, people, findings and the raw replies, one sheet "
+"each. The JSON document holds the same and every decoded setting, for a "
+"program or a later import."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4477,8 +4860,8 @@ msgstr ""
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 msgid ""
 "This survey stopped without finishing and has been closed. The module "
-"passwords it held have been cleared. What was read is kept; start a new "
-"survey when you are ready."
+"passwords it held have been cleared. What was read and imported so far is "
+"kept; press 'Reopen the survey' to continue from where it stopped."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4571,6 +4954,8 @@ msgid "Unknown"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__anomaly
 msgid "Unusual"
 msgstr ""
@@ -4602,11 +4987,6 @@ msgstr ""
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_ctrl__family__vending
 msgid "Vending machine"
-msgstr ""
-
-#. module: hr_rfid_hardware_import
-#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__discovery_timeout
-msgid "Wait for answers (seconds)"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4676,6 +5056,12 @@ msgstr ""
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__note
 msgid "What the survey concluded from this reply, when relevant."
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/wizards/hw_import_export_wiz.py:0
+msgid "What the survey read was exported as a file."
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4827,12 +5213,6 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "cards"
-msgstr ""
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 msgid "cards: %(n)s"
 msgstr ""
@@ -4841,12 +5221,6 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "clock"
-msgstr ""
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "controllers"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4870,12 +5244,6 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "groups"
-msgstr ""
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "holidays"
 msgstr ""
@@ -4894,6 +5262,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "input/output table"
 msgstr ""
@@ -4922,8 +5291,24 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid ""
+"it kept answering for another command; another program may be talking to the"
+" module at the same time. Stop it and read the module again"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/reader.py:0
+msgid ""
 "it requires a password, or the password is wrong; enter the password on the "
 "module's row and check it again"
+msgstr ""
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/reader.py:0
+msgid ""
+"its address is not a bare IP address or host name; correct the address on "
+"the module's row"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -4940,20 +5325,8 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "people"
-msgstr ""
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "reader settings"
-msgstr ""
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "report"
 msgstr ""
 
 #. module: hr_rfid_hardware_import
@@ -5040,8 +5413,13 @@ msgstr ""
 msgid "time schedules"
 msgstr ""
 
-#. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "webstacks"
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid_hardware_import
+msgid "RFID Hardware Import"
+msgstr ""
+
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid_hardware_import
+msgid ""
+"Survey a running access control system without changing it and import it"
 msgstr ""

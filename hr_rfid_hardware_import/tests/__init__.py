@@ -6,5 +6,7 @@ from . import test_read_and_analysis
 from . import test_names_and_import
 from . import test_failure_shapes
 from . import test_multi_company
+from . import test_export
+from . import test_large_sites
 from . import test_tours
 from . import test_oracle_vectors

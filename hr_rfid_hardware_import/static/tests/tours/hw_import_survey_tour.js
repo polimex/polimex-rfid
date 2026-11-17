@@ -3,6 +3,8 @@ import { registry } from "@web/core/registry";
 /**
  * The operator starts a survey and adds a module by address - by typing an
  * address into the dialog and confirming, not by looking at a rendered form.
+ * An address with a page glued to it is refused first; only the address of
+ * the module itself is accepted.
  * Selectors are by name and class, never by visible text: the database may
  * run in any language.
  */
@@ -24,7 +26,26 @@ registry.category("web_tour.tours").add("hw_import_survey_tour", {
             run: "click",
         },
         {
-            content: "The address can be typed in",
+            content: "An address with a page glued to it is typed in",
+            trigger: ".modal div[name='ip'] input",
+            run: "edit 192.0.2.20/config.htm",
+        },
+        {
+            content: "The operator tries to add it",
+            trigger: ".modal-footer button[name='action_add']",
+            run: "click",
+        },
+        {
+            content: "It is refused with a message, and the dialog stays open to correct it",
+            trigger: ".o_error_dialog",
+        },
+        {
+            content: "The message is closed",
+            trigger: ".o_error_dialog .o-default-button",
+            run: "click",
+        },
+        {
+            content: "The address is corrected",
             trigger: ".modal div[name='ip'] input",
             run: "edit 192.0.2.20",
         },

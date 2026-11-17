@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 08:12+0000\n"
-"PO-Revision-Date: 2026-09-05 11:12\n"
+"POT-Creation-Date: 2026-10-13 20:33+0000\n"
+"PO-Revision-Date: 2026-11-13 14:14\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -110,6 +110,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/hw_import_group.py:0
 msgid "%(ctrl)s door %(door)s"
 msgstr "%(ctrl)s врата %(door)s"
@@ -265,11 +266,34 @@ msgstr "%(ctrl)s беше пропуснат (регистриран друга�
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 msgid ""
+"%(ctrl)s: anti-passback is switched on for a reader pair whose readers are "
+"on separate doors in this controller mode. The controller does not check it "
+"there, and it was not imported."
+msgstr ""
+"%(ctrl)s: anti-passback е включен за двойка четци, които в този режим на "
+"контролера са на отделни врати. Там контролерът не го проверява и тази "
+"настройка не беше импортирана."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid ""
 "%(ctrl)s: output %(output)s follows schedule %(n)s, which this company does "
 "not have; that output schedule was not imported."
 msgstr ""
 "%(ctrl)s: изход %(output)s следва график %(n)s, който тази фирма няма; този "
 "график за изход не беше импортиран."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid ""
+"%(ctrl)s: the controller treats its two reader pairs as one anti-passback "
+"zone. Anti-passback is kept per door here, so that setting was not imported."
+msgstr ""
+"%(ctrl)s: контролерът третира двете си двойки четци като една зона на anti-"
+"passback. Тук anti-passback се води за всяка врата поотделно, затова тази "
+"настройка не беше импортирана."
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
@@ -321,8 +345,14 @@ msgstr "%(model)s SN:%(serial)s ID:%(address)s"
 #. module: hr_rfid_hardware_import
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "%(n)s cards were created."
-msgstr "%(n)s карти бяха създадени."
+msgid "%(n)s cards are in place."
+msgstr "%(n)s карти са налице."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "%(n)s cards; the Cards sheet gives the groups of every card."
+msgstr "%(n)s карти; листът „Карти“ показва групите на всяка карта."
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
@@ -352,8 +382,68 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 msgid ""
+"%(name)s also holds cards that were not read on these controllers "
+"(%(numbers)s). In this system those cards now open the doors of the groups "
+"given here as well; the controllers do not know that yet."
+msgstr ""
+"%(name)s притежава и карти, които не са прочетени от тези контролери "
+"(%(numbers)s). В тази система тези карти вече отварят и вратите на "
+"посочените тук групи; контролерите още не знаят за това."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid ""
 "%(name)s has no department, so the membership in %(group)s is left out."
 msgstr "%(name)s няма отдел, затова членството в %(group)s е пропуснато."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"'%(ip)s' carries a network zone (the part after %%); a module address never "
+"needs it, remove it."
+msgstr ""
+"'%(ip)s' съдържа мрежова зона (частта след %%); адресът на модула никога не "
+"я изисква, премахнете я."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"'%(ip)s' is not a module address. Enter only the IP address or the name of "
+"the module, e.g. 192.168.1.50, and the port in its own field."
+msgstr ""
+"'%(ip)s' не е адрес на модул. Въведете само IP адреса или името на модула, "
+"напр. 192.168.1.50, а порта - в отделното му поле."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"'%(ip)s' is not a valid IP address; write it as four numbers from 0 to 255 "
+"without leading zeros, e.g. 192.168.1.50."
+msgstr ""
+"'%(ip)s' не е валиден IP адрес; въведете го като четири числа от 0 до 255 "
+"без водещи нули, напр. 192.168.1.50."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "(always)"
+msgstr "(винаги)"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "(schedule %(n)s)"
+msgstr "(график %(n)s)"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "+ alarm"
+msgstr "+ аларма"
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_names_wiz_form
@@ -440,6 +530,16 @@ msgstr ""
 "                    които проучването предлага, и импортирате всичко в тази система."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid ""
+"A value in the sheet '%(sheet)s' is too long for an Excel cell. Export as "
+"JSON instead; it has no such limit."
+msgstr ""
+"Стойност в листа '%(sheet)s' е твърде дълга за клетка на Excel. "
+"Експортирайте вместо това като JSON; там няма такова ограничение."
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_ctrl__family__access
 msgid "Access control"
 msgstr "Контрол на достъпа"
@@ -482,6 +582,7 @@ msgstr "Група за достъп %(n)s - %(doors)s врати"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__group_ids
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_run__state__grouping
@@ -551,6 +652,8 @@ msgid "Added by address"
 msgstr "Добавен по адрес"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__ip
 msgid "Address"
 msgstr "Адрес"
@@ -566,6 +669,8 @@ msgid "Address of the module, e.g. 10.20.30.40."
 msgstr "Адрес на модула, напр. 10.20.30.40."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__address
 msgid "Address on the bus"
 msgstr "Адрес на шината"
@@ -606,6 +711,8 @@ msgid "Alarm zone setup as read (decoded)."
 msgstr "Настройка на алармени зони, както е прочетена (декодирана)."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__alarm_bits
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__alarm_lines
 msgid "Alarm zones"
@@ -660,14 +767,18 @@ msgid "Anomaly"
 msgstr "Аномалия"
 
 #. module: hr_rfid_hardware_import
-#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
-msgid "Anti-passback enabled per door (bit per door)."
-msgstr "Anti-passback, разрешен за всяка врата (бит на врата)."
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
+msgid "Anti-passback setting"
+msgstr "Настройка на anti-passback"
 
 #. module: hr_rfid_hardware_import
-#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
-msgid "Anti-passback per door"
-msgstr "Anti-passback по врата"
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__apb_bitmap
+msgid ""
+"Anti-passback setting as read: 1 = readers 1 and 2, 2 = readers 3 and 4, 4 ="
+" one zone for both pairs; the values add up."
+msgstr ""
+"Настройка на anti-passback във вида, в който е прочетена: 1 = четци 1 и 2, 2"
+" = четци 3 и 4, 4 = една зона за двете двойки; стойностите се сумират."
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__fc_hex
@@ -680,11 +791,15 @@ msgid "Anti-passback state"
 msgstr "Състояние на anti-passback"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__apb1
 msgid "Anti-passback state 1"
 msgstr "Състояние на anti-passback 1"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__apb2
 msgid "Anti-passback state 2"
 msgstr "Състояние на anti-passback 2"
@@ -728,6 +843,8 @@ msgid "Attachment Count"
 msgstr "Брой прикачени файлове"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__attempt
 msgid "Attempt"
 msgstr "Опит"
@@ -771,6 +888,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_add_ip_wiz_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_group_merge_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_names_wiz_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_options_wiz_form
@@ -863,6 +981,8 @@ msgid "Card already registered"
 msgstr "Картата вече е регистрирана"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__max_cards
 msgid "Card capacity"
 msgstr "Капацитет за карти"
@@ -877,6 +997,8 @@ msgstr ""
 "повече хора отколкото карти; по-малко означава, че файлът е обединил имена."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__number_display
 msgid "Card number"
 msgstr "Номер на картата"
@@ -892,6 +1014,12 @@ msgid "Card number in the file"
 msgstr "Номер на картата във файла"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Card numbers"
+msgstr "Номера на карти"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__card_count
 msgid ""
 "Card numbers found on the controllers that were read. Far fewer than the "
@@ -902,6 +1030,8 @@ msgstr ""
 "раздела Контролери."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__card_record_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
 msgid "Card records"
@@ -914,6 +1044,7 @@ msgstr "Отпечатък на набора карти"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__card_ids
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__card_ids
@@ -930,6 +1061,8 @@ msgid "Cards of one person differ"
 msgstr "Картите на едно лице се различават"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__card_count_device
 msgid "Cards on the device"
 msgstr "Карти на устройството"
@@ -940,6 +1073,8 @@ msgid "Cards open different doors"
 msgstr "Картите отварят различни врати"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__cards_read
 msgid "Cards read"
 msgstr "Прочетени карти"
@@ -994,21 +1129,51 @@ msgid "Clock (raw)"
 msgstr "Часовник (суров)"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__clock_drift_seconds
 msgid "Clock difference (seconds)"
 msgstr "Разлика в часовника (секунди)"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__opcode
 msgid "Command"
 msgstr "Команда"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_cmd_log_list
-#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
 msgid "Command log"
 msgstr "Дневник на командите"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Commands"
+msgstr "Команди"
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_count
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
+msgid "Commands sent"
+msgstr "Изпратени команди"
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_count
+msgid ""
+"Commands sent to the hardware during the survey; every one of them is a "
+"read. Open them to see each reply: rows in yellow are replies meant for "
+"another command, and many of them point at another program on the module or "
+"a badly wired bus."
+msgstr ""
+"Команди, изпратени към хардуера по време на проучването; всяка от тях е "
+"четене. Отворете ги, за да видите всеки отговор: редовете в жълто са "
+"отговори, предназначени за друга команда, и много такива сочат към друга "
+"програма на модула или към лошо свързана шина."
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__gaps_json
@@ -1084,6 +1249,8 @@ msgid "Continue without names"
 msgstr "Продължи без имена"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__ctrl_id
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
 msgid "Controller"
@@ -1148,6 +1315,8 @@ msgstr ""
 "да продължите."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__address
 msgid "Controller address"
 msgstr "Адрес на контролера"
@@ -1169,11 +1338,15 @@ msgid "Controller and door, in words."
 msgstr "Контролер и врата, изразени с думи."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__clock_read
 msgid "Controller clock"
 msgstr "Часовник на контролера"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__ctrl_ids
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__ctrl_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_list
@@ -1210,6 +1383,8 @@ msgid "Controllers read on"
 msgstr "Контролери, прочетени на"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__dev_found
 msgid "Controllers seen"
 msgstr "Видени контролери"
@@ -1246,6 +1421,13 @@ msgid "Controllers: %(n)s"
 msgstr "Контролери: %(n)s"
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__create_date
+msgid "Create Date"
+msgstr "Създадено на"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__owner_type
 msgid "Create as"
 msgstr "Създаване като"
@@ -1317,6 +1499,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__create_uid
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__create_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__create_uid
@@ -1336,8 +1519,8 @@ msgstr "Създадено от"
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_add_ip_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__create_date
-#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__create_date
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__create_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__create_date
@@ -1428,6 +1611,7 @@ msgstr "Различава се от тази на фирмата"
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__display_name
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__display_name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__display_name
@@ -1487,6 +1671,8 @@ msgstr ""
 "затворена."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__door_rights_json
 msgid "Doors opened"
 msgstr "Отворени врати"
@@ -1528,6 +1714,8 @@ msgid "Employees"
 msgstr "Служители"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__is_empty
 msgid "Empty"
 msgstr "Празно"
@@ -1561,13 +1749,14 @@ msgstr ""
 "собственик."
 
 #. module: hr_rfid_hardware_import
-#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__include_commands
 msgid ""
-"Every command sent to the hardware and its reply. All of them are read "
-"commands."
+"Every command sent to the hardware and its reply, as proof that only read "
+"commands were used. Long on a large site."
 msgstr ""
-"Всяка команда, изпратена към хардуера, и нейният отговор. Всички те са "
-"команди за четене."
+"Всяка команда, изпратена към хардуера, и нейният отговор, като "
+"доказателство, че са били използвани само команди за четене. Дълъг лог при "
+"голям обект."
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__cmd_log_ids
@@ -1608,9 +1797,24 @@ msgid "Every record the import creates belongs to this company."
 msgstr "Всеки запис, създаден от импорта, принадлежи на тази фирма."
 
 #. module: hr_rfid_hardware_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
+msgid ""
+"Everything the survey read goes into a file you can keep or hand on. Nothing is\n"
+"                        imported and nothing is sent to the controllers."
+msgstr ""
+"Всичко, прочетено при проучването, се записва във файл, който можете да "
+"запазите или предадете нататък. Нищо не се импортира и нищо не се изпраща "
+"към контролерите."
+
+#. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
 msgid "Evidence"
 msgstr "Доказателство"
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_export_wiz__file_format__xlsx
+msgid "Excel workbook (one sheet per kind of thing)"
+msgstr "Excel файл (по един лист за всеки вид данни)"
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__existing_card_id
@@ -1621,6 +1825,24 @@ msgstr "Съществуваща карта"
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__existing_ctrl_id
 msgid "Existing controller"
 msgstr "Съществуващ контролер"
+
+#. module: hr_rfid_hardware_import
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
+msgid "Export"
+msgstr "Експорт"
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model,name:hr_rfid_hardware_import.model_hr_rfid_hw_import_export_wiz
+msgid "Export what the survey read"
+msgstr "Експорт на прочетеното при проучването"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_export_wiz_form
+#: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
+msgid "Export what was read"
+msgstr "Експорт на прочетеното"
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_ctrl__read_state__failed
@@ -1639,6 +1861,11 @@ msgid "File"
 msgstr "Файл"
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__file_format
+msgid "File Format"
+msgstr "Формат на файла"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_names_wiz__file_name
 msgid "File Name"
 msgstr "Име на файла"
@@ -1650,6 +1877,7 @@ msgstr "Намери модули в мрежата"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__issue_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_issue_list
@@ -1685,6 +1913,8 @@ msgid "Fire panel"
 msgstr "Пожарен панел"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__sw_version
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__fw_version
 msgid "Firmware"
@@ -1806,6 +2036,12 @@ msgid "HTTP port; 80 unless the router forwards another."
 msgstr "HTTP порт; 80, освен ако рутерът не пренасочва друг."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Hardware"
+msgstr "Хардуер"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model,name:hr_rfid_hardware_import.model_hr_rfid_hw_import_run
 msgid "Hardware Survey"
 msgstr "Хардуерно проучване"
@@ -1846,6 +2082,8 @@ msgid "Hardware type code the controller reports."
 msgstr "Код на типа хардуер, съобщен от контролера."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__hw_version
 msgid "Hardware version"
 msgstr "Версия на хардуера"
@@ -1866,6 +2104,8 @@ msgid "Has Read Failures"
 msgstr "Има грешки при четене"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__holiday_ref
 msgid "Holiday list"
 msgstr "Списък с празници"
@@ -1961,12 +2201,6 @@ msgid "How many events the controller can buffer."
 msgstr "Колко събития може да буферира контролерът."
 
 #. module: hr_rfid_hardware_import
-#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__discovery_timeout
-msgid "How many seconds to wait for modules to answer the network search."
-msgstr ""
-"Колко секунди да се изчака модулите да отговорят на мрежовото търсене."
-
-#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__time_schedules
 msgid "How many time schedule slots the controller holds."
 msgstr "Колко слота за времеви график държи контролерът."
@@ -1991,6 +2225,7 @@ msgstr "Име на хардуера"
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__id
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__id
@@ -2073,6 +2308,11 @@ msgid "Import into this system"
 msgstr "Импорт в тази система"
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__step_cursor
+msgid "Import step position"
+msgstr "Позиция на стъпката на импорта"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__phase_done_json
 msgid ""
 "Import steps already finished, so a resumed import does not repeat them."
@@ -2129,12 +2369,16 @@ msgid "In progress"
 msgstr "В процес на изпълнение"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__summary
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts_slot__summary
 msgid "In words"
 msgstr "С думи"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__include
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__include
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__include
@@ -2142,6 +2386,11 @@ msgstr "С думи"
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__include
 msgid "Include"
 msgstr "Включи"
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__include_commands
+msgid "Include the command log"
+msgstr "Включване на лога на командите"
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__include
@@ -2194,6 +2443,8 @@ msgid "Input/output table rows"
 msgstr "Редове на таблицата за входове/изходи"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__inputs
 msgid "Inputs"
 msgstr "Входове"
@@ -2214,6 +2465,11 @@ msgid "Is Follower"
 msgstr "Е последовател"
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_export_wiz__file_format__json
+msgid "JSON (everything, raw replies included, for another system)"
+msgstr "JSON (всичко, включително необработените отговори, за друга система)"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts_slot__keep_existing
 msgid "Keep this company's"
 msgstr "Запазване на данните на тази фирма"
@@ -2224,6 +2480,8 @@ msgid "Keep this company's schedule and do not take the controllers' one."
 msgstr "Запази графика на тази фирма и не вземай този на контролерите."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__kind
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_person_search
 msgid "Kind"
@@ -2248,6 +2506,7 @@ msgstr "Етикет на това проучване - кога е старти
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__write_uid
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__write_uid
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__write_uid
@@ -2269,6 +2528,7 @@ msgstr "Последно актуализирано от"
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__write_date
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__write_date
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__write_date
@@ -2333,6 +2593,12 @@ msgid "Matched card"
 msgstr "Съпоставена карта"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/importer.py:0
+msgid "Members of the access groups"
+msgstr "Членове на групите за достъп"
+
+#. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_group_merge_wiz_form
 msgid "Merge"
 msgstr "Обедини"
@@ -2362,6 +2628,8 @@ msgid "Merged from"
 msgstr "Обединено от"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__message
 msgid "Message"
 msgstr "Съобщение"
@@ -2396,6 +2664,8 @@ msgstr ""
 "именува контролерите."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__module_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__module_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__module_id
@@ -2405,6 +2675,7 @@ msgstr "Модул"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "Module %(ip)s could not be read: %(reason)s."
 msgstr "Модул %(ip)s не можа да бъде прочетен: %(reason)s."
@@ -2434,6 +2705,16 @@ msgid ""
 msgstr ""
 "Модул %(ip)s спря да отговаря, докато контролер %(ctrl)s се четеше: "
 "%(reason)s."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid ""
+"Module %(ip)s was already registered in this system before the survey; it is"
+" not pointed again."
+msgstr ""
+"Модул %(ip)s вече беше регистриран в тази система преди проучването; не се "
+"насочва отново."
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
@@ -2537,6 +2818,7 @@ msgstr "Модулът е недостъпен"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__module_ids
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_run__state__draft
@@ -2601,6 +2883,8 @@ msgid "Must be resolved before the import"
 msgstr "Трябва да бъде разрешено преди импорта"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__name
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__name
@@ -2780,6 +3064,15 @@ msgid "Noted"
 msgstr "Отбелязано"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
+#: code:addons/hr_rfid_hardware_import/wizards/hw_import_export_wiz.py:0
+msgid "Nothing has been read yet; read the controllers first."
+msgstr "Все още нищо не е прочетено; първо прочетете контролерите."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__number
 msgid "Number (as stored)"
 msgstr "Номер (както е съхранен)"
@@ -2800,6 +3093,8 @@ msgid "Number of access groups"
 msgstr "Брой групи за достъп"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__card_count
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__card_count
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__card_count
@@ -2813,6 +3108,8 @@ msgid "Number of controllers"
 msgstr "Брой контролери"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__door_count
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__door_count
 msgid "Number of doors"
@@ -2889,6 +3186,8 @@ msgid "Opens no door"
 msgstr "Не отваря врата"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__mode
 msgid "Operating mode"
 msgstr "Режим на работа"
@@ -2924,6 +3223,8 @@ msgid "Output schedules (raw)"
 msgstr "Изходни графици (сурови)"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__outputs
 msgid "Outputs"
 msgstr "Изходи"
@@ -2934,6 +3235,8 @@ msgid "Owner and groups"
 msgstr "Собственик и групи"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__pin
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__pin
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__pin
@@ -2968,6 +3271,8 @@ msgid "PIN differs between controllers"
 msgstr "ПИН кодът се различава между контролерите"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__data_sent
 msgid "Parameters"
 msgstr "Параметри"
@@ -2996,6 +3301,7 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__person_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_options_wiz_form
@@ -3031,6 +3337,8 @@ msgid "People: %(n)s"
 msgstr "Хора: %(n)s"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__person_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__person_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_name__person_id
@@ -3038,6 +3346,8 @@ msgid "Person"
 msgstr "Лице"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__phase
 msgid "Phase"
 msgstr "Фаза"
@@ -3106,6 +3416,8 @@ msgid "Position in the module list"
 msgstr "Позиция в списъка с модули"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__position
 msgid "Position in the table"
 msgstr "Позиция в таблицата"
@@ -3218,6 +3530,12 @@ msgid "Raw reader modes reply."
 msgstr "Необработен отговор за режимите на четците."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Raw replies"
+msgstr "Необработени отговори"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__b3_hex
 msgid "Raw status reply."
 msgstr "Необработен отговор за статус."
@@ -3288,11 +3606,15 @@ msgid "Reader settings (raw)"
 msgstr "Настройки на четеца (сурови)"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__readers
 msgid "Readers"
 msgstr "Четци"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__rights
 msgid "Readers accepting the card"
 msgstr "Четци, приемащи картата"
@@ -3308,6 +3630,8 @@ msgid "Readers per door"
 msgstr "Четци на врата"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_issue__phase__read
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_module__read_state__reading
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ctrl_form
@@ -3332,6 +3656,8 @@ msgid "Reading position"
 msgstr "Позиция на четене"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__read_error
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__read_error
 msgid "Reading problem"
@@ -3358,6 +3684,8 @@ msgid "Ready"
 msgstr "Готово"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__raw_hex
 msgid "Record (raw)"
 msgstr "Запис (суров)"
@@ -3404,11 +3732,15 @@ msgid "Reopen the survey"
 msgstr "Повторно отваряне на проучването"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__response_hex
 msgid "Reply (raw)"
 msgstr "Отговор (суров)"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__e_code
 msgid "Reply code"
 msgstr "Код на отговора"
@@ -3429,6 +3761,8 @@ msgid "Reply for another command"
 msgstr "Отговор за друга команда"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__duration_ms
 msgid "Reply time (ms)"
 msgstr "Време за отговор (мс)"
@@ -3445,6 +3779,8 @@ msgid "Report line"
 msgstr "Ред от отчета"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__server_url
 msgid "Reports to today"
 msgstr "Докладва към днес"
@@ -3474,17 +3810,21 @@ msgstr "Разрешено"
 #: code:addons/hr_rfid_hardware_import/models/importer.py:0
 msgid ""
 "Result: %(modules)s modules, %(ctrls)s controllers, %(cards)s cards, "
-"%(rights)s door rights. No command was sent to the hardware."
+"%(rights)s door rights. Nothing was written to the controllers."
 msgstr ""
-"Резултат: %(modules)s модула, %(ctrls)s контролера, %(cards)s карти, "
-"%(rights)s права за врати. Никаква команда не беше изпратена към хардуера."
+"Резултат: модули: %(modules)s, контролери: %(ctrls)s, карти: %(cards)s, "
+"права за врати: %(rights)s. Към контролерите не е записано нищо."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__review_state
 msgid "Review"
 msgstr "Преглед"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__right_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_card_form
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_group_form
@@ -3512,6 +3852,7 @@ msgstr "Редове в таблицата за входове/изходи."
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__run_id
+#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__run_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__run_id
@@ -3537,6 +3878,8 @@ msgid "Same door, different schedules"
 msgstr "Една и съща врата, различни графици"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__raw_hex
 msgid "Schedule (raw)"
 msgstr "График (суров)"
@@ -3600,6 +3943,8 @@ msgid "Schedule slot %(n)s: this company's schedule was kept."
 msgstr "Слот за график %(n)s: графикът на тази фирма беше запазен."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__time_schedules
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__ts_slot_ids
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_ts_slot_list
@@ -3607,26 +3952,36 @@ msgid "Schedule slots"
 msgstr "Слотове за графици"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r1
 msgid "Schedule, reader 1"
 msgstr "График, четец 1"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r2
 msgid "Schedule, reader 2"
 msgstr "График, четец 2"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r3
 msgid "Schedule, reader 3"
 msgstr "График, четец 3"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__ts_r4
 msgid "Schedule, reader 4"
 msgstr "График, четец 4"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
 msgid "Schedules"
 msgstr "Графици"
@@ -3644,10 +3999,13 @@ msgstr "Търсене в локалната мрежа"
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__discovery_broadcast
 msgid ""
-"Search the local network for modules. Modules behind a router are added by "
-"address."
+"Search the local network for modules, the way the access control module "
+"does. Modules already registered here and modules behind a router do not "
+"answer; add them by address."
 msgstr ""
-"Търси модули в локалната мрежа. Модулите зад рутер се добавят по адрес."
+"Търсене на модули в локалната мрежа, по същия начин, по който прави модулът "
+"за контрол на достъпа. Вече регистрираните тук модули и модулите зад рутер "
+"не отговарят; добавете ги по адрес."
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
@@ -3667,6 +4025,8 @@ msgid "Sequence"
 msgstr "Последователност"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__serial
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__serial
 msgid "Serial number"
@@ -3683,6 +4043,12 @@ msgid "Serial number the controller reports."
 msgstr "Сериен номер, съобщен от контролера."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid "Setting"
+msgstr "Настройка"
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__imported_without_doors
 msgid "Settings only, no doors"
 msgstr "Само настройки, без врати"
@@ -3693,6 +4059,8 @@ msgid "Settings read"
 msgstr "Прочетени настройки"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__gaps_json
 msgid "Settings the controller cannot report"
 msgstr "Настройки, които контролерът не може да съобщи"
@@ -3703,6 +4071,8 @@ msgid "Several lines of the names file were merged into this person."
 msgstr "Няколко реда от файла с имена бяха обединени в това лице."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__severity
 msgid "Severity"
 msgstr "Тежест"
@@ -3713,6 +4083,8 @@ msgid "Skipped"
 msgstr "Пропуснато"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__slot_id
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__number
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts_slot__number
@@ -3748,6 +4120,8 @@ msgid "Something unusual about this record, if anything."
 msgstr "Нещо необичайно в този запис, ако има такова."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__source
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_person__source
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_person_search
@@ -3781,6 +4155,8 @@ msgid "State"
 msgstr "Състояние"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_module__status
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_name__status
 msgid "Status"
@@ -4086,6 +4462,16 @@ msgid "The controllers this module sees on its bus."
 msgstr "Контролерите, които този модул вижда на своята шина."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
+msgid ""
+"The department %(department)s belongs to %(other)s; choose a department of "
+"%(company)s."
+msgstr ""
+"Отделът %(department)s принадлежи на %(other)s; изберете отдел на "
+"%(company)s."
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_right__door_rec_id
 msgid "The door record the right was granted on, after the import."
 msgstr "Записът за врата, на който е предоставено правото, след импорта."
@@ -4168,31 +4554,32 @@ msgstr "Импортът все още не може да стартира."
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_options_wiz_form
 msgid ""
-"The import creates records here. No command is sent to the controllers, and a\n"
+"The import creates records here. Nothing is written to the controllers, and a\n"
 "                        module keeps reporting to its current server until you point it here afterwards."
 msgstr ""
-"Импортът създава записи тук. Никаква команда не се изпраща към контролерите и\n"
-"                        модул продължава да се отчита пред текущия си сървър, докато не бъде насочен насам впоследствие."
+"Импортът създава записи тук. Към контролерите не се записва нищо, а модулът "
+"продължава да се отчита към текущия си сървър, докато впоследствие не го "
+"пренасочите към този."
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 msgid ""
-"The import finished. Nothing was sent to the controllers. To hand a module "
-"over to this system, use 'Point to this server' on the module."
+"The import finished. Nothing was written to the controllers. To hand a "
+"module over to this system, use 'Point to this server' on the module."
 msgstr ""
-"Импортът приключи. Нищо не беше изпратено към контролерите. За да "
-"прехвърлите модул към тази система, използвайте „Насочи към този сървър“ "
-"върху модула."
+"Импортът приключи. Към контролерите не е записано нищо. За да предадете "
+"модул на тази система, използвайте „Насочи към този сървър“ на модула."
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_run_form
 msgid ""
-"The import finished; nothing was sent to the controllers. To hand a module over,\n"
+"The import finished; nothing was written to the controllers. To hand a module over,\n"
 "                            use \"Point to this server\" on its row, then \"Enable here\"."
 msgstr ""
-"Импортът завърши; нищо не беше изпратено към контролерите. За да предадете модул,\n"
-"                            използвайте \"Насочи към този сървър\" на неговия ред, след което \"Активирай тук\"."
+"Импортът приключи; към контролерите не е записано нищо. За да предадете "
+"модул, използвайте „Насочи към този сървър“ на неговия ред, след това "
+"„Активирай тук“."
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ctrl__io_table_hex
@@ -4201,6 +4588,15 @@ msgid ""
 msgstr ""
 "Таблицата за входове/изходи във формата, в който модулът за контрол на "
 "достъпа я съхранява."
+
+#. module: hr_rfid_hardware_import
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__step_cursor
+msgid ""
+"The last row the current import step finished, so a step that runs over "
+"several passes continues after it."
+msgstr ""
+"Последният ред, който текущата стъпка на импорта е завършила, така че "
+"стъпка, която се изпълнява на няколко прохода, да продължи след него."
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
@@ -4428,6 +4824,12 @@ msgstr ""
 " сега."
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/hw_import_module.py:0
+msgid "The port must be a number from 1 to 65535."
+msgstr "Портът трябва да бъде число от 1 до 65535."
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_issue__group_id
 msgid "The proposed access group this finding is about, if any."
 msgstr ""
@@ -4539,6 +4941,17 @@ msgstr ""
 "Серийният номер на модул %(serial)s е по-дълъг, отколкото тази система може "
 "да съхрани (%(size)s символа); модулът не може да бъде регистриран от този "
 "импорт."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
+msgid ""
+"The sheet '%(sheet)s' would have %(count)s rows; an Excel sheet holds at "
+"most %(limit)s. Export as JSON instead; it has no such limit."
+msgstr ""
+"Листът '%(sheet)s' би имал %(count)s реда; един лист на Excel побира най-"
+"много %(limit)s. Вместо това експортирайте като JSON; той няма такова "
+"ограничение."
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_ts__raw_hex
@@ -4655,6 +5068,11 @@ msgid "The survey this slot belongs to."
 msgstr "Проучването, към което принадлежи този слот."
 
 #. module: hr_rfid_hardware_import
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__run_id
+msgid "The survey to export."
+msgstr "Проучването за експорт."
+
+#. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_options_wiz__run_id
 msgid "The survey to import."
 msgstr "Проучването за импортиране."
@@ -4711,10 +5129,17 @@ msgid "The uploaded names file, kept for reference."
 msgstr "Качения файл с имена, запазен за справка."
 
 #. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
-msgid "The wait for answers must be between 1 and %(max)s seconds."
-msgstr "Изчакването за отговори трябва да е между 1 и %(max)s секунди."
+#: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_export_wiz__file_format
+msgid ""
+"The workbook is for people: modules, controllers, schedules, cards, card "
+"records, access groups, people, findings and the raw replies, one sheet "
+"each. The JSON document holds the same and every decoded setting, for a "
+"program or a later import."
+msgstr ""
+"Файлът е предназначен за хора: модули, контролери, графици, карти, записи на"
+" карти, групи за достъп, хора, констатации и необработените отговори, по "
+"един лист за всяко. JSON документът съдържа същото, плюс всяка декодирана "
+"настройка, за програма или последващ импорт."
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
@@ -4791,12 +5216,13 @@ msgstr ""
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 msgid ""
 "This survey stopped without finishing and has been closed. The module "
-"passwords it held have been cleared. What was read is kept; start a new "
-"survey when you are ready."
+"passwords it held have been cleared. What was read and imported so far is "
+"kept; press 'Reopen the survey' to continue from where it stopped."
 msgstr ""
-"Това проучване спря, без да завърши, и беше затворено. Паролите за модулите,"
-" които е държало, са изчистени. Прочетеното е запазено; стартирайте ново "
-"проучване, когато сте готови."
+"Това проучване спря, без да приключи, и беше затворено. Паролите на "
+"модулите, които държеше, са изчистени. Прочетеното и импортираното до "
+"момента е запазено; натиснете „Повторно отваряне на проучването“, за да "
+"продължите оттам, където е спряло."
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_module_list
@@ -4894,6 +5320,8 @@ msgid "Unknown"
 msgstr "Неизвестно"
 
 #. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_card_record__anomaly
 msgid "Unusual"
 msgstr "Необичайно"
@@ -4926,11 +5354,6 @@ msgstr "Използвано от правата на картата"
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_ctrl__family__vending
 msgid "Vending machine"
 msgstr "Вендинг автомат"
-
-#. module: hr_rfid_hardware_import
-#: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__discovery_timeout
-msgid "Wait for answers (seconds)"
-msgstr "Изчакване за отговори (секунди)"
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,field_description:hr_rfid_hardware_import.field_hr_rfid_hw_import_group_merge_wiz__warning
@@ -5009,6 +5432,12 @@ msgstr ""
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_cmd_log__note
 msgid "What the survey concluded from this reply, when relevant."
 msgstr "Какво заключи проучването от този отговор, когато е приложимо."
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/wizards/hw_import_export_wiz.py:0
+msgid "What the survey read was exported as a file."
+msgstr "Прочетеното при проучването беше експортирано като файл."
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields,help:hr_rfid_hardware_import.field_hr_rfid_hw_import_run__current_phase
@@ -5166,12 +5595,6 @@ msgstr "таблица с карти"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "cards"
-msgstr "карти"
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/hw_import_run.py:0
 msgid "cards: %(n)s"
 msgstr "карти: %(n)s"
@@ -5181,12 +5604,6 @@ msgstr "карти: %(n)s"
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "clock"
 msgstr "часовник"
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "controllers"
-msgstr "контролери"
 
 #. module: hr_rfid_hardware_import
 #: model_terms:ir.ui.view,arch_db:hr_rfid_hardware_import.hw_import_add_ip_wiz_form
@@ -5213,12 +5630,6 @@ msgstr ""
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "groups"
-msgstr "групи"
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "holidays"
 msgstr "празници"
@@ -5237,6 +5648,7 @@ msgstr "настройки на входовете/изходите"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/exporter.py:0
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "input/output table"
 msgstr "таблица за входове/изходи"
@@ -5265,11 +5677,31 @@ msgstr "не отговори; проверете адреса, мрежата �
 #. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid ""
+"it kept answering for another command; another program may be talking to the"
+" module at the same time. Stop it and read the module again"
+msgstr ""
+"продължи да отговаря за друга команда; възможно е друга програма да "
+"комуникира с модула едновременно. Спрете я и прочетете модула отново"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/reader.py:0
+msgid ""
 "it requires a password, or the password is wrong; enter the password on the "
 "module's row and check it again"
 msgstr ""
 "изисква парола или паролата е грешна; въведете паролата на реда на модула и "
 "проверете отново"
+
+#. module: hr_rfid_hardware_import
+#. odoo-python
+#: code:addons/hr_rfid_hardware_import/models/reader.py:0
+msgid ""
+"its address is not a bare IP address or host name; correct the address on "
+"the module's row"
+msgstr ""
+"адресът му не е чист IP адрес или име на хост; коригирайте адреса в реда на "
+"модула"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
@@ -5285,21 +5717,9 @@ msgstr "графици за изходите"
 
 #. module: hr_rfid_hardware_import
 #. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "people"
-msgstr "хора"
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
 #: code:addons/hr_rfid_hardware_import/models/reader.py:0
 msgid "reader settings"
 msgstr "настройки на четеца"
-
-#. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "report"
-msgstr "отчет"
 
 #. module: hr_rfid_hardware_import
 #: model:ir.model.fields.selection,name:hr_rfid_hardware_import.selection__hr_rfid_hw_import_add_ip_wiz__module_username__sdk
@@ -5385,8 +5805,15 @@ msgstr "отговорът беше празен"
 msgid "time schedules"
 msgstr "графици"
 
-#. module: hr_rfid_hardware_import
-#. odoo-python
-#: code:addons/hr_rfid_hardware_import/models/importer.py:0
-msgid "webstacks"
-msgstr "webstack-ове"
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid_hardware_import
+msgid "RFID Hardware Import"
+msgstr "Импорт от RFID хардуер"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid_hardware_import
+msgid ""
+"Survey a running access control system without changing it and import it"
+msgstr ""
+"Проучва работеща система за контрол на достъпа, без да я променя, и я "
+"импортира"

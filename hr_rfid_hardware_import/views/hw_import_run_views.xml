@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
         <record id="hw_import_run_list" model="ir.ui.view">
             <field name="name">hr.rfid.hw.import.run.list</field>
             <field name="model">hr.rfid.hw.import.run</field>
@@ -77,12 +76,20 @@
                         <button name="action_point_modules" type="object" string="Point the modules to this server"
                                 invisible="state != 'done'"
                                 confirm="Every module this survey created here will be told to report to THIS server from now on; modules that were already registered here are not touched. This is the only change the survey ever makes on a device. Continue?"/>
+                        <button name="action_open_export" type="object" string="Export what was read"
+                                icon="fa-download" invisible="not read_at"/>
                         <button name="action_download_report" type="object" string="Download the report"
                                 invisible="state in ('draft', 'discovering')"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,reading,naming,grouping,importing,done"/>
                     </header>
                     <sheet>
+                        <div name="button_box" class="oe_button_box">
+                            <button name="action_open_cmd_log" type="object" class="oe_stat_button" icon="fa-list-alt"
+                                    invisible="cmd_log_count == 0">
+                                <field name="cmd_log_count" widget="statinfo" string="Commands sent"/>
+                            </button>
+                        </div>
                         <div class="alert alert-info" role="status"
                              invisible="state not in ('discovering', 'reading', 'analysing', 'importing')">
                             The survey runs in the background and carries on if the server restarts; you
@@ -94,7 +101,7 @@
                             the import can start - see the Findings, Schedules and People tabs.
                         </div>
                         <div class="alert alert-success" role="status" invisible="state != 'done'">
-                            The import finished; nothing was sent to the controllers. To hand a module over,
+                            The import finished; nothing was written to the controllers. To hand a module over,
                             use "Point to this server" on its row, then "Enable here".
                         </div>
                         <div class="alert alert-danger" role="alert" invisible="state != 'failed'">
@@ -109,13 +116,13 @@
                                        readonly="state != 'draft' or module_count > 0"/>
                                 <field name="user_id" readonly="1"/>
                                 <field name="discovery_broadcast" readonly="state != 'draft'"/>
-                                <field name="discovery_timeout" readonly="state != 'draft'"/>
                             </group>
                             <group string="Progress">
                                 <field name="current_phase" readonly="1"/>
                                 <field name="progress" widget="progressbar" readonly="1"/>
                                 <field name="included_module_count" invisible="1"/>
                                 <field name="has_read_failures" invisible="1"/>
+                                <field name="read_at" invisible="1"/>
                                 <field name="has_blockers" invisible="1"/>
                                 <field name="module_count" invisible="1"/>
                                 <field name="name_line_ids" invisible="1"/>
@@ -194,12 +201,6 @@
                                     </list>
                                 </field>
                             </page>
-                            <page string="Command log" name="log">
-                                <p class="text-muted">
-                                    Every command sent to the hardware and its reply. All of them are read commands.
-                                </p>
-                                <field name="cmd_log_ids" nolabel="1" readonly="1"/>
-                            </page>
                         </notebook>
                     </sheet>
                     <chatter/>
@@ -235,5 +236,4 @@
                   action="hw_import_run_action"
                   groups="base.group_system"
                   sequence="95"/>
-    </data>
 </odoo>

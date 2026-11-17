@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
     <!--
         Showcase demo data: ONE finished hardware survey of a small, invented
         site, so the "Import from Hardware" list is not empty on a demo
@@ -14,22 +14,20 @@
         noupdate="1": the survey is a historical record; an operator may delete
         it once they have seen it.
     -->
-    <data noupdate="1">
         <record id="demo_hw_run" model="hr.rfid.hw.import.run">
             <field name="company_id" ref="base.main_company"/>
             <field name="user_id" ref="base.user_admin"/>
             <field name="state">done</field>
             <field name="discovery_broadcast">True</field>
-            <field name="discovery_timeout">2.0</field>
             <field name="placeholder_owner_type">contact</field>
             <field name="import_hardware">True</field>
             <field name="import_schedules">True</field>
             <field name="import_people">True</field>
             <field name="import_cards">True</field>
             <field name="import_groups">True</field>
-            <field name="phase_done_json">[&quot;cards&quot;, &quot;controllers&quot;, &quot;groups&quot;, &quot;people&quot;, &quot;report&quot;, &quot;schedules&quot;, &quot;webstacks&quot;]</field>
-            <field name="done_count">7</field>
-            <field name="total_count">7</field>
+            <field name="phase_done_json">[&quot;cards&quot;, &quot;controllers&quot;, &quot;groups&quot;, &quot;memberships&quot;, &quot;people&quot;, &quot;report&quot;, &quot;schedules&quot;, &quot;webstacks&quot;]</field>
+            <field name="done_count">8</field>
+            <field name="total_count">8</field>
             <field name="discovered_at">2026-06-01 08:00:00</field>
             <field name="read_at">2026-06-01 08:20:00</field>
             <field name="analysed_at">2026-06-01 08:21:00</field>
@@ -527,7 +525,7 @@
             <field name="run_id" ref="demo_hw_run"/>
             <field name="kind">report</field>
             <field name="severity">info</field>
-            <field name="message">6 cards were created.</field>
+            <field name="message">6 cards are in place.</field>
             <field name="resolution">none</field>
         </record>
         <record id="demo_hw_issue_9" model="hr.rfid.hw.import.issue">
@@ -541,7 +539,7 @@
             <field name="run_id" ref="demo_hw_run"/>
             <field name="kind">report</field>
             <field name="severity">info</field>
-            <field name="message">Result: 1 modules, 3 controllers, 6 cards, 9 door rights. No command was sent to the hardware.</field>
+            <field name="message">Result: 1 modules, 3 controllers, 6 cards, 9 door rights. Nothing was written to the controllers.</field>
             <field name="resolution">none</field>
         </record>
         <record id="demo_hw_log_1" model="hr.rfid.hw.import.cmd.log">
@@ -664,5 +662,4 @@
             <field name="skewed">False</field>
             <field name="attempt">1</field>
         </record>
-    </data>
 </odoo>

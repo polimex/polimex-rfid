@@ -1,7 +1,7 @@
 import { registry } from "@web/core/registry";
 
 /**
- * Narrative 8: the import is done and nothing was sent to the hardware. The
+ * Narrative 8: the import is done and nothing was written to the hardware. The
  * module row offers the one explicit device action, "Point to this server",
  * behind a confirmation the operator can still walk away from, and "Enable
  * here" as the step after it. Selectors use icons and names, never text.
@@ -19,7 +19,7 @@ registry.category("web_tour.tours").add("hw_import_handover_tour", {
             trigger: ".o_form_view .o_statusbar_status button.o_arrow_button_current[data-value='done']",
         },
         {
-            content: "The operator is told that nothing was sent to the controllers",
+            content: "The operator is told that nothing was written to the controllers",
             trigger: ".o_form_view .alert-success",
         },
         {

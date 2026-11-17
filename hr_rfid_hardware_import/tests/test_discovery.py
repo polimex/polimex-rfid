@@ -3,58 +3,81 @@
 Owner: "Първо се прави автоматична детекция на модули и се дава списъкът им с
 възможност да се добавят IP-та на модули, които не са намерени".
 """
+
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from .common import HwImportCase, MODULE_A_IP, MODULE_A_SERIAL, MODULE_B_IP, MODULE_B_SERIAL
+from .common import (
+    MODULE_A_IP,
+    MODULE_A_SERIAL,
+    MODULE_B_IP,
+    MODULE_B_SERIAL,
+    HwImportCase,
+)
 
 
-@tagged('post_install', '-at_install', 'rfid_hw_import', 'rfid_hw_import_discovery')
+@tagged("post_install", "-at_install", "rfid_hw_import", "rfid_hw_import_discovery")
 class TestDiscovery(HwImportCase):
-
     def test_the_network_search_lists_the_modules_it_hears(self):
         run = self._new_run()
         run.action_discover()
         self._work(run)
-        self.assertEqual(run.state, 'draft')
+        self.assertEqual(run.state, "draft")
         module = run.module_ids
         self.assertEqual(len(module), 1)
         self.assertEqual(module.ip, MODULE_A_IP)
         self.assertEqual(module.serial, MODULE_A_SERIAL)
-        self.assertEqual(module.status, 'new')
+        self.assertEqual(module.status, "new")
         self.assertEqual(module.dev_found, 5)
-        self.assertIn('old-server.example', module.server_url)
+        self.assertIn("old-server.example", module.server_url)
         self.assertTrue(module.include)
-        self.assertNotIn('secret', module.config_json, "keys and passwords never land in the survey")
+        self.assertNotIn(
+            "secret", module.config_json, "keys and passwords never land in the survey"
+        )
 
     def test_a_module_behind_a_router_is_added_by_address(self):
         run = self._new_run()
         module = self._add_module_b(run)
-        self.assertEqual(module.source, 'manual')
+        self.assertEqual(module.source, "manual")
         self.assertEqual(module.serial, MODULE_B_SERIAL)
-        self.assertEqual(module.hw_version, '10.3')
-        self.assertEqual(module.status, 'new')
+        self.assertEqual(module.hw_version, "10.3")
+        self.assertEqual(module.status, "new")
         self.assertEqual(module.dev_found, 2)
 
     def test_an_address_that_does_not_answer_stays_listed_as_unreachable(self):
         run = self._new_run()
-        wiz = self.env['hr.rfid.hw.import.add.ip.wiz'].create({'run_id': run.id, 'ip': '192.0.2.99'})
+        wiz = self.env["hr.rfid.hw.import.add.ip.wiz"].create(
+            {"run_id": run.id, "ip": "192.0.2.99"}
+        )
         result = wiz.action_add()
         module = run.module_ids
-        self.assertEqual(module.status, 'unreachable')
-        self.assertEqual(result['params']['type'], 'warning')
+        self.assertEqual(module.status, "unreachable")
+        self.assertEqual(result["params"]["type"], "warning")
         with self.assertRaises(UserError):
             run.action_read()
 
-    def test_a_module_already_registered_here_is_shown_and_left_out_by_default(self):
-        self.env['hr.rfid.webstack'].sudo().create({
-            'name': 'Existing module', 'serial': MODULE_A_SERIAL, 'active': False,
-            'company_id': self.company.id})
+    def test_a_module_already_registered_here_does_not_answer_the_search_and_is_added_by_address(
+        self,
+    ):
+        """The network search is the access control module's own: a module it
+        already knows is not listed. Added by address, it is shown as known
+        and left out unless the operator ticks it."""
+        self.env["hr.rfid.webstack"].sudo().create(
+            {
+                "name": "Existing module",
+                "serial": MODULE_A_SERIAL,
+                "active": False,
+                "company_id": self.company.id,
+            }
+        )
         run = self._new_run()
         run.action_discover()
         self._work(run)
-        module = run.module_ids
-        self.assertEqual(module.status, 'known')
+        self.assertFalse(
+            run.module_ids, "the registered module did not answer the search"
+        )
+        module = self._add_module_a(run)
+        self.assertEqual(module.status, "known")
         self.assertFalse(module.include)
         self.assertTrue(module.existing_webstack_id)
 

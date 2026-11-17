@@ -161,7 +161,9 @@ README.rst                 8-те стъпки, какво никога не п�
 docs/llms.txt, docs/llms-full.md   шаблон от hr_rfid_odoo_import/docs
 i18n/*.pot, bg.po
 helpers/allowlist.py       READ_OPCODES + ForbiddenOpcode + индексни гардове F3(1..15)/F4(1..8)
-helpers/transport.py       HardwareClient (requests, skew guard, retry по e), UdpDiscovery
+helpers/transport.py       HardwareClient (requests, skew guard, retry по e), CoreDiscovery (обвивка на _discover_ws на ядрото)
+models/exporter.py         SurveyExporter - всичко прочетено като Excel или JSON, без внос (plain class)
+wizards/hw_import_export_wiz.py  формат Excel/JSON, команден дневник по избор
 helpers/codecs.py          всички декодери (card record, F3->ts_data, F4, F5, F6, F9, FB, FC,
                            FF, B0, B3, F7), reader->door и zone->door карти, family, record_size
 helpers/fake_transport.py  FakeTransport за тестове/tour/демо (скриптирани отговори, allowlist)
@@ -201,7 +203,7 @@ tests/common.py + test_allowlist, test_transport, test_codecs, test_discovery,
 - **run** (`mail.thread`, `_order='create_date desc'`): name (compute store),
   company_id (required, index), user_id, state [draft, discovering, reading,
   analysing, naming, grouping, importing, done, failed] (tracking), discovery_broadcast,
-  discovery_timeout, O2M към всички редове, names_file (attachment) + names_file_name,
+  O2M към всички редове, names_file (attachment) + names_file_name,
   placeholder_owner_type (employee/contact, default contact), default_department_id
   (задължителен щом има служител), import_hardware/import_schedules/import_people/
   import_cards/import_groups (Boolean default True - всяка стъпка е пропускаема),
@@ -292,9 +294,14 @@ tests/common.py + test_allowlist, test_transport, test_codecs, test_discovery,
   повтори 3x (0.5/1/2 s) после ReadFailed; 23 повтори 6x през 5 s; 24 2x; 12 3x през
   2 s; 14 -> CapabilityGap; 4 -> CapabilityGap само при relay=True; друго ReadFailed.
   Без изкуствени паузи (решение 12). Всеки опит -> on_log -> cmd.log ред.
-- `UdpDiscovery.broadcast(timeout)` (огледало на `_discover_ws`, но пази ВСИЧКИ
-  отговори - регистрираните стават `known`) и `unicast(ip)` с fallback към
-  `get_config()` (serial = `convertor`, hw = `sdk.sdkHardware`, fw = `sdkVersion`).
+- Мрежовото търсене е това на ядрото: `CoreDiscovery(env).broadcast()` вика
+  `hr.rfid.webstack.discovery._discover_ws()` (праща пакета, събира отговорите в
+  редове на съветника, не пише по устройства; `setup_modules` не се вика). Договорът
+  на ядрото се пази: вече регистриран модул не излиза от търсенето - добавя се по
+  адрес, където `get_config()` го идентифицира (serial = `convertor`, hw =
+  `sdk.sdkHardware`, fw = `sdkVersion`). Решение на собственика, 05.09.2026:
+  „откриването трябва да преизползва кор кода на hr_rfid" - собственият UDP код и
+  полето за изчакване са махнати.
 - Seam: клас-атрибут `run._transport_factory` (не контекстен ключ - кронът работи в
   нов environment). `FakeTransport(script)` отговаря на discovery/config/status/cmd
   от речник, записва всяко повикване, налага allowlist, може да инжектира skew и
@@ -437,6 +444,11 @@ Empty state на action-а (2 абзаца). Меню: `hw_import_menu` „Вн�
    (`test_read_resume`)
 10. Операторът слива две групи: предупреждението изброява допълнителните права;
     слятата група се внася веднъж. (`test_analysis_groups`)
+11. Всичко прочетено се взима като файл, без внос (решение на собственика,
+    05.09.2026: „всичко изчетено трябва да може да се предложи като файл за експорт
+    без да се импортира в одоо"): Excel с лист за всяко нещо + суровите отговори,
+    или JSON с всичко декодирано; преди внос, след внос и след срив; нищо не се
+    създава и нищо не се праща. (`test_export`, tour `hw_import_export_tour`)
 Плюс отрицателни: `test_allowlist` (D1, DA, DC, B0 '00', B1 '00', F3 '00', F4 '09'
 вдигат преди fake-а да види нещо), `test_transport` (skew, e=20 retry, e=23),
 `test_codecs` (картите на четци/зони = реалните врати на ядрото за всяка F0
@@ -522,7 +534,7 @@ groups (run в grouping -> inline име -> съветник за сливане
 | 2 имплементация | готово | helpers (allowlist, codecs, transport, fake), 13 модела, 4 съветника, изгледи, права, крон, демо, тестове, tour-ове, docs |
 | 3 инсталация | готово | прясна база (bg_BG, демо): exit 0, 0 WARNING по grep-а; `-u` след всяка серия промени: exit 0, 0 WARNING |
 | 3b целият сет | готово | прясна база (bg_BG, BG, демо), 26 модула от сета: `ir_demo_failure` = 0, 0 модула с demo IS NOT TRUE, 54/54 демо записа, менютата непразни; `-u` на модула: exit 0, 0 WARNING |
-| 4-6 QA, разкази, тестове | готово | 10 разказа (раздел I) + формите на отказ -> 96 backend теста + 10 tour-а (един на разказ, всичките под bg UI), 5 оракул теста срещу polimex-protocol 0.1.1 (векторите не са в repo-то, път от `POLIMEX_PROTOCOL_VECTORS`); общо 106 в пакета на модула, 0 паднали |
+| 4-6 QA, разкази, тестове | готово | 11 разказа (раздел I) + формите на отказ -> 100 backend теста + 11 tour-а (един на разказ, всичките под bg UI), 5 оракул теста срещу polimex-protocol 0.1.1 (векторите не са в repo-то, път от `POLIMEX_PROTOCOL_VECTORS`); общо 111 в пакета на модула, 0 паднали |
 | живо срещу демо желязото | готово | двата демо модула на лабораторния стенд (адресите ги знае протоколната сесия; само по адрес, без broadcast): 8 контролера, 5 карти, 51 s, само allowlist опкоди, 0 skew; внос в тестовата база: 2 модула (неактивни), 7 контролера с врати/четци, 5 карти с огледални права, 2 групи, 0 команди за запис; пожарният панел отговори с повреден отговор (e=22) - докладвано като шина/окабеляване, добавен повторен опит |
 | 7 llms | готово | docs/llms.txt, docs/llms-full.md (без wire детайли) |
 | 8 превод | готово | POT 855 низа, bg.po 860/860 през po-ai-translator (sonnet), po_quality_check PASS, без дълги тирета, цитираните имена на бутони сверени знак по знак с преводите на самите бутони |

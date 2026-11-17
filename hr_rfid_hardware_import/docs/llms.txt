@@ -6,7 +6,7 @@ doc_type: user_guide
 audience:
 - user
 summary: Survey a running access control system without changing it, name the card holders, review the proposed access groups and import it all
-last_updated: '2026-09-04'
+last_updated: '2026-11-13'
 companion_doc: llms-full.md
 ---
 
@@ -25,9 +25,9 @@ import everything into this system.
 
 The survey only reads. Every command it sends is a read command, checked
 against a fixed list before it leaves, and every command is logged with its
-reply. The import creates records here without sending anything to the
-hardware. Handing a module over to this server is a separate button that you
-press on purpose.
+reply. The import creates records here and writes nothing to the
+controllers. Handing a module over to this server is a separate button that
+you press on purpose.
 
 ## Where to find it
 
@@ -37,10 +37,13 @@ surveys made so far; New starts one.
 ## The steps
 
 1. **Modules.** Press *Find modules on the network* to search the local
-   network. A module behind a router does not answer the search - add it
-   with *Add a module by address*. Each module shows whether it is new here
-   or already registered, how many controllers it sees and which server it
-   reports to today. Tick the modules to read.
+   network; this is the access control module's own search. A module behind
+   a router does not answer it, and neither does a module already registered
+   here - add those with *Add a module by address*. Type only the IP address
+   or the name of the module (e.g. 192.168.1.50) and the port in its own
+   field; anything else is refused. Each module shows whether
+   it is new here or already registered, how many controllers it sees and
+   which server it reports to today. Tick the modules to read.
 2. **Reading.** Press *Read the controllers*. The survey reads the settings
    and the whole card table of every controller, in the background; the
    page shows how far it has got and you can close it. Vending machine
@@ -53,7 +56,9 @@ surveys made so far; New starts one.
    controller per schedule slot and the names you gave to groups whose cards
    did not change are kept. A module that requires a password gets it on its
    own form (*Access to the module*), then *Check again*. Press *Refresh*
-   while the survey works to see how far it has got.
+   while the survey works to see how far it has got. If the server restarts
+   in the middle, the survey carries on by itself when the server is back, and a
+   card table that was half read continues from where it stopped.
 3. **Names.** Upload a CSV or Excel file with two columns, the person's name
    and the card number, or continue without one. Cards are matched by
    number. The same name on several lines becomes one person with several
@@ -72,13 +77,28 @@ surveys made so far; New starts one.
    present here - decide for each whether to use the existing record or
    leave the surveyed one out.
 5. **Import.** Press *Import...*, choose what to include (every part can be
-   left out) and start it. The import runs in the background. A survey that
+   left out) and start it. The import runs in the background, in small
+   pieces that are each saved; on a site with tens of thousands of cards it
+   takes several minutes, and the progress bar shows how far it has got. The
+   department you choose must belong to the survey's company. A survey that
    stops on a problem keeps everything it read and imported so far; *Reopen
    the survey* takes it back to the step it was at, and a second start
    creates nothing twice.
 6. **Hand over.** When you are ready for a module to report to this
    server, press *Point to this server* on the module, then *Enable here*.
    Until then the module keeps working with its current server.
+
+At any point after the reading, with or without an import, *Export what was
+read* gives you everything the survey holds as a file: an Excel workbook with
+one sheet per kind of thing (modules, controllers, schedules, cards, card
+records, access groups, people, findings, raw replies) or a JSON document with
+the same plus every decoded setting, for another system or a later import. The
+command log can be included as proof that only read commands were used. An
+Excel sheet holds about a million rows; a survey too large for that is
+refused as a workbook and is exported as JSON instead.
+
+The commands sent to the hardware open from the *Commands sent* button at the
+top of the survey, with the number of commands on it.
 
 ## What to expect
 
@@ -91,14 +111,22 @@ surveys made so far; New starts one.
 * A right the system cannot hold exactly (a card accepted on one reader of a
   door only, or with different schedules on the two readers) is imported as
   a right on the whole door and noted in the report.
+* Anti-passback comes over for the doors that have both an entry and an
+  exit reader. A controller that treats its two reader pairs as one zone,
+  or has anti-passback switched on for readers that stand on separate
+  doors, is named in the report; that setting is not imported, because this
+  system keeps anti-passback per door.
 * A second survey of the same site creates nothing twice.
+* A person who was already in this system and has more cards than the
+  survey read gets the new access groups on all of their cards here; the
+  report names those cards, because the controllers do not hold them yet.
 * The report lists everything that was created, left out or could not be
   represented exactly, and can be downloaded as a text file.
 
 ## Frequently asked questions
 
 **Does the survey change anything on the controllers?** No. It only reads,
-and the command log on the survey shows every command it sent.
+and the *Commands sent* button on the survey shows every command it sent.
 
 **Can I read a module that reports to another server?** Yes. The survey
 talks to the module directly and does not change where it reports to.
@@ -106,6 +134,14 @@ talks to the module directly and does not change where it reports to.
 **A controller is listed as "Not reachable" or "Failed".** The module or the
 controller did not answer, or answered with a damaged reply. Check the
 device and press *Check again* on the module, or start a new survey.
+
+**The survey says it stopped without finishing.** The server was restarted
+or stopped the background work for too long. Everything read and imported
+so far is kept; press *Reopen the survey* to continue.
+
+**In which language are the findings and the report?** In the language of
+the person who started the survey, although the work is done in the
+background.
 
 **Why is a vending machine controller left out?** Vending machines sell
 against card balances; they hold no access rights and are not part of an
