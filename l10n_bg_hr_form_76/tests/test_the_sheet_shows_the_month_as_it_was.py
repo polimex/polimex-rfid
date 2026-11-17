@@ -13,7 +13,7 @@ sheet is about.
 
 from datetime import date
 
-from odoo.tests.common import tagged
+from odoo.tests.common import new_test_user, tagged
 
 from .test_form_76 import TestForm76Common
 
@@ -363,3 +363,331 @@ class TestTheSheetShowsTheMonthAsItWas(TestForm76Common):
             }
         )
         self.assertNotIn(self.employee_1.id, [row[0] for row in rows])
+
+    # -- Who is on the sheet, and on which days ------------------------------
+
+    def _rows(self, month):
+        report = self.env["report.l10n_bg_hr_form_76.report_form_76"]
+        _days, rows = report._get_attendance_data(
+            {
+                "report_year": 2026,
+                "report_month": month,
+                "precision": 2,
+                "department_ids": self.department.ids,
+                "company_id": self.company.id,
+                "set_hours_to": 0,
+            }
+        )
+        return [row[0] for row in rows]
+
+    def _contract(self, employee, start, end=False):
+        employee.version_ids[:1].write(
+            {
+                "date_version": start,
+                "contract_date_start": start,
+                "contract_date_end": end,
+            }
+        )
+
+    def test_a_person_who_left_in_the_month_is_on_its_sheet_until_the_last_day(self):
+        """The contract ended on 10 March and the person was archived: the
+        March sheet still lists them. The days after the 10th are blank, not
+        absences, and the norm counts only the 7 working days up to the 10th."""
+        self._contract(self.employee_2, date(2026, 1, 1), date(2026, 3, 10))
+        self.employee_2.with_context(no_wizard=True).action_archive()
+
+        line = self._line(self.employee_2)
+
+        self.assertEqual(line["days"][9], "С")
+        self.assertEqual(set(line["days"][10:]), {""})
+        self.assertEqual(line["samootluchka"], 7)
+        self.assertEqual(line["hours_summary"].split("/")[1], "56")
+
+    def test_a_person_who_left_before_the_month_is_not_on_its_sheet(self):
+        """NEGATIVE: the contract ended on 20 February; the March sheet does
+        not list the person."""
+        self._contract(self.employee_2, date(2026, 1, 1), date(2026, 2, 20))
+        self.employee_2.with_context(no_wizard=True).action_archive()
+
+        self.assertNotIn(self.employee_2.id, self._rows(3))
+        self.assertIn(self.employee_2.id, self._rows(2))
+
+    def test_a_person_hired_in_the_month_is_blank_before_the_first_day(self):
+        """Hired on Friday 20 March, the person is on the March sheet; the
+        days before the 20th are blank, the 20th is a working day."""
+        newcomer = self.env["hr.employee"].create(
+            {
+                "name": "Петър Нов",
+                "department_id": self.department.id,
+                "company_id": self.company.id,
+                "date_version": date(2026, 3, 20),
+                "contract_date_start": date(2026, 3, 20),
+            }
+        )
+
+        line = self._line(newcomer)
+
+        self.assertEqual(set(line["days"][:19]), {""})
+        self.assertEqual(line["days"][19], "С")
+
+    def test_a_person_hired_after_the_month_is_not_on_its_sheet(self):
+        """NEGATIVE: hired on 20 March, the person is not on the February
+        sheet with a month of absences."""
+        newcomer = self.env["hr.employee"].create(
+            {
+                "name": "Петър Нов",
+                "department_id": self.department.id,
+                "company_id": self.company.id,
+                "date_version": date(2026, 3, 20),
+                "contract_date_start": date(2026, 3, 20),
+            }
+        )
+
+        self.assertNotIn(newcomer.id, self._rows(2))
+
+    def _six_days_until_april(self):
+        attendances = [
+            (
+                0,
+                0,
+                {
+                    "name": "%s %s" % (day, period),
+                    "dayofweek": str(day),
+                    "hour_from": hour_from,
+                    "hour_to": hour_to,
+                    "day_period": period,
+                },
+            )
+            for day in range(6)
+            for period, hour_from, hour_to in (
+                ("morning", 8, 12),
+                ("afternoon", 13, 17),
+            )
+        ]
+        six_days = self.env["resource.calendar"].create(
+            {
+                "name": "Six days a week F76",
+                "company_id": self.company.id,
+                "tz": "Europe/Sofia",
+                "attendance_ids": attendances,
+            }
+        )
+        self.employee_2.version_ids[:1].write(
+            {
+                "date_version": date(2026, 1, 1),
+                "contract_date_start": date(2026, 1, 1),
+                "resource_calendar_id": six_days.id,
+            }
+        )
+        self.employee_2.create_version(
+            {
+                "date_version": date(2026, 4, 1),
+                "resource_calendar_id": self.company.resource_calendar_id.id,
+            }
+        )
+
+    def test_the_days_off_of_march_are_those_of_the_march_schedule(self):
+        """The person worked six days a week until April and five since: on
+        the March sheet Saturday 14 March is a working day missed ("С"), not
+        a day off taken from today's schedule."""
+        self._six_days_until_april()
+
+        line = self._line(self.employee_2)
+
+        self.assertEqual(line["days"][13], "С")
+        self.assertEqual(line["days"][14], "Н")
+
+    def test_the_days_off_of_april_are_those_of_the_april_schedule(self):
+        """NEGATIVE: on the April sheet Saturday 4 April is a day off."""
+        self._six_days_until_april()
+
+        line = self._line(self.employee_2, report_month=4)
+
+        self.assertEqual(line["days"][3], "Н")
+
+    # -- Hours not worked on a day the person came ---------------------------
+
+    def _hourly_type(self):
+        return self.env["hr.leave.type"].create(
+            {
+                "name": "Hourly time off F76",
+                "requires_allocation": False,
+                "request_unit": "hour",
+                "company_id": self.company.id,
+            }
+        )
+
+    def _hours_off(self, leave_type, day, hour_from, hour_to, approve=True):
+        leave = self.env["hr.leave"].create(
+            {
+                "employee_id": self.employee_1.id,
+                "holiday_status_id": leave_type.id,
+                "request_date_from": day,
+                "request_date_to": day,
+                "request_unit_hours": True,
+                "request_hour_from": hour_from,
+                "request_hour_to": hour_to,
+            }
+        )
+        if approve:
+            leave.action_approve()
+            if leave.state != "validate":
+                leave.action_validate()
+        return leave
+
+    def _came_and_counted(self, day, check_in_utc, check_out_utc):
+        """The person badges in and out (UTC; Sofia is UTC+2 in March) and
+        the daily figures are worked out as the attendance module does."""
+        self.env["hr.attendance"].create(
+            {
+                "employee_id": self.employee_1.id,
+                "check_in": "%s %s" % (day, check_in_utc),
+                "check_out": "%s %s" % (day, check_out_utc),
+            }
+        )
+        self.employee_1.update_extra_attendance_data(
+            date.fromisoformat(day), overwrite_existing=True
+        )
+
+    def test_a_morning_off_is_four_partial_hours(self):
+        """Approved time off 08:00-12:00 on Tuesday, at work 13:00-17:00:
+        the four hours off are unworked hours under "Частични" (NSI does not
+        count leave as worked time) - four, once."""
+        leave = self._hours_off(self._hourly_type(), "2026-03-10", 8, 12)
+        self.assertEqual(leave.number_of_hours, 4.0)
+        self._came_and_counted("2026-03-10", "11:00:00", "15:00:00")
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["days"][9], "4")
+        self.assertEqual(line["partial"], 4.0)
+
+    def test_coming_after_lunch_misses_four_hours_not_five(self):
+        """At work 13:00-17:00 without any time off, on an 08:00-17:00 day
+        with a lunch hour: four scheduled hours were missed, the lunch hour
+        is not one of them."""
+        self._came_and_counted("2026-03-10", "11:00:00", "15:00:00")
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["partial"], 4.0)
+
+    def test_time_off_not_yet_approved_is_not_counted_twice(self):
+        """NEGATIVE: the morning off was only asked for, not approved; the
+        four hours are missed hours of the day, counted once, not again as
+        time off."""
+        self._hours_off(self._hourly_type(), "2026-03-10", 8, 12, approve=False)
+        self._came_and_counted("2026-03-10", "11:00:00", "15:00:00")
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["partial"], 4.0)
+
+    def test_half_a_day_off_is_four_partial_hours(self):
+        """Approved the morning off as half a day, at work in the afternoon:
+        four partial hours."""
+        half_day = self.env["hr.leave.type"].create(
+            {
+                "name": "Half-day time off F76",
+                "requires_allocation": False,
+                "request_unit": "half_day",
+                "company_id": self.company.id,
+            }
+        )
+        leave = self.env["hr.leave"].create(
+            {
+                "employee_id": self.employee_1.id,
+                "holiday_status_id": half_day.id,
+                "request_date_from": "2026-03-10",
+                "request_date_to": "2026-03-10",
+                "request_unit_half": True,
+                "request_date_from_period": "am",
+                "request_date_to_period": "am",
+            }
+        )
+        leave.action_approve()
+        if leave.state != "validate":
+            leave.action_validate()
+        self._came_and_counted("2026-03-10", "11:00:00", "15:00:00")
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["partial"], 4.0)
+
+    def test_time_off_over_two_days_is_partial_on_the_day_the_person_came(self):
+        """Approved time off from Tuesday 13:00 to Wednesday 12:00, at work
+        Tuesday morning and Wednesday afternoon: the afternoon off and the
+        morning off are four partial hours each."""
+        leave = self.env["hr.leave"].create(
+            {
+                "employee_id": self.employee_1.id,
+                "holiday_status_id": self._hourly_type().id,
+                "request_date_from": "2026-03-10",
+                "request_date_to": "2026-03-11",
+                "request_unit_hours": True,
+                "request_hour_from": 13,
+                "request_hour_to": 12,
+            }
+        )
+        leave.action_approve()
+        if leave.state != "validate":
+            leave.action_validate()
+        self._came_and_counted("2026-03-10", "06:00:00", "10:00:00")
+        self._came_and_counted("2026-03-11", "11:00:00", "15:00:00")
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["partial"], 8.0)
+
+    def test_a_whole_day_off_is_not_partial(self):
+        """NEGATIVE: time off for the whole of Tuesday, 08:00-17:00, is a day
+        of leave, not nine or eight partial hours, whatever the type's unit."""
+        self._hours_off(self._hourly_type(), "2026-03-10", 8, 17)
+        self._day(
+            self.employee_1,
+            "2026-03-10",
+            theoretical_work_time=0.0,
+            actual_work_time=1.0,
+        )
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["partial"], 0)
+
+    # -- Who else is not on the sheet ----------------------------------------
+
+    def test_an_archived_person_without_contract_dates_is_not_on_the_sheet(self):
+        """NEGATIVE: a former employee archived without contract dates is not
+        on every later sheet with a month of absences."""
+        self.employee_2.with_context(no_wizard=True).action_archive()
+
+        self.assertNotIn(self.employee_2.id, self._rows(3))
+
+    def test_the_attendance_manager_prints_people_with_contracts(self):
+        """The attendance manager, who is not an HR manager and cannot read
+        contract dates, prints the March sheet; the person who left on
+        10 March is on it."""
+        self._contract(self.employee_2, date(2026, 1, 1), date(2026, 3, 10))
+        manager = new_test_user(
+            self.env,
+            login="f76_attendance_manager",
+            groups="base.group_user,hr_attendance.group_hr_attendance_manager",
+        )
+        report = self.env["report.l10n_bg_hr_form_76.report_form_76"].with_user(manager)
+
+        lines = report._get_report_values(
+            None,
+            data={
+                "report_year": 2026,
+                "report_month": 3,
+                "precision": 2,
+                "department_ids": self.department.ids,
+                "company_id": self.company.id,
+                "set_hours_to": 0,
+            },
+        )["departments"]
+
+        self.assertIn(
+            self.employee_2.id,
+            [line["employee_id"] for dept in lines.values() for line in dept],
+        )

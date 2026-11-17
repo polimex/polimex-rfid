@@ -37,6 +37,17 @@ is therefore marked on its own day, not on the evening before.
 The columns follow the NSI template of the attendance sheet
 ("Таблица за отчитане явяването/неявяването на работа").
 
+- **Who is on the sheet:** everybody under contract on at least one day of
+  the month, including a person who left during the month and was archived,
+  and a person hired during it; nobody who left before the month or was hired
+  after it. The days outside the contract are blank, not absences, and the
+  norm counts only the working days of the contract. This needs the
+  **Contract Start Date** (and the end date for a person who left) on the
+  employee; an employee without contract dates is on every month's sheet
+  while active.
+- **Days off ("Н")** are those of the working schedule the person had in that
+  month, so a schedule changed later does not change the sheet of a past
+  month.
 - **Days of leave** show the Form 76 letter of the time-off type. With the
   Bulgarian time-off catalog installed, a time-off type has two Form 76
   letter fields; the letter filled in the catalog's field is printed, the
@@ -51,8 +62,10 @@ The columns follow the NSI template of the attendance sheet
   and holidays.
 - Hours are rounded day by day, half up, as the day cells are; with
   precision 0 every column prints whole numbers.
-- **"Частични"** (under "Неотработени човекочасове") holds the hours missed
-  on days the person came: late arrival and early leave.
+- **"Частични"** (under "Неотработени човекочасове") holds the scheduled hours
+  not worked on days the person came - arriving late, leaving early, a gap in
+  the day (a lunch break is not one of them) - and approved time off
+  for part of the day (half a day or some hours) - leave is not worked time.
 - **"в т.ч. целодневен престой"** stays empty: standstill caused by the
   employer is not recorded in the system; fill it in by hand if there was
   any.

@@ -1,10 +1,19 @@
 from odoo import api, models, _
 from odoo.exceptions import UserError
-from odoo.tools import float_round
+from odoo.tools import float_compare, float_round
 from datetime import date, datetime, time, timedelta
 import calendar
 import pytz
+from collections import defaultdict
 from markupsafe import Markup
+
+# A day outside the person's contract: before they were hired or after they
+# left. The NSI sheet leaves it blank - it is neither attendance nor absence.
+OUT_OF_CONTRACT = ''
+
+
+def _month_days(first, last):
+    return [first + timedelta(days=offset) for offset in range((last - first).days + 1)]
 
 
 class ReportForm76(models.AbstractModel):
@@ -30,13 +39,26 @@ class ReportForm76(models.AbstractModel):
         date_from = date(report_year, report_month, 1)
         date_to = date(report_year, report_month, last_day_num)
 
+        # Who is on the sheet: everybody in contract on at least one day of
+        # the month, archived or not, as core counts it
+        # (hr.employee._get_versions_with_contract_overlap_with_period) - the
+        # person who left on the 10th and the one hired on the 20th are on
+        # their month's sheet, nobody hired later is. A person with no
+        # contract dates at all has no period to go by and is on every sheet
+        # while active (core's _get_resource_without_contract).
+        # Archived people are looked for, archived versions are not: the days
+        # of the sheet come from the active versions (core's
+        # _get_contracts_valid_periods), so the list goes by the same ones.
+        company_employees = self.env['hr.employee'].sudo().with_context(active_test=False).search(
+            [('company_id', '=', company_id)]).with_context(active_test=True)
+        employees = (
+            company_employees._get_versions_with_contract_overlap_with_period(date_from, date_to).employee_id
+            | company_employees.filtered('active').resource_id._get_resource_without_contract().employee_id
+        )
         # The sheet of a past month shows the person's department and position
         # of that month: the version in force on its last day, as core picks
         # it (hr.employee._get_version), not the one in force today.
-        month_versions = {
-            employee.id: employee._get_version(date_to)
-            for employee in self.env['hr.employee'].sudo().search([('company_id', '=', company_id)])
-        }
+        month_versions = {employee.id: employee._get_version(date_to) for employee in employees}
         month_versions = {
             employee_id: version for employee_id, version in month_versions.items()
             if version.department_id.id in department_ids
@@ -114,57 +136,102 @@ class ReportForm76(models.AbstractModel):
         return last_day_num, rows
 
     def _get_holiday_map(self, employee_ids, date_from, date_to):
-        """Batch извличане на работен график — празнични/почивни дни за ВСИЧКИ служители."""
+        """Each day of the month of every person on the sheet: 'Н' for a day
+        off or a public holiday, False for a working day, OUT_OF_CONTRACT for
+        a day outside the person's contract.
+
+        The days off of a past month are those of the working schedule in
+        force then: core keeps, per person, which schedule was valid over
+        which part of the period - the schedule of each contract version, and
+        for a person without contract dates the current one over the whole
+        period (resource.resource._get_calendars_validity_within_period). A
+        day no contract covers is in no schedule's period.
+        """
         employees = self.env['hr.employee'].browse(employee_ids)
-        result = {}
+        result = {
+            employee_id: dict.fromkeys(_month_days(date_from, date_to), OUT_OF_CONTRACT)
+            for employee_id in employee_ids
+        }
 
-        # Group employees by calendar for batch processing - and by the zone
-        # their days are read in (hr.employee._local_tz, the one the daily
-        # figures in the same report are filed under).
-        groups = employees.grouped(
-            lambda emp: (emp.resource_id.calendar_id, emp._local_tz()))
-
-        for (cal, zone), emps in groups.items():
+        # The days are read in the person's own zone (hr.employee._local_tz,
+        # the one the daily figures in the same report are filed under).
+        for zone, emps in employees.grouped(lambda emp: emp._local_tz()).items():
             tz = pytz.timezone(zone)
             start_dt = tz.localize(datetime.combine(date_from, time.min))
             end_dt = tz.localize(datetime.combine(date_to, time.max))
+            validity = emps.resource_id.sudo()._get_calendars_validity_within_period(start_dt, end_dt)
 
-            resources = emps.resource_id
-
-            # Batch calls — ONE per calendar, not per employee per day
-            attendance_intervals = cal._attendance_intervals_batch(start_dt, end_dt, resources)
-            leave_intervals = cal._leave_intervals_batch(start_dt, end_dt)
-
-            # Global leaves are under key False (no specific resource)
-            global_leaves = leave_intervals[False]
-
+            # A contract version without a schedule (fully flexible) has no
+            # days off of its own; the sheet reads them from the company's
+            # schedule, as core does for a resource without one
+            # (resource.resource._get_calendars_validity_within_period).
+            periods_per_schedule = defaultdict(list)
             for emp in emps:
-                emp_intervals = attendance_intervals[emp.resource_id.id]
-                day_map = {}
-                current = date_from
-                while current <= date_to:
-                    day_start = tz.localize(datetime.combine(current, time.min))
-                    day_end = tz.localize(datetime.combine(current, time.max))
+                for version_schedule, periods in validity[emp.resource_id.id].items():
+                    schedule = version_schedule or emp.company_id.resource_calendar_id
+                    periods_per_schedule[schedule].append((emp, periods))
 
-                    # Check if any global leave covers this day
-                    has_global_leave = any(
-                        s <= day_end and e >= day_start
-                        for s, e, _meta in global_leaves
-                    )
-                    # Check if employee has attendance scheduled this day
-                    has_attendance = any(
-                        s <= day_end and e >= day_start
-                        for s, e, _meta in emp_intervals
-                    )
+            for schedule, emp_periods in periods_per_schedule.items():
+                # Batch calls - ONE per schedule, not per person per day.
+                # Public holidays are the resource-less leaves (key False).
+                schedule_resources = self.env['hr.employee'].concat(
+                    *(emp for emp, _periods in emp_periods)).resource_id
+                attendance_intervals = schedule._attendance_intervals_batch(
+                    start_dt, end_dt, schedule_resources)
+                global_leaves = schedule._leave_intervals_batch(start_dt, end_dt)[False]
+                for emp, periods in emp_periods:
+                    day_map = result[emp.id]
+                    for valid_from, valid_to, _meta in periods:
+                        for current in _month_days(valid_from.astimezone(tz).date(),
+                                                   valid_to.astimezone(tz).date()):
+                            day_start = tz.localize(datetime.combine(current, time.min))
+                            day_end = tz.localize(datetime.combine(current, time.max))
+                            has_global_leave = any(
+                                s <= day_end and e >= day_start for s, e, _meta in global_leaves)
+                            has_attendance = any(
+                                s <= day_end and e >= day_start
+                                for s, e, _meta in attendance_intervals[emp.resource_id.id])
+                            day_map[current] = 'Н' if has_global_leave or not has_attendance else False
 
-                    if has_global_leave or not has_attendance:
-                        day_map[current] = 'Н'
-                    else:
-                        day_map[current] = False
+        return result
 
-                    current += timedelta(days=1)
-                result[emp.id] = day_map
+    def _get_part_day_leave_hours(self, employee_ids, date_from, date_to):
+        """{(employee id, day): hours} of approved time off that covers only
+        part of the person's working day.
 
+        The hours of a time off fall on the days of its schedule as core
+        counts its duration (resource.mixin._list_work_time_per_day, the
+        helper of hr.leave._get_durations): a leave from Monday afternoon to
+        Wednesday morning has a part of Monday and of Wednesday, and all of
+        Tuesday. A day the time off covers whole is a day of leave, not
+        partial hours - whatever the time-off type's unit.
+        """
+        result = defaultdict(float)
+        # The leave's moments are UTC; a day either side catches every zone,
+        # the days themselves are then kept to the month.
+        month_start = datetime.combine(date_from - timedelta(days=1), time.min)
+        month_end = datetime.combine(date_to + timedelta(days=1), time.max)
+        leaves = self.env['hr.leave'].sudo().search([
+            ('employee_id', 'in', employee_ids), ('state', '=', 'validate'),
+            ('date_from', '<=', month_end), ('date_to', '>=', month_start),
+            '|', ('request_unit_half', '=', True), ('request_unit_hours', '=', True),
+        ])
+        for leave in leaves:
+            employee = leave.employee_id.with_context(compute_leaves=False)
+            schedule = leave.resource_calendar_id or employee.resource_calendar_id or employee.company_id.resource_calendar_id
+            tz = pytz.timezone(employee._local_tz())
+            leave_hours = employee._list_work_time_per_day(
+                leave.date_from, leave.date_to, calendar=schedule)[employee.id]
+            if not leave_hours:
+                continue
+            day_hours = dict(employee._list_work_time_per_day(
+                tz.localize(datetime.combine(leave_hours[0][0], time.min)),
+                tz.localize(datetime.combine(leave_hours[-1][0], time.max)),
+                calendar=schedule)[employee.id])
+            for day, hours in leave_hours:
+                if date_from <= day <= date_to and float_compare(
+                        hours, day_hours.get(day, 0.0), precision_digits=2) < 0:
+                    result[employee.id, day] += hours
         return result
 
     @api.model
@@ -194,17 +261,28 @@ class ReportForm76(models.AbstractModel):
             dept_name_map = {d.id: d.complete_name for d in depts}
 
         # Overtime on a working day belongs in "в т.ч. извънредни", and the
-        # hours missed on a day the person came (late arrival, early leave)
-        # in "Неотработени човекочасове: частични" (НСИ, form 76, appendix 1).
+        # scheduled hours not worked on a day the person came in
+        # "Неотработени човекочасове: частични" (НСИ, form 76, appendix 1).
         # With the hours replaced by a fixed figure the sheet shows that
         # figure for the day, so neither is taken from the real day.
+        # The scheduled hours not worked are those the person owed
+        # (theoretical_work_time: the schedule without their own time off)
+        # minus those worked inside the schedule (actual_work_time) - not
+        # the late arrival and early leave, which are measured from the
+        # schedule's first start and last end and so count a lunch break
+        # and a morning off as lateness. Approved time off for part of the
+        # day is unworked time too - NSI does not count as worked
+        # "неотработените часове поради ползването на платен или неплатен
+        # отпуск" (НСИ, Labour_Method_1.1) - and is added from the time off.
         day_figures = {}
+        part_day_leave_hours = {}
         if data['set_hours_to'] <= 0 and employee_ids:
             for figure in self.env['hr.attendance.extra'].sudo().search_read(
                     [('employee_id', 'in', employee_ids),
                      ('for_date', '>=', date_from), ('for_date', '<=', date_to)],
-                    ['employee_id', 'for_date', 'overtime', 'late_time', 'early_leave_time']):
+                    ['employee_id', 'for_date', 'overtime', 'theoretical_work_time', 'actual_work_time']):
                 day_figures[figure['employee_id'][0], figure['for_date']] = figure
+            part_day_leave_hours = self._get_part_day_leave_hours(employee_ids, date_from, date_to)
         precision = data['precision']
 
         def day_hours_rounded(value):
@@ -227,7 +305,7 @@ class ReportForm76(models.AbstractModel):
             job_title = row[3]
             corporate_id = row[4]
             sql_days = list(row[5:])
-            emp_holidays = holiday_map.get(emp_id, {})
+            emp_holidays = holiday_map[emp_id]
 
             # Merge SQL data with holiday calendar
             new_days = []
@@ -235,8 +313,11 @@ class ReportForm76(models.AbstractModel):
             off_day_hours = 0
             partial_hours = 0
             for d, dt in zip(sql_days, date_list, strict=True):
-                a = emp_holidays.get(dt, False)
-                if d != 'С' and a == 'Н':
+                a = emp_holidays[dt]
+                if d == 'С' and a == OUT_OF_CONTRACT:
+                    # Not employed that day: blank, not an absence.
+                    new_days.append(OUT_OF_CONTRACT)
+                elif d != 'С' and a == 'Н':
                     # Working day hours on a holiday — count as extra
                     try:
                         off_day_hours += float(d)
@@ -257,7 +338,8 @@ class ReportForm76(models.AbstractModel):
                     if figure:
                         extr_hours += day_hours_rounded(figure['overtime'])
                         partial_hours += day_hours_rounded(
-                            figure['late_time'] + figure['early_leave_time'])
+                            max(0.0, figure['theoretical_work_time'] - figure['actual_work_time'])
+                            + part_day_leave_hours.get((emp_id, dt), 0.0))
             # Hours on days off and holidays are overtime too, and, like the
             # overtime of a working day, part of the hours worked: "в т.ч.
             # извънредни" is a part of "Всичко".
@@ -277,7 +359,8 @@ class ReportForm76(models.AbstractModel):
                 except (ValueError, TypeError):
                     pass
 
-            work_days_count = len(new_days) - new_days.count('Н')
+            # The norm counts only the working days of the person's contract.
+            work_days_count = len(new_days) - new_days.count('Н') - new_days.count(OUT_OF_CONTRACT)
             line = {
                 'employee_id': emp_id,
                 'department_name': dept_name,
