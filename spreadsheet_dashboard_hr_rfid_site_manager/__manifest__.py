@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Access Control Dashboard - Sites",
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Human Resources/Dashboard',
     'summary': "Adds a Site filter to the access-control dashboards",
     'author': 'Polimex Dev Team',
