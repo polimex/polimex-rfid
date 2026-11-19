@@ -8,7 +8,8 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='visual']" position="before">
                 <group name="leave_description_form_76" id="f76" string="Form 76 Description">
-                    <field name="form76_code"/>
+                    <field name="form76_code_from_catalog" invisible="1"/>
+                    <field name="form76_code" invisible="form76_code_from_catalog"/>
                     <field name="form76_law_reason"/>
                     <field name="form76_description"/>
                 </group>

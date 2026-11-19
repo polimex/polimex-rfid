@@ -11,9 +11,14 @@ inspector; every column must hold what its heading says, for the month the
 sheet is about.
 """
 
+import importlib.util
 from datetime import date
 
+from lxml import etree
+
 from odoo.tests.common import new_test_user, tagged
+from odoo.tools.misc import file_path
+from odoo.tools.safe_eval import safe_eval
 
 from .test_form_76 import TestForm76Common
 
@@ -138,6 +143,77 @@ class TestTheSheetShowsTheMonthAsItWas(TestForm76Common):
 
         self.assertEqual(line["days"][1:3], ["А", "А"])
         self.assertEqual(line["otpusk_a"], 2)
+
+    def test_a_letter_typed_on_a_latin_keyboard_counts_in_its_column(self):
+        """HR types "O" on an English keyboard for paid leave: the type keeps
+        the Cyrillic "О" of the legend, and the sheet counts those days under
+        "О" - not printed alike and counted nowhere."""
+        leave_type = self.env["hr.leave.type"].create(
+            {
+                "name": "Paid leave typed in Latin",
+                "requires_allocation": False,
+                "company_id": self.company.id,
+                "form76_code": "O",
+            }
+        )
+        self.assertEqual(leave_type.form76_code, "\u041e")
+        leave_type.form76_code = "A"
+        self.assertEqual(
+            leave_type.form76_code, "\u0410", "the same when it is changed"
+        )
+        leave_type.form76_code = "O"
+        self._time_off(leave_type, "2026-03-02", "2026-03-03")
+
+        line = self._line(self.employee_1)
+
+        self.assertEqual(line["days"][1:3], ["\u041e", "\u041e"])
+        self.assertEqual(line["otpusk_o"], 2)
+
+    def test_letters_saved_in_latin_before_are_made_cyrillic_on_upgrade(self):
+        """A type that holds a Latin "A" from before is counted under "А"
+        after the upgrade; a letter that is not a look-alike stays."""
+        leave_type = self.env["hr.leave.type"].create(
+            {"name": "Old Latin letter", "company_id": self.company.id}
+        )
+        other = self.env["hr.leave.type"].create(
+            {"name": "Not a letter of the legend", "company_id": self.company.id}
+        )
+        self.env.flush_all()
+        self.env.cr.execute(
+            "UPDATE hr_leave_type SET form76_code = %s WHERE id = %s",
+            ["A", leave_type.id],
+        )
+        self.env.cr.execute(
+            "UPDATE hr_leave_type SET form76_code = %s WHERE id = %s",
+            ["Z", other.id],
+        )
+        self.env.invalidate_all()
+        path = file_path("l10n_bg_hr_form_76/migrations/19.0.1.0.11/post-migrate.py")
+        spec = importlib.util.spec_from_file_location("form76_letters", path)
+        script = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(script)
+
+        script.migrate(self.env.cr, "19.0.1.0.10")
+
+        self.env.invalidate_all()
+        self.assertEqual(leave_type.form76_code, "\u0410")
+        self.assertEqual(other.form76_code, "Z")
+
+    def test_the_sheets_own_letter_is_hidden_where_the_catalog_has_one(self):
+        """On the time-off type form HR sees one letter: the catalog's when it
+        is filled in, the sheet's own when the catalog's is empty."""
+        view = self.env.ref("hr_holidays.edit_holiday_status_form")
+        arch = self.env["hr.leave.type"].get_view(view.id, "form")["arch"]
+        node = etree.fromstring(arch).xpath("//field[@name='form76_code']")
+        self.assertEqual(len(node), 1)
+        invisible = node[0].get("invisible")
+        with_letter = self._catalog_type("Б")
+        without_letter = self._catalog_type("")
+        for leave_type, hidden in ((with_letter, True), (without_letter, False)):
+            values = {"form76_code_from_catalog": leave_type.form76_code_from_catalog}
+            self.assertEqual(
+                bool(safe_eval(invisible, values)), hidden, leave_type.name
+            )
 
     def test_the_catalog_letter_wins_over_the_sheets_own(self):
         """The letter HR filled in the catalog is the type's letter even when

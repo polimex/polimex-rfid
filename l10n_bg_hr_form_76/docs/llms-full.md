@@ -2,7 +2,7 @@
 id: l10n_bg_hr_form_76
 title: Attendance Form 76 Bulgaria
 module: l10n_bg_hr_form_76
-module_version: 19.0.1.0.10
+module_version: 19.0.1.0.11
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -12,7 +12,7 @@ audience:
 companion_doc: llms.txt
 summary: Form 76 for Bulgaria
 last_updated: '2026-11-19'
-source_digest: sha256:6b4f1df0d51ae09ff1ff3826f6cff99d8fa487d8b95e81d7ea61a5b4d14c0072
+source_digest: sha256:531076df59f8f58b98eeba912c033f52cbadbe9dfe8ad6b57aee07c1f5f54492
 depends:
 - hr_attendance_late
 - hr_holidays
@@ -58,7 +58,7 @@ chunking:
 ---
 
 
-# Attendance Form 76 Bulgaria - `l10n_bg_hr_form_76` v19.0.1.0.10
+# Attendance Form 76 Bulgaria - `l10n_bg_hr_form_76` v19.0.1.0.11
 
 Form 76 for Bulgaria
 
@@ -70,7 +70,7 @@ Form 76 for Bulgaria
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `l10n_bg_hr_form_76`
-- **Version**: `19.0.1.0.10`
+- **Version**: `19.0.1.0.11`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -126,7 +126,10 @@ The columns follow the NSI template of the attendance sheet
 - **Days of leave** show the Form 76 letter of the time-off type. With the
   Bulgarian time-off catalog installed, a time-off type has two Form 76
   letter fields; the letter filled in the catalog's field is printed, the
-  sheet's own field is used when the catalog's one is empty.
+  sheet's own field is used when the catalog's one is empty, and the form of
+  the type shows the sheet's own field only then. A letter typed on a Latin
+  keyboard ("O" for "О") is saved as the Cyrillic one of the legend, so its
+  days are counted in their column.
 - **Position and department** are those of the employee's contract version
   in force on the last day of the month, so the sheet of a past month shows
   the position held then, not today's.
@@ -184,15 +187,26 @@ Python class `HrEmployee` in `models/hr_employee.py:12`.  Model.  Inherits: `hr.
   - Check if a specific date is a non-working day for the employee.
 
 ### `hr.leave.type` <a id='model-hr-leave-type'></a>
-Python class `HolidaysType` in `models/hr_leave_type.py:4`.  Model.  Inherits: `hr.leave.type`.
+Python class `HolidaysType` in `models/hr_leave_type.py:15`.  Model.  Inherits: `hr.leave.type`.
 
 #### Fields
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `form76_code` | Char | Код за форма 76 |  | ✓ | Буквата, с която Форма 76 отбелязва дните на този отпуск, на кирилица: О - редов |
+| `form76_code_from_catalog` | Boolean | Form76 Code From Catalog |  | - | The Bulgarian time-off catalog holds this type's Form 76 letter, so the sheet pr |
 | `form76_law_reason` | Char | Основание за оптуска |  | ✓ | Правното основание за този тип отпуск (член/алинея от КТ или друг нормативен акт |
 | `form76_description` | Text | Описание |  | ✓ | Свободен текст за вътрешни нужди — пояснява в кои ситуации да се ползва този тип |
+
+#### Notable methods
+
+- **`_compute_form76_code_from_catalog(self)`** - decorators: `@api.depends`
+- **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
+  - calls `super() `create``
+- **`write(self, vals)`** - decorators: -
+  - calls `super() `write``
+- **`_form76_code_in_cyrillic(self, vals)`** - decorators: `@api.model`
+  - The Form 76 letter in ``vals`` with its Latin look-alikes made Cyrillic, as the legend of the sheet writes them.
 
 ### `hr.attendance.form76.wizard` <a id='model-hr-attendance-form76-wizard'></a>
 Python class `WizardHrForm76` in `wizards/report_form_76_wizard.py:5`.  TransientModel (wizard).  Description: *Wizard for generation Form 76 in Bulgaria*.
@@ -221,6 +235,11 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 ### `models/hr_employee.py`
 
 - **`PUBLIC_HOLIDAYS`** *(collection)* = `[('time_type', '=', 'leave'), ('resource_id', '=', False)]`  - line 9
+
+### `models/hr_leave_type.py`
+
+- **`LATIN_TO_CYRILLIC`** *(expression)* = `str.maketrans('AaBCcEeHKMOoPpTXxy', 'АаВСсЕеНКМОоРрТХху')`  - line 8
+- **`CATALOG_CODE`** *(scalar)* = `'l10n_bg_form76_code'`  - line 12
 
 ### `reports/report_form_76_bg.py`
 
@@ -329,6 +348,6 @@ Commit `9a3d488b20` (2026-04-21): [FIX] manifest validator issues flagged by Odo
 ## Source provenance <a id='provenance'></a>
 
 - Module: `l10n_bg_hr_form_76`
-- Source digest: `sha256:6b4f1df0d51ae09ff1ff3826f6cff99d8fa487d8b95e81d7ea61a5b4d14c0072`
-- Generated at: `2026-11-19T16:38:03+00:00`
+- Source digest: `sha256:531076df59f8f58b98eeba912c033f52cbadbe9dfe8ad6b57aee07c1f5f54492`
+- Generated at: `2026-11-19T16:49:12+00:00`
 - Generator: `polimex_module_knowledge`

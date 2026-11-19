@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-09 09:06+0000\n"
-"PO-Revision-Date: 2026-11-17 20:09\n"
+"PO-Revision-Date: 2026-11-19 18:48\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -140,6 +140,11 @@ msgid "Form 76 Report"
 msgstr "Отчет Форма 76"
 
 #. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,field_description:l10n_bg_hr_form_76.field_hr_leave_type__form76_code_from_catalog
+msgid "Form76 Code From Catalog"
+msgstr "Código del Formulario 76 del catálogo"
+
+#. module: l10n_bg_hr_form_76
 #: model:ir.actions.act_window,name:l10n_bg_hr_form_76.act_wizard_generate_form76
 #: model:ir.ui.menu,name:l10n_bg_hr_form_76.menu_wizard_generate_form76_attendance
 msgid "Generate Form 76"
@@ -269,6 +274,15 @@ msgstr "септември"
 #: model:ir.model.fields,field_description:l10n_bg_hr_form_76.field_hr_attendance_form76_wizard__set_hours_to
 msgid "Set Hours To"
 msgstr "Задай часовете на"
+
+#. module: l10n_bg_hr_form_76
+#: model:ir.model.fields,help:l10n_bg_hr_form_76.field_hr_leave_type__form76_code_from_catalog
+msgid ""
+"The Bulgarian time-off catalog holds this type's Form 76 letter, so the "
+"sheet prints that one."
+msgstr ""
+"El catálogo búlgaro de ausencias contiene la letra del Formulario 76 de este"
+" tipo, por lo que la hoja de asistencia imprime esa."
 
 #. module: l10n_bg_hr_form_76
 #. odoo-python

@@ -43,7 +43,10 @@ The columns follow the NSI template of the attendance sheet
 - **Days of leave** show the Form 76 letter of the time-off type. With the
   Bulgarian time-off catalog installed, a time-off type has two Form 76
   letter fields; the letter filled in the catalog's field is printed, the
-  sheet's own field is used when the catalog's one is empty.
+  sheet's own field is used when the catalog's one is empty, and the form of
+  the type shows the sheet's own field only then. A letter typed on a Latin
+  keyboard ("O" for "О") is saved as the Cyrillic one of the legend, so its
+  days are counted in their column.
 - **Position and department** are those of the employee's contract version
   in force on the last day of the month, so the sheet of a past month shows
   the position held then, not today's.
