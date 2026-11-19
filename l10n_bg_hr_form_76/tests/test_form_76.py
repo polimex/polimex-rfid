@@ -3,6 +3,8 @@ from datetime import date, timedelta
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase, tagged
 
+from odoo.addons.hr_attendance_multi_rfid.tests.common import set_public_holidays_aside
+
 
 @tagged('post_install', '-at_install')
 class TestForm76Common(TransactionCase):
@@ -13,6 +15,10 @@ class TestForm76Common(TransactionCase):
         super().setUpClass()
 
         cls.env.user.tz = 'Europe/Sofia'
+        # The sheet is read for months whose holidays the database may already
+        # hold (the demo's, a localisation's); each test makes the ones it
+        # speaks of.
+        set_public_holidays_aside(cls.env)
 
         cls.company = cls.env.company
         cls.company.resource_calendar_id.tz = 'Europe/Sofia'

@@ -208,6 +208,25 @@ class TestTheSheetShowsTheMonthAsItWas(TestForm76Common):
         self.assertEqual(worked["extra_hours"], 4.0)
         self.assertEqual(worked["hours_summary"].split("/")[0], "4.0")
 
+    def test_another_companys_holiday_is_not_on_this_sheet(self):
+        """A day off another company of the database declares for all its
+        people is an ordinary working day on this company's sheet."""
+        other = self.env["res.company"].create({"name": "Other company F76"})
+        self.env["resource.calendar.leaves"].with_company(other).create(
+            {
+                "name": "Their closing day",
+                "company_id": other.id,
+                "calendar_id": False,
+                "resource_id": False,
+                "date_from": "2026-03-09 22:00:00",
+                "date_to": "2026-03-10 21:59:59",
+            }
+        )
+
+        line = self._line(self.employee_2)
+
+        self.assertNotEqual(line["days"][9], "Н", "10 March is a working day here")
+
     def test_whole_hours_print_as_whole_numbers_rounded_half_up(self):
         """With the wizard's default precision 0 the columns print "3" like
         the day cells do, and half an hour rounds up as in the cells."""

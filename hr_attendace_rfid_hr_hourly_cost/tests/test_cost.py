@@ -6,6 +6,8 @@ from pytz import timezone, utc
 
 from odoo.tests.common import TransactionCase, tagged
 
+from odoo.addons.hr_attendance_multi_rfid.tests.common import set_public_holidays_aside
+
 SOFIA = timezone('Europe/Sofia')
 
 
@@ -39,29 +41,17 @@ class TestAttendanceCostRates(TransactionCase):
         # the Public Holidays form takes the day in the user's own zone.
         cls.env.user.tz = 'Europe/Sofia'
         # Seed known official holidays (2026-05-24 Culture Day - a Sunday,
-        # 2026-09-22 Independence Day - a Tuesday) as global leaves on the
-        # company calendar, in the shape Time Off -> Public Holidays (and the
-        # BG localisation seeder) creates: the whole local day, midnight to
-        # midnight in Sofia, stored in UTC. Seeded directly so the
-        # tests stay inside this module's dependency closure - the previous
-        # call to _generate_bg_public_holidays crashed setUpClass on any
-        # database without l10n_bg_hr_attendance_overtime_rates installed.
-        # Created only when the day is not already an official day: on a
-        # database where the localisation has filled the year in - every demo
-        # installation, and every customer running the BG modules - a second
-        # record for the same day is refused as an overlapping public holiday
-        # and takes the whole fixture down with it.
+        # 2026-09-22 Independence Day - a Tuesday) on the company calendar, in
+        # the shape Time Off -> Public Holidays creates: the whole local day,
+        # midnight to midnight in Sofia, stored in UTC. Seeded directly so the
+        # tests stay inside this module's dependency closure. The holidays the
+        # database already holds (the demo's, a localisation's) are set aside
+        # first: made in the zone of the database's schedule, they would cover
+        # the first hour of the Sofia day after them.
+        set_public_holidays_aside(cls.env)
         for day, name in ((date(2026, 5, 24), 'Culture Day'),
                           (date(2026, 9, 22), 'Independence Day')):
             day_from, day_to = cls._sofia_day(day)
-            already_there = cls.env['resource.calendar.leaves'].search([
-                ('calendar_id', '=', cls.company.resource_calendar_id.id),
-                ('resource_id', '=', False),
-                ('date_from', '<=', day_to),
-                ('date_to', '>=', day_from),
-            ], limit=1)
-            if already_there:
-                continue
             cls.env['resource.calendar.leaves'].create({
                 'name': name,
                 'calendar_id': cls.company.resource_calendar_id.id,

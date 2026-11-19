@@ -7,8 +7,8 @@ audience:
 - user
 summary: 'A demo company that keeps working: passages, attendance, lateness and overtime for the RFID
   set, day after day'
-last_updated: '2026-11-16'
-source_digest: sha256:76da4dbcee8152efb7e43e6b558d3dbce9d897019e9057a10ca3e4446710bd6d
+last_updated: '2026-11-19'
+source_digest: sha256:37e14f8e39d98491069e7f99040a1066b87175e9d65d7ac90c532b5698762c90
 companion_doc: llms-full.md
 ---
 
@@ -75,5 +75,6 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   evenings, every entry is counted as a visit, and when the visits or the
   month run out the next one is sold.
 
-A person on approved leave does not come in that day, and a day somebody
-already has attendance entered by hand is left to them.
+A person on approved leave does not come in that day, nobody comes in on a
+public holiday of the company, and a day somebody already has attendance
+entered by hand is left to them.

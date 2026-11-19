@@ -2,7 +2,7 @@
 id: l10n_bg_hr_attendance_overtime_rates
 title: Bulgaria — Attendance Overtime Rates
 module: l10n_bg_hr_attendance_overtime_rates
-module_version: 19.0.1.0.0
+module_version: 19.0.1.0.6
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,15 +11,15 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Bulgarian statutory overtime/night coefficients and public holidays
-last_updated: '2026-06-03'
-source_digest: sha256:73c06219d3138dbb79864df737a40919973cab9ad0be2eb7becdd10a09b86c98
+last_updated: '2026-11-19'
+source_digest: sha256:4d972331eba215c904431cab34c20e664f2fe625ad85489d2ff8a82b62a9b884
 depends:
 - hr_attendance_late
 - hr_holidays
 entities:
-  primary: res.company
+  primary: l10n.bg.generate.holidays.wizard
   related:
-  - l10n.bg.generate.holidays.wizard
+  - res.company
 keywords:
 - attendance
 - bulgarian
@@ -35,7 +35,7 @@ keywords:
 - statutory
 - wizard
 license: AGPL-3
-author: Polimex
+author: Polimex Dev Team
 category: Human Resources/Attendances
 installable: true
 application: false
@@ -56,7 +56,7 @@ chunking:
 ---
 
 
-# Bulgaria — Attendance Overtime Rates — `l10n_bg_hr_attendance_overtime_rates` v19.0.1.0.0
+# Bulgaria — Attendance Overtime Rates - `l10n_bg_hr_attendance_overtime_rates` v19.0.1.0.6
 
 Bulgarian statutory overtime/night coefficients and public holidays
 
@@ -65,13 +65,13 @@ Bulgarian statutory overtime/night coefficients and public holidays
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `l10n_bg_hr_attendance_overtime_rates`
-- **Version**: `19.0.1.0.0`
+- **Version**: `19.0.1.0.6`
 - **Category**: Human Resources/Attendances
 - **License**: AGPL-3
-- **Author**: Polimex
+- **Author**: Polimex Dev Team
 - **Application**: no
 - **Auto-install**: no
 - **Installable**: yes
@@ -79,7 +79,7 @@ Technical overview — module identity, license, dependencies and entry points. 
 
 ### README (verbatim)
 
-#### Bulgaria — Attendance Overtime Rates & Public Holidays
+#### Bulgaria - Attendance Overtime Rates & Public Holidays
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Version](https://img.shields.io/badge/Version-19.0.1.0.0-green.svg)](https://apps.odoo.com)
@@ -92,10 +92,10 @@ Bulgarian localisation seed for the attendance cost layer: statutory overtime co
 
 ##### ✨ Key Features
 
-- **КТ overtime coefficients (dated)** — work-day overtime ×1.5, rest-day ×1.75, public-holiday ×2.0 (КТ чл. 262 minimums), seeded with a historical effective date so future law changes are added as new dated rows.
-- **Night-shift supplement** — an additive per-hour amount (НСОРЗ чл. 8), seeded at 0.51 EUR effective 2026-01-01 (eurozone). Additive, not a multiplier.
-- **Public-holiday generation** — computes the year's official Bulgarian holidays, including the movable Orthodox Easter dates (`dateutil.easter` with `EASTER_ORTHODOX`), as global `resource.calendar.leaves`. Idempotent.
-- **Wizard + annual cron** — generate holidays for a chosen year on demand, or let the yearly cron roll the next year forward.
+- **КТ overtime coefficients (dated)** - work-day overtime ×1.5, rest-day ×1.75, public-holiday ×2.0 (КТ чл. 262 minimums), seeded with a historical effective date so future law changes are added as new dated rows.
+- **Night-shift supplement** - an additive per-hour amount (НСОРЗ чл. 8), seeded at 0.51 EUR effective 2026-01-01 (eurozone). Additive, not a multiplier.
+- **Public-holiday generation** - computes the year's official Bulgarian holidays, including the movable Orthodox Easter dates (`dateutil.easter` with `EASTER_ORTHODOX`), as public holidays with no working schedule, so they hold for everybody in the company whatever schedule a person is on (shifts, part time, nights). A day the company already holds is left as it is.
+- **Wizard + annual cron** - generate holidays for a chosen year on demand, or let the yearly cron roll the next year forward for every company in Bulgaria that keeps public holidays.
 
 ##### 📋 Requirements
 
@@ -111,31 +111,35 @@ Bulgarian localisation seed for the attendance cost layer: statutory overtime co
 
 ##### 🚀 Usage
 
-1. Install — КТ coefficients and the night supplement appear in **Legal Rates**.
+1. Install - КТ coefficients and the night supplement appear in **Legal Rates**.
 2. Run the holiday wizard for the current/next year (or wait for the cron).
 3. The attendance cost bridge reads these rates and the public-holiday calendar automatically; no further setup is needed.
 
-> When the law changes a coefficient, add a **new** Legal Rate row with the new *Valid From* date — past worked days keep their historical value.
+> When the law changes a coefficient, add a **new** Legal Rate row with the new *Valid From* date - past worked days keep their historical value.
+
+##### The holidays it creates
+
+Each generated public holiday is a day off for everybody in the company,
+whatever working schedule a person is on: shifts, part time or nights. It is
+the whole day, midnight to midnight, in the timezone of the company's working
+schedule - whoever generates the year: an HR officer, or the yearly scheduled
+action, which has no timezone of its own. This is the shape
+**Time Off -> Configuration -> Public Holidays** creates when *Working Hours*
+is left empty, so the days it makes and the days typed in by hand read alike.
+A day the company already holds as a public holiday is left as it is.
 
 ##### 🛠️ Technical
 
-- **`data/legal_rates.xml`** — seeds `hr.legal.rate` rows (`overtime_workday`, `overtime_weekend`, `overtime_holiday`, `night_supplement`).
-- **`res.company._generate_bg_public_holidays(year)`** — idempotent batched creation of global `resource.calendar.leaves`; fixed dates + Orthodox-Easter-derived Good Friday / Holy Saturday / Easter Monday.
-- **`_cron_generate_bg_public_holidays`** — annual roll-forward.
-- **`generate.bg.holidays.wizard`** — on-demand generation for a chosen year.
+- **`data/legal_rates.xml`** - seeds `hr.legal.rate` rows (`overtime_workday`, `overtime_weekend`, `overtime_holiday`, `night_supplement`).
+- **`res.company._generate_bg_public_holidays(year)`** - idempotent batched creation of `resource.calendar.leaves` with no schedule and no resource (core applies them to every schedule of the company); fixed dates + Orthodox-Easter-derived Good Friday / Holy Saturday / Easter Monday.
+- **`_cron_generate_bg_public_holidays`** - annual roll-forward, only for companies whose country is Bulgaria.
+- **Upgrade to 19.0.1.0.6** - for companies in Bulgaria, official days from today on that earlier versions tied to one schedule are released to every schedule (`_hand_bg_public_holidays_to_everyone`); days already over, closures of several days and closing days on ordinary dates keep their schedule, and a day core refuses to release is logged and left.
+- **`generate.bg.holidays.wizard`** - on-demand generation for a chosen year.
 
 ##### 👥 Credits
 
-**Polimex Holding Ltd.** — https://polimex.co
+**Polimex Holding Ltd.** - https://polimex.co
 
-
-## The holidays it creates
-
-Each generated public holiday is the whole day, midnight to midnight, in
-the timezone of the company's working schedule - whoever generates the
-year: an HR officer, or the yearly scheduled action, which has no
-timezone of its own. This is the shape **Time Off -> Configuration -> Public Holidays**
-creates, so the days it makes and the days typed in by hand read alike.
 
 ## Installation & Configuration <a id='install'></a>
 
@@ -150,13 +154,19 @@ Installation requirements and configuration entry points. Use this section to an
 Each model below is an atomic concept: one H3 per model. Inherited models (extending core) are marked explicitly.
 
 ### `res.company` <a id='model-res-company'></a>
-Python class `ResCompany` in `models/res_company.py:29`.  Model.  Inherits: `res.company`.
+Python class `ResCompany` in `models/res_company.py:62`.  Model.  Inherits: `res.company`.
 
 #### Notable methods
 
-- **`_cron_generate_bg_public_holidays(self)`** — decorators: `@api.model`
-  - Yearly cron: seed next year's BG public holidays for every company
-  - touches: `res.company`, `resource.calendar.leaves`
+- **`_bg_companies(self)`** - decorators: `@api.model`
+  - The companies in Bulgaria - by the country of their address, the way core's localisations tell their companies apart.
+- **`_hand_bg_public_holidays_to_everyone(self)`** - decorators: `@api.model`
+  - Make the official days held for one working schedule hold for everybody in the company, from today on.
+  - effects: `log_info`, `log_warn`, `with_company`
+  - touches: `resource.calendar.leaves`
+- **`_cron_generate_bg_public_holidays(self)`** - decorators: `@api.model`
+  - Yearly cron: seed next year's official days for every company in Bulgaria that keeps public holidays at all.
+  - touches: `resource.calendar.leaves`
 
 ### `l10n.bg.generate.holidays.wizard` <a id='model-l10n-bg-generate-holidays-wizard'></a>
 Python class `GenerateBgHolidaysWizard` in `wizards/generate_bg_holidays_wizard.py:6`.  TransientModel (wizard).  Description: *Generate Bulgarian Public Holidays*.
@@ -165,22 +175,24 @@ Python class `GenerateBgHolidaysWizard` in `wizards/generate_bg_holidays_wizard.
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `year` | Integer |  | ✓ | ✓ | Calendar year to generate the official Bulgarian public holidays for. Fixed date |
-| `company_id` | Many2one → \`res.company\` |  | ✓ | ✓ | Company whose working calendar receives the holidays. |
+| `year` | Integer | Year | ✓ | ✓ | Calendar year to generate the official Bulgarian public holidays for. Fixed date |
+| `company_id` | Many2one → \`res.company\` | Company | ✓ | ✓ | Company whose people get the holidays - everybody in it, whatever working schedu |
 
 #### Notable methods
 
-- **`action_generate(self)`** — decorators: —
+- **`action_generate(self)`** - decorators: -
+  - Fill the year in and show the company's public holidays of it.
 
 
 ## Module Constants <a id='constants'></a>
 
-UPPER_CASE module-level assignments — rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
+UPPER_CASE module-level assignments - rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
 
 
 ### `models/res_company.py`
 
-- **`BG_FIXED_HOLIDAYS`** *(collection)* = `[(1, 1, "New Year's Day"), (3, 3, 'Liberation Day'), (5, 1, 'Labour Day'), (5, 6, "St. George's Day / Day of Valour"), (5, 24, 'Day of Bulgarian Education and Culture'), (9, 6, 'Unification Day'), (9, 22, 'Independence Day'), (12, 24, 'Chri  # ...truncated`  — line 15
+- **`BG_FIXED_HOLIDAYS`** *(collection)* = `[(1, 1, "New Year's Day"), (3, 3, 'Liberation Day'), (5, 1, 'Labour Day'), (5, 6, "St. George's Day / Day of Valour"), (5, 24, 'Day of Bulgarian Education and Culture'), (9, 6, 'Unification Day'), (9, 22, 'Independence Day'), (12, 24, 'Chri  # ...truncated`  - line 17
+- **`ONE_DAY`** *(expression)* = `timedelta(days=1)`  - line 31
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -188,23 +200,14 @@ UPPER_CASE module-level assignments — rates, mappings, priority tables, status
 Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
 
 
-### Public helpers
+### Private helpers
 
-- **`TestBgPublicHolidays.setUpClass(cls)`** (`@classmethod`) — `tests/test_public_holidays.py:14`
-  - calls `super()`
-  - touches: `resource.calendar`
-- **`TestBgPublicHolidays.test_seeded_legal_rates(self)`** — `tests/test_public_holidays.py:22`
-  - КТ чл. 262 multipliers are seeded and resolvable.
-  - touches: `hr.legal.rate`
-- **`TestBgPublicHolidays.test_night_supplement_dated_at_2026(self)`** — `tests/test_public_holidays.py:31`
-  - Night supplement only effective from euro adoption (2026-01-01).
-  - touches: `hr.legal.rate`
-- **`TestBgPublicHolidays.test_generates_fixed_and_moving_holidays(self)`** — `tests/test_public_holidays.py:37`
-  - Fixed dates + Orthodox-Easter cluster created as global leaves.
-- **`TestBgPublicHolidays.test_generation_is_idempotent(self)`** — `tests/test_public_holidays.py:54`
-  - Re-running the same year creates nothing new.
-- **`TestBgPublicHolidays.test_easter_differs_by_year(self)`** — `tests/test_public_holidays.py:61`
-  - Moving cluster tracks the year (regression vs hardcoded dates).
+- **`_bg_public_holiday_days(year)`** - `models/res_company.py:34`
+  - The official days of that year as (date, name): the fixed dates and the moving Orthodox-Easter cluster.
+- **`_day_bounds(day, tz)`** - `models/res_company.py:47`
+  - A whole day in that zone, its first and last moment, as stored (naive UTC).
+- **`_overlap(a_from, a_to, b_from, b_to)`** - `models/res_company.py:57`
+  - Two stretches of time share at least a moment.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -213,7 +216,7 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `generate_bg_holidays_wizard_form` | `l10n.bg.generate.holidays.wizard` | — |  | `views/hr_public_holidays_views.xml` |
+| `generate_bg_holidays_wizard_form` | `l10n.bg.generate.holidays.wizard` | - |  | `views/hr_public_holidays_views.xml` |
 
 
 ## Security <a id='security'></a>
@@ -221,7 +224,7 @@ List of `ir.ui.view` records created or extended by this module.
 Who can do what. Answer access-related questions from this section.
 
 
-### Access rights (ir.model.access)
+### Access rights (ir.model.access; v20: ir.access rows with a group)
 
 | CSV id | Model | Group | R | W | C | D |
 |---|---|---|---|---|---|---|
@@ -242,6 +245,7 @@ XML records seeded at install and scheduled actions.
 
 - `hr.legal.rate`: 4 record(s)
 - `ir.cron`: 1 record(s)
+- `ir.actions.act_window`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
@@ -255,68 +259,18 @@ No images, diagrams or screenshots are shipped with this module.
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
+Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `gotchas` (6)
+### From `git_log` (1)
 
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
+#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u ...
 
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `<p>, help=`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: **Search view: `<group>` без атрибути** — `expand="0"` и `string="Grou
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Search view: `<group>` без атрибути** — `expand="0"` и `string="Group By"` са премахнати. Стария път гърми с `RELAXNG_ERR_INVALIDATTR`.
-
-Matched tokens: `<group>`
-
-#### Gotcha: **`mail.template.body_html` се рендира с QWeb (`<t t-out>`), НЕ с inli
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Mail / Templates** in odoo19-gotchas.md:
-
-> **`mail.template.body_html` се рендира с QWeb (`<t t-out>`), НЕ с inline `{{ }}`.** Полето е `fields.Html(render_engine='qweb')`. Само КЪСИТЕ полета (`subject`, `email_from`, `email_to`, `reply_to`, `scheduled_date`) ползват `inline_template` engine-а с `{{ expr }}`. Ако напишеш body с `{{ object.number }}`, placeholder-ите се пращат **буквално** в имейла (получателят вижда `{{ object.number }}`), а evaluation никога не става → латентните грешки в израза (несъществуващо поле/метод) не се виждат докато не мигрираш на t-out и QWeb не ги валидира при write. Canonical: helpdesk_mgmt/data templates ползват `<t t-out="object.X"/>`. Поправка на съществуващи `noupdate="1"` templates → migration който презаписва body-то per-lang. **Как се хваща**: рендирай `template._render_field('body_html', ids)[id]` в тест и assert `'{{' not in body`.
-
-Matched tokens: `noupdate="1"`
-
-#### Gotcha: **Correlation/round-trip ключ между две инстанции трябва да е със същи
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Mail / Templates** in odoo19-gotchas.md:
-
-> **Correlation/round-trip ключ между две инстанции трябва да е със същия ТИП от двете страни.** Ако модул А праща `local_id = record.number` (Char стринг "PST-00076") в маркер/payload, а модул Б го чете в `fields.Integer` с `int(local_id)` → `ValueError` на първия реален номер. Маскира се ако тестовете подават числов fixture (`42`) вместо реалния формат. **Винаги** тествай correlation с реалния номеров формат (prefix+padding), не с гол integer. При несъответствие — изравни типа (обикновено Char, защото човешкият номер е стринг), не cast-вай.
-
-Matched tokens: `fields.integer`
-
-#### Gotcha: **TransientModel + `target='current'` = dead link.** TransientModel за
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Wizards & TransientModel** in odoo19-gotchas.md:
-
-> **TransientModel + `target='current'` = dead link.** TransientModel записи биват изтрити от autovacuum cron след минути до часове. Ако `action_window` връща `target='current'` с `res_id`, browser-ът bookmark-ва URL `/odoo/<model>/<id>` — следващ refresh/back-button → 404 "тотална грешка" / "запис не съществува". **Винаги** използвай `target='new'` (modal dialog) — modal-ите не променят URL-а, така че няма bookmarkable стара ID. Ако имаш Next/Back бутони (`type="object"`), pre-create record-а в `action_open_wizard()` за да съществува за compute_field-а, но дръж dialog-а modal. Производна на това: `_reopen()` helper-и за multistep wizard-и също трябва да са `target='new'`, не `'current'`.
-
-Matched tokens: `type="object"`
+Commit `54843cfc81` (2026-07-22): fix(demo): showcase demo files must be noupdate=1 - production -u re-wrote them
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/l10n_bg_hr_attendance_overtime_rates`
-- Source digest: `sha256:73c06219d3138dbb79864df737a40919973cab9ad0be2eb7becdd10a09b86c98`
-- Generated at: `2026-06-03T08:31:34+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `l10n_bg_hr_attendance_overtime_rates`
+- Source digest: `sha256:4d972331eba215c904431cab34c20e664f2fe625ad85489d2ff8a82b62a9b884`
+- Generated at: `2026-11-19T16:38:03+00:00`
+- Generator: `polimex_module_knowledge`

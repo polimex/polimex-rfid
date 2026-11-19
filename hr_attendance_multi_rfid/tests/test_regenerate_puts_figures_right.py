@@ -17,6 +17,8 @@ from datetime import datetime
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
 
+from .common import set_public_holidays_aside
+
 
 @tagged('post_install', '-at_install', 'rfid_attendance_figures')
 class TestRegeneratePutsFiguresRight(TransactionCase):
@@ -24,6 +26,9 @@ class TestRegeneratePutsFiguresRight(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # The days below are ordinary working days; 22 September is
+        # Independence Day wherever the Bulgarian holidays are filled in.
+        set_public_holidays_aside(cls.env)
         # Core's own default schedule, made here (resource_calendar.py,
         # _get_default_attendance_ids): the shared standard one is the
         # customer's to change, and a test reading it measures the site.

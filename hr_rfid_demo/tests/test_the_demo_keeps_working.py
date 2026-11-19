@@ -9,9 +9,12 @@ work only on demo data".
 from datetime import timedelta
 
 from freezegun import freeze_time
+from pytz import timezone, utc
 
 from odoo import fields
 from odoo.tests.common import HttpCase, TransactionCase, tagged
+
+from odoo.addons.hr_attendance_multi_rfid.tests.common import set_public_holidays_aside
 
 from ..models.hr_rfid_demo import ALSO_SIMULATED_UNTIL, SIMULATED_UNTIL
 
@@ -145,6 +148,52 @@ class TestTheDemoKeepsWorking(TransactionCase):
         first = self.Demo._demo_day(employee, "day", day, entrance, inner)
         second = self.Demo._demo_day(employee, "day", day, entrance, inner)
         self.assertEqual(first, second)
+
+    def test_nobody_comes_in_on_a_public_holiday(self):
+        """On an official holiday the demo company is closed, for everybody.
+
+        Whatever schedule a person is on - the day workers and the night
+        workers alike. The working day after it is an ordinary one, so the
+        empty day is the holiday and not an empty window.
+        """
+        # The database's own holidays (the demo's, a localisation's) are set
+        # aside, so the only one is made here.
+        set_public_holidays_aside(self.env)
+        holiday = fields.Date.today() + timedelta(days=30)
+        while holiday.weekday() > 3:  # a Monday to Thursday, with a working day after
+            holiday += timedelta(days=1)
+        company = self.env.ref("base.main_company")
+        tz = company.resource_calendar_id.tz or "UTC"
+        start = fields.Datetime.to_datetime(fields.Date.to_string(holiday))
+        self.env["resource.calendar.leaves"].with_company(company).create(
+            {
+                "name": "Official holiday",
+                "company_id": company.id,
+                "calendar_id": False,
+                "resource_id": False,
+                "date_from": self._utc(start, tz),
+                "date_to": self._utc(start + timedelta(hours=23, minutes=59), tz),
+            }
+        )
+        moment = fields.Datetime.to_datetime(fields.Date.to_string(holiday))
+        days = {
+            day: present
+            for day, _people, present in self.Demo._demo_days(
+                moment, moment + timedelta(days=1)
+            )
+        }
+        self.assertFalse(days[holiday], "somebody came in on the holiday")
+        self.assertTrue(
+            any(
+                passages
+                for _employee, _card, passages in days[holiday + timedelta(days=1)]
+            ),
+            "nobody came in on the day after",
+        )
+
+    @staticmethod
+    def _utc(local, tz):
+        return timezone(tz).localize(local).astimezone(utc).replace(tzinfo=None)
 
 
 @tagged("post_install", "-at_install", "rfid_demo", "rfid_demo_vending")

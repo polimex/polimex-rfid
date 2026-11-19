@@ -922,8 +922,11 @@ class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
     def _demo_is_away(self, day):
-        """On approved leave that day: a person on leave does not come in."""
+        """On approved leave that day, or the day is a public holiday of the
+        company where the person works: nobody comes in then."""
         self.ensure_one()
+        if self._demo_is_public_holiday(day):
+            return True
         if "hr.leave" not in self.env:
             return False
         return bool(
@@ -938,3 +941,25 @@ class HrEmployee(models.Model):
                 ]
             )
         )
+
+    def _demo_is_public_holiday(self, day):
+        """A public holiday of the company falls on the person's own day.
+
+        Read the way core reads it for this person: the holidays of the company
+        for everybody or for the person's schedule
+        (resource/models/resource_calendar.py, _leave_intervals), in the
+        person's own zone.
+        """
+        calendar = self.resource_calendar_id or self.company_id.resource_calendar_id
+        if not calendar:
+            return False
+        tz = ZoneInfo(self._local_tz())
+        start = datetime.combine(day, time.min, tzinfo=tz)
+        stop = datetime.combine(day, time.max, tzinfo=tz)
+        holidays = calendar.sudo()._leave_intervals(
+            start,
+            stop,
+            self.resource_id,
+            domain=[("time_type", "=", "leave"), ("resource_id", "=", False)],
+        )
+        return bool(holidays)

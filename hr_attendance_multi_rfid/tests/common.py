@@ -32,3 +32,26 @@ def in_sofia(day, hour, minute=0):
     """The moment the clock on a Sofia wall says, as naive UTC."""
     moment = SOFIA.localize(datetime.combine(day, time(hour, minute)))
     return moment.astimezone(utc).replace(tzinfo=None)
+
+
+def set_public_holidays_aside(env):
+    """Hold the public holidays already in the database off every schedule.
+
+    A public holiday with no schedule holds for every schedule of its company
+    (resource/models/resource_calendar.py:515) - the demo's, a localisation's,
+    a customer's - so a test that speaks of an ordinary day finds a holiday on
+    it on such a database. They are moved to a schedule nobody in the test
+    works on, in SQL: through the ORM core would plan everybody's time off
+    again (hr_holidays/models/resource.py, write). Each test then makes the
+    holidays it talks about (skill odoo19-gotchas, tests.md).
+    """
+    aside = env["resource.calendar"].create(
+        {"name": "Public holidays set aside (test)"}
+    )
+    env.flush_all()
+    env.cr.execute(
+        "UPDATE resource_calendar_leaves SET calendar_id = %s WHERE resource_id IS NULL",
+        [aside.id],
+    )
+    env.invalidate_all()
+    return aside

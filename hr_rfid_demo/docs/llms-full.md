@@ -2,7 +2,7 @@
 id: hr_rfid_demo
 title: RFID Demo Data
 module: hr_rfid_demo
-module_version: 19.0.1.2.0
+module_version: 19.0.1.2.1
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -12,8 +12,8 @@ audience:
 companion_doc: llms.txt
 summary: 'A demo company that keeps working: passages, attendance, lateness and overtime for the RFID
   set, day after day'
-last_updated: '2026-11-16'
-source_digest: sha256:76da4dbcee8152efb7e43e6b558d3dbce9d897019e9057a10ca3e4446710bd6d
+last_updated: '2026-11-19'
+source_digest: sha256:37e14f8e39d98491069e7f99040a1066b87175e9d65d7ac90c532b5698762c90
 depends:
 - hr_rfid
 - hr_attendance_multi_rfid
@@ -58,7 +58,7 @@ chunking:
 ---
 
 
-# RFID Demo Data - `hr_rfid_demo` v19.0.1.2.0
+# RFID Demo Data - `hr_rfid_demo` v19.0.1.2.1
 
 A demo company that keeps working: passages, attendance, lateness and overtime for the RFID set, day after day
 
@@ -70,7 +70,7 @@ A demo company that keeps working: passages, attendance, lateness and overtime f
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_demo`
-- **Version**: `19.0.1.2.0`
+- **Version**: `19.0.1.2.1`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -134,8 +134,9 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   evenings, every entry is counted as a visit, and when the visits or the
   month run out the next one is sold.
 
-A person on approved leave does not come in that day, and a day somebody
-already has attendance entered by hand is left to them.
+A person on approved leave does not come in that day, nobody comes in on a
+public holiday of the company, and a day somebody already has attendance
+entered by hand is left to them.
 
 Technical
 =========
@@ -359,6 +360,6 @@ No FAQ candidates have been mined yet. Run the skill with the `chat_history` min
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid_demo`
-- Source digest: `sha256:76da4dbcee8152efb7e43e6b558d3dbce9d897019e9057a10ca3e4446710bd6d`
-- Generated at: `2026-11-16T14:27:03+00:00`
+- Source digest: `sha256:37e14f8e39d98491069e7f99040a1066b87175e9d65d7ac90c532b5698762c90`
+- Generated at: `2026-11-19T16:38:03+00:00`
 - Generator: `polimex_module_knowledge`

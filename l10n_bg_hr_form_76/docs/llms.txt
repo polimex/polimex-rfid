@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Form 76 for Bulgaria
-last_updated: '2026-04-29'
-source_digest: sha256:3dc726145ed218680f8acf3eafae61e2abfd1fbc7c91d8a1a22fb21c2c6336b1
+last_updated: '2026-11-19'
+source_digest: sha256:6b4f1df0d51ae09ff1ff3826f6cff99d8fa487d8b95e81d7ea61a5b4d14c0072
 companion_doc: llms-full.md
 ---
 
@@ -24,15 +24,30 @@ Form 76 for Bulgaria.
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
 
 
-## Which days Form 76 marks
+## How to use it
+
+### Attendance Form 76 Bulgaria
+
+The attendance sheet of a department for a month (form 76, "Таблица за
+отчитане явяването/неявяването на работа"): every person under contract in
+the month, a cell per day with the hours worked or the letter of the
+absence, and the totals the NSI template asks for.
+
+#### Usage
+
+Print the sheet from **Attendances -> Reporting -> Generate Form 76**: pick
+the year, the month and the departments.
+
+##### Which days Form 76 marks
 
 Leave is marked on the days it was asked for. Non-working days ("Н") are
-the days of the employee's schedule as they live them, in their own
+the days off of the employee's schedule and the public holidays of the
+employee's own company, as they live them, in their own
 **Timezone** (employee form, *Settings* tab) - the same days the worked
 hours in the form are filed under. A night shift that begins at midnight
 is therefore marked on its own day, not on the evening before.
 
-## What the columns hold
+##### What the columns hold
 
 The columns follow the NSI template of the attendance sheet
 ("Таблица за отчитане явяването/неявяването на работа").
@@ -72,7 +87,3 @@ The columns follow the NSI template of the attendance sheet
 - With **fixed hours per day** set in the wizard, every worked day shows that
   figure, and neither the overtime nor the missed hours of a working day are
   counted; hours worked on a day off still are.
-
-## How to use it
-
-Day-to-day workflows are accessed through the standard Odoo menus contributed by this module. Refer to your administrator if you cannot find the corresponding screens.

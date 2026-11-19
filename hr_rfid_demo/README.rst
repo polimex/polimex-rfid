@@ -51,8 +51,9 @@ Open Attendances, the Dashboards or RFID Access Control on the demo database:
   evenings, every entry is counted as a visit, and when the visits or the
   month run out the next one is sold.
 
-A person on approved leave does not come in that day, and a day somebody
-already has attendance entered by hand is left to them.
+A person on approved leave does not come in that day, nobody comes in on a
+public holiday of the company, and a day somebody already has attendance
+entered by hand is left to them.
 
 Technical
 =========

@@ -2,6 +2,12 @@ from odoo import fields, models
 from datetime import datetime, date, time
 import pytz
 
+# The public holidays: no person on them. Read for a person, core keeps a
+# holiday of another company out (resource/models/resource_calendar.py, the
+# company check in _leave_intervals_batch); read for the schedule alone, every
+# company's holidays with no schedule come in.
+PUBLIC_HOLIDAYS = [('time_type', '=', 'leave'), ('resource_id', '=', False)]
+
 
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
@@ -33,6 +39,7 @@ class HrEmployee(models.Model):
 
         cal = employee_resource.calendar_id
         intervals = cal._attendance_intervals_batch(start_dt, end_dt)[False]
-        global_leaves = cal._leave_intervals_batch(start_dt, end_dt)[False]
+        global_leaves = cal._leave_intervals(
+            start_dt, end_dt, employee_resource, domain=PUBLIC_HOLIDAYS)
 
         return (global_leaves and 'Н') or (not intervals and 'Н') or False

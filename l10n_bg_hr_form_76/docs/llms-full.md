@@ -2,7 +2,7 @@
 id: l10n_bg_hr_form_76
 title: Attendance Form 76 Bulgaria
 module: l10n_bg_hr_form_76
-module_version: 19.0.1.0.2
+module_version: 19.0.1.0.10
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,16 +11,16 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Form 76 for Bulgaria
-last_updated: '2026-04-29'
-source_digest: sha256:3dc726145ed218680f8acf3eafae61e2abfd1fbc7c91d8a1a22fb21c2c6336b1
+last_updated: '2026-11-19'
+source_digest: sha256:6b4f1df0d51ae09ff1ff3826f6cff99d8fa487d8b95e81d7ea61a5b4d14c0072
 depends:
 - hr_attendance_late
 - hr_holidays
 entities:
-  primary: hr.employee
+  primary: hr.attendance.form76.wizard
   related:
+  - hr.employee
   - hr.leave.type
-  - hr.attendance.form76.wizard
 keywords:
 - attendance
 - bulgaria
@@ -32,7 +32,7 @@ keywords:
 - type
 - wizard
 license: AGPL-3
-author: Polimex Holding Ltd.
+author: Polimex Dev Team
 category: Human Resources
 installable: true
 application: false
@@ -58,7 +58,7 @@ chunking:
 ---
 
 
-# Attendance Form 76 Bulgaria — `l10n_bg_hr_form_76` v19.0.1.0.2
+# Attendance Form 76 Bulgaria - `l10n_bg_hr_form_76` v19.0.1.0.10
 
 Form 76 for Bulgaria
 
@@ -67,28 +67,47 @@ Form 76 for Bulgaria
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `l10n_bg_hr_form_76`
-- **Version**: `19.0.1.0.2`
+- **Version**: `19.0.1.0.10`
 - **Category**: Human Resources
 - **License**: AGPL-3
-- **Author**: Polimex Holding Ltd.
+- **Author**: Polimex Dev Team
 - **Application**: no
 - **Auto-install**: no
 - **Installable**: yes
 - **Depends on**: `hr_attendance_late`, `hr_holidays`
 
+### README (verbatim)
 
-## Which days Form 76 marks
+===========================
+Attendance Form 76 Bulgaria
+===========================
+
+The attendance sheet of a department for a month (form 76, "Таблица за
+отчитане явяването/неявяването на работа"): every person under contract in
+the month, a cell per day with the hours worked or the letter of the
+absence, and the totals the NSI template asks for.
+
+Usage
+=====
+
+Print the sheet from **Attendances -> Reporting -> Generate Form 76**: pick
+the year, the month and the departments.
+
+Which days Form 76 marks
+------------------------
 
 Leave is marked on the days it was asked for. Non-working days ("Н") are
-the days of the employee's schedule as they live them, in their own
+the days off of the employee's schedule and the public holidays of the
+employee's own company, as they live them, in their own
 **Timezone** (employee form, *Settings* tab) - the same days the worked
 hours in the form are filed under. A night shift that begins at midnight
 is therefore marked on its own day, not on the evening before.
 
-## What the columns hold
+What the columns hold
+---------------------
 
 The columns follow the NSI template of the attendance sheet
 ("Таблица за отчитане явяването/неявяването на работа").
@@ -129,6 +148,15 @@ The columns follow the NSI template of the attendance sheet
   figure, and neither the overtime nor the missed hours of a working day are
   counted; hours worked on a day off still are.
 
+Credits
+=======
+
+Authors
+-------
+
+* Polimex Holding Ltd. - https://polimex.co
+
+
 ## Installation & Configuration <a id='install'></a>
 
 Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.
@@ -142,17 +170,17 @@ Installation requirements and configuration entry points. Use this section to an
 Each model below is an atomic concept: one H3 per model. Inherited models (extending core) are marked explicitly.
 
 ### `hr.employee` <a id='model-hr-employee'></a>
-Python class `HrEmployee` in `models/hr_employee.py:6`.  Model.  Inherits: `hr.employee`.
+Python class `HrEmployee` in `models/hr_employee.py:12`.  Model.  Inherits: `hr.employee`.
 
 #### Fields
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `corporate_internal_number` | Char |  |  | ✓ |  |
+| `corporate_internal_number` | Char | Corporate Internal Number |  | ✓ | Вътрешен корпоративен номер на служителя в дружеството (например табелен/служебе |
 
 #### Notable methods
 
-- **`f76_intervals(self, specific_date)`** — decorators: —
+- **`f76_intervals(self, specific_date)`** - decorators: -
   - Check if a specific date is a non-working day for the employee.
 
 ### `hr.leave.type` <a id='model-hr-leave-type'></a>
@@ -162,9 +190,9 @@ Python class `HolidaysType` in `models/hr_leave_type.py:4`.  Model.  Inherits: `
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `form76_code` | Char | Код за форма 76 |  | ✓ |  |
-| `form76_law_reason` | Char | Основание за оптуска |  | ✓ |  |
-| `form76_description` | Text | Описание |  | ✓ |  |
+| `form76_code` | Char | Код за форма 76 |  | ✓ | Буквата, с която Форма 76 отбелязва дните на този отпуск, на кирилица: О - редов |
+| `form76_law_reason` | Char | Основание за оптуска |  | ✓ | Правното основание за този тип отпуск (член/алинея от КТ или друг нормативен акт |
+| `form76_description` | Text | Описание |  | ✓ | Свободен текст за вътрешни нужди — пояснява в кои ситуации да се ползва този тип |
 
 ### `hr.attendance.form76.wizard` <a id='model-hr-attendance-form76-wizard'></a>
 Python class `WizardHrForm76` in `wizards/report_form_76_wizard.py:5`.  TransientModel (wizard).  Description: *Wizard for generation Form 76 in Bulgaria*.
@@ -174,20 +202,29 @@ Python class `WizardHrForm76` in `wizards/report_form_76_wizard.py:5`.  Transien
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
 | `department_ids` | Many2many → \`hr.department\` | Departments | ✓ | ✓ | Generate report for this Department/s |
-| `report_year` | Integer | Calendar Year | ✓ | ✓ |  |
-| `report_month` | Selection |  | ✓ | ✓ |  |
-| `precision` | Integer |  | ✓ | ✓ | Round the hours to exact precision. Precision=2 (0.00) means 2 digits after deci |
-| `set_hours_to` | Integer |  | ✓ | ✓ | Replace hours with this hours.  This operation will replace real hours per day w |
+| `report_year` | Integer | Calendar Year | ✓ | ✓ | Календарна година за която се генерира Форма 76. Приема стойности от 2020 нататъ |
+| `report_month` | Selection | Report Month | ✓ | ✓ | Месец, за който се генерира Форма 76 в комбинация с годината по-горе. |
+| `precision` | Integer | Precision | ✓ | ✓ | Round the hours to exact precision. Precision=2 (0.00) means 2 digits after deci |
+| `set_hours_to` | Integer | Set Hours To | ✓ | ✓ | Replace hours with this hours.  This operation will replace real hours per day w |
 
 #### Notable methods
 
-- **`report_print(self)`** — decorators: —
-- **`report_view(self)`** — decorators: —
+- **`report_print(self)`** - decorators: -
+- **`report_view(self)`** - decorators: -
 
 
 ## Module Constants <a id='constants'></a>
 
-No module-level UPPER_CASE constants are declared by this module.
+UPPER_CASE module-level assignments - rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
+
+
+### `models/hr_employee.py`
+
+- **`PUBLIC_HOLIDAYS`** *(collection)* = `[('time_type', '=', 'leave'), ('resource_id', '=', False)]`  - line 9
+
+### `reports/report_form_76_bg.py`
+
+- **`OUT_OF_CONTRACT`** *(scalar)* = `''`  - line 14
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -195,79 +232,9 @@ No module-level UPPER_CASE constants are declared by this module.
 Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
 
 
-### Public helpers
-
-- **`TestForm76Common.setUpClass(cls)`** (`@classmethod`) — `tests/test_form_76.py:11`
-  - calls `super()`
-  - touches: `hr.department`, `hr.employee`, `hr.leave.type`
-- **`TestLeaveType.test_form76_code_default(self)`** — `tests/test_form_76.py:62`
-  - touches: `hr.leave.type`
-- **`TestLeaveType.test_form76_law_reason_default(self)`** — `tests/test_form_76.py:69`
-  - touches: `hr.leave.type`
-- **`TestLeaveType.test_form76_custom_code(self)`** — `tests/test_form_76.py:76`
-- **`TestEmployee.test_corporate_internal_number(self)`** — `tests/test_form_76.py:85`
-- **`TestEmployee.test_f76_intervals_working_day(self)`** — `tests/test_form_76.py:89`
-  - Monday should be a working day.
-- **`TestEmployee.test_f76_intervals_weekend(self)`** — `tests/test_form_76.py:103`
-  - Saturday should be non-working.
-- **`TestEmployee.test_f76_intervals_string_date(self)`** — `tests/test_form_76.py:113`
-  - Test with string date input.
-- **`TestEmployee.test_f76_intervals_invalid_input(self)`** — `tests/test_form_76.py:123`
-  - Test with invalid input raises ValueError.
-- **`TestWizard.test_wizard_defaults(self)`** — `tests/test_form_76.py:142`
-- **`TestWizard.test_wizard_prepare_report_data(self)`** — `tests/test_form_76.py:147`
-- **`TestWizard.test_wizard_invalid_year(self)`** — `tests/test_form_76.py:158`
-- **`TestWizard.test_wizard_future_year(self)`** — `tests/test_form_76.py:163`
-- **`TestWizard.test_wizard_report_print(self)`** — `tests/test_form_76.py:168`
-- **`TestWizard.test_wizard_report_view_preview(self)`** — `tests/test_form_76.py:180`
-- **`TestWizard.test_wizard_preview_does_not_modify_db(self)`** — `tests/test_form_76.py:187`
-  - Preview should NOT modify the ir.actions.report record.
-- **`TestReportForm76.test_get_attendance_data_returns_correct_structure(self)`** — `tests/test_form_76.py:217`
-  - SQL query should return rows with correct number of columns.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_attendance_data_february(self)`** — `tests/test_form_76.py:233`
-  - February should have 28 or 29 days.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_attendance_data_filters_by_department(self)`** — `tests/test_form_76.py:242`
-  - Only employees in specified department should be returned.
-  - touches: `hr.department`, `hr.employee`, `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_attendance_data_company_filter(self)`** — `tests/test_form_76.py:266`
-  - SQL query should filter by company_id.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_holiday_map(self)`** — `tests/test_form_76.py:276`
-  - Holiday map should identify weekends correctly.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_holiday_map_multiple_employees(self)`** — `tests/test_form_76.py:297`
-  - Holiday map should handle multiple employees.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_report_values_structure(self)`** — `tests/test_form_76.py:310`
-  - Report values should contain all required keys.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_report_values_line_structure(self)`** — `tests/test_form_76.py:328`
-  - Each line in departments should have all named keys.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_report_values_no_data_raises(self)`** — `tests/test_form_76.py:350`
-  - Report without data should raise UserError.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_get_report_values_with_leave(self)`** — `tests/test_form_76.py:357`
-  - Approved leave should appear with correct form76 code.
-  - touches: `hr.leave`, `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_vertical_text(self)`** — `tests/test_form_76.py:389`
-  - vertical_text should join characters with <br/>.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestReportForm76.test_set_hours_to_replaces_actual(self)`** — `tests/test_form_76.py:395`
-  - When set_hours_to > 0, actual hours should be replaced.
-  - touches: `report.l10n_bg_hr_form_76.report_form_76`
-- **`TestHolidayRequestReport.test_report_action_exists(self)`** — `tests/test_form_76.py:415`
-  - Holiday request report action should exist.
-- **`TestHolidayRequestReport.test_form76_report_action_exists(self)`** — `tests/test_form_76.py:425`
-  - Form 76 report action should exist.
-
 ### Private helpers
 
-- **`TestWizard._create_wizard(self, **kwargs)`** — `tests/test_form_76.py:133`
-  - touches: `hr.attendance.form76.wizard`
-- **`TestReportForm76._get_report_data(self, **kwargs)`** — `tests/test_form_76.py:205`
+- **`_month_days(first, last)`** - `reports/report_form_76_bg.py:17`
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -276,10 +243,10 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_employee_form_inherit_form76` | `hr.employee` | — | hr.view_employee_form | `views/hr_employee.xml` |
-| `view_employee_filter_inherit` | `hr.employee` | — | hr.view_employee_filter | `views/hr_employee.xml` |
-| `f76_edit_holiday_status_form` | `hr.leave.type` | — | hr_holidays.edit_holiday_status_form | `views/hr_leave_type_views.xml` |
-| `f76_view_holiday_status_normal_tree` | `hr.leave.type` | — | hr_holidays.view_holiday_status_normal_tree | `views/hr_leave_type_views.xml` |
+| `hr_employee_form_inherit_form76` | `hr.employee` | - | hr.view_employee_form | `views/hr_employee.xml` |
+| `view_employee_filter_inherit` | `hr.employee` | - | hr.view_employee_filter | `views/hr_employee.xml` |
+| `f76_edit_holiday_status_form` | `hr.leave.type` | - | hr_holidays.edit_holiday_status_form | `views/hr_leave_type_views.xml` |
+| `f76_view_holiday_status_normal_tree` | `hr.leave.type` | - | hr_holidays.view_holiday_status_normal_tree | `views/hr_leave_type_views.xml` |
 
 #### Sample XPath operations
 
@@ -302,7 +269,7 @@ List of `ir.ui.view` records created or extended by this module.
 Who can do what. Answer access-related questions from this section.
 
 
-### Access rights (ir.model.access)
+### Access rights (ir.model.access; v20: ir.access rows with a group)
 
 | CSV id | Model | Group | R | W | C | D |
 |---|---|---|---|---|---|---|
@@ -317,62 +284,51 @@ XML records seeded at install and scheduled actions.
 
 ### Data records summary
 
+- `hr.attendance.extra`: 60 record(s)
 - `hr.leave.type`: 12 record(s)
+- `hr.employee`: 3 record(s)
+- `hr.leave`: 3 record(s)
+- `ir.actions.report`: 2 record(s)
 - `report.paperformat`: 1 record(s)
+- `hr.leave.allocation`: 1 record(s)
+- `ir.actions.act_window`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
 
-This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWeb templates).
+JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
+
+
+**QWeb templates in XML data, rendered by the server** (6): `hr_holiday_request`, `hr_holidays_request_document`, `report_f76_header`, `report_form_76`, `report_f76_department`, `report_f76_footer`
+
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
-
-### From `gotchas` (2)
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчита
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчитай на него за валидация
-
-Matched tokens: `fields.char`
+Entries derived from the module's own code comments and bug-fix commit history.
 
 ### From `git_log` (1)
 
 #### Fix: [FIX] manifest validator issues flagged by Odoo Apps
-<!-- source: git_log ref: 9a3d488b201a3d36dd71ae01c4b394d2ee8b8caf occ: 1 conf: 0.60 -->
 
 Commit `9a3d488b20` (2026-04-21): [FIX] manifest validator issues flagged by Odoo Apps
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/l10n_bg_hr_form_76`
-- Source digest: `sha256:3dc726145ed218680f8acf3eafae61e2abfd1fbc7c91d8a1a22fb21c2c6336b1`
-- Generated at: `2026-04-29T07:30:42+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `l10n_bg_hr_form_76`
+- Source digest: `sha256:6b4f1df0d51ae09ff1ff3826f6cff99d8fa487d8b95e81d7ea61a5b4d14c0072`
+- Generated at: `2026-11-19T16:38:03+00:00`
+- Generator: `polimex_module_knowledge`

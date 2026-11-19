@@ -7,6 +7,8 @@ import pytz
 from collections import defaultdict
 from markupsafe import Markup
 
+from ..models.hr_employee import PUBLIC_HOLIDAYS
+
 # A day outside the person's contract: before they were hired or after they
 # left. The NSI sheet leaves it blank - it is neither attendance nor absence.
 OUT_OF_CONTRACT = ''
@@ -173,12 +175,14 @@ class ReportForm76(models.AbstractModel):
 
             for schedule, emp_periods in periods_per_schedule.items():
                 # Batch calls - ONE per schedule, not per person per day.
-                # Public holidays are the resource-less leaves (key False).
+                # Public holidays are read per person, so a holiday of another
+                # company stays out (PUBLIC_HOLIDAYS).
                 schedule_resources = self.env['hr.employee'].concat(
                     *(emp for emp, _periods in emp_periods)).resource_id
                 attendance_intervals = schedule._attendance_intervals_batch(
                     start_dt, end_dt, schedule_resources)
-                global_leaves = schedule._leave_intervals_batch(start_dt, end_dt)[False]
+                public_holidays = schedule._leave_intervals_batch(
+                    start_dt, end_dt, resources=schedule_resources, domain=PUBLIC_HOLIDAYS)
                 for emp, periods in emp_periods:
                     day_map = result[emp.id]
                     for valid_from, valid_to, _meta in periods:
@@ -187,7 +191,8 @@ class ReportForm76(models.AbstractModel):
                             day_start = tz.localize(datetime.combine(current, time.min))
                             day_end = tz.localize(datetime.combine(current, time.max))
                             has_global_leave = any(
-                                s <= day_end and e >= day_start for s, e, _meta in global_leaves)
+                                s <= day_end and e >= day_start
+                                for s, e, _meta in public_holidays[emp.resource_id.id])
                             has_attendance = any(
                                 s <= day_end and e >= day_start
                                 for s, e, _meta in attendance_intervals[emp.resource_id.id])

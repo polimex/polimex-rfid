@@ -918,6 +918,9 @@ class TestTheScheduledTask(ForgottenBadgeCase):
         The oldest stay is settled and kept, the time is up, and the next run
         finds only what is left.
         """
+        # Whatever the database already has open (a demo's forgotten
+        # badges) is settled first, so the two stays below are all there is.
+        self.env["hr.attendance"].check_for_incomplete_attendances()
         first = self._machine_stay(self.at(self.monday, 8))
         second = self._machine_stay(self.at(self.tuesday, 8))
         in_the_task = self.env["hr.attendance"].with_context(ir_cron_progress_id=1)

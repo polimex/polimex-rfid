@@ -3,11 +3,12 @@
     <data noupdate="1">
     <!--
         Showcase demo: populate the official Bulgarian public holidays for the
-        demo reference year 2026 on the main company's working calendar.
+        demo reference year 2026 for everybody in the main company, whatever
+        working schedule a person is on.
 
         This reuses the module's own idempotent generator
         (res.company._generate_bg_public_holidays) rather than hardcoding
-        dates, so the resulting global resource.calendar.leaves are real,
+        dates, so the resulting public holidays are real,
         law-derived holidays (10 fixed BG dates + the movable Orthodox-Easter
         cluster: Good Friday / Holy Saturday / Easter Monday).
 
