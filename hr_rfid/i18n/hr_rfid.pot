@@ -8914,14 +8914,6 @@ msgid ""
 msgstr ""
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
-msgid ""
-"Security feature requiring two authorized persons to badge within a time "
-"window to grant access. Commonly used for high-security areas like server "
-"rooms or vaults."
-msgstr ""
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__anti_pass_back
 msgid ""
 "Security feature that prevents tailgating and ensures accurate tracking. When enabled:\n"
@@ -10919,6 +10911,14 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__9
 msgid "Turnstile"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
+msgid ""
+"Two authorized persons must badge within a short time for the door to open, "
+"for high-security areas like server rooms or vaults. Available on iCON130 "
+"(firmware 7.36 or newer)."
 msgstr ""
 
 #. module: hr_rfid

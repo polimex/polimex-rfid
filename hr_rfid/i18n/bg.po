@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-06 18:16+0000\n"
-"PO-Revision-Date: 2026-11-16 17:46\n"
+"PO-Revision-Date: 2026-11-19 18:20\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -10079,18 +10079,6 @@ msgstr ""
 "стъкло и др.) и да задейства подходящи реакции."
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
-msgid ""
-"Security feature requiring two authorized persons to badge within a time "
-"window to grant access. Commonly used for high-security areas like server "
-"rooms or vaults."
-msgstr ""
-"Функция за сигурност, изискваща двама оторизирани лица да използват картите "
-"си в рамките на определен времеви прозорец за предоставяне на достъп. "
-"Обикновено се използва за зони с висока сигурност като сървърни помещения "
-"или трезори."
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__anti_pass_back
 msgid ""
 "Security feature that prevents tailgating and ensures accurate tracking. When enabled:\n"
@@ -12502,6 +12490,18 @@ msgstr "Включи сирената"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__9
 msgid "Turnstile"
 msgstr "Турникет"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
+msgid ""
+"Two authorized persons must badge within a short time for the door to open, "
+"for high-security areas like server rooms or vaults. Available on iCON130 "
+"(firmware 7.36 or newer)."
+msgstr ""
+"За да се отвори вратата, две упълномощени лица трябва да преминат с карта в "
+"рамките на кратко време. Използва се за зони с висока степен на сигурност, "
+"като сървърни помещения или трезори. Налично на iCON130 (фърмуер 7.36 или "
+"по-нов)."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__2

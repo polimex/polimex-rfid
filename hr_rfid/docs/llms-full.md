@@ -1025,7 +1025,7 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 | `mode_selection_31` | Selection | Relays mode | ✓ | - | Relay configuration mode: - 1 x 32: Single bank of 32 relays - 2 x 16: Two indep |
 | `external_db` | Boolean | External DB |  | ✓ | External database mode. When on, the controller does not keep the card list in i |
 | `relay_time_factor` | Selection | Relay Time Factor |  | ✓ | Time unit for relay activation duration. When set to "1 second", relay timers co |
-| `dual_person_mode` | Boolean | Dual Person Mode |  | ✓ | Security feature requiring two authorized persons to badge within a time window  |
+| `dual_person_mode` | Boolean | Dual Person Mode |  | ✓ | Two authorized persons must badge within a short time for the door to open. Available on iCON130 (firmware 7.36 or newer); not shown and never sent for other controllers |
 | `interlocking_mode` | Boolean | Interlocking Mode |  | ✓ | Interlocking (mantrap): only one of the controller's doors may be open at a time |
 | `max_cards_count` | Integer | Maximum Cards |  | ✓ | Maximum number of access cards this controller can store in its internal memory. |
 | `cards_count` | Integer | Cards Count |  | ✓ | Current number of access cards stored in the controller's memory. When this appr |

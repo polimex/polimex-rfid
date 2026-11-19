@@ -1207,11 +1207,15 @@ class HrRfidCommands(models.Model):
             'external_db': external_db,
             'relay_time_factor': relay_time_factor,
             'interlocking_mode': interlocking_mode,
-            'dual_person_mode': dual_person_mode,
             'max_cards_count': max_cards_count,
             'max_events_count': max_events_count,
             'last_f0_read': fields.Datetime.now(),
         }
+        # Bit 3 is dual person mode only where the controller carries it out
+        # (iCON50 reports its anti-passback there); elsewhere the saved choice
+        # stays as it is.
+        if hw_ver in polimex.DUAL_PERSON_HW_VERSIONS:
+            ctrl_dict['dual_person_mode'] = dual_person_mode
         if ctrl_mode != self.controller_id.mode and self.controller_id.mode is not None and ctrl_already_existed:
             # ctrl_dict['io_table'] = polimex.get_default_io_table(hw_ver, sw_ver, ctrl_mode)
             self.controller_id.with_context({'from_controller': True}).write(ctrl_dict)

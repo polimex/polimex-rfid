@@ -174,7 +174,8 @@
                                                invisible="hw_version not in ['31']"/>
                                         <field name="external_db" widget="boolean_toggle"/>
                                         <field name="relay_time_factor"/>
-                                        <field name="dual_person_mode" widget="boolean_toggle"/>
+                                        <field name="dual_person_mode" widget="boolean_toggle"
+                                               invisible="hw_version not in ['17']"/>
                                         <field name="interlocking_mode" widget="boolean_toggle"
                                                invisible="hw_version not in ['11','17']"/>
                                     </group>

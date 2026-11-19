@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-16 17:47\n"
+"PO-Revision-Date: 2026-11-19 18:20\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -10139,18 +10139,6 @@ msgstr ""
 "usw.) verbunden werden und entsprechende Reaktionen auslösen."
 
 #. module: hr_rfid
-#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
-msgid ""
-"Security feature requiring two authorized persons to badge within a time "
-"window to grant access. Commonly used for high-security areas like server "
-"rooms or vaults."
-msgstr ""
-"Sicherheitsfunktion, die erfordert, dass zwei autorisierte Personen "
-"innerhalb eines Zeitfensters ihren Ausweis verwenden, um Zutritt zu "
-"erhalten. Wird häufig für Hochsicherheitsbereiche wie Serverräume oder "
-"Tresore eingesetzt."
-
-#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_zone__anti_pass_back
 msgid ""
 "Security feature that prevents tailgating and ensures accurate tracking. When enabled:\n"
@@ -12595,6 +12583,18 @@ msgstr "Sirene einschalten"
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__hw_version__9
 msgid "Turnstile"
 msgstr "Drehsperre"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_ctrl__dual_person_mode
+msgid ""
+"Two authorized persons must badge within a short time for the door to open, "
+"for high-security areas like server rooms or vaults. Available on iCON130 "
+"(firmware 7.36 or newer)."
+msgstr ""
+"Zwei berechtigte Personen müssen innerhalb kurzer Zeit ihren Ausweis "
+"vorhalten, damit sich die Tür öffnet. Für Hochsicherheitsbereiche wie "
+"Serverräume oder Tresorräume. Verfügbar bei iCON130 (Firmware 7.36 oder "
+"neuer)."
 
 #. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl__mode_selection_4__2

@@ -71,8 +71,8 @@ class TestInterlockingMode(RFIDController, HttpCase):
         interlocking bit, so toggling dual-person mode wiped interlocking on
         the controller.
         """
-        self._add_iCon115()
-        ctrl = self.c_115
+        self._add_iCon130()
+        ctrl = self.c_130
         ctrl.interlocking_mode = True            # stored + first D5 queued
         ctrl.dual_person_mode = True             # an unrelated mode write
 

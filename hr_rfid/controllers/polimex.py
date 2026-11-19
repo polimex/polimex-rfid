@@ -39,6 +39,13 @@ HW_TYPES = [('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140
 # rights. One iCON180 board carries three vending firmwares: 16 (Executive
 # with a coin mechanism), 20 (Executive only) and 21 (MDB cashless).
 VENDING_HW_VERSIONS = ('16', '20', '21')
+# Hardware codes that carry out dual person mode (bit 3 of the mode byte, D5 /
+# F0). Read by the protocol team in the firmware sources (19.11.2026): only
+# iCON130, from build 7.36_3. The turnstile reports itself as an iCON130 by
+# name but never does it (refuses the bit up to 7.47, ignores it from 7.49);
+# on iCON50 the same bit stops anti-passback, and the older iCON180 and iCON115
+# refuse the whole mode write (0xE4). So the bit goes to these codes only.
+DUAL_PERSON_HW_VERSIONS = ('17',)
 # The highest time schedule number a card write (D1) may carry, per controller
 # model. Read by the protocol team from command_d1 of each firmware (protocol
 # change D47, 12.11.2026): iCON130 and iCON180 (hotel too) keep 2 bits per

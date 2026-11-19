@@ -317,7 +317,9 @@ class HrRfidController(models.Model):
         string='Dual Person Mode',
         default=False,
         tracking=True,
-        help='Security feature requiring two authorized persons to badge within a time window to grant access. Commonly used for high-security areas like server rooms or vaults.'
+        help='Two authorized persons must badge within a short time for the door to open, '
+             'for high-security areas like server rooms or vaults. Available on iCON130 '
+             '(firmware 7.36 or newer).'
     )
 
     interlocking_mode = fields.Boolean(
@@ -816,7 +818,10 @@ class HrRfidController(models.Model):
                 ctrl.alarm_line_ids._compute_states()
 
             # if old_ext_db != new_ext_db or 'dual_person_mode' in vals.keys() or 'relay_time_factor' in vals.keys():
-            if not from_controller and ('external_db' in vals.keys() or 'dual_person_mode' in vals.keys() or 'relay_time_factor' in vals.keys() or 'interlocking_mode' in vals.keys()):
+            if not from_controller and (
+                    'external_db' in vals.keys() or 'relay_time_factor' in vals.keys()
+                    or 'interlocking_mode' in vals.keys()
+                    or ('dual_person_mode' in vals.keys() and ctrl._does_dual_person_mode())):
                 ctrl.write_controller_mode()
             if (
                     'high_temperature' in vals or 'low_temperature' in vals or 'hysteresis' in vals) and not self.env.context.get(
@@ -1337,6 +1342,10 @@ class HrRfidController(models.Model):
         else:
             return commands
 
+    def _does_dual_person_mode(self):
+        self.ensure_one()
+        return self.hw_version in polimex.DUAL_PERSON_HW_VERSIONS
+
     def write_controller_mode(self, new_mode: int = None, new_ext_db: bool = None, new_dual_person_mode: bool = None, new_relay_factor: int = None, new_interlocking_mode: bool = None):
         if new_mode is None:
             new_mode = self.mode
@@ -1346,6 +1355,9 @@ class HrRfidController(models.Model):
             new_relay_factor = self.relay_time_factor
         if new_dual_person_mode is None:
             new_dual_person_mode = self.dual_person_mode
+        # Bit 3 means dual person mode only on the controllers that carry it
+        # out; anywhere else it breaks something or the write is refused.
+        new_dual_person_mode = bool(new_dual_person_mode) and self._does_dual_person_mode()
         if new_interlocking_mode is None:
             new_interlocking_mode = self.interlocking_mode
 
