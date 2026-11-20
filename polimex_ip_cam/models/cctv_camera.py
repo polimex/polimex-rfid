@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 import pytz
 
-from odoo import models, fields, api, _, Command, SUPERUSER_ID
+from odoo import models, fields, api, _, Command
 import logging
 from odoo.addons.polimex_ip_cam.helpers.camera_api import HikvisionCamera  # import our Hikvision-specific class
 from odoo.addons.polimex_ip_cam.controllers.anpr_controller import (
@@ -844,17 +844,7 @@ class CctvCamera(models.Model):
             return {"status": "failed", "error": "Failed to delete plate before updating."}
 
     def notify_by_discuss(self, recipients, msg, attachments=None):
-        odoobot_id = self.env.ref("base.partner_root").id
-        for recipient in recipients:
-            partners_to = [recipient.id]
-            channel = self.env["discuss.channel"].with_user(SUPERUSER_ID).channel_get(partners_to)
-            channel.message_post(
-                body=msg,
-                author_id=odoobot_id,
-                message_type="comment",
-                subtype_xmlid="mail.mt_comment",
-                attachments=attachments or []
-            )
+        self.env["hr.rfid.notification"]._tell_in_chat(recipients, msg, attachments)
 
     def parse_event(self, files_data):
         """

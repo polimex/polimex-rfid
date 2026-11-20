@@ -149,6 +149,13 @@ Event Endpoint: /hr/rfid/event
    - View current door states
    - Remote open/close doors
 
+3. **Zone Notifications**
+   - On a zone, the **Notifications** tab: each row picks an action (for
+     example "Card Denied" or "Card Granted") and who is told, in the chat or
+     by e-mail, when it happens at a door of the zone
+   - A refused card is told like any other action; only a granted passage
+     moves people in or out of the zone
+
 ### Reports
 
 - Access logs by person

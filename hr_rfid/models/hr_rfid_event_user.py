@@ -482,8 +482,11 @@ class HrRfidUserEvent(models.Model):
                     'its card matched nobody. Action %s from controller %s.',
                     rec.id, rec.event_action, rec.ctrl_addr)
             
-            # Process only granted access events for zone tracking
+            # Only a granted passage moves people in or out of a zone, but any
+            # action may be the one a zone's notification watches for - a card
+            # refused at its door above all.
             if rec.event_action != '1':  # '1' == Granted
+                rec.door_id.zone_ids.process_event(rec)
                 continue
 
             if not rec.employee_id and not rec.contact_id:

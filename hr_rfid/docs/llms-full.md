@@ -2,7 +2,7 @@
 id: hr_rfid
 title: RFID Access Control
 module: hr_rfid
-module_version: 19.0.2.34.6
+module_version: 19.0.2.34.7
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -12,7 +12,7 @@ audience:
 companion_doc: llms.txt
 summary: Manage employee access control
 last_updated: '2026-11-20'
-source_digest: sha256:5867504fd0fdbfff4e85a392a880cfc7701e900f06dc04094457d473f0e4c8a2
+source_digest: sha256:7fa7bb0d5912d1f7956912710f388f293949f19f997f941a6b71a4508d685b5d
 depends:
 - hr
 - contacts
@@ -111,7 +111,7 @@ chunking:
 ---
 
 
-# RFID Access Control - `hr_rfid` v19.0.2.34.6
+# RFID Access Control - `hr_rfid` v19.0.2.34.7
 
 Manage employee access control
 
@@ -123,7 +123,7 @@ Manage employee access control
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid`
-- **Version**: `19.0.2.34.6`
+- **Version**: `19.0.2.34.7`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -284,6 +284,13 @@ Event Endpoint: /hr/rfid/event
    - RFID → Doors
    - View current door states
    - Remote open/close doors
+
+3. **Zone Notifications**
+   - On a zone, the **Notifications** tab: each row picks an action (for
+     example "Card Denied" or "Card Granted") and who is told, in the chat or
+     by e-mail, when it happens at a door of the zone
+   - A refused card is told like any other action; only a granted passage
+     moves people in or out of the zone
 
 ###### Reports
 
@@ -1616,6 +1623,8 @@ Python class `RFIDNotification` in `models/hr_rfid_notification.py:11`.  Model. 
 - **`process_event(self, event)`** - decorators: -
   - effects: `with_context`
 - **`notify_by_discuss(self, recipients, msg)`** - decorators: -
+- **`_tell_in_chat(self, partners, body, attachments=None)`** - decorators: `@api.model`
+  - Post ``body`` from OdooBot in its private chat with each partner.
   - effects: `message_post`
   - touches: `discuss.channel`
 - **`notify_by_email(self, recipients, subject, body)`** - decorators: -
@@ -2809,7 +2818,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > remove buttons and move actions
 
-### From `git_log` (58)
+### From `git_log` (57)
 
 #### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior ...
 
@@ -2915,6 +2924,6 @@ Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:5867504fd0fdbfff4e85a392a880cfc7701e900f06dc04094457d473f0e4c8a2`
-- Generated at: `2026-11-20T09:48:03+00:00`
+- Source digest: `sha256:7fa7bb0d5912d1f7956912710f388f293949f19f997f941a6b71a4508d685b5d`
+- Generated at: `2026-11-20T10:24:32+00:00`
 - Generator: `polimex_module_knowledge`

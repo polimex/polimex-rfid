@@ -173,12 +173,28 @@ class RFIDNotification(models.Model):
                         pass
 
     def notify_by_discuss(self, recipients, msg):
-        odoobot_id = self.env.ref("base.partner_root").id
-        for recipient in recipients:
-            partners_to = [recipient.id]
-            channel = self.env["discuss.channel"].with_user(SUPERUSER_ID).channel_get(partners_to)
-            channel.message_post(body=msg, author_id=odoobot_id, message_type="comment",
-                                 subtype_xmlid="mail.mt_comment")
+        self._tell_in_chat(recipients, msg)
+
+    @api.model
+    def _tell_in_chat(self, partners, body, attachments=None):
+        """Post ``body`` from OdooBot in its private chat with each partner.
+
+        The chat is core's own one-to-one conversation, found or opened as
+        mail_bot opens it (``discuss.channel._get_or_create_chat`` as the
+        superuser, whose partner is OdooBot); ``channel_get`` it replaced is
+        gone in 19.
+        """
+        odoobot = self.env.ref("base.partner_root")
+        Channel = self.env["discuss.channel"].with_user(SUPERUSER_ID)
+        for partner in partners:
+            chat = Channel._get_or_create_chat([partner.id])
+            chat.message_post(
+                body=body,
+                author_id=odoobot.id,
+                message_type="comment",
+                subtype_xmlid="mail.mt_comment",
+                attachments=attachments or [],
+            )
 
     def notify_by_email(self, recipients, subject, body):
         for recipient in recipients:

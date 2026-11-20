@@ -36,7 +36,7 @@ from unittest.mock import patch
 from lxml import etree
 
 from odoo import fields
-from odoo.tests.common import HttpCase, tagged
+from odoo.tests.common import HttpCase, new_test_user, tagged
 from odoo.tools.safe_eval import safe_eval
 
 from ..controllers.polimex import CMD_ANSWER_TIMEOUT_S, CMD_MAX_RETRIES
@@ -1467,3 +1467,77 @@ class TestADoorOpenedFromTheScreen(ConversationCase):
 
         self.assertEqual(command.status, "Wait")
         self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+
+
+@tagged("post_install", "-at_install", "rfid", "rfid_conversation")
+class TestAZoneTellsWhatItWatchesFor(ConversationCase):
+    """A zone's notification goes out for the action it was set up for.
+
+    The security officer asks to be told when a card is refused at a door of
+    the zone. That message never came: only a granted passage reached the
+    zone's notifications.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.officer = new_test_user(
+            cls.env, login="zone_watch_officer", groups="base.group_user"
+        )
+        cls.zone = cls.env["hr.rfid.zone"].create(
+            {
+                "name": "The Server Room",
+                "company_id": cls.env.company.id,
+                "door_ids": [(4, cls.new_door.id)],
+            }
+        )
+
+    def _notification(self, action):
+        return self.env["hr.rfid.notification"].create(
+            {
+                "zone_id": self.zone.id,
+                "user_event": action,
+                "notification_type": "discuss",
+                "notify_followers": False,
+                "notify_partner_ids": [(6, 0, self.officer.partner_id.ids)],
+            }
+        )
+
+    def _told(self):
+        chats = self.env["discuss.channel"].search(
+            [("channel_member_ids.partner_id", "=", self.officer.partner_id.id)]
+        )
+        return self.env["mail.message"].search_count(
+            [
+                ("model", "=", "discuss.channel"),
+                ("res_id", "in", chats.ids),
+                ("author_id", "=", self.env.ref("base.partner_root").id),
+            ]
+        )
+
+    def test_a_card_refused_at_a_door_of_the_zone_is_told(self):
+        self._notification("2")  # Card Denied
+        before = self._told()
+
+        reply = self.event(self.new_ctrl, 4, card=self.card.number)  # denied, reader 1
+
+        self.assertEqual(reply.told, {"status": 200})
+        self.assertEqual(self.log_of_user_events()[-1:].event_action, "2")
+        self.assertEqual(self._told(), before + 1)
+
+    def test_a_refused_card_does_not_put_anybody_inside(self):
+        self.event(self.new_ctrl, 4, card=self.card.number)
+
+        self.assertFalse(self.zone.employee_ids)
+
+    def test_a_granted_passage_is_still_told_once(self):
+        self._notification("1")  # Card Granted
+        before = self._told()
+
+        self.passage(self.new_ctrl, 1)
+
+        self.assertEqual(self._told(), before + 1)
+        self.assertIn(self.employee, self.zone.employee_ids)
+
+    def log_of_user_events(self):
+        return self.UserEvent.search([("door_id", "=", self.new_door.id)], order="id")

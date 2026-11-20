@@ -7,7 +7,7 @@ audience:
 - user
 summary: Manage employee access control
 last_updated: '2026-11-20'
-source_digest: sha256:5867504fd0fdbfff4e85a392a880cfc7701e900f06dc04094457d473f0e4c8a2
+source_digest: sha256:7fa7bb0d5912d1f7956912710f388f293949f19f997f941a6b71a4508d685b5d
 companion_doc: llms-full.md
 ---
 
@@ -191,6 +191,13 @@ Event Endpoint: /hr/rfid/event
    - RFID → Doors
    - View current door states
    - Remote open/close doors
+
+3. **Zone Notifications**
+   - On a zone, the **Notifications** tab: each row picks an action (for
+     example "Card Denied" or "Card Granted") and who is told, in the chat or
+     by e-mail, when it happens at a door of the zone
+   - A refused card is told like any other action; only a granted passage
+     moves people in or out of the zone
 
 ##### Reports
 
