@@ -5,6 +5,24 @@ import re
 from datetime import datetime
 
 
+
+def widened_period(old_start, old_end, start=None, end=None):
+    """The period that holds both ``old_start``-``old_end`` and a new one.
+
+    The earlier start and the later end; an empty end is no end at all, so
+    it stays empty, and a value not given leaves the old one as it is.
+    """
+    starts = [moment for moment in (old_start, start) if moment]
+    new_start = min(starts) if starts else False
+    if not old_end:
+        new_end = False
+    elif end:
+        new_end = max(old_end, end)
+    else:
+        new_end = old_end
+    return new_start, new_end
+
+
 class ResPartner(models.Model):
     _name = 'res.partner'
     _inherit = ['res.partner']
@@ -298,16 +316,15 @@ class ResPartner(models.Model):
         for p in self:
             if access_group_id in p.hr_rfid_access_group_ids.mapped('access_group_id.id'):
                 existing = p.hr_rfid_access_group_ids.filtered(lambda ag: ag.access_group_id.id == access_group_id)
-                existing.visits_counting = visits > 0
+                start, end = widened_period(
+                    existing.activate_on, existing.expiration, activate_on, expire_on)
                 existing.write({
-                    'activate_on': (activate_on < existing.activate_on) and activate_on or existing.activate_on,
-                    'expiration': (expire_on > existing.expire_on) and expire_on or existing.expire_on,
+                    'activate_on': start,
+                    'expiration': end,
+                    'visits_counting': visits > 0,
+                    # 0 permits any number of visits.
+                    'permitted_visits': max(existing.permitted_visits + visits, 0),
                 })
-
-                if (existing.permited_visits + visits) > 0:
-                    existing.permited_visits += visits
-                else:
-                    existing.permited_visits = None
 
             else:
                 p.write({'hr_rfid_access_group_ids': [(0, 0, {
@@ -315,16 +332,18 @@ class ResPartner(models.Model):
                     'activate_on': activate_on or fields.Datetime.now(),
                     'expiration': expire_on or None,
                     'visits_counting': visits > 0,
-                    'permited_visits': visits
+                    'permitted_visits': visits
                 })]})
 
     def add_card_number(self, card_number, activate_on=None, expire_on=None, card_input_type=None):
         for p in self:
             if card_number in p.hr_rfid_card_ids.mapped('number'):
                 existing = p.hr_rfid_card_ids.filtered(lambda c: c.number == card_number)
+                start, end = widened_period(
+                    existing.activate_on, existing.deactivate_on, activate_on, expire_on)
                 existing.write({
-                    'activate_on': (activate_on < existing.activate_on) and activate_on or existing.activate_on,
-                    'deactivate_on': (expire_on > existing.deactivate_on) and expire_on or existing.deactivate_on,
+                    'activate_on': start,
+                    'deactivate_on': end,
                     'card_input_type': card_input_type or self.env.company.card_input_type,
                 })
             else:

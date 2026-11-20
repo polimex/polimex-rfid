@@ -37,3 +37,4 @@ from . import test_card_schedule_fits_the_controller
 from . import test_a_module_reports_and_is_answered
 from . import test_a_card_number_is_kept_whole
 from . import test_a_controller_without_cards_asks_odoo
+from . import test_access_given_through_the_api

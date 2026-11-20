@@ -2,7 +2,7 @@
 id: hr_rfid
 title: RFID Access Control
 module: hr_rfid
-module_version: 19.0.2.34.8
+module_version: 19.0.2.34.9
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -12,7 +12,7 @@ audience:
 companion_doc: llms.txt
 summary: Manage employee access control
 last_updated: '2026-11-20'
-source_digest: sha256:a852426b5e348d692f728bcc0fe3f132c804a984ec0ce2a94ed6e562cc33c86c
+source_digest: sha256:69e7db3d697e595d87f2c38541ff3d22a4fdcddbad539233ef3691089a746d3a
 depends:
 - hr
 - contacts
@@ -111,7 +111,7 @@ chunking:
 ---
 
 
-# RFID Access Control - `hr_rfid` v19.0.2.34.8
+# RFID Access Control - `hr_rfid` v19.0.2.34.9
 
 Manage employee access control
 
@@ -123,7 +123,7 @@ Manage employee access control
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid`
-- **Version**: `19.0.2.34.8`
+- **Version**: `19.0.2.34.9`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -1980,7 +1980,7 @@ Python class `ResCompany` in `models/res_company.py:4`.  Model.  Inherits: `res.
   - touches: `hr.rfid.time.schedule`
 
 ### `res.partner` <a id='model-res-partner'></a>
-Python class `ResPartner` in `models/res_partner.py:8`.  Model.  Inherits: `res.partner`.
+Python class `ResPartner` in `models/res_partner.py:26`.  Model.  Inherits: `res.partner`.
 
 #### Fields
 
@@ -2037,7 +2037,7 @@ Python class `ResPartner` in `models/res_partner.py:8`.  Model.  Inherits: `res.
   - This function receives a string containing the Machine Readable Zone (MRZ) data of a personal document, decodes the MRZ data and returns it as a dictionary. The function also performs basic…
 
 ### `res.partner.mass.wiz` <a id='model-res-partner-mass-wiz'></a>
-Python class `HrPartnerMassAccGrsWiz` in `models/res_partner.py:465`.  TransientModel (wizard).  Description: *Bulk Access Group Management for Contacts*.
+Python class `HrPartnerMassAccGrsWiz` in `models/res_partner.py:484`.  TransientModel (wizard).  Description: *Bulk Access Group Management for Contacts*.
 
 #### Fields
 
@@ -2140,6 +2140,8 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 - **`get_reverse_temperature(temp)`** - `controllers/polimex.py:584`
 - **`get_local_ip()`** - `models/hr_rfid_webstack.py:42`
   - Return the IP address of the machine running the code.
+- **`widened_period(old_start, old_end, start=None, end=None)`** - `models/res_partner.py:9`
+  - The period that holds both ``old_start``-``old_end`` and a new one.
 
 ### Private helpers
 
@@ -2827,7 +2829,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > remove buttons and move actions
 
-### From `git_log` (56)
+### From `git_log` (55)
 
 #### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior ...
 
@@ -2933,6 +2935,6 @@ Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:a852426b5e348d692f728bcc0fe3f132c804a984ec0ce2a94ed6e562cc33c86c`
-- Generated at: `2026-11-20T11:28:09+00:00`
+- Source digest: `sha256:69e7db3d697e595d87f2c38541ff3d22a4fdcddbad539233ef3691089a746d3a`
+- Generated at: `2026-11-20T11:32:30+00:00`
 - Generator: `polimex_module_knowledge`
