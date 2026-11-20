@@ -46,7 +46,8 @@ The columns follow the NSI template of the attendance sheet
   sheet's own field is used when the catalog's one is empty, and the form of
   the type shows the sheet's own field only then. A letter typed on a Latin
   keyboard ("O" for "О") is saved as the Cyrillic one of the legend, so its
-  days are counted in their column.
+  days are counted in their column; "NA", the mark of a type without a
+  letter, stays as it is.
 - **Position and department** are those of the employee's contract version
   in force on the last day of the month, so the sheet of a past month shows
   the position held then, not today's.

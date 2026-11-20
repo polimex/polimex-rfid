@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Form 76 for Bulgaria
-last_updated: '2026-11-19'
-source_digest: sha256:531076df59f8f58b98eeba912c033f52cbadbe9dfe8ad6b57aee07c1f5f54492
+last_updated: '2026-11-20'
+source_digest: sha256:9678104194307ade14dc29a0c0c636201b8be7055516fcea6926552563a00bac
 companion_doc: llms-full.md
 ---
 
@@ -69,7 +69,8 @@ The columns follow the NSI template of the attendance sheet
   sheet's own field is used when the catalog's one is empty, and the form of
   the type shows the sheet's own field only then. A letter typed on a Latin
   keyboard ("O" for "О") is saved as the Cyrillic one of the legend, so its
-  days are counted in their column.
+  days are counted in their column; "NA", the mark of a type without a
+  letter, stays as it is.
 - **Position and department** are those of the employee's contract version
   in force on the last day of the month, so the sheet of a past month shows
   the position held then, not today's.

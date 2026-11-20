@@ -161,6 +161,10 @@ class TestTheSheetShowsTheMonthAsItWas(TestForm76Common):
         self.assertEqual(
             leave_type.form76_code, "\u0410", "the same when it is changed"
         )
+        leave_type.form76_code = "NA"
+        self.assertEqual(
+            leave_type.form76_code, "NA", "a code with a Latin-only letter is kept"
+        )
         leave_type.form76_code = "O"
         self._time_off(leave_type, "2026-03-02", "2026-03-03")
 
@@ -169,35 +173,64 @@ class TestTheSheetShowsTheMonthAsItWas(TestForm76Common):
         self.assertEqual(line["days"][1:3], ["\u041e", "\u041e"])
         self.assertEqual(line["otpusk_o"], 2)
 
+    def _run_upgrade(self, version, from_version):
+        path = file_path(f"l10n_bg_hr_form_76/migrations/{version}/post-migrate.py")
+        spec = importlib.util.spec_from_file_location("form76_letters", path)
+        script = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(script)
+        script.migrate(self.env.cr, from_version)
+        self.env.invalidate_all()
+
+    def _store_code(self, leave_type, code):
+        self.env.flush_all()
+        self.env.cr.execute(
+            "UPDATE hr_leave_type SET form76_code = %s WHERE id = %s",
+            [code, leave_type.id],
+        )
+        self.env.invalidate_all()
+
     def test_letters_saved_in_latin_before_are_made_cyrillic_on_upgrade(self):
         """A type that holds a Latin "A" from before is counted under "А"
-        after the upgrade; a letter that is not a look-alike stays."""
+        after the upgrade; a letter that is not a look-alike stays, and so
+        does "NA", the type without a letter."""
         leave_type = self.env["hr.leave.type"].create(
             {"name": "Old Latin letter", "company_id": self.company.id}
         )
         other = self.env["hr.leave.type"].create(
             {"name": "Not a letter of the legend", "company_id": self.company.id}
         )
-        self.env.flush_all()
-        self.env.cr.execute(
-            "UPDATE hr_leave_type SET form76_code = %s WHERE id = %s",
-            ["A", leave_type.id],
+        without_letter = self.env["hr.leave.type"].create(
+            {"name": "No letter", "company_id": self.company.id}
         )
-        self.env.cr.execute(
-            "UPDATE hr_leave_type SET form76_code = %s WHERE id = %s",
-            ["Z", other.id],
-        )
-        self.env.invalidate_all()
-        path = file_path("l10n_bg_hr_form_76/migrations/19.0.1.0.11/post-migrate.py")
-        spec = importlib.util.spec_from_file_location("form76_letters", path)
-        script = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(script)
+        self.assertEqual(without_letter.form76_code, "NA")
+        self._store_code(leave_type, "A")
+        self._store_code(other, "Z")
 
-        script.migrate(self.env.cr, "19.0.1.0.10")
+        self._run_upgrade("19.0.1.0.11", "19.0.1.0.10")
 
-        self.env.invalidate_all()
         self.assertEqual(leave_type.form76_code, "\u0410")
         self.assertEqual(other.form76_code, "Z")
+        self.assertEqual(without_letter.form76_code, "NA")
+
+    def test_na_made_half_cyrillic_by_the_upgrade_is_given_back(self):
+        """The upgrade to 19.0.1.0.11 made "NA" an "N" and a Cyrillic "А";
+        the next one gives "NA" back and leaves real letters alone."""
+        broken = self.env["hr.leave.type"].create(
+            {"name": "Half Cyrillic", "company_id": self.company.id}
+        )
+        letter = self.env["hr.leave.type"].create(
+            {
+                "name": "Real letter",
+                "company_id": self.company.id,
+                "form76_code": "\u0410",
+            }
+        )
+        self._store_code(broken, "N\u0410")
+
+        self._run_upgrade("19.0.1.0.12", "19.0.1.0.11")
+
+        self.assertEqual(broken.form76_code, "NA")
+        self.assertEqual(letter.form76_code, "\u0410")
 
     def test_the_sheets_own_letter_is_hidden_where_the_catalog_has_one(self):
         """On the time-off type form HR sees one letter: the catalog's when it

@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Form 76 for Bulgaria
-last_updated: '2026-11-19'
-source_digest: sha256:531076df59f8f58b98eeba912c033f52cbadbe9dfe8ad6b57aee07c1f5f54492
+last_updated: '2026-11-20'
+source_digest: sha256:9678104194307ade14dc29a0c0c636201b8be7055516fcea6926552563a00bac
 depends:
 - hr_attendance_late
 - hr_holidays
@@ -129,7 +129,8 @@ The columns follow the NSI template of the attendance sheet
   sheet's own field is used when the catalog's one is empty, and the form of
   the type shows the sheet's own field only then. A letter typed on a Latin
   keyboard ("O" for "О") is saved as the Cyrillic one of the legend, so its
-  days are counted in their column.
+  days are counted in their column; "NA", the mark of a type without a
+  letter, stays as it is.
 - **Position and department** are those of the employee's contract version
   in force on the last day of the month, so the sheet of a past month shows
   the position held then, not today's.
@@ -187,7 +188,7 @@ Python class `HrEmployee` in `models/hr_employee.py:12`.  Model.  Inherits: `hr.
   - Check if a specific date is a non-working day for the employee.
 
 ### `hr.leave.type` <a id='model-hr-leave-type'></a>
-Python class `HolidaysType` in `models/hr_leave_type.py:15`.  Model.  Inherits: `hr.leave.type`.
+Python class `HolidaysType` in `models/hr_leave_type.py:27`.  Model.  Inherits: `hr.leave.type`.
 
 #### Fields
 
@@ -238,8 +239,9 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 ### `models/hr_leave_type.py`
 
-- **`LATIN_TO_CYRILLIC`** *(expression)* = `str.maketrans('AaBCcEeHKMOoPpTXxy', 'АаВСсЕеНКМОоРрТХху')`  - line 8
-- **`CATALOG_CODE`** *(scalar)* = `'l10n_bg_form76_code'`  - line 12
+- **`LATIN_TO_CYRILLIC`** *(expression)* = `str.maketrans('AaBCcEeHKMOoPpTXxy', 'АаВСсЕеНКМОоРрТХху')`  - line 10
+- **`CATALOG_CODE`** *(scalar)* = `'l10n_bg_form76_code'`  - line 14
+- **`LATIN_LETTER`** *(expression)* = `re.compile('[A-Za-z]')`  - line 15
 
 ### `reports/report_form_76_bg.py`
 
@@ -250,6 +252,11 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
 
+
+### Public helpers
+
+- **`form76_code_in_cyrillic(code)`** - `models/hr_leave_type.py:18`
+  - ``code`` with its Latin look-alikes made Cyrillic, when that leaves it all Cyrillic; a code that also holds a Latin letter without a Cyrillic twin ("NA", the type without a letter) stays as it was typed, rather than…
 
 ### Private helpers
 
@@ -348,6 +355,6 @@ Commit `9a3d488b20` (2026-04-21): [FIX] manifest validator issues flagged by Odo
 ## Source provenance <a id='provenance'></a>
 
 - Module: `l10n_bg_hr_form_76`
-- Source digest: `sha256:531076df59f8f58b98eeba912c033f52cbadbe9dfe8ad6b57aee07c1f5f54492`
-- Generated at: `2026-11-19T16:49:12+00:00`
+- Source digest: `sha256:9678104194307ade14dc29a0c0c636201b8be7055516fcea6926552563a00bac`
+- Generated at: `2026-11-20T09:33:26+00:00`
 - Generator: `polimex_module_knowledge`

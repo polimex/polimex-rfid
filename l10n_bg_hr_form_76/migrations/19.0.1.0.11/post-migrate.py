@@ -8,7 +8,7 @@ Cyrillic (hr.leave.type.write).
 
 from odoo import SUPERUSER_ID, api
 
-from odoo.addons.l10n_bg_hr_form_76.models.hr_leave_type import LATIN_TO_CYRILLIC
+from odoo.addons.l10n_bg_hr_form_76.models.hr_leave_type import form76_code_in_cyrillic
 
 
 def migrate(cr, version):
@@ -20,5 +20,5 @@ def migrate(cr, version):
     )
     for leave_type in leave_types:
         code = leave_type.form76_code
-        if code.translate(LATIN_TO_CYRILLIC) != code:
+        if form76_code_in_cyrillic(code) != code:
             leave_type.form76_code = code

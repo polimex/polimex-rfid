@@ -1,3 +1,5 @@
+import re
+
 from odoo import api, fields, models
 
 # The legend of form 76 is Cyrillic: a Latin letter that looks the same, typed
@@ -10,6 +12,16 @@ LATIN_TO_CYRILLIC = str.maketrans("AaBCcEeHKMOoPpTXxy", "АаВСсЕеНКМО�
 # the sheet prints that one and falls back to this module's own when it is
 # empty (reports/report_form_76_bg.py).
 CATALOG_CODE = "l10n_bg_form76_code"
+LATIN_LETTER = re.compile("[A-Za-z]")
+
+
+def form76_code_in_cyrillic(code):
+    """``code`` with its Latin look-alikes made Cyrillic, when that leaves it
+    all Cyrillic; a code that also holds a Latin letter without a Cyrillic
+    twin ("NA", the type without a letter) stays as it was typed, rather than
+    becoming a mix of the two alphabets."""
+    cyrillic = code.translate(LATIN_TO_CYRILLIC)
+    return code if LATIN_LETTER.search(cyrillic) else cyrillic
 
 
 class HolidaysType(models.Model):
@@ -61,4 +73,4 @@ class HolidaysType(models.Model):
         """The Form 76 letter in ``vals`` with its Latin look-alikes made
         Cyrillic, as the legend of the sheet writes them."""
         if vals.get("form76_code"):
-            vals["form76_code"] = vals["form76_code"].translate(LATIN_TO_CYRILLIC)
+            vals["form76_code"] = form76_code_in_cyrillic(vals["form76_code"])
