@@ -202,26 +202,58 @@ class TestRfidLeaveBlock(TransactionCase):
             {"leave_id": leave.id, "blocked_card_ids": [(6, 0, card.ids)]}
         )
         card.active = False
-        cron = self.env.ref("hr_rfid_leave_block.ir_cron_restore_expired_leave_blocks")
-        cron.write(
-            {
-                "code": "model._cron_restore_expired_blocks()",
-                "interval_number": 1,
-                "interval_type": "days",
-            }
-        )
-        path = file_path("hr_rfid_leave_block/migrations/19.0.1.0.2/post-migrate.py")
-        spec = importlib.util.spec_from_file_location("leave_block_upgrade", path)
-        script = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(script)
+        cron = self._cron_as_before_the_upgrade()
 
-        script.migrate(self.env.cr, "19.0.1.0.1")
+        self._run_upgrade("19.0.1.0.2", "19.0.1.0.1")
+        self._run_upgrade("19.0.1.0.3", "19.0.1.0.1")
 
         self.assertTrue(card.active)
         self.assertEqual(leave.rfid_block_ids.state, "restored")
         self.assertEqual(cron.code, "model._cron_follow_the_leaves()")
         self.assertEqual((cron.interval_number, cron.interval_type), (15, "minutes"))
-        self.assertEqual(cron.name, "RFID: Follow time off (stop and give back access)")
+        self._assert_cron_shows_its_name_and_runs_now(cron)
+
+    def test_an_upgraded_action_shows_its_new_name_and_runs_now(self):
+        """A database already on 19.0.1.0.2 kept the old name in the list of
+        scheduled actions and the next run of the old daily pace; the repair
+        upgrade gives it both."""
+        cron = self._cron_as_before_the_upgrade()
+        self._run_upgrade("19.0.1.0.2", "19.0.1.0.1")
+        self.assertEqual(cron.cron_name, "RFID: Restore access after leave ends")
+
+        self._run_upgrade("19.0.1.0.3", "19.0.1.0.2")
+
+        self._assert_cron_shows_its_name_and_runs_now(cron)
+
+    def _cron_as_before_the_upgrade(self):
+        cron = self.env.ref("hr_rfid_leave_block.ir_cron_restore_expired_leave_blocks")
+        cron.write(
+            {
+                "name": "RFID: Restore access after leave ends",
+                "code": "model._cron_restore_expired_blocks()",
+                "interval_number": 1,
+                "interval_type": "days",
+                "nextcall": fields.Datetime.add(fields.Datetime.now(), hours=16),
+            }
+        )
+        self.env.flush_all()
+        return cron
+
+    def _run_upgrade(self, version, from_version):
+        path = file_path(f"hr_rfid_leave_block/migrations/{version}/post-migrate.py")
+        spec = importlib.util.spec_from_file_location("leave_block_upgrade", path)
+        script = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(script)
+        script.migrate(self.env.cr, from_version)
+
+    def _assert_cron_shows_its_name_and_runs_now(self, cron):
+        name = "RFID: Follow time off (stop and give back access)"
+        self.assertEqual(cron.name, name)
+        # The list of scheduled actions shows the stored copy, read as stored.
+        self.env.invalidate_all()
+        self.env.cr.execute("SELECT cron_name FROM ir_cron WHERE id = %s", [cron.id])
+        self.assertEqual(self.env.cr.fetchone()[0], name)
+        self.assertLessEqual(cron.nextcall, fields.Datetime.now())
 
     @freeze_time(NOW)
     def test_gc_restored_blocks(self):
