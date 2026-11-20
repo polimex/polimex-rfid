@@ -14,6 +14,9 @@ class TestHrRfidTours(HttpCase):
         super().setUpClass()
         cls.company = cls.env.company
 
+        # The tours read the screens in English, whatever the language of the
+        # database they run on: English is installed for the user first.
+        cls.env["res.lang"]._activate_lang("en_US")
         admin = cls.env["res.users"].search([("login", "=", "admin")], limit=1)
         admin.write({"lang": "en_US", "tz": "Europe/Sofia"})
 

@@ -67,6 +67,12 @@ class ConversationCase(HttpCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # A module sends no language: its request asks for English and gets
+        # the language of the company when English is not installed (core
+        # get_lang, odoo/tools/misc.py), so on a Bulgarian database the log
+        # is written in Bulgarian. The tests read English, whatever the
+        # language of the database they run on.
+        cls.env["res.lang"]._activate_lang("en_US")
         # The upkeep the schedule queues by itself is not part of any story
         # here; the tests that are about it queue it themselves.
         for cron in (
