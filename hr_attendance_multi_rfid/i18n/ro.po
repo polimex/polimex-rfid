@@ -787,6 +787,11 @@ msgid "Open the scheduled task"
 msgstr "Deschide sarcina programată"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__out_mode
+msgid "Out Mode"
+msgstr "Mod Ieșire"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
 msgid "Overwrite check-in"
 msgstr "Suprascriere intrare"
@@ -834,6 +839,7 @@ msgstr "Progres"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance__in_mode__rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance__out_mode__rfid
 msgid "RFID"
 msgstr "RFID"
 

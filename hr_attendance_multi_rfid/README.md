@@ -102,6 +102,14 @@ the attendance form under the check-out mode. On **Overwrite Check-Out**, the
 last exit badged within 8 hours of a stay the system recorded moves its
 check-out; a check-out a person entered stays as entered.
 
+An attendance says how it began and how it ended: the entry and the exit of a
+stay made at a door read **RFID** in the mode fields of the attendance form
+(in the list: the optional columns Input Mode (In) and Input Mode (Out)). A check-in or check-out
+somebody types over it reads Manual from then on, a stay closed for a
+forgotten badge reads Automatic Check-Out, and the kiosk and the systray keep
+their own names. A badge shows no browser, address or position, also where
+device tracking is on.
+
 ## 📖 Usage
 
 ### Automatic Attendance

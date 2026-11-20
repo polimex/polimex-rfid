@@ -63,6 +63,27 @@
                 <xpath expr="//field[@name='out_mode']" position="after">
                     <field name="forgotten_badge" invisible="not forgotten_badge"/>
                 </xpath>
+                <!-- A door has no browser, address or position to show: where
+                     device tracking is on, a badge reads as core's manual
+                     entry does, without the empty device details. -->
+                <xpath expr="//field[@name='in_ip_address']" position="attributes">
+                    <attribute name="invisible">in_mode in ('manual', 'rfid') or not device_tracking_enabled</attribute>
+                </xpath>
+                <xpath expr="//field[@name='in_browser']" position="attributes">
+                    <attribute name="invisible">in_mode in ('manual', 'rfid') or not device_tracking_enabled</attribute>
+                </xpath>
+                <xpath expr="//field[@name='in_location']/parent::group" position="attributes">
+                    <attribute name="invisible">in_mode in ('manual', 'rfid') or not device_tracking_enabled</attribute>
+                </xpath>
+                <xpath expr="//field[@name='out_ip_address']" position="attributes">
+                    <attribute name="invisible">in_mode == 'manual' or out_mode == 'rfid' or not device_tracking_enabled</attribute>
+                </xpath>
+                <xpath expr="//field[@name='out_browser']" position="attributes">
+                    <attribute name="invisible">in_mode == 'manual' or out_mode == 'rfid' or not device_tracking_enabled</attribute>
+                </xpath>
+                <xpath expr="//field[@name='out_location']/parent::group" position="attributes">
+                    <attribute name="invisible">out_mode in ('manual', 'rfid') or not device_tracking_enabled</attribute>
+                </xpath>
             </field>
         </record>
 

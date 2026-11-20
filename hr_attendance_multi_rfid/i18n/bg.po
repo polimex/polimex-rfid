@@ -773,6 +773,11 @@ msgid "Open the scheduled task"
 msgstr "Отваряне на планираната задача"
 
 #. module: hr_attendance_multi_rfid
+#: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_attendance__out_mode
+msgid "Out Mode"
+msgstr "Режим при напускане"
+
+#. module: hr_attendance_multi_rfid
 #: model:ir.model.fields,field_description:hr_attendance_multi_rfid.field_hr_rfid_zone__overwrite_check_in
 msgid "Overwrite check-in"
 msgstr "Презаписване на Вписване"
@@ -820,6 +825,7 @@ msgstr "Напредък"
 
 #. module: hr_attendance_multi_rfid
 #: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance__in_mode__rfid
+#: model:ir.model.fields.selection,name:hr_attendance_multi_rfid.selection__hr_attendance__out_mode__rfid
 msgid "RFID"
 msgstr "RFID"
 

@@ -13,3 +13,4 @@ from . import test_a_new_entry_after_a_forgotten_badge
 from . import test_hours_for_a_forgotten_badge
 from . import test_a_rebuild_that_starts_inside_a_stay
 from . import test_a_forgotten_day_ends_with_the_schedule
+from . import test_the_exit_says_who_made_it

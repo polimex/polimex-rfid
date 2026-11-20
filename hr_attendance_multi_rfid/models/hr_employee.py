@@ -289,6 +289,8 @@ class HrEmployee(models.Model):
             'employee_id': self.id,
             'in_zone_id': zone.id,
             'in_mode': 'rfid',
+            # A closed stay of the rebuild ended at a door, as the live one.
+            **({'out_mode': 'rfid'} if check_out else {}),
         })
 
     def _outlived_its_day(self, check_in, moment, limits):

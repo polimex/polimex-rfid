@@ -142,6 +142,13 @@ class HrAttendance(models.Model):
         selection_add=[('rfid', "RFID")],
         ondelete={'rfid': 'set default'},
     )
+    # The exit says who made it, as core says it for the kiosk and the
+    # systray (hr_attendance/models/hr_attendance.py, out_mode set by every
+    # channel): a badge at the door is not a time somebody typed in.
+    out_mode = fields.Selection(
+        selection_add=[('rfid', "RFID")],
+        ondelete={'rfid': 'set default'},
+    )
 
     def _update_overtime(self, attendance_domain=None):
         """Core's overtime run, made to leave every figure of the day right.
@@ -221,9 +228,24 @@ class HrAttendance(models.Model):
             # this stay, and the measurement caps a marked stay at that.
             vals['forgotten_badge'] = False
 
+        # The exit carries the mark of who made it. Every machinery write of
+        # a check-out that names no mode of its own is a badge at a door (the
+        # zone flow, the rebuild); the administrative close names its own
+        # ('auto_check_out'). A check-out a person types over a badge-out is
+        # theirs, unless the channel they used names itself (kiosk, systray).
+        typed_over = self.browse()
+        if 'check_out' in vals and 'out_mode' not in vals:
+            if not by_a_person:
+                if vals['check_out']:
+                    vals['out_mode'] = 'rfid'
+            else:
+                typed_over = self.filtered(lambda a: a.out_mode == 'rfid')
+
         res = super(HrAttendance, self).write(vals)
         if taken_over:
             super(HrAttendance, taken_over).write({'in_mode': 'manual'})
+        if typed_over:
+            super(HrAttendance, typed_over).write({'out_mode': 'manual'})
         return res
 
     def _scheduled_day(self):
