@@ -21,8 +21,8 @@ from odoo.tests.common import TransactionCase, tagged
 from .common import one_door, passage
 
 
-@tagged('post_install', '-at_install', 'rfid_attendance_reason')
-class TestWhyAPassageWasNotCounted(TransactionCase):
+class AZoneThatCountsAttendance(TransactionCase):
+    """One door with an entry and an exit reader, in a zone that counts."""
 
     @classmethod
     def setUpClass(cls):
@@ -61,6 +61,11 @@ class TestWhyAPassageWasNotCounted(TransactionCase):
     def _rebuild(self, employee=None):
         (employee or self.employee).recalc_attendance(
             self.period_start, self.period_end)
+
+
+
+@tagged('post_install', '-at_install', 'rfid_attendance_reason')
+class TestWhyAPassageWasNotCounted(AZoneThatCountsAttendance):
 
     # ── the live machinery ────────────────────────────────────
 
@@ -328,3 +333,55 @@ class TestWhyAPassageWasNotCounted(TransactionCase):
         self.assertEqual(len(attendance), 1)
         self.assertEqual((attendance.check_in, attendance.check_out),
                          (self.morning, self.morning + timedelta(hours=8)))
+
+
+@tagged('post_install', '-at_install', 'rfid_attendance_reason')
+class TestTheLastExitIsTheCheckOut(AZoneThatCountsAttendance):
+    """A zone set to overwrite the check-out takes the last exit of the stay.
+
+    Somebody badges out, comes back through the door without badging (held
+    open for them), and badges out again half an hour later. Where the zone
+    is set so, the day ends at the last exit - live, and again when the
+    period is rebuilt.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.zone.overwrite_check_out = True
+
+    def _day(self):
+        self._passage(self.reader_in, self.morning)
+        self._passage(self.reader_out, self.morning + timedelta(hours=8))
+        return self._passage(
+            self.reader_out, self.morning + timedelta(hours=8, minutes=30))
+
+    def test_the_last_exit_moves_the_check_out(self):
+        last = self._day()
+
+        self.assertEqual(len(self._attendance_of()), 1)
+        self.assertEqual(self._attendance_of().check_out, last.event_time)
+
+    def test_a_rebuild_ends_the_day_at_the_same_exit(self):
+        last = self._day()
+        live = self._attendance_of().read(['check_in', 'check_out'])
+
+        self._rebuild()
+
+        self.assertEqual(self._attendance_of().read(['check_in', 'check_out'])[0]['check_out'],
+                         last.event_time)
+        self.assertEqual(len(self._attendance_of()), 1)
+        self.assertEqual(live[0]['check_out'], last.event_time)
+
+    def test_a_check_out_a_person_entered_is_not_moved(self):
+        """An operator who typed the check-out stated a fact; a later exit
+        of the same evening does not write over it."""
+        self._passage(self.reader_in, self.morning)
+        self._passage(self.reader_out, self.morning + timedelta(hours=8))
+        typed = self.morning + timedelta(hours=8, minutes=10)
+        self._attendance_of().write({'check_out': typed})
+        self.assertEqual(self._attendance_of().in_mode, 'manual')
+
+        self._passage(self.reader_out, self.morning + timedelta(hours=8, minutes=40))
+
+        self.assertEqual(self._attendance_of().check_out, typed)

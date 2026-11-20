@@ -163,12 +163,17 @@ class HrRfidZone(models.Model):
                         'check_out': check_out_time
                     })
                 elif zone.overwrite_check_out:
-                    # No open attendance found, but zone allows overwriting recent check-outs
-                    # Find the most recent closed attendance
+                    # No open attendance found, but zone allows overwriting recent check-outs.
+                    # The person's last stay the machine recorded, as the rebuild
+                    # takes it (hr.employee.recalc_attendance, previous_attendance_id).
+                    # Not by in_zone_id: it is cleared when the stay closes
+                    # (hr.attendance.write), so a closed stay never matched and
+                    # the last exit never moved the check-out. A record a
+                    # person typed is theirs and is not moved.
                     last_att_id = self.env['hr.attendance'].search([
                         ('check_out', '<', event.event_time),
                         ('employee_id', '=', person.id),
-                        ('in_zone_id', '=', zone.id),
+                        ('in_mode', '=', 'rfid'),
                     ], order='check_out desc', limit=1)
                     
                     # Only update if the event is within 8 hours of the last check-out
