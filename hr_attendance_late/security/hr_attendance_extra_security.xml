@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Who reads the daily figures: the three levels core gives its overtime
+         lines (hr_attendance/security/hr_attendance_security.xml). -->
+    <record id="hr_attendance_extra_rule_officer_of_all" model="ir.rule">
+        <field name="name">Daily attendance figures: every employee</field>
+        <field name="model_id" ref="model_hr_attendance_extra"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('hr_attendance.group_hr_attendance_user'))]"/>
+    </record>
+
+    <record id="hr_attendance_extra_rule_officer" model="ir.rule">
+        <field name="name">Daily attendance figures: the officer's own people</field>
+        <field name="model_id" ref="model_hr_attendance_extra"/>
+        <field name="domain_force">[('employee_id.attendance_manager_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('hr_attendance.group_hr_attendance_officer'))]"/>
+    </record>
+</odoo>

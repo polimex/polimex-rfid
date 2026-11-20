@@ -125,7 +125,81 @@ Employees can:
    - Export attendance data
    - Generate payroll deductions
 
+## Legal coefficients (Legal Rates)
+
+**Attendance -> Configuration -> Legal Rates** holds the statutory
+coefficients used when attendance is costed: the overtime multipliers (working
+day, rest day, public holiday) and the night-shift supplement per hour. An
+attendance manager may edit them; they are grouped by code, and each one
+carries a **Valid From** date.
+
+**These are normally filled by the localisation module for your country - edit
+them only to override.**
+
+Two different things, which must not be confused:
+
+- **The law changed.** Add a NEW row with the new Valid From date. A worked day
+  is always costed with the coefficient in force on that day, so past periods
+  keep what they were worth and nothing is recalculated behind your back.
+- **The figure is simply wrong.** Correct it in place, on the row you already
+  have. Do not add a second row for the same code and the same date - correcting
+  is not a change in the law, and two rows would only make it unclear which one
+  applies.
+
+A coefficient is a multiplier of the hourly rate (1.5 = 150%, that is +50%).
+The night supplement is not a multiplier but an amount per hour, in the
+currency named on the row. It is shown to four decimal places, in the number
+format of your language - 1,85 or 1.85 for the same figure.
+
+A row without a company is the national one and applies everywhere; give it a
+company only to override that company's figure. If nothing is configured for a
+code, the cost calculation reads it as no premium at all rather than guessing.
+
 ## 📊 Reports
+
+### Who sees the daily figures
+
+The daily figures (**Attendances -> Reporting**, with the list of people who
+left early) are read with the attendance rights of the person:
+
+- **Officer: Manage attendances** - the days of the employees they are the
+  attendance approver of (employee form, *Settings* tab, *Approvers* -
+  *Attendance*);
+- **Officer: Manage all attendances** and **Administrator** - every employee;
+- the figures are the system's own: only the administrator deletes them, and
+  nobody edits them by hand.
+
+### Which day a figure belongs to
+
+Every daily row is the day as the employee lived it, in their own
+**Timezone** (employee form, *Settings* tab). A stay belongs, whole, to the
+day it began on there: in Sofia, a stay begun at 00:30 on Tuesday is
+Tuesday's, measured against Tuesday's schedule, although the database
+stores that moment with Monday's date. Night work (22:00-06:00) is counted
+by the clock of the day worked, also when a winter day is recomputed in
+summer, and a day with no badge becomes an absence only once it is over
+for the person.
+
+Rows computed before this rule keep their figures until their day is
+computed again (**Recompute Extra Attendance** for those days).
+
+### A day nobody badged out of
+
+A stay the system had to close by itself (marked **Forgotten Badge**) is
+counted only up to the end the company's Forgotten Badge setting credits, and
+that is never past the end of the schedule the person came in under. The
+lateness of that morning stays on the row. Somebody in at 09:07 on an
+08:00-17:00 schedule who never badged out is late by 1:07, worked 6:53 and
+has no overtime. Where the person came in after their schedule had ended - in
+for the evening - every credited hour is the system's estimate, and none of
+it is overtime: nobody is paid a premium for an estimate. Once somebody
+enters the real check-out on the attendance record, the day is measured by
+it, overtime included. Other stays of the same day, badged in and out, keep
+their overtime. A stay measured before the scheduled task has closed it reads
+the same way.
+
+Rows computed before this rule keep their figures until their day is computed
+again (**Recompute Extra Attendance** for those days).
 
 ### Standard Reports
 
