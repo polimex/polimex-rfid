@@ -13,6 +13,8 @@ _logger = logging.getLogger(__name__)
 # cash, and card data it could not read. Both are ordinary operation, so an
 # event of these kinds is not missing a person - it never had one.
 ANONYMOUS_EVENT_ACTIONS = ('47', '-1')
+# How far back an "End last action" work code looks for what it ends.
+WORKCODE_MEMORY_HOURS = 12
 
 
 action_selection = [
@@ -492,15 +494,17 @@ class HrRfidUserEvent(models.Model):
             if not rec.employee_id and not rec.contact_id:
                 continue
 
-            # Update zone presence based on reader type
+            # Update zone presence: the work code typed at the reader where it
+            # asks for one, else the reader's type (_direction).
             zones = rec.door_id.zone_ids
             if zones:
-                # Reader type is In (entrance)
-                if rec.reader_id.reader_type == '0':
+                direction = rec._direction()
+                if direction == 'in':
                     zones.with_context(from_event=True).person_entered(rec.employee_id or rec.contact_id, rec)
-                # Reader type is Out (exit)
-                else:
+                elif direction == 'out':
                     zones.with_context(from_event=True).person_left(rec.employee_id or rec.contact_id, rec)
+                else:
+                    rec._no_direction()
                 zones.process_event(rec)
                 continue
 
@@ -543,6 +547,51 @@ class HrRfidUserEvent(models.Model):
                         else:
                             rec.door_id.zone_ids.person_entered(rec.employee_id, rec)
         return records
+
+    def _direction(self):
+        """Whether this passage takes the person in ('in') or out ('out').
+
+        At a reader that asks for a work code (mode '03') the code says it:
+        "Coming to work" takes the person in, "Going to a break" out, and
+        "End last action" ends what the person's last code of the previous
+        12 hours began - a break ends by coming back in, work by going out.
+        False when such a code has nothing to end. Anywhere else the reader's
+        type says it. The live zones and the rebuild of attendance read the
+        same answer.
+        """
+        self.ensure_one()
+        if self.reader_id.mode == '03' and self.workcode_id:
+            return self._workcode_direction()
+        return 'in' if self.reader_id.reader_type == '0' else 'out'
+
+    def _workcode_direction(self):
+        action = self.workcode_id.user_action
+        if action == 'start':
+            return 'in'
+        if action == 'break':
+            return 'out'
+        open_actions = []
+        for earlier in self.search([
+            ('employee_id', '=', self.employee_id.id),
+            ('contact_id', '=', self.contact_id.id),
+            ('workcode_id', '!=', False),
+            ('event_time', '>=', self.event_time - timedelta(hours=WORKCODE_MEMORY_HOURS)),
+            ('event_time', '<', self.event_time),
+            ('id', '!=', self.id),
+        ], order='event_time, id'):
+            if earlier.workcode_id.user_action == 'stop':
+                if open_actions:
+                    open_actions.pop()
+            else:
+                open_actions.append(earlier.workcode_id.user_action)
+        if not open_actions:
+            return False
+        return 'out' if open_actions[-1] == 'start' else 'in'
+
+    def _no_direction(self):
+        """Hook: a passage whose direction cannot be told (a work code that
+        has nothing to end). Attendance modules record why it counted for
+        nothing."""
 
     def zone_process_event(self):
         for rec in self:

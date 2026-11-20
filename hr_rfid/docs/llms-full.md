@@ -2,7 +2,7 @@
 id: hr_rfid
 title: RFID Access Control
 module: hr_rfid
-module_version: 19.0.2.34.7
+module_version: 19.0.2.34.8
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -12,7 +12,7 @@ audience:
 companion_doc: llms.txt
 summary: Manage employee access control
 last_updated: '2026-11-20'
-source_digest: sha256:7fa7bb0d5912d1f7956912710f388f293949f19f997f941a6b71a4508d685b5d
+source_digest: sha256:a852426b5e348d692f728bcc0fe3f132c804a984ec0ce2a94ed6e562cc33c86c
 depends:
 - hr
 - contacts
@@ -111,7 +111,7 @@ chunking:
 ---
 
 
-# RFID Access Control - `hr_rfid` v19.0.2.34.7
+# RFID Access Control - `hr_rfid` v19.0.2.34.8
 
 Manage employee access control
 
@@ -123,7 +123,7 @@ Manage employee access control
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid`
-- **Version**: `19.0.2.34.7`
+- **Version**: `19.0.2.34.8`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -291,6 +291,14 @@ Event Endpoint: /hr/rfid/event
      by e-mail, when it happens at a door of the zone
    - A refused card is told like any other action; only a granted passage
      moves people in or out of the zone
+
+4. **Work Codes**
+   - **RFID System → Access Control → Work codes**: a four-digit code and what it
+     means - "Coming to work", "Going to a break" or "End last action"
+   - At a reader set to **Card and Workcode**, the code typed after the card
+     says whether the person comes in or goes out of the zone, whatever the
+     reader's type; "End last action" ends what the person's last code of the
+     previous 12 hours began. The attendance and its rebuild follow the code
 
 ###### Reports
 
@@ -1544,7 +1552,7 @@ Python class `HrRfidSystemEventWizard` in `models/hr_rfid_event_system.py:452`. 
   - touches: `hr.rfid.card`
 
 ### `hr.rfid.event.user` <a id='model-hr-rfid-event-user'></a>
-Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:35`.  Model.  Inherits: `hr.rfid.event`, `mail.thread`.  Description: *RFID User Event*.  Default order: `event_time desc`.
+Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:37`.  Model.  Inherits: `hr.rfid.event`, `mail.thread`.  Description: *RFID User Event*.  Default order: `event_time desc`.
 
 #### Fields
 
@@ -2085,6 +2093,7 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 ### `models/hr_rfid_event_user.py`
 
 - **`ANONYMOUS_EVENT_ACTIONS`** *(collection)* = `('47', '-1')`  - line 15
+- **`WORKCODE_MEMORY_HOURS`** *(scalar)* = `12`  - line 17
 
 ### `models/hr_rfid_webstack.py`
 
@@ -2818,7 +2827,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > remove buttons and move actions
 
-### From `git_log` (57)
+### From `git_log` (56)
 
 #### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior ...
 
@@ -2924,6 +2933,6 @@ Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:7fa7bb0d5912d1f7956912710f388f293949f19f997f941a6b71a4508d685b5d`
-- Generated at: `2026-11-20T10:24:32+00:00`
+- Source digest: `sha256:a852426b5e348d692f728bcc0fe3f132c804a984ec0ce2a94ed6e562cc33c86c`
+- Generated at: `2026-11-20T11:28:09+00:00`
 - Generator: `polimex_module_knowledge`

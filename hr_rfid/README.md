@@ -156,6 +156,14 @@ Event Endpoint: /hr/rfid/event
    - A refused card is told like any other action; only a granted passage
      moves people in or out of the zone
 
+4. **Work Codes**
+   - **RFID System → Access Control → Work codes**: a four-digit code and what it
+     means - "Coming to work", "Going to a break" or "End last action"
+   - At a reader set to **Card and Workcode**, the code typed after the card
+     says whether the person comes in or goes out of the zone, whatever the
+     reader's type; "End last action" ends what the person's last code of the
+     previous 12 hours began. The attendance and its rebuild follow the code
+
 ### Reports
 
 - Access logs by person

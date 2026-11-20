@@ -217,12 +217,9 @@ class HrEmployee(models.Model):
         """
         att_zone_ids = self.env['hr.rfid.zone'].search([('attendance', "=", True)])
         doors_with_attendance = att_zone_ids.mapped('door_ids')
-        readers_ids = doors_with_attendance.mapped('reader_ids')
         return {
             'zones': att_zone_ids,
             'doors': doors_with_attendance,
-            'in_readers': readers_ids.filtered(lambda r: r.reader_type == '0'),
-            'out_readers': readers_ids.filtered(lambda r: r.reader_type == '1'),
             # Does ANY attendance zone follow only certain departments or
             # tags? Asked once here so that the installations which have none
             # - most of them - skip the per-employee question below entirely.
@@ -325,8 +322,6 @@ class HrEmployee(models.Model):
 
         att_zone_ids = ctx['zones']
         doors_with_attendance = ctx['doors']
-        in_readers_ids = ctx['in_readers']
-        out_readers_ids = ctx['out_readers']
         # Kept under its old name so the rebuilding code below reads exactly as
         # it did when it was the body of a loop over several employees.
         employee_id = self
@@ -365,11 +360,9 @@ class HrEmployee(models.Model):
             permitted_doors = att_zone_ids.filtered(
                 lambda z: z._check_employee_permit(employee_id)).door_ids
         # Asked once per event below, and a big tenant replays hundreds of
-        # thousands of them, so all three questions are set lookups rather
-        # than scans of a recordset.
+        # thousands of them, so it is a set lookup rather than a scan of a
+        # recordset.
         permitted_door_ids = set(permitted_doors.ids)
-        in_reader_ids = set(in_readers_ids.ids)
-        out_reader_ids = set(out_readers_ids.ids)
 
         # Remove the attendance this system made for the period, and only
         # that - what a person typed in by hand is theirs, not ours to replay.
@@ -508,14 +501,18 @@ class HrEmployee(models.Model):
             if e.door_id.id not in permitted_door_ids:
                 e._rewrite_no_attendance('not_tracked_here')
                 continue
+            # The direction the live zones read (hr.rfid.event.user._direction:
+            # the work code where the reader asks for one, else its type); a
+            # passage with no reader has none.
+            direction = e._direction() if e.reader_id else False
 
             # Events the stay from before the period already accounts for.
             # Its own exit says so; an entry inside it was made by someone
             # already inside; anything else keeps what it says.
             if within_an_earlier_stay(e.event_time):
-                if e.reader_id.id in in_reader_ids:
+                if direction == 'in':
                     e._rewrite_no_attendance('already_inside')
-                elif e.reader_id.id in out_reader_ids and e.event_time in earlier_exits:
+                elif direction == 'out' and e.event_time in earlier_exits:
                     e._mark_attendance('out')
                 continue
 
@@ -525,7 +522,7 @@ class HrEmployee(models.Model):
                 continue
 
             # Handle check-in events (entry readers)
-            if e.reader_id.id in in_reader_ids:
+            if direction == 'in':
                 # The same rule a live entry follows: a stay that has outlived
                 # the person's day is settled, and this entry begins a new one.
                 # A failure here is the whole person's: the rebuild undoes them
@@ -560,7 +557,7 @@ class HrEmployee(models.Model):
                     e._rewrite_no_attendance('already_inside')
 
             # Handle check-out events (exit readers)
-            elif e.reader_id.id in out_reader_ids:
+            elif direction == 'out':
                 if presence[0]:
                     # Normal check-out for open attendance
                     presence[1] = e.event_time

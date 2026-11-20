@@ -61,6 +61,9 @@ This field is automatically set when recalculating attendance from RFID events."
             return
         self.write({'in_or_out': direction, 'no_attendance_reason': False})
 
+    def _no_direction(self):
+        self._mark_no_attendance('direction_unknown')
+
     def _mark_no_attendance(self, reason):
         """Say why this passage left the attendance untouched - LIVE.
 

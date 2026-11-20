@@ -385,3 +385,68 @@ class TestTheLastExitIsTheCheckOut(AZoneThatCountsAttendance):
         self._passage(self.reader_out, self.morning + timedelta(hours=8, minutes=40))
 
         self.assertEqual(self._attendance_of().check_out, typed)
+
+
+@tagged('post_install', '-at_install', 'rfid_attendance_reason')
+class TestTheWorkCodeSaysWhichWay(AZoneThatCountsAttendance):
+    """At a reader that asks for a work code, the code says in or out.
+
+    The person badges and types why: coming to work, going to a break, or
+    ending the last of these. The day followed the reader's type instead, so
+    a break typed at the entry reader opened nothing and closed nothing.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.reader_in.mode = '03'
+        Code = cls.env['hr.rfid.workcode']
+        cls.start = Code.create({'name': 'Coming to work', 'workcode': '9101',
+                                 'user_action': 'start'})
+        cls.pause = Code.create({'name': 'Going to a break', 'workcode': '9102',
+                                 'user_action': 'break'})
+        cls.end = Code.create({'name': 'End last action', 'workcode': '9103',
+                               'user_action': 'stop'})
+
+    def _typed(self, code, moment):
+        return self.env['hr.rfid.event.user'].create({
+            'employee_id': self.employee.id,
+            'door_id': self.door.id,
+            'reader_id': self.reader_in.id,
+            'event_time': moment,
+            'event_action': '1',
+            'workcode_id': code.id,
+        })
+
+    def _day(self):
+        m = self.morning
+        self._typed(self.start, m)
+        self._typed(self.pause, m + timedelta(hours=3))
+        self._typed(self.end, m + timedelta(hours=3, minutes=30))
+        self._typed(self.end, m + timedelta(hours=8, minutes=30))
+
+    def _times(self):
+        return [(a.check_in, a.check_out)
+                for a in self._attendance_of().sorted('check_in')]
+
+    def test_the_codes_make_the_day_and_its_break(self):
+        self._day()
+        m = self.morning
+        self.assertEqual(self._times(), [
+            (m, m + timedelta(hours=3)),
+            (m + timedelta(hours=3, minutes=30), m + timedelta(hours=8, minutes=30)),
+        ])
+
+    def test_a_rebuild_reads_the_codes_the_same_way(self):
+        self._day()
+        live = self._times()
+
+        self._rebuild()
+
+        self.assertEqual(self._times(), live)
+
+    def test_an_end_with_nothing_to_end_counts_for_nothing_and_says_so(self):
+        lone = self._typed(self.end, self.morning)
+
+        self.assertFalse(self._attendance_of())
+        self.assertEqual(lone.no_attendance_reason, 'direction_unknown')
