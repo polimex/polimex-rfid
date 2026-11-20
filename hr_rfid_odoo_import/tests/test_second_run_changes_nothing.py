@@ -264,7 +264,15 @@ class TestSecondRunChangesNothing(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.company = cls.env.company
+        # A company of its own: the consistency check reads the whole target
+        # company, and the main company of a database may hold equipment of
+        # its own (the cameras of polimex_ip_cam's demo, with no readers),
+        # which the check rightly reports and which this transfer did not
+        # bring.
+        cls.company = cls.env["res.company"].create(
+            {"name": "Company Receiving The Transfer"}
+        )
+        cls.env.user.company_ids |= cls.company
         cls.company_map = {SOURCE_COMPANY: cls.company.id}
         cls.source = cls._build_source()
         cls.counted_models = (
