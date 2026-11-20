@@ -3,18 +3,18 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Version](https://img.shields.io/badge/Version-19.0.1.0.0-green.svg)](https://apps.odoo.com)
 
-Suspend an employee's RFID cards automatically while they are on approved time off, and restore them when the leave ends.
+Suspend an employee's RFID cards automatically while their approved time off goes on, and restore them when the leave ends.
 
 ## 🎯 Overview
 
-When a time-off request is approved, this module deactivates the employee's currently-active RFID cards so they cannot enter while away. It remembers the exact set of cards it suspended and re-activates only those when access is restored — the day after the leave ends, or immediately if the leave is refused or cancelled. A card the employee had already disabled before the leave, or added during it, is intentionally left untouched.
+When an approved time off begins, this module deactivates the employee's currently-active RFID cards so they cannot enter while away; a leave approved ahead of time leaves the person working until it begins. It remembers the exact set of cards it suspended and re-activates only those when access is restored - when the leave ends, or immediately if the leave is refused or cancelled. A card the employee had already disabled before the leave, or added during it, is intentionally left untouched.
 
 ## ✨ Key Features
 
 - **Per-card snapshot** — records exactly which cards were active and got suspended (`hr.rfid.leave.block`), so restore never silently re-enables a card the user meant to keep off.
-- **Automatic on approval** — a `hr.leave` state transition to *Approved* triggers the suspension; *Refused* / *Cancelled* / back-to-draft triggers the restore.
+- **Automatic, from the start of the leave** - approving a leave that already goes on suspends the cards at once; a leave approved for later is suspended by the scheduled action when it begins. *Refused* / *Cancelled* / back-to-draft triggers the restore.
 - **Idempotent** — re-approving a leave that already has an active block does not double-suspend or re-snapshot.
-- **Scheduled restore** — a daily cron restores access for leaves whose end date has passed.
+- **Scheduled follow-up** - every 15 minutes a scheduled action suspends the cards of the approved leaves that have begun and restores them for the leaves that have ended.
 - **Self-cleaning audit** — restored audit rows are reclaimed by `@api.autovacuum` after one year, in batches.
 - **Multi-company isolated** — blocks are scoped to the leave's company.
 
@@ -28,20 +28,20 @@ When a time-off request is approved, this module deactivates the employee's curr
 
 No configuration is required. The behaviour is wired to the standard time-off approval flow. Two scheduled actions are created on install:
 
-- **Restore RFID access for ended leaves** — daily.
+- **RFID: Follow time off (stop and give back access)** - every 15 minutes.
 - Restored audit rows are garbage-collected by the core *Auto-vacuum* cron (no separate schedule).
 
 ## 🚀 Usage
 
 1. Approve a time-off request for an employee who holds RFID cards.
-2. The employee's active cards are suspended and listed under **RFID ▸ Leave Access Blocks**.
+2. When the leave begins (at once, if it already goes on), the employee's active cards are suspended and listed under **RFID ▸ Leave Access Blocks**.
 3. When the leave ends (or is refused/cancelled), the snapshotted cards are re-activated automatically.
 
 ## 🛠️ Technical
 
 - **Model `hr.rfid.leave.block`** — `leave_id`, related `employee_id`/`company_id`, `blocked_card_ids` (M2M snapshot read with `active_test=False` so archived cards stay visible), `state` (`active`/`restored`), `blocked_at`/`restored_at`.
-- **`hr.leave.write` hook** — reacts to the `state` transition after the core write succeeds; `validate` → `_rfid_block_access`, `draft`/`confirm`/`refuse`/`cancel` → `_rfid_restore_access`.
-- **`_cron_restore_expired_blocks`** — restores blocks whose `leave_id.date_to` has passed.
+- **`hr.leave.write` hook** — reacts to the `state` transition after the core write succeeds; `validate` → `_rfid_block_access` for the leaves that go on now (`_rfid_going_on`), `draft`/`confirm`/`refuse`/`cancel` → `_rfid_restore_access`.
+- **`_cron_follow_the_leaves`** - suspends the cards of approved leaves that have begun and have no active block, and restores the blocks of the leaves that have ended (`date_to` reached); `_cron_restore_expired_blocks` (restore only, by date) is kept for callers of the old scheduled action.
 - **`_gc_restored_blocks`** — batched `@api.autovacuum` returning `(done, has_more)`.
 
 ## 👥 Credits

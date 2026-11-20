@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Polimex Modules. See LICENSE file for full copyright and licensing details.
-from datetime import date
+from datetime import date, timedelta
 
 from odoo.tests import HttpCase, tagged
 
@@ -41,18 +41,22 @@ class TestLeaveBlockTour(HttpCase):
             "leave_validation_type": "hr",
             "company_id": cls.company.id,
         })
+        # A leave going on now (from yesterday to tomorrow), approved late:
+        # its approval stops the cards at once. A leave that begins later
+        # stops them when it begins (tests/test_leave_block.py).
+        today = date.today()
         cls.leave = cls.env["hr.leave"].create({
             "name": "LeaveBlock holiday",
             "employee_id": cls.employee.id,
             "holiday_status_id": cls.leave_type.id,
-            "request_date_from": date(2026, 12, 15),
-            "request_date_to": date(2026, 12, 15),
+            "request_date_from": today - timedelta(days=1),
+            "request_date_to": today + timedelta(days=1),
         })
         if cls.leave.state == "draft":
             cls.leave.action_confirm()
 
     def test_leave_approval_blocks_cards_tour(self):
-        """Process: officer approves a leave → cards suspended + block logged."""
+        """Process: officer approves a leave that goes on now → cards suspended + block logged."""
         self.assertTrue(self.card.active, "Card starts active")
         self.assertFalse(
             self.env["hr.rfid.leave.block"].search([("leave_id", "=", self.leave.id)]),

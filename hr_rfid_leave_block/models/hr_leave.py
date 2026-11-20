@@ -20,10 +20,22 @@ class HrLeave(models.Model):
         if 'state' in vals:
             new_state = vals['state']
             if new_state == 'validate':
-                self._rfid_block_access()
+                # Only a leave that is going on now stops the cards. One that
+                # starts later is picked up by the scheduled action when it
+                # begins (hr.rfid.leave.block._cron_follow_the_leaves); one that
+                # is already over stops nothing.
+                self._rfid_going_on(fields.Datetime.now())._rfid_block_access()
             elif new_state in RESTORE_STATES:
                 self._rfid_restore_access()
         return res
+
+    def _rfid_going_on(self, moment):
+        """The leaves that have begun and not yet ended at ``moment``."""
+        return self.filtered(
+            lambda leave: leave.date_from
+            and leave.date_to
+            and leave.date_from <= moment < leave.date_to
+        )
 
     def _rfid_block_access(self):
         """Suspend the employee's currently-active cards for each leave.

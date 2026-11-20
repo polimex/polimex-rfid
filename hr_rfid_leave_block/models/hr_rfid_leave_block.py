@@ -67,6 +67,32 @@ class HrRfidLeaveBlock(models.Model):
             block.write({'state': 'restored', 'restored_at': fields.Datetime.now()})
 
     @api.model
+    def _cron_follow_the_leaves(self):
+        """Stop the cards of the approved leaves that have begun, and give
+        them back for the leaves that are over.
+
+        A leave approved ahead of time stops nothing at its approval: the
+        person keeps working until the leave begins.
+        """
+        now = fields.Datetime.now()
+        begun = self.env['hr.leave'].search([
+            ('state', '=', 'validate'),
+            ('date_from', '<=', now),
+            ('date_to', '>', now),
+            ('rfid_block_ids', 'not any', [('state', '=', 'active')]),
+        ])
+        if begun:
+            _logger.info("Suspending RFID access for %s leave(s) that began.", len(begun))
+            begun._rfid_block_access()
+        over = self.search([
+            ('state', '=', 'active'),
+            ('leave_id.date_to', '<=', now),
+        ])
+        if over:
+            _logger.info("Restoring RFID access for %s ended leave(s).", len(over))
+            over._restore()
+
+    @api.model
     def _cron_restore_expired_blocks(self):
         """Restore access for leaves whose end date has passed."""
         today = fields.Date.context_today(self)

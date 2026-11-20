@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-03 07:59+0000\n"
-"PO-Revision-Date: 2026-06-03 11:05\n"
+"PO-Revision-Date: 2026-11-20 12:15\n"
 "Last-Translator: Lyubomir Georgiev <lg@polimex.co>\n"
 "Language-Team: Polimex Dev Team <odoo@polimex.co>\n"
 "Language: bg\n"
@@ -71,7 +71,7 @@ msgstr "Създадено на"
 #: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_leave__display_name
 #: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__display_name
 msgid "Display Name"
-msgstr "Показвано име"
+msgstr "Име за показване"
 
 #. module: hr_rfid_leave_block
 #: model:ir.model.fields,field_description:hr_rfid_leave_block.field_hr_rfid_leave_block__employee_id
@@ -148,8 +148,8 @@ msgstr "RFID блокирания при отпуск"
 
 #. module: hr_rfid_leave_block
 #: model:ir.actions.server,name:hr_rfid_leave_block.ir_cron_restore_expired_leave_blocks_ir_actions_server
-msgid "RFID: Restore access after leave ends"
-msgstr "RFID: Възстановяване на достъп след края на отпуска"
+msgid "RFID: Follow time off (stop and give back access)"
+msgstr "RFID: Следване на почивката (спиране и възстановяване на достъпа)"
 
 #. module: hr_rfid_leave_block
 #: model:ir.model.fields.selection,name:hr_rfid_leave_block.selection__hr_rfid_leave_block__state__restored
@@ -192,7 +192,7 @@ msgstr "Одобреният отпуск, предизвикал спиране
 #. module: hr_rfid_leave_block
 #: model:ir.model,name:hr_rfid_leave_block.model_hr_leave
 msgid "Time Off"
-msgstr "Отпуск"
+msgstr "Почивка"
 
 #. module: hr_rfid_leave_block
 #: model_terms:ir.actions.act_window,help:hr_rfid_leave_block.hr_rfid_leave_block_action
