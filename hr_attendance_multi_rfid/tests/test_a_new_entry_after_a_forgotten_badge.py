@@ -17,12 +17,14 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from freezegun import freeze_time
+from lxml import etree
 from psycopg2 import errors
 
 from odoo import Command, fields
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase, tagged
 from odoo.tools import mute_logger
+from odoo.tools.safe_eval import safe_eval
 
 from .common import in_sofia, one_door, passage
 
@@ -1128,3 +1130,48 @@ class TestTheOverlapCheck(ForgottenBadgeCase):
         first.check_out = self.at(self.monday, 13)
 
         self.assertEqual(first.check_out, self.at(self.monday, 13))
+
+
+@tagged("post_install", "-at_install", "rfid_attendance_zone")
+class TestTheOperatorFindsTheForgottenDays(ForgottenBadgeCase):
+    """The operator who has to enter the real hours finds the days to fix.
+
+    The mark was set but shown nowhere: not in the list of attendances, not
+    in a filter, and core's own "Automatically Checked-Out" filter does not
+    hold every one of them.
+    """
+
+    def _search_view(self):
+        return self.env["hr.attendance"].get_view(
+            self.env.ref("hr_attendance.hr_attendance_view_filter").id, "search"
+        )["arch"]
+
+    def test_the_forgotten_badge_filter_finds_the_day(self):
+        self.company.write({"forgotten_badge_policy": "ignore"})
+        self._in(self.at(self.monday, 8))
+        self._in(self.at(self.tuesday, 8))
+        monday, tuesday = self._stays()
+
+        node = etree.fromstring(self._search_view()).xpath(
+            "//filter[@name='forgotten_badge']"
+        )
+        self.assertEqual(len(node), 1, "the filter is in the search")
+        found = self.env["hr.attendance"].search(
+            safe_eval(node[0].get("domain")) + [("employee_id", "=", self.employee.id)]
+        )
+        self.assertEqual(found, monday)
+
+    def test_the_list_and_the_form_show_the_mark(self):
+        Attendance = self.env["hr.attendance"]
+        listed = etree.fromstring(
+            Attendance.get_view(
+                self.env.ref("hr_attendance.view_attendance_tree").id, "list"
+            )["arch"]
+        )
+        self.assertTrue(listed.xpath("//field[@name='forgotten_badge']"))
+        form = etree.fromstring(
+            Attendance.get_view(
+                self.env.ref("hr_attendance.hr_attendance_view_form").id, "form"
+            )["arch"]
+        )
+        self.assertTrue(form.xpath("//field[@name='forgotten_badge']"))

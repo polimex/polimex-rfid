@@ -95,6 +95,13 @@ past the end of the schedule the person came in under: late in the morning and
 no badge-out is credited to the end of the schedule, not a full day from the
 hour they came.
 
+The days to fix by hand are found in **Attendances**: the filter **Forgotten
+Badge**, next to core's Automatically Checked-Out, lists every stay the system
+closed for a forgotten badge; the list shows the mark in its own column, and
+the attendance form under the check-out mode. On **Overwrite Check-Out**, the
+last exit badged within 8 hours of a stay the system recorded moves its
+check-out; a check-out a person entered stays as entered.
+
 ## 📖 Usage
 
 ### Automatic Attendance
