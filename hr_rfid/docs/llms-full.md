@@ -2,7 +2,7 @@
 id: hr_rfid
 title: RFID Access Control
 module: hr_rfid
-module_version: 19.0.2.33.4
+module_version: 19.0.2.34.6
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage employee access control
-last_updated: '2026-11-09'
-source_digest: sha256:8fae63ae5f5fdba8a7d7220c4629c62c3c8431043cc7cba8a1f624338cfaa506
+last_updated: '2026-11-20'
+source_digest: sha256:5867504fd0fdbfff4e85a392a880cfc7701e900f06dc04094457d473f0e4c8a2
 depends:
 - hr
 - contacts
@@ -111,7 +111,7 @@ chunking:
 ---
 
 
-# RFID Access Control - `hr_rfid` v19.0.2.33.4
+# RFID Access Control - `hr_rfid` v19.0.2.34.6
 
 Manage employee access control
 
@@ -123,7 +123,7 @@ Manage employee access control
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid`
-- **Version**: `19.0.2.33.4`
+- **Version**: `19.0.2.34.6`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -332,11 +332,26 @@ access_group.emergency_open()
    - Verify card is active
    - Check access group assignments
    - Confirm time schedules
+   - A controller in external database mode asks the system about every card and gets the same answer the written rights give: a card is stopped after its access in the group expires, before it starts, when its visits are used up, when it is not of the door's card type, and outside the door's time schedule (at the controller's local time)
 
 3. **Events not appearing**
    - Check controller online status
    - Verify event processing cron job
    - Review system logs
+
+###### Messages you may see
+
+- **"The door ... takes time schedules numbered 0 to 3 for a card"** - iCON130 and iCON180 (hotel too) hold time schedules 0-3 for a card and refuse the whole card write above that, so the door would never open for the group's cards. Choose a schedule numbered 3 or lower for such a door; iCON110, iCON115 and the turnstile take 0-15.
+- **"Card ... was not written to the controller: its time schedule is number ..."** in a controller's system events - the controller refused the card because of its schedule (an access group set up before the check existed). Give the door a schedule in the controller's range in the access group and reload the cards.
+- **"No answer came to "..." for card ... after N attempts, so it may not have been carried out"** in a controller's system events - a change of that card's access was handed to the module and no answer came back, so it is not known whether the controller took it. Check that the module is in touch and that the controller answers it (the line, the controller's address, its power). The command is in Events > Commands as "Command Execution Unsuccessful" with the error "No response from the Module" or "No Response from controller".
+- **"No answer came to "...", so it may not have been carried out. It is not sent again, because it was meant for that moment"** in a controller's system events - a door opened or closed from the screen (the door's buttons, or "Open / close doors") got no answer. It is never handed over again later, so the door cannot open after the person has gone; look at the door to see whether it opened, and check that the module is in touch and that the controller answers it. On a module Odoo reaches directly, a failed hand-over ends the same way at once. A door set to stay unlocked or locked is a state, not a moment, and is sent until the controller takes it.
+- **"No answer came to "..."" for the clock or the status reading** in a controller's system events - the controller stopped answering its routine upkeep. The line is written once, when the silence starts, not at every clock setting after it.
+- **A command stays "Command Processing"** - it is out with the module, which has a short time to answer. Without an answer it is handed over again with the module's next reports and closed as unsuccessful after its attempts; the commands behind it then go out. The clock and the status reading are tried once only - their schedule repeats them - so a controller that does not answer them does not hold up changes of access. The answer to a card shown at a door that asks the server, and the credit for a vending machine, are also given once and never later.
+- **"A card was used at a controller that has not described itself yet"** in a controller's system events - the controller is known only by its number and has not answered what it is, so it has no readers yet. A 100.1 module keeps the passage and sends it again once the controller is described; the report is also kept in the event. If the controller never answers, its passages are noted and accepted so that the module's other reports are not held back; ask it again with "Reload Controller Information" in the Actions menu of the controller.
+- **"A vending machine asked how much credit a card has, and the vending add-on is not installed here"** - the site has a vending controller but not the vending add-on (`hr_rfid_vending`); the request is logged and the machine gets no credit. With the add-on installed, a machine is served over the classic connection and in real time alike.
+- **"The number "..." is longer than the 10 characters a card number holds. Nothing was saved."** or **"Card number must be exactly 10 digits"** - a card number has 10 digits (a 4-byte number, as "5 digits + 5 digits" or as one 10-digit number). A longer number, such as a 7-byte card number written as one decimal number, is refused when it is imported or sent through the API; it is never cut to fit. A number plate is checked after its spaces and dashes are dropped.
+- **Old passages arriving** - a module that was out of touch sends its stored passages when it is back, with their own dates. Each is recorded and counts for attendance on its own day. A passage that is more than 10 minutes old when it arrives, and comes after a newer one of the same person, does not change who is shown inside a zone, and does not change the anti-passback state of their card. A passage stamped later than the server's own time (a controller with its clock ahead) is not counted as the newer one.
+- **Enable real-time is not on the form** - the real-time connection exists on iCON1XX 100.1 modules. A 10.3 module works the classic way only: it reports in and takes its commands in the reply.
 
 ###### Debug Mode
 
@@ -635,11 +650,11 @@ Python class `HrRfidAccessGroupDoorRel` in `models/hr_rfid_access_group.py:453`.
 
 #### Notable methods
 
-- **`_check_schedule_fits_the_controller(self)`** - decorators: `@api.constrains('door_id', 'time_schedule_id')`
-  - Refuses a schedule above what the door's controller holds for a card: `hr.rfid.ctrl._card_schedule_max()` from `controllers/polimex.py` `CARD_SCHEDULE_MAX` (protocol D47: iCON130/iCON180/hotel 0-3, iCON110/iCON115/turnstile 0-15, others no known limit). The controller would otherwise refuse the whole card write (e=4). A controller that refuses a card anyway is explained in its system events by `hr.rfid.command._explain_a_refused_card_schedule()` (D1 with error 4 and a schedule above the limit).
-  - effects: `raise:ValidationError`
 - **`_check_shared_module_grant(self)`** - decorators: `@api.constrains`
   - A company the module is shared with may include its doors in its own access groups, but only with the unrestricted schedule: the controller's schedule slots belong to the owner company, and writing a…
+  - effects: `raise:ValidationError`
+- **`_check_schedule_fits_the_controller(self)`** - decorators: `@api.constrains`
+  - A schedule the controller cannot hold is refused here, not at the door.
   - effects: `raise:ValidationError`
 - **`check_for_ts_inconsistencies(self, rels1, rels2)`** - decorators: `@api.model`
   - effects: `raise:ValidationError`
@@ -653,7 +668,7 @@ Python class `HrRfidAccessGroupDoorRel` in `models/hr_rfid_access_group.py:453`.
   - touches: `hr.rfid.card.door.rel`
 
 ### `hr.rfid.access.group.rel` <a id='model-hr-rfid-access-group-rel'></a>
-Python class `HrRfidAccessGroupRelations` in `models/hr_rfid_access_group.py:577`.  AbstractModel.  Description: *Relation between access groups and employees*.
+Python class `HrRfidAccessGroupRelations` in `models/hr_rfid_access_group.py:602`.  AbstractModel.  Description: *Relation between access groups and employees*.
 
 #### Fields
 
@@ -676,12 +691,13 @@ Python class `HrRfidAccessGroupRelations` in `models/hr_rfid_access_group.py:577
 - **`_compute_state(self)`** - decorators: `@api.depends`
 - **`_check_expirations(self)`** - decorators: `@api.model`
 - **`filter_by_door(self, door_id, active_only=True)`** - decorators: -
+  - The memberships that give ``door_id``, inherited doors included: a pass through a door that comes from an inherited group is still a visit of the membership that gave it.
 - **`ag_ready(self)`** - decorators: -
 - **`write(self, vals)`** - decorators: -
   - calls `super() `write``
 
 ### `hr.rfid.access.group.employee.rel` <a id='model-hr-rfid-access-group-employee-rel'></a>
-Python class `HrRfidAccessGroupEmployeeRel` in `models/hr_rfid_access_group.py:749`.  Model.  Inherits: `hr.rfid.access.group.rel`.  Description: *Relation between access groups and employees*.
+Python class `HrRfidAccessGroupEmployeeRel` in `models/hr_rfid_access_group.py:772`.  Model.  Inherits: `hr.rfid.access.group.rel`.  Description: *Relation between access groups and employees*.
 
 #### Fields
 
@@ -703,7 +719,7 @@ Python class `HrRfidAccessGroupEmployeeRel` in `models/hr_rfid_access_group.py:7
   - calls `super() `unlink``
 
 ### `hr.rfid.access.group.contact.rel` <a id='model-hr-rfid-access-group-contact-rel'></a>
-Python class `HrRfidAccessGroupContactRel` in `models/hr_rfid_access_group.py:832`.  Model.  Inherits: `hr.rfid.access.group.rel`.  Description: *Relation between access groups and contacts*.
+Python class `HrRfidAccessGroupContactRel` in `models/hr_rfid_access_group.py:855`.  Model.  Inherits: `hr.rfid.access.group.rel`.  Description: *Relation between access groups and contacts*.
 
 #### Fields
 
@@ -725,7 +741,7 @@ Python class `HrRfidAccessGroupContactRel` in `models/hr_rfid_access_group.py:83
   - calls `super() `unlink``
 
 ### `hr.rfid.access.group.wizard` <a id='model-hr-rfid-access-group-wizard'></a>
-Python class `HrRfidAccessGroupWizard` in `models/hr_rfid_access_group.py:917`.  TransientModel (wizard).  Description: *Add or remove doors to the access group*.
+Python class `HrRfidAccessGroupWizard` in `models/hr_rfid_access_group.py:940`.  TransientModel (wizard).  Description: *Add or remove doors to the access group*.
 
 #### Fields
 
@@ -784,6 +800,9 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:17`.  Model.  Inherits: `ma
 - **`_compute_barcode_number(self)`** - decorators: `@api.depends`
 - **`_check_user(self)`** - decorators: `@api.constrains`
   - effects: `raise:ValidationError`
+- **`_number_as_kept(self, number, card_type)`** - decorators: `@api.model`
+  - The number in the form the card keeps it, or a refusal - BEFORE the ORM takes it.
+  - effects: `raise:ValidationError`
 - **`_check_number(self)`** - decorators: `@api.constrains`
   - effects: `raise:ValidationError`
 - **`_check_shared_module_collisions(self)`** - decorators: `@api.constrains`
@@ -792,11 +811,11 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:17`.  Model.  Inherits: `ma
 - **`create(self, vals)`** - decorators: `@api.model_create_multi`
   - calls `super() `create``
   - effects: `raise:ValidationError`
-  - touches: `hr.rfid.card`, `hr.rfid.card.door.rel`
+  - touches: `hr.rfid.card`, `hr.rfid.card.door.rel`, `hr.rfid.card.type`
 - **`write(self, vals)`** - decorators: -
   - calls `super() `write``
   - effects: `raise:ValidationError`
-  - touches: `hr.rfid.card.door.rel`
+  - touches: `hr.rfid.card.door.rel`, `hr.rfid.card.type`
 - **`unlink(self)`** - decorators: -
   - calls `super() `unlink``
 - **`hex_to_w34(self, bc)`** - decorators: `@api.model`
@@ -804,12 +823,10 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:17`.  Model.  Inherits: `ma
 - **`create_bc_card(self)`** - decorators: `@api.model`
   - effects: `raise:UserError`
   - touches: `hr.rfid.card`
-- **`_update_cards(self)`** - decorators: `@api.model`
-  - touches: `hr.rfid.card`
-- *2 more not listed*
+- *3 more not listed*
 
 ### `hr.rfid.card.type` <a id='model-hr-rfid-card-type'></a>
-Python class `HrRfidCardType` in `models/hr_rfid_card.py:466`.  Model.  Inherits: `mail.thread`.  Description: *Card Type*.
+Python class `HrRfidCardType` in `models/hr_rfid_card.py:543`.  Model.  Inherits: `mail.thread`.  Description: *Card Type*.
 
 #### Fields
 
@@ -822,14 +839,6 @@ Python class `HrRfidCardType` in `models/hr_rfid_card.py:466`.  Model.  Inherits
 #### Notable methods
 
 - **`check_and_fix_card_numer(self, number)`** - decorators: -
-- **`hr.rfid.card._number_as_kept(self, number, card_type)`** - decorators: `@api.model`
-  - The number in the form the card stores it, or a refusal, applied in
-    `create` and `write` BEFORE the ORM takes the value. The `number` field
-    has `size=10` and the ORM cuts a longer value to fit (Char.convert_to_cache),
-    so no constraint ever saw a number that was too long: the card was saved
-    under its first 10 characters. Calls the card type's
-    `check_and_fix_card_numer` (leading zeros; a number plate without its
-    separators) and raises when the result is longer than the field.
   - effects: `raise:UserError`
 - **`unlink(self)`** - decorators: -
   - super-split (super `unlink`): pre=`raise:ValidationError` · post=-
@@ -837,7 +846,7 @@ Python class `HrRfidCardType` in `models/hr_rfid_card.py:466`.  Model.  Inherits
 - **`list_cards_from_this_type(self)`** - decorators: -
 
 ### `hr.rfid.command` <a id='model-hr-rfid-command'></a>
-Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inherits: `balloon.mixin`.  Description: *Command to controller*.  Default order: `create_date desc, id desc`.
+Python class `HrRfidCommands` in `models/hr_rfid_command.py:29`.  Model.  Inherits: `balloon.mixin`.  Description: *Command to controller*.  Default order: `create_date desc, id desc`.
 
 #### Fields
 
@@ -856,6 +865,8 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inheri
 | `response` | Char | Response |  | ✓ | Technical details: The raw JSON response received from the module. Contains the  |
 | `card_number` | Char | Card |  | ✓ | The RFID card number this command is related to. For example, when adding or rem |
 | `retries` | Integer | Command retries |  | ✓ | Number of times the system has attempted to resend this command after failures.  |
+| `sent_at` | Datetime | Sent At |  | ✓ | When the command was last handed to the module. A command that gets no answer sh |
+| `single_attempt` | Boolean | Sent Once |  | ✓ | Set on a command that is handed to the module only once: an answer to something  |
 | `pin_code` | Char | Pin Code (debug info) |  | ✓ | PIN code associated with the card for this command. Used for debugging purposes. |
 | `ts_code` | Char | TS Code (debug info) |  | ✓ | Time Schedule code that defines when the card has access. Used for debugging pur |
 | `rights_data` | Char | Rights Data (debug info) |  | ✓ | Binary representation of access rights being granted. Used for debugging purpose |
@@ -899,47 +910,13 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:30`.  Model.  Inheri
 - **`change_apb_flag(self, door, card, can_exit=True)`** - decorators: `@api.model`
   - touches: `hr.rfid.card.door.rel`
 - **`_next_waiting(self, webstack)`** - decorators: `@api.model`
-  - The next command to hand to a module: the oldest in `Wait`. The one rule
-    for both deliveries - `hr.rfid.webstack.check_for_unsent_cmd` (the reply
-    to a module's report) and the real-time channel
-    (`_ws_publish_next_command`, `_ws_on_connect_sync`).
-- **`_is_still_awaited(self)`** - decorators: -
-  - True while less than `CMD_ANSWER_TIMEOUT_S` (15 s, `controllers/polimex.py`)
-    has passed since `sent_at`: the module may still be carrying the command
-    out. A command with no `sent_at` (from before the field existed) counts
-    as overdue.
-- **`_may_be_sent_again(self)`** - decorators: -
-  - False for a `single_attempt` command and once `retries` reached
-    `CMD_MAX_RETRIES` (5).
-- **`_close_unanswered(self, error='30')`** - decorators: -
-  - Gives a command up: `status='Failure'`, the reason in `error` ('30' no
-    answer from the module, '20' the module said the controller was silent),
-    `ex_timestamp`. The controller's log gets a system event naming the
-    command, the card and the number of attempts ("No answer came to ..." -
-    whether the controller carried it out is not known). Routine upkeep
-    (`ROUTINE_COMMANDS`: D7, B3) gets its event once, when the controller
-    stops answering (`_controller_was_answering`), not at every failure after
-    it. The event is written inside a savepoint: a failure to write it is
-    logged and never keeps the command open. A `single_attempt` command that
-    is not upkeep (a door opened or closed from the screen, an answer to a
-    card) says instead that it is not sent again, because it was meant for
-    that moment.
-- **`_meant_for_the_moment(self)`** - decorators: -
-  - `single_attempt` and not routine upkeep. Such a command that Odoo could
-    not hand straight to a module it reaches (`_not_delivered_directly`,
-    `hr.rfid.ctrl._base_command`) is closed at once instead of waiting for
-    the module's next report; upkeep still waits.
-- **`_controller_was_answering(self)`** - decorators: -
-  - True unless the controller's previous finished command was closed for no
-    answer ('30' or '20'); True when there is none before.
-  - effects: `write`
-  - touches: `hr.rfid.event.system`
+  - The next command to hand to this module: the oldest one that waits.
 - **`_sync_clocks(self)`** - decorators: `@api.model`
   - touches: `hr.rfid.webstack`
 - *9 more not listed*
 
 ### `hr.rfid.command` <a id='model-hr-rfid-command'></a>
-Python class `HrRfidCommandWs` in `models/hr_rfid_command_ws.py:29`.  Model.  Inherits: `hr.rfid.command`.
+Python class `HrRfidCommandWs` in `models/hr_rfid_command_ws.py:33`.  Model.  Inherits: `hr.rfid.command`.
 
 #### Notable methods
 
@@ -1025,7 +1002,7 @@ Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inheri
 | `mode_selection_31` | Selection | Relays mode | ✓ | - | Relay configuration mode: - 1 x 32: Single bank of 32 relays - 2 x 16: Two indep |
 | `external_db` | Boolean | External DB |  | ✓ | External database mode. When on, the controller does not keep the card list in i |
 | `relay_time_factor` | Selection | Relay Time Factor |  | ✓ | Time unit for relay activation duration. When set to "1 second", relay timers co |
-| `dual_person_mode` | Boolean | Dual Person Mode |  | ✓ | Two authorized persons must badge within a short time for the door to open. Available on iCON130 (firmware 7.36 or newer); not shown and never sent for other controllers |
+| `dual_person_mode` | Boolean | Dual Person Mode |  | ✓ | Two authorized persons must badge within a short time for the door to open, for  |
 | `interlocking_mode` | Boolean | Interlocking Mode |  | ✓ | Interlocking (mantrap): only one of the controller's doors may be open at a time |
 | `max_cards_count` | Integer | Maximum Cards |  | ✓ | Maximum number of access cards this controller can store in its internal memory. |
 | `cards_count` | Integer | Cards Count |  | ✓ | Current number of access cards stored in the controller's memory. When this appr |
@@ -1238,7 +1215,7 @@ Python class `HrRfidReader` in `models/hr_rfid_ctrl_reader.py:4`.  Model.  Inher
   - effects: `i18n`
 
 ### `hr.rfid.ctrl.th` <a id='model-hr-rfid-ctrl-th'></a>
-Python class `CtrlTemperatureAndHumidity` in `models/hr_rfid_ctrl_th.py:13`.  Model.  Inherits: `mail.thread`.  Description: *Temperature and Humidity Sensor*.
+Python class `CtrlTemperatureAndHumidity` in `models/hr_rfid_ctrl_th.py:9`.  Model.  Inherits: `mail.thread`.  Description: *Temperature and Humidity Sensor*.
 
 #### Fields
 
@@ -1283,7 +1260,7 @@ Python class `CtrlTemperatureAndHumidityLog` in `models/hr_rfid_ctrl_th_log.py:4
 | `event_time` | Datetime | Reading Time |  | ✓ | The exact date and time when this temperature/humidity reading was taken. Use th |
 
 ### `hr.rfid.time.schedule` <a id='model-hr-rfid-time-schedule'></a>
-Python class `HrRfidTimeSchedule` in `models/hr_rfid_ctrl_time_schedule.py:17`.  Model.  Inherits: `mail.thread`.  Description: *Time Schedule*.
+Python class `HrRfidTimeSchedule` in `models/hr_rfid_ctrl_time_schedule.py:16`.  Model.  Inherits: `mail.thread`.  Description: *Time Schedule*.
 
 #### Fields
 
@@ -1311,7 +1288,7 @@ Python class `HrRfidTimeSchedule` in `models/hr_rfid_ctrl_time_schedule.py:17`. 
   - touches: `hr.rfid.time.schedule`, `res.company`
 
 ### `hr.rfid.ctrl.ts.line` <a id='model-hr-rfid-ctrl-ts-line'></a>
-Python class `HrRfidTimeScheduleWizDayLine` in `models/hr_rfid_ctrl_time_schedule.py:139`.  TransientModel (wizard).  Description: *Time Schedule line Wizard*.  Default order: `day`.
+Python class `HrRfidTimeScheduleWizDayLine` in `models/hr_rfid_ctrl_time_schedule.py:166`.  TransientModel (wizard).  Description: *Time Schedule line Wizard*.  Default order: `day`.
 
 #### Fields
 
@@ -1335,7 +1312,7 @@ Python class `HrRfidTimeScheduleWizDayLine` in `models/hr_rfid_ctrl_time_schedul
 - **`get_set_str(self)`** - decorators: -
 
 ### `hr.rfid.ctrl.ts.week.wiz` <a id='model-hr-rfid-ctrl-ts-week-wiz'></a>
-Python class `HrRfidTimeScheduleWizWeek` in `models/hr_rfid_ctrl_time_schedule.py:218`.  TransientModel (wizard).  Description: *Time Schedule Week Wizard*.
+Python class `HrRfidTimeScheduleWizWeek` in `models/hr_rfid_ctrl_time_schedule.py:248`.  TransientModel (wizard).  Description: *Time Schedule Week Wizard*.
 
 #### Fields
 
@@ -1407,8 +1384,12 @@ Python class `HrRfidDoor` in `models/hr_rfid_door.py:15`.  Model.  Inherits: `ma
 - **`get_cards(self, access_groups=None, all=True)`** - decorators: -
   - Returns a list of tuples (card, time_schedule) for which the card potentially has access to this door
   - touches: `hr.rfid.access.group.door.rel`
+- **`_command_of(self, result)`** - decorators: `@api.model`
+  - The command an output change made, or nothing.
 - **`open_door(self)`** - decorators: -
+  - effects: `with_context`
 - **`close_door(self)`** - decorators: -
+  - effects: `with_context`
 - **`arm_door(self)`** - decorators: -
 - **`disarm_door(self)`** - decorators: -
 - **`siren_off(self)`** - decorators: -
@@ -1425,7 +1406,7 @@ Python class `HrRfidDoor` in `models/hr_rfid_door.py:15`.  Model.  Inherits: `ma
   - touches: `hr.rfid.card.door.rel`, `hr.rfid.command`
 
 ### `hr.rfid.door.open.close.wiz` <a id='model-hr-rfid-door-open-close-wiz'></a>
-Python class `HrRfidDoorOpenCloseWiz` in `models/hr_rfid_door.py:631`.  TransientModel (wizard).  Inherits: `balloon.mixin`.  Description: *Open or close door*.
+Python class `HrRfidDoorOpenCloseWiz` in `models/hr_rfid_door.py:644`.  TransientModel (wizard).  Inherits: `balloon.mixin`.  Description: *Open or close door*.
 
 #### Fields
 
@@ -1437,10 +1418,12 @@ Python class `HrRfidDoorOpenCloseWiz` in `models/hr_rfid_door.py:631`.  Transien
 #### Notable methods
 
 - **`open_doors(self)`** - decorators: -
+  - effects: `with_context`
 - **`close_doors(self)`** - decorators: -
+  - effects: `with_context`
 
 ### `hr.rfid.card.door.rel` <a id='model-hr-rfid-card-door-rel'></a>
-Python class `HrRfidCardDoorRel` in `models/hr_rfid_door.py:670`.  Model.  Description: *Card and door relation model*.
+Python class `HrRfidCardDoorRel` in `models/hr_rfid_door.py:685`.  Model.  Description: *Card and door relation model*.
 
 #### Fields
 
@@ -1454,7 +1437,7 @@ Python class `HrRfidCardDoorRel` in `models/hr_rfid_door.py:670`.  Model.  Descr
 #### Notable methods
 
 - **`get_ts_code_string(self)`** - decorators: -
-  - The card's schedule for each of the four readers, every reader of the door included. The card write itself does not read it: `hr.rfid.command.add_card` sends one D1 per reader, merged per slot by `hr.rfid.ctrl.add_remove_card`.
+  - The card's schedule for each of the controller's four readers.
 - **`update_card_rels(self, card_id, access_group=None)`** - decorators: `@api.model`
   - Checks all card-door relations and updates them :param card_id: Card for which the relations to be checked :param access_group: Which access groups to go through when searching for the doors. If None…
 - **`update_door_rels(self, door_id, access_group=None)`** - decorators: `@api.model`
@@ -1495,7 +1478,7 @@ Python class `HRRFIDEvent` in `models/hr_rfid_event.py:4`.  AbstractModel.  Desc
 - **`get_event_action_text(self)`** - decorators: -
 
 ### `hr.rfid.event.system` <a id='model-hr-rfid-event-system'></a>
-Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:76`.  Model.  Inherits: `hr.rfid.event`, `mail.thread`.  Description: *RFID System Event*.  Default order: `timestamp desc`.
+Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:78`.  Model.  Inherits: `hr.rfid.event`, `mail.thread`.  Description: *RFID System Event*.  Default order: `timestamp desc`.
 
 #### Fields
 
@@ -1520,6 +1503,8 @@ Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:76`.  Model.
 
 - **`_compute_is_card_event(self)`** - decorators: `@api.depends`
 - **`_compute_sys_ev_name(self)`** - decorators: `@api.depends`
+- **`_report_without_key(self, raw)`** - decorators: `@api.model`
+  - A report as the module sent it, without the module's key.
 - **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
   - calls `super() `create``
   - effects: `with_context`
@@ -1529,7 +1514,7 @@ Python class `HrRfidSystemEvent` in `models/hr_rfid_event_system.py:76`.  Model.
   - calls `super() `write``
 
 ### `hr.rfid.event.sys.wiz` <a id='model-hr-rfid-event-sys-wiz'></a>
-Python class `HrRfidSystemEventWizard` in `models/hr_rfid_event_system.py:486`.  TransientModel (wizard).  Description: *Add card to employee/contact*.
+Python class `HrRfidSystemEventWizard` in `models/hr_rfid_event_system.py:452`.  TransientModel (wizard).  Description: *Add card to employee/contact*.
 
 #### Fields
 
@@ -1579,20 +1564,10 @@ Python class `HrRfidUserEvent` in `models/hr_rfid_event_user.py:35`.  Model.  In
 #### Notable methods
 
 - **`_compute_user_ev_name(self)`** - decorators: `@api.depends`
-- **`_search_name(self, operator, value)`** - search method of the computed,
-  unstored `name` (first field of the events' search view and part of
-  `_rec_names_search`, so also the name search of an event link): `like` /
-  `ilike` become an OR over `employee_id.name`, `contact_id.name`,
-  `door_id.name` and the `event_action` keys whose label, in the searcher's
-  language, contains the text (`_search_name_actions`); `in` (what `=` and
-  "is set" arrive as) reads each exact name back into action, owner and door
-  (`_search_name_equal`), and `False` matches nothing because every name
-  holds the action; a negative operator returns `NotImplemented` and the ORM
-  negates the positive search. `hr.rfid.vending.event` inherits it and
-  overrides `_search_name_containing` / `_search_name_equal` for sales, whose
-  name is "product - buyer". Without it every text search in that box raised "Cannot convert
-  hr.rfid.event.user.name to SQL because it is not stored" (client case,
-  10.11.2026).
+- **`_search_name_owner(self, who)`** - decorators: `@api.model`
+  - Who the name starts with: the person, else the contact, else the door.
+- **`_search_name_actions(self, operator, value)`** - decorators: `@api.model`
+  - The actions whose label contains ``value``.
 - **`_compute_user_ev_action_str(self)`** - decorators: `@api.depends`
   - effects: `i18n`
 - **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
@@ -1752,7 +1727,7 @@ Python class `HrRfidWebstack` in `models/hr_rfid_webstack.py:72`.  Model.  Inher
 - **`direct_execute(self, cmd, command_id=None)`** - decorators: -
   - :param cmd: A dictionary that contains the command to be executed. :param command_id: (optional) A model instance representing a stored command. :return: The response from the command execution.
   - effects: `log_error`
-- *14 more not listed*
+- *13 more not listed*
 
 ### `hr.rfid.webstack.discovery.row` <a id='model-hr-rfid-webstack-discovery-row'></a>
 Python class `HrRfidWebstackDiscoveryRow` in `models/hr_rfid_webstack_discovery.py:8`.  TransientModel (wizard).  Description: *Webstack discovery rows*.
@@ -1881,7 +1856,7 @@ Python class `HrRfidWsDedup` in `models/hr_rfid_ws_dedup.py:24`.  Model.  Descri
   - effects: `sudo`
 
 ### `hr.rfid.zone` <a id='model-hr-rfid-zone'></a>
-Python class `HrRfidZone` in `models/hr_rfid_zone.py:12`.  Model.  Inherits: `mail.thread`.  Description: *Zone*.
+Python class `HrRfidZone` in `models/hr_rfid_zone.py:18`.  Model.  Inherits: `mail.thread`.  Description: *Zone*.
 
 #### Fields
 
@@ -1925,7 +1900,7 @@ Python class `HrRfidZone` in `models/hr_rfid_zone.py:12`.  Model.  Inherits: `ma
 - **`process_event(self, event)`** - decorators: -
 
 ### `hr.rfid.zone.doors.wiz` <a id='model-hr-rfid-zone-doors-wiz'></a>
-Python class `HrRfidZoneDoorsWizard` in `models/hr_rfid_zone.py:323`.  TransientModel (wizard).  Description: *Add or remove doors to the zone*.
+Python class `HrRfidZoneDoorsWizard` in `models/hr_rfid_zone.py:377`.  TransientModel (wizard).  Description: *Add or remove doors to the zone*.
 
 #### Fields
 
@@ -2072,48 +2047,31 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 - **`MAX_DIRECT_EXECUTE`** *(scalar)* = `10`  - line 3
 - **`MAX_DIRECT_EXECUTE_TIME`** *(scalar)* = `5`  - line 4
-- **`HW_TYPES`** *(collection)* = `[('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'), ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'), ('9', 'Turnstile'), ('10', 'iCON180'), ('11', 'iCON115'), ('12', 'iCON50'), ('13', 'iCON115 hot  # ...truncated`  - line 7
-- **`VENDING_HW_VERSIONS`** *(collection)* = `('16', '20', '21')`  - line 24
-- **`DEFAULT_IO_TABLES`** *(collection)* = `[[6, 2, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   # ...truncated`  - line 25
-- **`READ_CARDS_BLOCK_SIZE`** *(scalar)* = `5`  - line 518
+- **`CMD_ANSWER_TIMEOUT_S`** *(scalar)* = `15`  - line 11
+- **`CMD_MAX_RETRIES`** *(scalar)* = `5`  - line 13
+- **`ROUTINE_COMMANDS`** *(collection)* = `('D7', 'B3')`  - line 17
+- **`ERROR_NO_ANSWER`** *(scalar)* = `'30'`  - line 20
+- **`ERROR_CONTROLLER_SILENT`** *(scalar)* = `'20'`  - line 21
+- **`HW_TYPES`** *(collection)* = `[('1', 'iCON200'), ('2', 'iCON150'), ('3', 'iCON150'), ('4', 'iCON140'), ('5', 'iCON120'), ('6', 'iCON110'), ('7', 'iCON160'), ('8', 'iCON170'), ('9', 'Turnstile'), ('10', 'iCON180'), ('11', 'iCON115'), ('12', 'iCON50'), ('13', 'iCON115 hot  # ...truncated`  - line 24
+- **`VENDING_HW_VERSIONS`** *(collection)* = `('16', '20', '21')`  - line 41
+- **`DUAL_PERSON_HW_VERSIONS`** *(collection)* = `('17',)`  - line 48
+- **`CARD_SCHEDULE_MAX`** *(collection)* = `{'17': 3, '10': 3, '14': 3, '6': 15, '11': 15, '9': 15}`  - line 55
+- **`DEFAULT_IO_TABLES`** *(collection)* = `[[6, 2, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   # ...truncated`  - line 56
+- **`READ_CARDS_BLOCK_SIZE`** *(scalar)* = `5`  - line 549
 
 ### `models/hr_rfid_command_ws.py`
 
-- **`WS_CMD_REPUBLISH_TIMEOUT_S`** *(scalar)* = `CMD_ANSWER_TIMEOUT_S` (15)
-- **`WS_CMD_MAX_RETRIES`** *(scalar)* = `CMD_MAX_RETRIES` (5)
-
-### `controllers/polimex.py` - the command queue
-
-- **`CMD_ANSWER_TIMEOUT_S`** *(scalar)* = `15` - how long a command handed to a module may stay unanswered before it counts as lost; shared by the classic delivery and the real-time channel
-- **`CMD_MAX_RETRIES`** *(scalar)* = `5` - how many times a lost command is handed over again
-- **`ROUTINE_COMMANDS`** *(collection)* = `('D7', 'B3')` - the clock and the status reading: `single_attempt`, one system event when the controller stops answering them
-- **`ERROR_NO_ANSWER`** = `'30'`, **`ERROR_CONTROLLER_SILENT`** = `'20'` - the reasons a command is closed for
-
-### The conversation with a module (`controllers/main.py`, `models/hr_rfid_webstack.py`)
-
-- **The shape of the reply** is settled per request by `_decode_post` and kept on the request (`request.rfid_reply_shape`: `json_rpc`, `id`, `plain`), never on the controller object, which is shared by every request. `_make_response` reads it: JSON-RPC envelope, plain JSON for a 100.1 (serial starting with '4'), and for a 10.3 an empty body or `{"cmd": {...}}` and nothing else - no `status`, no `ws` block.
-- **One command out at a time** (`check_for_unsent_cmd`): while ANY command in `Process` is still awaited nothing is handed over and none is re-sent; once all are overdue, those that may not be sent again are closed (`_close_unanswered`), the oldest of the rest is re-sent (`retries + 1`), and with none left the next waiting one goes out in the same reply.
-- **What the module answers to a command** (`parse_response`): `e=20` (controller silent) in the reply to a report re-sends the command in place (`_retry_command`) or closes it with '20'; on a delivery of its own (`direct_cmd=True`: the real-time channel, a module Odoo reaches) it goes back to `Wait` with `retries + 1` or is closed, because no reply carries a command there. `e=24` (module full) puts the command back to `Wait`. Neither re-queues a `single_attempt` command: it is closed.
-- **On reconnect** (`_ws_on_connect_sync`): a `Process` command that may not be sent again is closed if its time is up, and holds the slot if it is still awaited; otherwise the oldest `Process` command is published again, else the next waiting one.
-- **A controller that has not described itself** (`_hw_description_is_on_its_way`): a card event for a controller with no `hw_version` is answered 400 while its F0 is `Wait`/`Process` (asked here if it never was), with a system event that keeps the report. After an F0 that ended without describing it, the event is noted ("Could not find a reader with that id") and accepted, so the module is not held back.
-- **`_reply_with_command(command, status_code)`** - used by the reports that are answered with a command of their own (event 30 the clock, event 25/31 the status reading, an unknown controller its F0): the command goes out in the reply only when nothing else is out; otherwise it waits its turn.
-- **`single_attempt`** commands are never re-sent: the answer to event 64 (DB, and DB2 for vending credit) and routine upkeep.
-- **The answer to event 64** (a controller in external database mode asks about a card it does not keep) follows the same rights Odoo writes to the controllers that keep their cards (`hr.rfid.card._doors_it_opens_now`): the card is valid now (`card_ready`) and of the door's card type; the owner's place in the access group has started, has not expired and has visits left; the doors of inherited groups count; and the door's time schedule in that group covers the controller's local time (server time plus the module's time zone, `hr.rfid.time.schedule._lets_in_at`: Monday-first weekday rows, the last minute of a period included, schedule 0 at any time, 00:00-00:00 unused, holiday row not read). A group whose minimum time between passes is not over opens nothing - the member's group and, for an inherited door, the group the door comes from. A relay controller opens only the doors the card opens now.
-- **Visits through an inherited door** count on the membership that gave the door (`filter_by_door` reads `all_door_ids`): a day pass whose group includes the gym is used up at the gym door.
-- **The working time editor** numbers a day's periods 1-4 and keeps every minute on save (whole minutes, rounded; the 4th period's end is read in full).
-- **A report that fails here** is recorded as a system event with the traceback AND the raw report (`with_context(keep_report=True)` bypasses the "save communications" setting, up to `KEPT_REPORT_MAX_CHARS` = 20000): a 10.3 reads an empty reply as "accepted" and forgets the event, so this record is its only copy. The kept copy leaves out the module's key (`_report_without_key`). Only for a module that has proved its key; before that the report is kept only if the site keeps its communication. The work on the report runs inside a savepoint (`post_event`, and the vending override): a failure undoes what was half done, and the record can still be written after a database error. The real-time channel does the same per event (`_ws_on_event_batch`).
-- **A report with no key** is refused like a wrong key (400, "Webstack key and key in json did not match"); it used to raise.
-- **Events 27/28** (alarm zone delay) are logged and acknowledged; they used to raise.
-- **A late passage** (`hr.rfid.zone._passage_is_overtaken`): a granted passage more than `LATE_PASSAGE_AFTER_MINUTES` (10) old on arrival, with a newer one of the same person through a door of the zone, does not change the zone's people or the anti-passback flags; it is still recorded and still counts for attendance by its own time. A "newer" passage stamped after the server's own time is not counted (a controller with its clock ahead), and a passage that is not late always moves the zone. Each skip is logged at INFO with both passages.
-- **Vending without a server for it** (`_hw_vending_request_for_balance`): logged as "the vending add-on is not installed here" and accepted. Reached only on a site without `hr_rfid_vending`: the add-on overrides `_hw_parse_event` and answers the reports of vending controllers itself, on the classic route and in real time alike.
+- **`WS_CMD_REPUBLISH_TIMEOUT_S`** *(expression)* = `CMD_ANSWER_TIMEOUT_S`  - line 29
+- **`WS_CMD_MAX_RETRIES`** *(expression)* = `CMD_MAX_RETRIES`  - line 30
 
 ### `models/hr_rfid_ctrl_time_schedule.py`
 
-- **`DEFAULT_TS_LINE`** *(expression)* = `'01\n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00\n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 \n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00\n         `  - line 5
+- **`DEFAULT_TS_LINE`** *(expression)* = `'01\n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00\n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00 \n                   00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00\n         `  - line 4
 
 ### `models/hr_rfid_event_system.py`
 
-- **`SYS_EV_DEDUP_WINDOW_SECONDS`** *(scalar)* = `300`  - line 20
+- **`SYS_EV_DEDUP_WINDOW_SECONDS`** *(scalar)* = `300`  - line 17
+- **`KEPT_REPORT_MAX_CHARS`** *(scalar)* = `20000`  - line 22
 
 ### `models/hr_rfid_event_user.py`
 
@@ -2136,9 +2094,9 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 - **`WS_DEDUP_RETENTION_DAYS`** *(scalar)* = `7`  - line 20
 - **`GC_UNLINK_LIMIT`** *(scalar)* = `1000`  - line 21
 
-### `tools/odoo_bus_device_sim.py`
+### `models/hr_rfid_zone.py`
 
-- **`PROTO`** *(scalar)* = `1`  - line 37
+- **`LATE_PASSAGE_AFTER_MINUTES`** *(scalar)* = `10`  - line 15
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -2151,71 +2109,19 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 - **`WebRfidController.post_barcode(self, **post)`** (`@http.route`) - `controllers/main.py:54`
   - :param post: Dictionary of parameters sent in the POST request. :return: List of dictionaries with barcode data.
   - effects: `log_info`
-- **`WebRfidController.post_event(self, **post)`** (`@http.route`) - `controllers/main.py:240`
+- **`WebRfidController.post_event(self, **post)`** (`@http.route`) - `controllers/main.py:266`
   - This method handles the POST request to the '/hr/rfid/event' route. It processes the received data from the request and performs necessary actions based on the data.
-  - effects: `log_error`, `log_info`, `sudo`
+  - effects: `log_error`, `log_info`, `with_context`
   - touches: `hr.rfid.event.system`, `hr.rfid.webstack`
-- **`WebRfidController.vending_request_for_balance(self)`** - `controllers/main.py:394`
-- **`get_default_io_table(hw_version, mode, as_string=True)`** - `controllers/polimex.py:521`
-- **`bytes_to_num(data, start, digits)`** - `controllers/polimex.py:530`
-- **`str_hex_to_array(str)`** - `controllers/polimex.py:540`
-- **`str_dec_to_array(str)`** - `controllers/polimex.py:542`
-- **`get_temperature(h, l, precision=0.5)`** - `controllers/polimex.py:545`
-- **`get_reverse_temperature(temp)`** - `controllers/polimex.py:553`
-- **`simulate_event()`** - `controllers/simulate_event.py:9`
-  - effects: `http_post`
-- **`BaseImporter.connect_to_old_odoo(self)`** - `manual_import.py:34`
-  - effects: `log_error`, `log_info`
-- **`BaseImporter.connect_to_new_odoo(self)`** - `manual_import.py:44`
-  - effects: `log_error`, `log_info`
-- **`BaseImporter.fetch_data_in_batches(self, model, fields, domain=[])`** - `manual_import.py:54`
-  - effects: `log_info`
-- **`BaseImporter.check_external_id_exists(self, model, external_id)`** - `manual_import.py:68`
-- **`BaseImporter.create_external_id(self, model, res_id, external_id)`** - `manual_import.py:72`
-- **`BaseImporter.get_matching_fields(self, source_model, target_model)`** - `manual_import.py:80`
-- **`BaseImporter.get_avatar_mixin_fields(self)`** - `manual_import.py:94`
-- **`BaseImporter.get_mail_thread_fields(self)`** - `manual_import.py:102`
-- **`BaseImporter.get_computed_fields(self, model)`** - `manual_import.py:124`
-- **`BaseImporter.get_related_fields(self, model)`** - `manual_import.py:134`
-- **`BaseImporter.get_model_specific_exceptions(self, model_name)`** - `manual_import.py:144`
-- **`BaseImporter.get_field_mapping(self, model_name)`** - `manual_import.py:169`
-- **`BaseImporter.get_final_field_mapping(self, source_model, target_model, model_name)`** - `manual_import.py:184`
-  - effects: `log_info`
-- **`BaseImporter.map_fields(self, record, field_mapping, source_model)`** - `manual_import.py:200`
-- **`BaseImporter.import_related_model(self, related_model, related_id, related_field_mapping)`** - `manual_import.py:223`
-  - effects: `create`, `log_info`
-- **`BaseImporter.import_log_notes(self, source_model, target_model, record_id, new_record_id)`** - `manual_import.py:240`
-  - effects: `log_info`
-- **`BaseImporter.import_data(self, model, data, external_id, source_model, record_id)`** - `manual_import.py:260`
-  - effects: `create`, `log_info`
-- **`BaseImporter.import_data_for_model(self, source_model, target_model=None, ignored_ids=None)`** - `manual_import.py:282`
-  - effects: `log_info`
-- **`PartnerImporter.import_partners(self, target_model=None, ignored_ids=None)`** - `manual_import.py:309`
-- **`test_import_partners()`** - `manual_import.py:318`
-- **`demo_records_to_noupdate(cr, module)`** - `migration_utils.py:68`
-  - Set ``noupdate`` on the module's demo ir.model.data rows.
-  - effects: `log_info`, `sql`
-- **`migrate(cr, version)`** - `migrations/19.0.2.11.1/post-migrate.py:26`
-  - effects: `log_exception`, `log_info`, `with_context`
-- **`migrate(cr, version)`** - `migrations/19.0.2.20.0/pre-migrate.py:8`
-- **`migrate(cr, version)`** - `migrations/19.0.2.24.1/pre-migrate.py:8`
+- **`WebRfidController.vending_request_for_balance(self)`** - `controllers/main.py:428`
+- **`get_default_io_table(hw_version, mode, as_string=True)`** - `controllers/polimex.py:552`
+- **`bytes_to_num(data, start, digits)`** - `controllers/polimex.py:561`
+- **`str_hex_to_array(str)`** - `controllers/polimex.py:571`
+- **`str_dec_to_array(str)`** - `controllers/polimex.py:573`
+- **`get_temperature(h, l, precision=0.5)`** - `controllers/polimex.py:576`
+- **`get_reverse_temperature(temp)`** - `controllers/polimex.py:584`
 - **`get_local_ip()`** - `models/hr_rfid_webstack.py:42`
   - Return the IP address of the machine running the code.
-- **`log(msg)`** - `tools/odoo_bus_device_sim.py:40`
-- **`WsClient.send_text(self, payload)`** - `tools/odoo_bus_device_sim.py:81`
-- **`WsClient.recv_text(self, timeout=15.0)`** - `tools/odoo_bus_device_sim.py:104`
-  - Return the next TEXT payload; transparently answers PINGs.
-- **`Device.http_checkin(self, extra)`** - `tools/odoo_bus_device_sim.py:149`
-- **`Device.provision(self)`** - `tools/odoo_bus_device_sim.py:160`
-- **`Device.connect_ws(self)`** - `tools/odoo_bus_device_sim.py:171`
-- **`Device.send(self, mtype, **payload)`** - `tools/odoo_bus_device_sim.py:191`
-- **`Device.expect(self, mtype, timeout=15.0)`** - `tools/odoo_bus_device_sim.py:196`
-  - Wait for one bus notification of the given type; track last id.
-- **`NoRedirect.redirect_request(self, *args, **kwargs)`** - `tools/odoo_bus_device_sim.py:212`
-- **`event_dict(ctrl=5, bos=1, event_n=4, card='0000000000')`** - `tools/odoo_bus_device_sim.py:216`
-- **`scenario_single(dev)`** - `tools/odoo_bus_device_sim.py:226`
-  - The SPEC §12 walk: provisioning, hello, new-controller event flow, F0 response, event retry, dedup, command over the bus.
-- **`main()`** - `tools/odoo_bus_device_sim.py:291`
 
 ### Private helpers
 
@@ -2226,24 +2132,19 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 - **`WebRfidController._respond_to_ev_64(self, open_door, controller, reader, card, post_data)`** - `controllers/main.py:46`
   - Thin delegate - core on hr.rfid.webstack (see _hw_respond_to_ev_64).
 - **`WebRfidController._decode_post(self, post)`** - `controllers/main.py:95`
-- **`WebRfidController._make_response(self, result)`** - `controllers/main.py:107`
+  - What the module sent, unwrapped - and, settled here once, the shape its reply must have (:meth:`_make_response`).
+  - touches: `hr.rfid.webstack`
+- **`WebRfidController._make_response(self, result)`** - `controllers/main.py:129`
   - Wrap the result for the wire the module speaks. THREE shapes:
-- **`WebRfidController._authenticate_webstack(self, post_data)`** - `controllers/main.py:151`
+- **`WebRfidController._authenticate_webstack(self, post_data)`** - `controllers/main.py:175`
   - Find and authenticate the webstack behind a hardware POST.
   - effects: `log_info`, `message_post`, `sudo`, `with_context`
   - touches: `hr.rfid.webstack`, `ir.config_parameter`, `res.company`, `res.users`
-- **`WebRfidController._parse_raw_data(self, post_data)`** - `controllers/main.py:369`
+- **`WebRfidController._parse_raw_data(self, post_data)`** - `controllers/main.py:403`
   - Answer a device that speaks a shape this endpoint does not handle.
   - effects: `log_info`
-- **`BaseImporter.__init__(self, old_url, old_db, old_username, old_password, new_url, new_db, new_username, new_password, source_version, batch_size=100)`** - `manual_import.py:8`
-- **`_demo_xml_ids(module)`** - `migration_utils.py:37`
-  - Every xml id declared by the module's own demo files.
-  - effects: `log_warn`
-- **`_check_overlap(ranges)`** - `models/hr_rfid_access_group.py:562`
+- **`_check_overlap(ranges)`** - `models/hr_rfid_access_group.py:587`
 - **`_tz_get(self)`** - `models/hr_rfid_webstack.py:64`
-- **`WsClient.__init__(self, ws_url, origin, cookie)`** - `tools/odoo_bus_device_sim.py:49`
-- **`WsClient._read_exact(self, n)`** - `tools/odoo_bus_device_sim.py:95`
-- **`Device.__init__(self, args)`** - `tools/odoo_bus_device_sim.py:135`
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -2631,7 +2532,7 @@ JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
 **Asset bundles extended in the manifest**: `web.assets_backend`, `web.report_assets_common`, `web.report_assets_pdf`, `web.assets_unit_tests` (tests only), `web.assets_tests` (tests only)
 
 
-**Other static JS/SCSS loaded by these bundles** (7): `static/tests/onboarding_banner.test.js`, `static/tests/onboarding_in_any_view.test.js`, `static/tests/tours/access_group_add_door_tour.js`, `static/tests/tours/add_webstack_tour.js`, `static/tests/tours/card_assign_tour.js`, `static/tests/tours/onboarding_panel_tour.js`, `static/tests/tours/realtime_channel_tour.js`
+**Other static JS/SCSS loaded by these bundles** (9): `static/tests/onboarding_banner.test.js`, `static/tests/onboarding_in_any_view.test.js`, `static/tests/tours/access_group_add_door_tour.js`, `static/tests/tours/add_webstack_tour.js`, `static/tests/tours/card_assign_tour.js`, `static/tests/tours/command_unanswered_tour.js`, `static/tests/tours/event_search_by_name_tour.js`, `static/tests/tours/onboarding_panel_tour.js`, `static/tests/tours/realtime_channel_tour.js`
 
 
 
@@ -2712,6 +2613,108 @@ Visual assets shipped with the module.
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
+
+### Curated (docs/faq.md)
+
+##### How Odoo talks to a module
+
+How Odoo answers the reports of an RFID module and delivers its commands to the
+controllers - for whoever maintains or supports this module.
+
+###### The command queue (`controllers/polimex.py`)
+
+- **`CMD_ANSWER_TIMEOUT_S`** *(scalar)* = `15` - how long a command handed to a module may stay unanswered before it counts as lost; shared by the classic delivery and the real-time channel
+- **`CMD_MAX_RETRIES`** *(scalar)* = `5` - how many times a lost command is handed over again
+- **`ROUTINE_COMMANDS`** *(collection)* = `('D7', 'B3')` - the clock and the status reading: `single_attempt`, one system event when the controller stops answering them
+- **`ERROR_NO_ANSWER`** = `'30'`, **`ERROR_CONTROLLER_SILENT`** = `'20'` - the reasons a command is closed for
+- **`WS_CMD_REPUBLISH_TIMEOUT_S`** = `CMD_ANSWER_TIMEOUT_S` (15) and **`WS_CMD_MAX_RETRIES`** = `CMD_MAX_RETRIES` (5) in `models/hr_rfid_command_ws.py` - the real-time channel uses the same limits
+
+###### Commands in `hr.rfid.command`
+
+- **`_next_waiting(self, webstack)`**
+  - The next command to hand to a module: the oldest in `Wait`. The one rule
+    for both deliveries - `hr.rfid.webstack.check_for_unsent_cmd` (the reply
+    to a module's report) and the real-time channel
+    (`_ws_publish_next_command`, `_ws_on_connect_sync`).
+- **`_is_still_awaited(self)`**
+  - True while less than `CMD_ANSWER_TIMEOUT_S` (15 s, `controllers/polimex.py`)
+    has passed since `sent_at`: the module may still be carrying the command
+    out. A command with no `sent_at` (from before the field existed) counts
+    as overdue.
+- **`_may_be_sent_again(self)`**
+  - False for a `single_attempt` command and once `retries` reached
+    `CMD_MAX_RETRIES` (5).
+- **`_close_unanswered(self, error='30')`**
+  - Gives a command up: `status='Failure'`, the reason in `error` ('30' no
+    answer from the module, '20' the module said the controller was silent),
+    `ex_timestamp`. The controller's log gets a system event naming the
+    command, the card and the number of attempts ("No answer came to ..." -
+    whether the controller carried it out is not known). Routine upkeep
+    (`ROUTINE_COMMANDS`: D7, B3) gets its event once, when the controller
+    stops answering (`_controller_was_answering`), not at every failure after
+    it. The event is written inside a savepoint: a failure to write it is
+    logged and never keeps the command open. A `single_attempt` command that
+    is not upkeep (a door opened or closed from the screen, an answer to a
+    card) says instead that it is not sent again, because it was meant for
+    that moment.
+- **`_meant_for_the_moment(self)`**
+  - `single_attempt` and not routine upkeep. Such a command that Odoo could
+    not hand straight to a module it reaches (`_not_delivered_directly`,
+    `hr.rfid.ctrl._base_command`) is closed at once instead of waiting for
+    the module's next report; upkeep still waits.
+- **`_controller_was_answering(self)`**
+  - True unless the controller's previous finished command was closed for no
+    answer ('30' or '20'); True when there is none before.
+
+###### Replies and reports (`controllers/main.py`, `models/hr_rfid_webstack.py`)
+
+- **The shape of the reply** is settled per request by `_decode_post` and kept on the request (`request.rfid_reply_shape`: `json_rpc`, `id`, `plain`), never on the controller object, which is shared by every request. `_make_response` reads it: JSON-RPC envelope, plain JSON for a 100.1 (serial starting with '4'), and for a 10.3 an empty body or `{"cmd": {...}}` and nothing else - no `status`, no `ws` block.
+- **One command out at a time** (`check_for_unsent_cmd`): while ANY command in `Process` is still awaited nothing is handed over and none is re-sent; once all are overdue, those that may not be sent again are closed (`_close_unanswered`), the oldest of the rest is re-sent (`retries + 1`), and with none left the next waiting one goes out in the same reply.
+- **What the module answers to a command** (`parse_response`): `e=20` (controller silent) in the reply to a report re-sends the command in place (`_retry_command`) or closes it with '20'; on a delivery of its own (`direct_cmd=True`: the real-time channel, a module Odoo reaches) it goes back to `Wait` with `retries + 1` or is closed, because no reply carries a command there. `e=24` (module full) puts the command back to `Wait`. Neither re-queues a `single_attempt` command: it is closed.
+- **On reconnect** (`_ws_on_connect_sync`): a `Process` command that may not be sent again is closed if its time is up, and holds the slot if it is still awaited; otherwise the oldest `Process` command is published again, else the next waiting one.
+- **A controller that has not described itself** (`_hw_description_is_on_its_way`): a card event for a controller with no `hw_version` is answered 400 while its F0 is `Wait`/`Process` (asked here if it never was), with a system event that keeps the report. After an F0 that ended without describing it, the event is noted ("Could not find a reader with that id") and accepted, so the module is not held back.
+- **`_reply_with_command(command, status_code)`** - used by the reports that are answered with a command of their own (event 30 the clock, event 25/31 the status reading, an unknown controller its F0): the command goes out in the reply only when nothing else is out; otherwise it waits its turn.
+- **`single_attempt`** commands are never re-sent: the answer to event 64 (DB, and DB2 for vending credit) and routine upkeep.
+- **The answer to event 64** (a controller in external database mode asks about a card it does not keep) follows the same rights Odoo writes to the controllers that keep their cards (`hr.rfid.card._doors_it_opens_now`): the card is valid now (`card_ready`) and of the door's card type; the owner's place in the access group has started, has not expired and has visits left; the doors of inherited groups count; and the door's time schedule in that group covers the controller's local time (server time plus the module's time zone, `hr.rfid.time.schedule._lets_in_at`: Monday-first weekday rows, the last minute of a period included, schedule 0 at any time, 00:00-00:00 unused, holiday row not read). A group whose minimum time between passes is not over opens nothing - the member's group and, for an inherited door, the group the door comes from. A relay controller opens only the doors the card opens now.
+- **Visits through an inherited door** count on the membership that gave the door (`filter_by_door` reads `all_door_ids`): a day pass whose group includes the gym is used up at the gym door.
+- **The working time editor** numbers a day's periods 1-4 and keeps every minute on save (whole minutes, rounded; the 4th period's end is read in full).
+- **A report that fails here** is recorded as a system event with the traceback AND the raw report (`with_context(keep_report=True)` bypasses the "save communications" setting, up to `KEPT_REPORT_MAX_CHARS` = 20000): a 10.3 reads an empty reply as "accepted" and forgets the event, so this record is its only copy. The kept copy leaves out the module's key (`_report_without_key`). Only for a module that has proved its key; before that the report is kept only if the site keeps its communication. The work on the report runs inside a savepoint (`post_event`, and the vending override): a failure undoes what was half done, and the record can still be written after a database error. The real-time channel does the same per event (`_ws_on_event_batch`).
+- **A report with no key** is refused like a wrong key (400, "Webstack key and key in json did not match"); it used to raise.
+- **Events 27/28** (alarm zone delay) are logged and acknowledged; they used to raise.
+- **A late passage** (`hr.rfid.zone._passage_is_overtaken`): a granted passage more than `LATE_PASSAGE_AFTER_MINUTES` (10) old on arrival, with a newer one of the same person through a door of the zone, does not change the zone's people or the anti-passback flags; it is still recorded and still counts for attendance by its own time. A "newer" passage stamped after the server's own time is not counted (a controller with its clock ahead), and a passage that is not late always moves the zone. Each skip is logged at INFO with both passages.
+- **Vending without a server for it** (`_hw_vending_request_for_balance`): logged as "the vending add-on is not installed here" and accepted. Reached only on a site without `hr_rfid_vending`: the add-on overrides `_hw_parse_event` and answers the reports of vending controllers itself, on the classic route and in real time alike.
+
+###### Cards and their schedules
+
+- **`hr.rfid.access.group.door.rel._check_schedule_fits_the_controller()`**
+  - Refuses a schedule above what the door's controller holds for a card: `hr.rfid.ctrl._card_schedule_max()` from `controllers/polimex.py` `CARD_SCHEDULE_MAX` (protocol D47: iCON130/iCON180/hotel 0-3, iCON110/iCON115/turnstile 0-15, others no known limit). The controller would otherwise refuse the whole card write (e=4). A controller that refuses a card anyway is explained in its system events by `hr.rfid.command._explain_a_refused_card_schedule()` (D1 with error 4 and a schedule above the limit).
+- **`hr.rfid.card.door.rel.get_ts_code_string()`**
+  - The card's schedule for each of the four readers, every reader of the door included. The card write itself does not read it: `hr.rfid.command.add_card` sends one D1 per reader, merged per slot by `hr.rfid.ctrl.add_remove_card`.
+- **`hr.rfid.card._number_as_kept(number, card_type)`**
+  - The number in the form the card stores it, or a refusal, applied in
+    `create` and `write` BEFORE the ORM takes the value. The `number` field
+    has `size=10` and the ORM cuts a longer value to fit (Char.convert_to_cache),
+    so no constraint ever saw a number that was too long: the card was saved
+    under its first 10 characters. Calls the card type's
+    `check_and_fix_card_numer` (leading zeros; a number plate without its
+    separators) and raises when the result is longer than the field.
+
+###### Searching the user events by name (`hr.rfid.event.user`)
+
+- **`_search_name(self, operator, value)`** - the search method of the computed,
+  unstored `name` (first field of the events' search view and part of
+  `_rec_names_search`, so also the name search of an event link): `like` /
+  `ilike` become an OR over `employee_id.name`, `contact_id.name`,
+  `door_id.name` and the `event_action` keys whose label, in the searcher's
+  language, contains the text (`_search_name_actions`); `in` (what `=` and
+  "is set" arrive as) reads each exact name back into action, owner and door
+  (`_search_name_equal`), and `False` matches nothing because every name
+  holds the action; a negative operator returns `NotImplemented` and the ORM
+  negates the positive search. `hr.rfid.vending.event` inherits it and
+  overrides `_search_name_containing` / `_search_name_equal` for sales, whose
+  name is "product - buyer". Without it every text search in that box raised "Cannot convert
+  hr.rfid.event.user.name to SQL because it is not stored" (client case,
+  10.11.2026).
 Entries derived from the module's own code comments and bug-fix commit history.
 
 ### From `code_comments` (15)
@@ -2724,19 +2727,19 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 #### TODO: New field. Need to implemented in cron job tasks!!!
 
-**TODO** in `models/hr_rfid_access_group.py:600`
+**TODO** in `models/hr_rfid_access_group.py:625`
 
 > New field. Need to implemented in cron job tasks!!!
 
 #### TODO: Why this is here?!
 
-**TODO** in `models/hr_rfid_command.py:589`
+**TODO** in `models/hr_rfid_command.py:627`
 
 > Why this is here?!
 
 #### TODO: Check if result is usless and delete command as previos function
 
-**TODO** in `models/hr_rfid_ctrl.py:1287`
+**TODO** in `models/hr_rfid_ctrl.py:1335`
 
 > Check if result is usless and delete command as previos function
 
@@ -2748,7 +2751,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 #### TODO: Store command in model as in execution
 
-**TODO** in `models/hr_rfid_webstack.py:872`
+**TODO** in `models/hr_rfid_webstack.py:878`
 
 > Store command in model as in execution
 
@@ -2760,13 +2763,13 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 #### TODO: Debug and test relay controller with this event
 
-**TODO** in `models/hr_rfid_webstack_hw_events.py:171`
+**TODO** in `models/hr_rfid_webstack_hw_events.py:212`
 
 > Debug and test relay controller with this event
 
 #### TODO: Reader number in relay controller hold the door 1 or 2!!!!!
 
-**TODO** in `models/hr_rfid_webstack_hw_events.py:293`
+**TODO** in `models/hr_rfid_webstack_hw_events.py:334`
 
 > Reader number in relay controller hold the door 1 or 2!!!!!
 
@@ -2806,7 +2809,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > remove buttons and move actions
 
-### From `git_log` (63)
+### From `git_log` (58)
 
 #### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior ...
 
@@ -2912,6 +2915,6 @@ Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:8fae63ae5f5fdba8a7d7220c4629c62c3c8431043cc7cba8a1f624338cfaa506`
-- Generated at: `2026-11-09T07:58:39+00:00`
+- Source digest: `sha256:5867504fd0fdbfff4e85a392a880cfc7701e900f06dc04094457d473f0e4c8a2`
+- Generated at: `2026-11-20T09:48:03+00:00`
 - Generator: `polimex_module_knowledge`
