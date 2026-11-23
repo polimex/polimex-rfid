@@ -186,9 +186,14 @@ class TestAControllerWithoutCardsAsksOdoo(RFIDController, HttpCase):
         self.test_ag_employee_1.with_context(no_hardware_commands=True).add_doors(
             self.ctrl.door_ids, schedule
         )
+        # The first Sunday at least two days ahead, so the card and its access
+        # have long started: Sunday 22:00 UTC is Monday 07:00 in Tokyo.
+        ahead = (fields.Datetime.now() + timedelta(days=2)).date()
+        sunday = ahead + timedelta(days=(6 - ahead.weekday()) % 7)
+        monday_in_tokyo = datetime.combine(sunday, time(22, 0))
         for utc, expected in [
-            (datetime(2026, 11, 22, 22, 0), GRANTED),
-            (datetime(2026, 11, 23, 22, 0), DENIED),
+            (monday_in_tokyo, GRANTED),
+            (monday_in_tokyo + timedelta(days=1), DENIED),
         ]:
             with patch.object(fields.Datetime, "now", return_value=utc):
                 self.assertEqual(
