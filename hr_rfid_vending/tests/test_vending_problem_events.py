@@ -26,6 +26,10 @@ class TestVendingProblemsInWords(VendingFlowMixin, RFIDController, HttpCase):
     _registry_readonly_enabled = False
 
     def _problem(self, hw, event_n, product=0, code=0):
+        # The words are written in the language the report arrives in; where
+        # English is not among the database's languages they would be read in
+        # another one.
+        self.env["res.lang"]._activate_lang("en_US")
         self._add_Vending(hw=hw)
         self._vending_event(event_n, dt=vending_part(product, code), system_event=True)
         events = self._system_events(event_action=str(event_n))

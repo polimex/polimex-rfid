@@ -57,11 +57,13 @@ class HrRfidControllerOutputTS(models.Model):
                     _('Time Schedule number  %(ts)d not in range from 1 to %(to)d', ts=rel.time_schedule_id.number,
                       to=rel.max_ts))
 
-    def name_get(self):
-        def get_names(rel):
-            return _('Output %d working with TS %s') % (rel.output_number, rel.time_schedule_id.name)
-
-        return [(rel.id, get_names(rel)) for rel in self]
+    @api.depends('output_number', 'time_schedule_id.name')
+    def _compute_display_name(self):
+        for rel in self:
+            rel.display_name = rel.env._(
+                'Output %(output)d working with TS %(schedule)s',
+                output=rel.output_number, schedule=rel.time_schedule_id.name or '',
+            )
 
 
 class HrRfidCtrlInputMask(models.Model):

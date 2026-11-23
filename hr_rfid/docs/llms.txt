@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage employee access control
-last_updated: '2026-11-20'
-source_digest: sha256:69e7db3d697e595d87f2c38541ff3d22a4fdcddbad539233ef3691089a746d3a
+last_updated: '2026-11-23'
+source_digest: sha256:dc964b6f31647940550f32c4eca95284ae0521242e536fcad26663e8e08d8e95
 companion_doc: llms-full.md
 ---
 
@@ -137,6 +137,7 @@ cp -r hr_rfid /path/to/odoo/addons/
    - Controllers will auto-appear after webstack connection
    - Configure each controller's settings
    - Map readers to doors
+   - A controller that already checks anti-passback (entry, then exit, never twice the same way) shows it on its doors as soon as it is added: **APB Mode** is on for the door whose pair of readers the controller checks
 
 4. **Access Groups**
    - Create access groups under RFID → Access Groups

@@ -2,7 +2,7 @@
 id: hr_rfid
 title: RFID Access Control
 module: hr_rfid
-module_version: 19.0.2.34.9
+module_version: 19.0.2.34.10
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage employee access control
-last_updated: '2026-11-20'
-source_digest: sha256:69e7db3d697e595d87f2c38541ff3d22a4fdcddbad539233ef3691089a746d3a
+last_updated: '2026-11-23'
+source_digest: sha256:dc964b6f31647940550f32c4eca95284ae0521242e536fcad26663e8e08d8e95
 depends:
 - hr
 - contacts
@@ -111,7 +111,7 @@ chunking:
 ---
 
 
-# RFID Access Control - `hr_rfid` v19.0.2.34.9
+# RFID Access Control - `hr_rfid` v19.0.2.34.10
 
 Manage employee access control
 
@@ -123,7 +123,7 @@ Manage employee access control
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid`
-- **Version**: `19.0.2.34.9`
+- **Version**: `19.0.2.34.10`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -230,6 +230,7 @@ cp -r hr_rfid /path/to/odoo/addons/
    - Controllers will auto-appear after webstack connection
    - Configure each controller's settings
    - Map readers to doors
+   - A controller that already checks anti-passback (entry, then exit, never twice the same way) shows it on its doors as soon as it is added: **APB Mode** is on for the door whose pair of readers the controller checks
 
 4. **Access Groups**
    - Create access groups under RFID → Access Groups
@@ -960,10 +961,10 @@ Python class `HrRfidControllerOutputTS` in `models/hr_rfid_ctrl.py:11`.  Model. 
 
 - **`_constrains_output_number_ts(self)`** - decorators: `@api.constrains`
   - effects: `raise:ValidationError`
-- **`name_get(self)`** - decorators: -
+- **`_compute_display_name(self)`** - decorators: `@api.depends`
 
 ### `hr.rfid.ctrl.input.mask` <a id='model-hr-rfid-ctrl-input-mask'></a>
-Python class `HrRfidCtrlInputMask` in `models/hr_rfid_ctrl.py:67`.  Model.  Description: *Input Mask for Controllers*.  Default order: `i_number`.
+Python class `HrRfidCtrlInputMask` in `models/hr_rfid_ctrl.py:69`.  Model.  Description: *Input Mask for Controllers*.  Default order: `i_number`.
 
 #### Fields
 
@@ -982,7 +983,7 @@ Python class `HrRfidCtrlInputMask` in `models/hr_rfid_ctrl.py:67`.  Model.  Desc
   - calls `super() `write``
 
 ### `hr.rfid.ctrl` <a id='model-hr-rfid-ctrl'></a>
-Python class `HrRfidController` in `models/hr_rfid_ctrl.py:120`.  Model.  Inherits: `mail.thread`, `balloon.mixin`.  Description: *Controller*.  Default order: `webstack_id, ctrl_id`.
+Python class `HrRfidController` in `models/hr_rfid_ctrl.py:122`.  Model.  Inherits: `mail.thread`, `balloon.mixin`.  Description: *Controller*.  Default order: `webstack_id, ctrl_id`.
 
 #### Fields
 
@@ -2759,7 +2760,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 #### TODO: Check if result is usless and delete command as previos function
 
-**TODO** in `models/hr_rfid_ctrl.py:1335`
+**TODO** in `models/hr_rfid_ctrl.py:1337`
 
 > Check if result is usless and delete command as previos function
 
@@ -2935,6 +2936,6 @@ Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:69e7db3d697e595d87f2c38541ff3d22a4fdcddbad539233ef3691089a746d3a`
-- Generated at: `2026-11-20T11:32:30+00:00`
+- Source digest: `sha256:dc964b6f31647940550f32c4eca95284ae0521242e536fcad26663e8e08d8e95`
+- Generated at: `2026-11-23T10:03:18+00:00`
 - Generator: `polimex_module_knowledge`

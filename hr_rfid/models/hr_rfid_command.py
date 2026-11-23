@@ -1083,7 +1083,10 @@ class HrRfidCommands(models.Model):
             _reader.door_ids += _door
 
         def gen_d_name(door_num, controller_id):
-            name = _('Door %d of ctrl id %d (%s)') % (door_num, controller_id.ctrl_id, controller_id.name)
+            name = self.env._(
+                'Door %(door)d of ctrl id %(ctrl)d (%(name)s)',
+                door=door_num, ctrl=controller_id.ctrl_id, name=controller_id.name,
+            )
             return name
 
         if self.controller_id.is_relay_ctrl(hw_ver):

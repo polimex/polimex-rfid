@@ -9,3 +9,4 @@ from . import test_vending_event_search
 from . import test_vending_problem_events
 from . import test_a_vending_machine_is_answered
 from . import test_a_vending_machine_over_real_time
+from . import test_vending_settings_name_the_field

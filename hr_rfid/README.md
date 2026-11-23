@@ -94,6 +94,7 @@ cp -r hr_rfid /path/to/odoo/addons/
    - Controllers will auto-appear after webstack connection
    - Configure each controller's settings
    - Map readers to doors
+   - A controller that already checks anti-passback (entry, then exit, never twice the same way) shows it on its doors as soon as it is added: **APB Mode** is on for the door whose pair of readers the controller checks
 
 4. **Access Groups**
    - Create access groups under RFID → Access Groups

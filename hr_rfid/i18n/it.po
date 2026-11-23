@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-19 18:22\n"
+"PO-Revision-Date: 2026-11-23 11:44\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -4529,8 +4529,8 @@ msgstr "Porta"
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_command.py:0
-msgid "Door %d of ctrl id %d (%s)"
-msgstr "Porta %d del controller id %d (%s)"
+msgid "Door %(door)d of ctrl id %(ctrl)d (%(name)s)"
+msgstr "Porta %(door)d del controller con ID %(ctrl)d (%(name)s)"
 
 #. module: hr_rfid
 #. odoo-python
@@ -8669,8 +8669,8 @@ msgstr ""
 #. module: hr_rfid
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_ctrl.py:0
-msgid "Output %d working with TS %s"
-msgstr "Uscita %d funzionante con fascia oraria %s"
+msgid "Output %(output)d working with TS %(schedule)s"
+msgstr "Uscita %(output)d che funziona con la fascia oraria %(schedule)s"
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__output_states

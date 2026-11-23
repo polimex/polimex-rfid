@@ -601,7 +601,7 @@ class HrRfidCardType(models.Model):
                 else:
                     refused.append(ch)
             if refused:
-                raise exceptions.UserError(_(
+                raise exceptions.UserError(self.env._(
                     'The plate number "%(entered)s" contains %(chars)s - not '
                     'something a number plate can carry, and there is nothing '
                     'it converts to. Enter the number exactly as it reads on '

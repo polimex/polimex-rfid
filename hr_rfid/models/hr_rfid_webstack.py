@@ -1386,10 +1386,18 @@ class HrRfidWebstack(models.Model):
                 input_masks += byte_data[i] & 0x7F << (i * 8)
             controller.process_input_masks(input_masks, output_relay_mask = byte_data[2:])
         if response['c'] == 'FC':
-            apb_mode = response['d']
-            for door in controller.door_ids:
-                door.apb_mode = (door.number == '1' and (apb_mode & 1)) \
-                                or (door.number == '2' and (apb_mode & 2))
+            # One byte of flags: bit 0 checks the pair of readers of door 1,
+            # bit 1 the pair of door 2 - the same numbers the door's own
+            # setting writes with DE. Reading the controller's state is not a
+            # change of it, so no command goes back.
+            apb_flags = bytes.fromhex(response['d'] or '')
+            if apb_flags:
+                for door in controller.door_ids.with_context(no_hardware_commands=True):
+                    door.apb_mode = (
+                        door.number in (1, 2)
+                        and len(door.reader_ids) > 1
+                        and bool(apb_flags[0] & door.number)
+                    )
         if response['c'] == 'FF': # Read time schedules for outputs
             byte_data = bytes.fromhex(response['d'])
             ts_for_read = set()

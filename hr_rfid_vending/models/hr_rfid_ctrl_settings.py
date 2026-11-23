@@ -58,15 +58,16 @@ class HrRfidVendingSettingsWiz(models.TransientModel):
     def save_settings(self):
         self.ensure_one()
 
-        def raise_invalid_number(position):
-            raise exceptions.ValidationError(
-                _('The value of %s is invalid. Must be between 0 and 255') % position
-            )
+        def raise_invalid_number(field_name):
+            raise exceptions.ValidationError(self.env._(
+                'The value of %s is invalid. Must be between 0 and 255',
+                self._fields[field_name]._description_string(self.env),
+            ))
 
         if self.scale_factor < 0 or self.scale_factor > 255:
-            raise_invalid_number('the scale number')
+            raise_invalid_number('scale_factor')
         if self.show_price_timeout < 0 or self.show_price_timeout > 255:
-            raise_invalid_number('"show price" timeout')
+            raise_invalid_number('show_price_timeout')
 
         vend_rows = self.vending_row_ids.sorted(lambda r: r.row_num)
 
