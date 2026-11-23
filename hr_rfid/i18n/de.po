@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-23 11:43\n"
+"PO-Revision-Date: 2026-11-24 00:52\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -10471,6 +10471,11 @@ msgid "Sent Once"
 msgstr "Einmal gesendet"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid "Sent in Real Time"
+msgstr "In Echtzeit gesendet"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -10593,6 +10598,22 @@ msgid ""
 msgstr ""
 "Abteilungsstandards für die automatische Zutrittszuweisung an neue "
 "Mitarbeiter einrichten"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid ""
+"Set when the command was last handed to the module over its real-time "
+"connection. The module knows such a command by its number, so it can be "
+"handed over again right after a reconnect without being carried out twice. A"
+" command handed over in the reply to a report of the module has no number "
+"the module knows."
+msgstr ""
+"Wird gesetzt, wenn der Befehl zuletzt über die Echtzeitverbindung an das "
+"Modul übergeben wurde. Das Modul kennt einen solchen Befehl anhand seiner "
+"Nummer, sodass er nach einem erneuten Verbindungsaufbau erneut übergeben "
+"werden kann, ohne zweimal ausgeführt zu werden. Ein Befehl, der in der "
+"Antwort auf eine Meldung des Moduls übergeben wird, hat keine dem Modul "
+"bekannte Nummer."
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.action_hr_rfid_configuration

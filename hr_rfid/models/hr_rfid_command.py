@@ -216,6 +216,16 @@ class HrRfidCommands(models.Model):
         copy=False,
     )
 
+    sent_on_channel = fields.Boolean(
+        string='Sent in Real Time',
+        help='Set when the command was last handed to the module over its real-time connection. '
+             'The module knows such a command by its number, so it can be handed over again right '
+             'after a reconnect without being carried out twice. A command handed over in the '
+             'reply to a report of the module has no number the module knows.',
+        readonly=True,
+        copy=False,
+    )
+
     single_attempt = fields.Boolean(
         string='Sent Once',
         help='Set on a command that is handed to the module only once: an answer to something '
@@ -1258,12 +1268,22 @@ class HrRfidCommands(models.Model):
             self.controller_id.read_anti_pass_back_mode_cmd()
 
     # Communication Helpers
-    def send_command(self, status_code):
+    def send_command(self, status_code, on_channel=False):
+        """Hand the command over: mark it as out and build what goes on the wire.
+
+        :param status_code: what the module is told about its own report
+        :param on_channel: it goes out over the real-time connection, with its
+            number; otherwise in the reply to a report of the module
+        """
         if len(self) > 1:
             command = self[0]
         else:
             command = self
-        command.write({'status': 'Process', 'sent_at': fields.Datetime.now()})
+        command.write({
+            'status': 'Process',
+            'sent_at': fields.Datetime.now(),
+            'sent_on_channel': on_channel,
+        })
         cmd = {
             'cmd': {
                 'id': command.controller_id.ctrl_id,

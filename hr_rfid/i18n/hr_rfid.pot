@@ -9170,6 +9170,11 @@ msgid "Sent Once"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid "Sent in Real Time"
+msgstr ""
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -9267,6 +9272,16 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Set up department defaults for automatic access assignment to new employees"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid ""
+"Set when the command was last handed to the module over its real-time "
+"connection. The module knows such a command by its number, so it can be "
+"handed over again right after a reconnect without being carried out twice. A"
+" command handed over in the reply to a report of the module has no number "
+"the module knows."
 msgstr ""
 
 #. module: hr_rfid

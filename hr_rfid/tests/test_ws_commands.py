@@ -465,3 +465,59 @@ class TestWsCommands(RFIDAppCase):
         self.assertTrue(kept)
         self.assertIn(self.test_card_employee.number, kept.input_js or '')
         self.assertIn('it could not be placed', kept.input_js or '')
+
+    # -- a command handed over in the reply to a report, then a reconnect --
+
+    def _handed_in_a_reply(self, ws, ctrl):
+        """A command the module took in the reply to its report, not on the channel."""
+        ws.sudo().ws_last_seen = fields.Datetime.now() - timedelta(hours=1)
+        ws.invalidate_recordset(['ws_online'])
+        command = self._mk_cmd(ctrl)
+        self.assertEqual(command.status, 'Wait', 'not connected: nothing is published')
+        reply = ws.check_for_unsent_cmd(200)
+        self.assertEqual(reply['cmd']['c'], 'DB')
+        self.assertEqual(command.status, 'Process')
+        return command
+
+    def test_a_reconnect_does_not_hand_over_again_what_a_reply_just_carried(self):
+        """NEGATIVE: the module carries out twice a command it gets both ways.
+
+        A command in the reply to a report has no number the module knows, so
+        the same command published on the channel a moment later is a new one
+        to it. While the answer may still come, the reconnect hands over
+        nothing - neither that command nor the next one in the queue.
+        """
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        command = self._handed_in_a_reply(ws, ctrl)
+        waiting = self._mk_cmd(ctrl, cmd='D7', cmd_data='')
+
+        handed = self._hello(ws)
+
+        self.assertEqual(handed, [])
+        self.assertEqual((command.status, command.retries, waiting.status),
+                         ('Process', 0, 'Wait'))
+
+    def test_a_reconnect_hands_over_again_what_went_out_on_the_channel(self):
+        """The module knows a command of the channel by its number, so it gets it again at once."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            command = self._mk_cmd(ctrl)
+        self.assertEqual(command.status, 'Process', 'connected: published at once')
+
+        handed = self._hello(ws)
+
+        self.assertEqual(handed, [command.id])
+
+    def test_a_reconnect_hands_over_a_reply_command_whose_answer_is_overdue(self):
+        """Past the time an answer takes, handing it over on the channel is the retry."""
+        ws = self._ws()
+        ctrl = self._go_online(ws)
+        command = self._handed_in_a_reply(ws, ctrl)
+        self._past_its_time(command)
+
+        handed = self._hello(ws)
+
+        self.assertEqual(handed, [command.id])
+        self.assertEqual(command.status, 'Process')

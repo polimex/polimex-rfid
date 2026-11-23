@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-23 11:43\n"
+"PO-Revision-Date: 2026-11-24 00:52\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el_GR\n"
@@ -10469,6 +10469,11 @@ msgid "Sent Once"
 msgstr "Αποστολή μία φορά"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid "Sent in Real Time"
+msgstr "Αποστολή σε πραγματικό χρόνο"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -10591,6 +10596,21 @@ msgid ""
 msgstr ""
 "Ρύθμιση προεπιλογών τμήματος για αυτόματη εκχώρηση πρόσβασης σε νέους "
 "υπαλλήλους"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid ""
+"Set when the command was last handed to the module over its real-time "
+"connection. The module knows such a command by its number, so it can be "
+"handed over again right after a reconnect without being carried out twice. A"
+" command handed over in the reply to a report of the module has no number "
+"the module knows."
+msgstr ""
+"Ορίζεται όταν η εντολή παραδόθηκε τελευταία φορά στη μονάδα μέσω της "
+"σύνδεσης Πραγματικού Χρόνου. Η μονάδα αναγνωρίζει μια τέτοια εντολή από τον "
+"αριθμό της, ώστε να μπορεί να παραδοθεί ξανά αμέσως μετά από επανασύνδεση "
+"χωρίς να εκτελεστεί δύο φορές. Μια εντολή που παραδίδεται στην απάντηση σε "
+"αναφορά της μονάδας δεν έχει αριθμό που να γνωρίζει η μονάδα."
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.action_hr_rfid_configuration

@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-23 11:44\n"
+"PO-Revision-Date: 2026-11-24 00:53\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -10450,6 +10450,11 @@ msgid "Sent Once"
 msgstr "Enviado una sola vez"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid "Sent in Real Time"
+msgstr "Enviado en tiempo real"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -10570,6 +10575,21 @@ msgid ""
 msgstr ""
 "Configurar los valores predeterminados del departamento para la asignación "
 "automática de acceso a los nuevos empleados"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid ""
+"Set when the command was last handed to the module over its real-time "
+"connection. The module knows such a command by its number, so it can be "
+"handed over again right after a reconnect without being carried out twice. A"
+" command handed over in the reply to a report of the module has no number "
+"the module knows."
+msgstr ""
+"Se establece cuando el comando se entregó por última vez al módulo a través "
+"de su conexión en tiempo real. El módulo identifica dicho comando por su "
+"número, por lo que puede entregarse de nuevo justo después de una reconexión"
+" sin que se ejecute dos veces. Un comando entregado en la respuesta a un "
+"informe del módulo no tiene un número que el módulo reconozca."
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.action_hr_rfid_configuration

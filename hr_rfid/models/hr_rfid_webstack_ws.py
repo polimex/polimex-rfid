@@ -221,7 +221,7 @@ class HrRfidWebstackWs(models.Model):
         records the request, exactly like an HTTP delivery does.
         """
         self.ensure_one()
-        json_cmd = command.sudo().send_command(200)
+        json_cmd = command.sudo().send_command(200, on_channel=True)
         return self._ws_send('hr_rfid.cmd', {
             'cid': command.id,
             'cmd': json_cmd['cmd'],
@@ -282,10 +282,18 @@ class HrRfidWebstackWs(models.Model):
         expired._close_unanswered()
         if spent - expired:
             return
+        # One handed over in the reply to a report carries no id the device
+        # knows: published now, it would be carried out a second time. While
+        # its answer may still come it keeps the one place, as it does in the
+        # classic delivery; past that, handing it over again is the retry.
+        resumable = out - spent
+        if any(not command.sent_on_channel and command._is_still_awaited()
+               for command in resumable):
+            return
         # The command that was out when the connection dropped goes first (the
         # device recognises it by its id); otherwise the next one in the queue,
         # in the order the classic delivery uses.
-        commands = (out - spent)[:1] or Command._next_waiting(self)
+        commands = resumable[:1] or Command._next_waiting(self)
         for command in commands:
             # Per-command savepoint: one command with corrupt data (send_command
             # can raise on e.g. an empty pin/rights field) must not abort the

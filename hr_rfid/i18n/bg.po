@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-06 18:16+0000\n"
-"PO-Revision-Date: 2026-11-23 11:41\n"
+"PO-Revision-Date: 2026-11-24 00:51\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: bg\n"
@@ -10406,6 +10406,11 @@ msgid "Sent Once"
 msgstr "Изпраща се веднъж"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid "Sent in Real Time"
+msgstr "Изпратена в реално време"
+
+#. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl__serial_number
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_webstack_discovery_row__serial
 msgid "Serial"
@@ -10525,6 +10530,21 @@ msgid ""
 msgstr ""
 "Настройте стандартните настройки на отделите за автоматично присвояване на "
 "достъп на нови служители"
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_on_channel
+msgid ""
+"Set when the command was last handed to the module over its real-time "
+"connection. The module knows such a command by its number, so it can be "
+"handed over again right after a reconnect without being carried out twice. A"
+" command handed over in the reply to a report of the module has no number "
+"the module knows."
+msgstr ""
+"Задава се, когато командата последно е предадена на модула през връзката в "
+"реално време. Модулът познава такава команда по нейния номер, затова тя може"
+" да бъде предадена отново веднага след повторно свързване, без да бъде "
+"изпълнена два пъти. Команда, предадена в отговор на отчет от модула, няма "
+"номер, който модулът да познава."
 
 #. module: hr_rfid
 #: model:ir.actions.act_window,name:hr_rfid.action_hr_rfid_configuration
