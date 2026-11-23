@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: HR RFID Vertical Elections
-last_updated: '2026-08-14'
-source_digest: sha256:7d35422a10a83a49a29b86c886b6f82aa8f83f7094c61bf681be937896d052ac
+last_updated: '2026-11-23'
+source_digest: sha256:b54ac922530cc7e208ffeffffb8b53ae5fb8486d774b831b6aa7bfd1a12a1065
 companion_doc: llms-full.md
 ---
 
@@ -22,18 +22,6 @@ companion_doc: llms-full.md
 HR RFID Vertical Elections.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
-
-
-## The setup checklist
-
-Until voting is set up, a checklist appears above the voting sessions
-(**Vote Session**): configure a display, define the participants list, add the
-voting items, then open the first session. Each step opens the screen where it
-is done, and ticks itself off as soon as the thing exists - there is nothing to
-mark by hand.
-
-Close it with the **X** (you are asked to confirm) and it is gone for good for
-everybody in the company. It has no effect on anything else.
 
 
 ## How to use it
@@ -271,6 +259,17 @@ def get_results(self, session_id):
     }
 ```
 
+#### The setup checklist
+
+Until voting is set up, a checklist appears above the voting sessions
+(**Vote Session**): configure a display, define the participants list, add the
+voting items, then open the first session. Each step opens the screen where it
+is done, and ticks itself off as soon as the thing exists - there is nothing to
+mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
+
 #### 🐛 Troubleshooting
 
 ##### Common Issues
@@ -341,14 +340,6 @@ Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 
 For more information, visit [polimex.co](https://polimex.co)
 
-
 ### Available actions
 
-- **Close panel voting setup**
-- **Open step voting display**
-- **Open step voting participants**
-- **Open step voting items**
-- **Open step voting session**
-- **Open display view**
-- **View sessions**
-- **Vote result send** — Opens a wizard to compose an email, with relevant mail template loaded by default
+- **Open display**

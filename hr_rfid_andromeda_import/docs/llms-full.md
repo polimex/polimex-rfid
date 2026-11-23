@@ -2,7 +2,7 @@
 id: hr_rfid_andromeda_import
 title: RFID Andromeda Data Import
 module: hr_rfid_andromeda_import
-module_version: 19.0.1.3.0
+module_version: 19.0.1.4.0
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,15 +11,14 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Import access control data from Polimex Andromeda Database
-last_updated: '2026-08-14'
-source_digest: sha256:9a0e8b6e25c272594255feed587e0df8df2ebd5e5e4c2dfe30478ad01813c719
+last_updated: '2026-11-23'
+source_digest: sha256:ac5bbfb25af5026261791ef3f8217541593c809ab2dc5a25a45738591a0c3a2f
 depends:
 - hr_rfid
 entities:
-  primary: hr.rfid.andromeda.instance
+  primary: hr.rfid.andromeda.import.wiz
   related:
   - hr.rfid.andromeda.import.users
-  - hr.rfid.andromeda.import.wiz
   - hr.rfid.andromeda.welcome.wiz
 keywords:
 - access
@@ -29,7 +28,6 @@ keywords:
 - database
 - from
 - import
-- instance
 - polimex
 - rfid
 - users
@@ -42,7 +40,7 @@ installable: true
 application: false
 auto_install: false
 counts:
-  models: 4
+  models: 3
   views: 2
   access_rules: 3
   record_rules: 0
@@ -67,7 +65,7 @@ chunking:
 ---
 
 
-# RFID Andromeda Data Import — `hr_rfid_andromeda_import` v19.0.1.3.0
+# RFID Andromeda Data Import - `hr_rfid_andromeda_import` v19.0.1.4.0
 
 Import access control data from Polimex Andromeda Database
 
@@ -76,10 +74,10 @@ Import access control data from Polimex Andromeda Database
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_andromeda_import`
-- **Version**: `19.0.1.3.0`
+- **Version**: `19.0.1.4.0`
 - **Category**: HR
 - **License**: AGPL-3
 - **Author**: Polimex
@@ -98,6 +96,29 @@ This module extends the RFID Access Control (hr_rfid) module, allowing it to imp
 * Import all Users and cards.
 * Import All Access Control Groups.
 * Import all Access Users Rights.
+
+#### Running the import again
+
+The import can be run as often as you like. Everything it creates is marked
+with the Andromeda record it came from, so a later run finds that work instead
+of doing it a second time:
+
+- Somebody already imported is not offered in the list again.
+- A company, a department, a person or a card that is already here is used as
+  it is - no second copy is made.
+- An access group somebody already has is not given to them again.
+- A card that was switched off in Andromeda is not handed out again as a
+  working one.
+
+Nothing is deleted and nothing already corrected here is overwritten: a name
+you have put right in Odoo stays as you left it.
+
+**One thing to check first.** Databases filled by a version of this import from
+before August 2026 were marked in a different way, which the current version
+does not read. On such a database the people imported back then are offered
+again and would come in as new records. If you are not sure which case you are
+in, import one person first and see whether a second copy appears before doing
+the rest.
 
 #### Requirements
 
@@ -127,25 +148,8 @@ Installation requirements and configuration entry points. Use this section to an
 ## Models <a id='models'></a>
 Each model below is an atomic concept: one H3 per model. Inherited models (extending core) are marked explicitly.
 
-### `hr.rfid.andromeda.instance` <a id='model-hr-rfid-andromeda-instance'></a>
-Python class `AndromedaWelcomeWiz` in `models/andromeda_instance.py:11`.  Model.  Description: *Andromeda Instance for import*.
-
-#### Fields
-
-| Name | Type | Label | Required | Store | Help |
-|---|---|---|---|---|---|
-| `ip_address` | Char | IP address | ✓ | ✓ | IP address of the Windows host running the Andromeda Firebird DB engine. |
-| `database_path` | Char | Database Path | ✓ | ✓ | Absolute path to the Andromeda.fdb file as seen by the Firebird server on the Wi |
-| `users_count` | Integer |  |  | ✓ | Number of users last reported by the Andromeda database. Populated by Check Conn |
-| `state` | Selection | State |  | ✓ | Lifecycle of this Andromeda connection record — New: not yet probed. Confirmed:  |
-
-#### Notable methods
-
-- **`do_check_connection(self)`** — decorators: —
-  - effects: `log_warn`, `raise:ValidationError`
-
 ### `hr.rfid.andromeda.import.users` <a id='model-hr-rfid-andromeda-import-users'></a>
-Python class `AndromedaImportusers` in `models/import_wizard.py:22`.  TransientModel (wizard).  Description: *Andromeda Import Users*.
+Python class `AndromedaImportusers` in `models/import_wizard.py:45`.  TransientModel (wizard).  Description: *Andromeda Import Users*.
 
 #### Fields
 
@@ -163,68 +167,67 @@ Python class `AndromedaImportusers` in `models/import_wizard.py:22`.  TransientM
 | `d_name` | Char | Department Name |  | ✓ | Department display name from Andromeda — shown for human cross-check. |
 | `c_id` | Integer | Company ID |  | ✓ | Numeric company ID from Andromeda. Translated to a local res.company via company |
 | `c_name` | Char | Company Name |  | ✓ | Company display name from Andromeda — shown for human cross-check. |
-| `import_id` | Many2one → \`hr.rfid.andromeda.import.wiz\` |  |  | ✓ | Parent import-run wizard this user row belongs to. Set automatically when the wi |
+| `import_id` | Many2one → \`hr.rfid.andromeda.import.wiz\` | Import |  | ✓ | Parent import-run wizard this user row belongs to. Set automatically when the wi |
 
 #### Notable methods
 
-- **`get_full_name(self)`** — decorators: —
-- **`get_record_for_note(self)`** — decorators: —
-- **`import_row(self)`** — decorators: —
+- **`get_full_name(self)`** - decorators: -
+- **`get_record_for_note(self)`** - decorators: -
+- **`import_row(self)`** - decorators: -
+  - effects: `log_debug`
 
 ### `hr.rfid.andromeda.import.wiz` <a id='model-hr-rfid-andromeda-import-wiz'></a>
-Python class `AndromedaImportWiz` in `models/import_wizard.py:125`.  TransientModel (wizard).  Inherits: `hr.rfid.andromeda.welcome.wiz`.  Description: *Import*.
+Python class `AndromedaImportWiz` in `models/import_wizard.py:149`.  TransientModel (wizard).  Inherits: `hr.rfid.andromeda.welcome.wiz`.  Description: *Import*.
 
 #### Fields
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `company_list` | Selection |  |  | ✓ |  |
-| `default_department` | Many2one → \`hr.department\` |  |  | ✓ | Use this department if Employee have no Company and Department |
-| `force_default_department` | Boolean |  |  | ✓ | Force use only this department for selected import |
-| `default_company` | Many2one → \`res.partner\` |  |  | ✓ | Use this company if Contact have no Company and Department |
-| `force_default_company` | Boolean |  |  | ✓ | Force use only this company for selected import |
-| `users_ids` | One2many → \`hr.rfid.andromeda.import.users\` |  |  | ✓ | Users discovered in the Andromeda DB. Operator picks per-row which ones to impor |
-| `import_as` | Selection |  |  | ✓ | Bulk-applied default for the per-row Import As column. Changing this rewrites ev |
-| `select_all` | Boolean |  |  | ✓ | Master toggle that ticks/un-ticks the do_import flag on every users_ids row. |
+| `company_list` | Selection | Company List |  | ✓ |  |
+| `default_department` | Many2one → \`hr.department\` | Default Department |  | ✓ | Use this department if Employee have no Company and Department |
+| `force_default_department` | Boolean | Force Default Department |  | ✓ | Force use only this department for selected import |
+| `default_company` | Many2one → \`res.partner\` | Default Company |  | ✓ | Use this company if Contact have no Company and Department |
+| `force_default_company` | Boolean | Force Default Company |  | ✓ | Force use only this company for selected import |
+| `users_ids` | One2many → \`hr.rfid.andromeda.import.users\` | Users |  | ✓ | Users discovered in the Andromeda DB. Operator picks per-row which ones to impor |
+| `import_as` | Selection | Import As |  | ✓ | Bulk-applied default for the per-row Import As column. Changing this rewrites ev |
+| `select_all` | Boolean | Select All |  | ✓ | Master toggle that ticks/un-ticks the do_import flag on every users_ids row. |
 
 #### Notable methods
 
-- **`go_back(self)`** — decorators: —
-- **`default_get(self, fields_list)`** — decorators: `@api.model`
-  - super-split (super `default_get`): pre=— · post=`sudo`
-  - effects: `sudo`
-  - touches: `hr.rfid.andromeda.import.users`, `ir.model.data`
-- **`get_context_list(self, field)`** — decorators: `@api.model`
-- **`get_user_data_as_dict(self, u_data, import_id, import_as)`** — decorators: `@api.model`
-- **`create_res_partner_company(self, user_id)`** — decorators: —
-  - effects: `message_post`, `sudo`, `with_context`
-  - touches: `ir.model.data`, `res.partner`
-- **`create_res_partner(self, user_id)`** — decorators: —
-  - effects: `create`, `message_post`, `sudo`, `with_context`
-  - touches: `ir.model.data`, `res.partner`
-- **`create_department(self, d_id, d_name)`** — decorators: —
-  - effects: `message_post`, `sudo`, `with_context`
-  - touches: `hr.department`, `ir.model.data`
-- **`create_employee(self, user_id, department_id)`** — decorators: —
-  - effects: `message_post`, `sudo`, `with_context`
-  - touches: `hr.employee`, `ir.model.data`
-- **`create_tags(self, user_id, employee_id=None, partner_id=None)`** — decorators: —
-  - effects: `message_post`, `raise:ValidationError`, `sudo`, `with_context`
-  - touches: `hr.rfid.card`, `ir.model.data`
-- **`create_user_ag_relation(self, user_id, employee_id=None, partner_id=None)`** — decorators: —
+- **`go_back(self)`** - decorators: -
+- **`default_get(self, fields_list)`** - decorators: `@api.model`
+  - calls `super() `default_get``
+  - touches: `hr.rfid.andromeda.import.users`
+- **`get_context_list(self, field)`** - decorators: `@api.model`
+- **`get_user_data_as_dict(self, u_data, import_id, import_as)`** - decorators: `@api.model`
+- **`create_res_partner_company(self, user_id)`** - decorators: -
+  - effects: `message_post`, `with_context`
+  - touches: `res.partner`
+- **`create_res_partner(self, user_id)`** - decorators: -
+  - effects: `create`, `message_post`, `with_context`
+  - touches: `res.partner`
+- **`create_department(self, d_id, d_name)`** - decorators: -
+  - effects: `message_post`, `with_context`
+  - touches: `hr.department`
+- **`create_employee(self, user_id, department_id)`** - decorators: -
+  - effects: `message_post`, `with_context`
+  - touches: `hr.employee`
+- **`create_tags(self, user_id, employee_id=None, partner_id=None)`** - decorators: -
+  - effects: `message_post`, `raise:ValidationError`, `with_context`
+  - touches: `hr.rfid.card`
+- **`create_user_ag_relation(self, user_id, employee_id=None, partner_id=None)`** - decorators: -
   - effects: `log_info`, `raise:ValidationError`
+- **`do_import_user_as_employee(self, user_id)`** - decorators: -
+  - effects: `create`
+- **`do_import_user_as_contact(self, user_id)`** - decorators: -
+  - effects: `create`
+- **`import_ags(self)`** - decorators: -
+  - effects: `message_post`, `with_context`
   - touches: `hr.rfid.access.group`
-- **`do_import_user_as_employee(self, user_id)`** — decorators: —
-  - effects: `create`
-- **`do_import_user_as_contact(self, user_id)`** — decorators: —
-  - effects: `create`
-- **`import_ags(self)`** — decorators: —
-  - effects: `message_post`, `sudo`, `with_context`
-  - touches: `hr.rfid.access.group`, `ir.model.data`
-- **`import_u(self, selected=False)`** — decorators: —
+- **`import_u(self, selected=False)`** - decorators: -
   - effects: `log_info`
-- **`do_import(self)`** — decorators: —
-- **`do_fb_sql_context(self, sql)`** — decorators: `@api.model`
+- **`do_import(self)`** - decorators: -
+- **`do_fb_sql_context(self, sql)`** - decorators: `@api.model`
   - effects: `log_warn`, `raise:ValidationError`
 
 ### `hr.rfid.andromeda.welcome.wiz` <a id='model-hr-rfid-andromeda-welcome-wiz'></a>
@@ -236,66 +239,43 @@ Python class `AndromedaWelcomeWiz` in `models/welcome_wizard.py:11`.  TransientM
 |---|---|---|---|---|---|
 | `ip_address` | Char | IP address | ✓ | ✓ | IP address of the Windows host running the Andromeda Firebird DB engine. Reachab |
 | `database_path` | Char | Database Path | ✓ | ✓ | Absolute path to the Andromeda.fdb file as seen by the Firebird server (Windows  |
-| `users_count` | Integer |  |  | ✓ | Number of users discovered in the Andromeda DB after Test Connection — informati |
-| `company_dict` | Char |  |  | ✓ | Internal JSON mapping (Andromeda company ID → Odoo res.company ID) populated aft |
-| `ag_dict` | Char |  |  | ✓ | Internal JSON mapping (Andromeda access group → Odoo hr.rfid.access.group) popul |
-| `connection_checked` | Boolean |  |  | ✓ | True after a successful Firebird login and structural probe. Gates the Import bu |
-| `default_import_as` | Selection |  |  | ✓ | Where Andromeda users land in Odoo by default — hr.employee for staff, res.partn |
-| `import_access_groups` | Boolean |  |  | ✓ | Include Andromeda access groups and their door bindings in the import. |
-| `import_users` | Boolean |  |  | ✓ | Include Andromeda users (with cards) in the import. Disable to import only struc |
+| `users_count` | Integer | Users Count |  | ✓ | Number of users discovered in the Andromeda DB after Test Connection — informati |
+| `company_dict` | Char | Company Dict |  | ✓ | Internal JSON mapping (Andromeda company ID → Odoo res.company ID) populated aft |
+| `ag_dict` | Char | Ag Dict |  | ✓ | Internal JSON mapping (Andromeda access group → Odoo hr.rfid.access.group) popul |
+| `connection_checked` | Boolean | Connection Checked |  | ✓ | True after a successful Firebird login and structural probe. Gates the Import bu |
+| `default_import_as` | Selection | Default Import As |  | ✓ | Where Andromeda users land in Odoo by default — hr.employee for staff, res.partn |
+| `import_access_groups` | Boolean | Import Access Groups |  | ✓ | Include Andromeda access groups and their door bindings in the import. |
+| `import_users` | Boolean | Import Users |  | ✓ | Include Andromeda users (with cards) in the import. Disable to import only struc |
 
 #### Notable methods
 
-- **`do_check_connection(self)`** — decorators: —
+- **`do_check_connection(self)`** - decorators: -
   - effects: `log_warn`, `raise:ValidationError`
 
 
 ## Module Constants <a id='constants'></a>
 
-UPPER_CASE module-level assignments — rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
+UPPER_CASE module-level assignments - rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
 
 
 ### `models/import_wizard.py`
 
-- **`USERS_SQL`** *(scalar)* = `'select\n            u_id, U_CODE, u_name, u_fname, u_sname, u_lname,D_id, D_NAME, c_id, C_NAME\n            from USERS\n            left join USER_JOB UJ on USERS.U_ID = UJ.USERS_U_ID\n            left join COMPANY C on UJ.COMPANY_C_ID = C`  — line 11
-- **`AG_USER_SQL`** *(scalar)* = `'select users_u_id, access_groups_ag_id, agu_start_timestamp,\n            agu_expire_timestamp, agu_active from AG_USERS\n            where agu_active=1 and USERS_U_ID=%d'`  — line 18
-- **`LEDGER_MODULE`** = `'__import__'` - the `ir.model.data` module every record
-  created here is registered under. It is what core's own `BaseModel.load()`
-  writes for imported rows, so a second run recognises the first run's work
-  exactly the way core would.
-- **`SOURCE_SLUG`** = `'andromeda'` - the source identity inside the external
-  ID. One slug for every Andromeda source: the Firebird connection exposes no
-  stable installation identifier (the IP can change between runs and the
-  database path is the same on every default install).
-- **`SRC_USER`/`SRC_COMPANY`/`SRC_DEPARTMENT`/`SRC_ACCESS_GROUP`/`SRC_TAG`/`SRC_AG_USER`/`SRC_PLACEHOLDER_AG`**
-  = `'u'`/`'c'`/`'d'`/`'ag'`/`'tag'`/`'agu'`/`'placeholder'` - source TABLE
-  tokens. USERS and COMPANY both land in `res.partner`, so the reference has to
-  say which Andromeda table an id came from, or user 7 and company 7 are the
-  same record.
+- **`USERS_SQL`** *(scalar)* = `'select\n            u_id, U_CODE, u_name, u_fname, u_sname, u_lname,D_id, D_NAME, c_id, C_NAME\n            from USERS\n            left join USER_JOB UJ on USERS.U_ID = UJ.USERS_U_ID\n            left join COMPANY C on UJ.COMPANY_C_ID = C`  - line 11
+- **`AG_USER_SQL`** *(scalar)* = `'select users_u_id, access_groups_ag_id, agu_start_timestamp,\n            agu_expire_timestamp, agu_active from AG_USERS\n            where agu_active=1 and USERS_U_ID=%d'`  - line 18
+- **`LEDGER_MODULE`** *(scalar)* = `'__import__'`  - line 26
+- **`SOURCE_SLUG`** *(scalar)* = `'andromeda'`  - line 32
+- **`SRC_USER`** *(scalar)* = `'u'`  - line 36
+- **`SRC_COMPANY`** *(scalar)* = `'c'`  - line 37
+- **`SRC_DEPARTMENT`** *(scalar)* = `'d'`  - line 38
+- **`SRC_ACCESS_GROUP`** *(scalar)* = `'ag'`  - line 39
+- **`SRC_TAG`** *(scalar)* = `'tag'`  - line 40
+- **`SRC_AG_USER`** *(scalar)* = `'agu'`  - line 41
+- **`SRC_PLACEHOLDER_AG`** *(scalar)* = `'placeholder'`  - line 42
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`TestAndromedaImportWizard.setUpClass(cls)`** (`@classmethod`) — `tests/test_import_wizard.py:17`
-  - calls `super()`
-  - touches: `hr.rfid.andromeda.import.users`
-- **`TestAndromedaImportWizard.test_create_res_partner_company_creates_record(self)`** — `tests/test_import_wizard.py:44`
-- **`TestAndromedaImportWizard.test_create_res_partner_company_is_idempotent(self)`** — `tests/test_import_wizard.py:51`
-- **`TestAndromedaImportWizard.test_create_department_creates_record(self)`** — `tests/test_import_wizard.py:60`
-- **`TestAndromedaImportWizard.test_create_department_is_idempotent(self)`** — `tests/test_import_wizard.py:65`
-- **`TestAndromedaImportWizard.test_create_employee_creates_record(self)`** — `tests/test_import_wizard.py:75`
-- **`TestAndromedaImportWizard.test_create_employee_is_idempotent(self)`** — `tests/test_import_wizard.py:84`
-- **`TestAndromedaImportWizard.test_create_res_partner_uses_default_company_when_forced(self)`** — `tests/test_import_wizard.py:91`
-  - touches: `res.partner`
-
-### Private helpers
-
-- **`TestAndromedaImportWizard._fake_user(**overrides)`** (`@staticmethod`) — `tests/test_import_wizard.py:23`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -304,8 +284,8 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `andromeda_import_wizard_form` | `hr.rfid.andromeda.import.wiz` | — |  | `views/import_wizard.xml` |
-| `andromeda_welcome_wizard_form` | `hr.rfid.andromeda.welcome.wiz` | — |  | `views/welcome_wizard.xml` |
+| `andromeda_import_wizard_form` | `hr.rfid.andromeda.import.wiz` | - |  | `views/import_wizard.xml` |
+| `andromeda_welcome_wizard_form` | `hr.rfid.andromeda.welcome.wiz` | - |  | `views/welcome_wizard.xml` |
 
 
 ## Security <a id='security'></a>
@@ -313,7 +293,7 @@ List of `ir.ui.view` records created or extended by this module.
 Who can do what. Answer access-related questions from this section.
 
 
-### Access rights (ir.model.access)
+### Access rights (ir.model.access; v20: ir.access rows with a group)
 
 | CSV id | Model | Group | R | W | C | D |
 |---|---|---|---|---|---|---|
@@ -327,7 +307,12 @@ Who can do what. Answer access-related questions from this section.
 
 ## Data & Automation <a id='data'></a>
 
-No XML data records or cron jobs are declared by this module.
+XML records seeded at install and scheduled actions.
+
+
+### Data records summary
+
+- `ir.actions.act_window`: 2 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
@@ -336,13 +321,13 @@ This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWe
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -351,106 +336,17 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
 
-### From `gotchas` (7)
+### Curated (docs/faq.md)
 
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `ir.model.data, <p>, help=`
-
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
-
-Matched tokens: `api.onchange, @api.onchange`
-
-#### Gotcha: **TransientModel + `target='current'` = dead link.** TransientModel за
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Wizards & TransientModel** in odoo19-gotchas.md:
-
-> **TransientModel + `target='current'` = dead link.** TransientModel записи биват изтрити от autovacuum cron след минути до часове. Ако `action_window` връща `target='current'` с `res_id`, browser-ът bookmark-ва URL `/odoo/<model>/<id>` — следващ refresh/back-button → 404 "тотална грешка" / "запис не съществува". **Винаги** използвай `target='new'` (modal dialog) — modal-ите не променят URL-а, така че няма bookmarkable стара ID. Ако имаш Next/Back бутони (`type="object"`), pre-create record-а в `action_open_wizard()` за да съществува за compute_field-а, но дръж dialog-а modal. Производна на това: `_reopen()` helper-и за multistep wizard-и също трябва да са `target='new'`, не `'current'`.
-
-Matched tokens: `type="object", res_id`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчита
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчитай на него за валидация
-
-Matched tokens: `fields.char`
-
-#### Gotcha: SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, н
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, не `ValidationError`
-
-Matched tokens: `validationerror`
-
-#### Gotcha: **Search view: `<group>` без атрибути** — `expand="0"` и `string="Grou
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Search view: `<group>` без атрибути** — `expand="0"` и `string="Group By"` са премахнати. Стария път гърми с `RELAXNG_ERR_INVALIDATTR`.
-
-Matched tokens: `<group>`
-
-### From `git_log` (3)
-
-#### Fix: [FIX] hr_rfid_andromeda_import: drop @api.returns decorators (removed in
-<!-- source: git_log ref: 5f1c3fa934519b81bff07b53099e297d7324b901 occ: 1 conf: 0.60 -->
-
-Commit `5f1c3fa934` (2026-05-03): [FIX] hr_rfid_andromeda_import: drop @api.returns decorators (removed in v19)
-
-#### Fix: v2.1 Added portal functionality, barcode generation and RFID services. M
-<!-- source: git_log ref: 3c84986ac48326833d2f41e4de1d121e3c526130 occ: 1 conf: 0.60 -->
-
-Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
-
-#### Fix: fix from 14.0
-<!-- source: git_log ref: 8a074b53884675ad0ff284f9880f2c2b29fc3e0e occ: 1 conf: 0.60 -->
-
-Commit `8a074b5388` (2022-05-12): fix from 14.0
-
-
-## Source provenance <a id='provenance'></a>
-
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/hr_rfid_andromeda_import`
-- Source digest: `sha256:9a0e8b6e25c272594255feed587e0df8df2ebd5e5e4c2dfe30478ad01813c719`
-- Generated at: `2026-05-14T11:16:44+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
-
-## How an imported record is recognised again <a id='import-identity'></a>
+##### How an imported record is recognised again
 
 Every record this wizard creates is registered in Odoo's own external-ID
 metadata (`ir.model.data`), against the Andromeda record it came from. That
@@ -458,7 +354,7 @@ register is what makes a second run find the first run's work instead of
 creating it again - identity is the SOURCE ID, never a name, a code or a card
 number.
 
-### The name
+###### The name
 
 ```
 __import__.rfid_import_andromeda_{target_model}_{source_table}_{source_id}
@@ -469,7 +365,7 @@ built by `_xml_id_name(model, source_ref)`; `source_ref` is
 Andromeda user can land as BOTH an `hr.employee` and a `res.partner`, and both
 have to be recognised separately.
 
-### Helpers on `hr.rfid.andromeda.import.wiz`
+###### Helpers on `hr.rfid.andromeda.import.wiz`
 
 | Method | Does |
 |---|---|
@@ -479,7 +375,7 @@ have to be recognised separately.
 | `_mark_imported(record, source_ref)` | Registers a freshly created record. Called on EVERY create path: company, contact, department, employee, card, placeholder access group, access-group membership. |
 | `_already_imported_user_ids()` | The Andromeda user ids an earlier run brought in, so they are not offered for import again. Looks under both `hr.employee` and `res.partner` prefixes; the `SRC_USER` token keeps companies (also `res.partner`) out. |
 
-### Memberships have TWO guards
+###### Memberships have TWO guards
 
 `_add_ag_membership` skips a membership when its external ID exists **or** when
 the (person, access group) pair is already there. The second guard is not
@@ -487,14 +383,14 @@ redundant: memberships created before this module wrote external IDs at all
 carry nothing that says they came from here, and without it the first run after
 the change would duplicate every one of them.
 
-### Placeholder access group
+###### Placeholder access group
 
 A department with no default access group gets a placeholder, registered
 against the source access group that made it necessary
 (`SRC_PLACEHOLDER_AG`), so a second run reuses it instead of leaving another
 one behind.
 
-### Records marked by an earlier version
+###### Records marked by an earlier version
 
 Versions before 19.0.1.3.0 registered their work under `__export__` with names
 like `andromeda_u_id_7`. Those names are NOT read any more, and there is no
@@ -502,7 +398,7 @@ conversion step: on a database imported with an older version, the users
 concerned are offered again and accepted as new. A site in that position should
 be checked before a repeat import is run.
 
-### Tests
+###### Tests
 
 `tests/test_import_wizard.py` - the create paths and their repeats (company,
 department, employee, contact), an access group is not given twice (by external
@@ -512,3 +408,46 @@ badge is not handed out twice, and a card switched off in Andromeda is not
 reissued as a second working copy. The Firebird calls are patched out
 (`do_fb_sql_context`), so no server is needed - and none is needed for any of
 this logic.
+
+##### What the constants of the import mean
+
+- **`LEDGER_MODULE`** = `'__import__'` - the `ir.model.data` module every record
+  created here is registered under. It is what core's own `BaseModel.load()`
+  writes for imported rows, so a second run recognises the first run's work
+  exactly the way core would.
+- **`SOURCE_SLUG`** = `'andromeda'` - the source identity inside the external
+  ID. One slug for every Andromeda source: the Firebird connection exposes no
+  stable installation identifier (the IP can change between runs and the
+  database path is the same on every default install).
+- **`SRC_USER`/`SRC_COMPANY`/`SRC_DEPARTMENT`/`SRC_ACCESS_GROUP`/`SRC_TAG`/`SRC_AG_USER`/`SRC_PLACEHOLDER_AG`**
+  = `'u'`/`'c'`/`'d'`/`'ag'`/`'tag'`/`'agu'`/`'placeholder'` - source TABLE
+  tokens. USERS and COMPANY both land in `res.partner`, so the reference has to
+  say which Andromeda table an id came from, or user 7 and company 7 are the
+  same record.
+Entries derived from the module's own code comments and bug-fix commit history.
+
+### From `git_log` (4)
+
+#### Fix: [FIX] drop test-framework import from module __init__ (A1)
+
+Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
+
+#### Fix: [FIX] hr_rfid_andromeda_import: drop @api.returns decorators ...
+
+Commit `5f1c3fa934` (2026-05-03): [FIX] hr_rfid_andromeda_import: drop @api.returns decorators (removed in v19)
+
+#### Fix: v2.1 Added portal functionality, barcode generation and RFID ...
+
+Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
+
+#### Fix: fix from 14.0
+
+Commit `8a074b5388` (2022-05-12): fix from 14.0
+
+
+## Source provenance <a id='provenance'></a>
+
+- Module: `hr_rfid_andromeda_import`
+- Source digest: `sha256:ac5bbfb25af5026261791ef3f8217541593c809ab2dc5a25a45738591a0c3a2f`
+- Generated at: `2026-11-23T10:04:47+00:00`
+- Generator: `polimex_module_knowledge`

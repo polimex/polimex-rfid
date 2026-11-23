@@ -80,15 +80,153 @@ No special configuration is needed. The module adds a menu entry under
 Usage
 =====
 
-1. Go to **RFID System -> Hardware Manager -> Import from Odoo**
-2. Enter the source Odoo connection details (URL, database, login, password)
-3. Click **Check Connection** to verify connectivity
-4. Select the source company to import
-5. Choose which optional data to include (events, vending, attendance, services)
-6. Click **Start Import** and monitor progress
-7. The transfer opens on its own page and continues in the background. Close it
-   whenever you like; come back to **RFID System -> Hardware Manager -> Data Transfers** to see how far it
-   has got and what it moved.
+1. Go to **RFID System -> Hardware Manager -> Import from Odoo**.
+2. Enter the address of the other system and an account that can read it. That
+   account needs to be able to see everything you want moved - including the
+   camera passwords, if you have cameras. The address can be typed as in a
+   browser: `192.168.1.10:8069` becomes `http://192.168.1.10:8069`. A server
+   reached over https needs `https://` typed in front.
+
+   - **Source identity** on the same page is normally left empty: the transfer
+     then files everything under the name of the database it read, which is
+     right for a one-off move. Fill it in when you read the SAME system from
+     two places - a restored backup for the bulk of it, then the live server
+     for what changed since. Both transfers must carry the same identity, or
+     the second one treats the live server as a different system and brings
+     everything across a second time.
+   - If this database already holds records from another system, you are told
+     so before you start, with the name that system was filed under. Leave the
+     box empty and the transfer will not start: put the earlier name in it if
+     it is the same system, or type a name of your own to say it is a
+     different one.
+
+3. Press **Check Connection**. The wizard then lists the companies it found.
+4. Pick which company to bring across and which company here it becomes.
+5. Choose what to include. Anything the other system does not keep, or this one
+   cannot receive, is shown with the reason and cannot be ticked.
+6. Review the summary. Records that would clash with something already here are
+   listed for you to decide about; the transfer will not start until you have.
+7. Press **Start Import**. The transfer opens on its own page and continues in
+   the background - close the page whenever you like.
+8. Come back to **RFID System -> Hardware Manager -> Data Transfers** to see how far it got and, line by
+   line, what it moved and what it did not.
+
+What it brings across
+=====================
+
+- Equipment: communication modules, controllers, doors, readers, working times
+- People: employees, contacts, departments, tags
+- Zones, and who belongs to them
+- Sites: the whole tree, the equipment on it, the contacts in it
+- Access groups and their door, employee and contact assignments
+- Cards, including vehicle plates
+- Cameras: their settings, the serial numbers they are recognised by, their
+  readers and doors, and their plate lists
+- History: card events, system events, recognised plates, temperature logs
+- Vending, attendance and visitor services, when both systems have them
+
+Common questions
+================
+
+**Can I run it twice?** Yes, as often as you like - nothing is ever brought
+across a second time. What a repeat transfer does to what is already here is
+not the same for everything, and the summary page says so before you start:
+the equipment and the cards are put back to what the other system holds, so a
+card switched off here comes back on and a door renamed here gets its old name
+back. People, contacts, departments and access groups keep the details
+corrected here. A list the other system keeps - the departments of an access
+group, the doors a reader serves - is rebuilt from it, so an entry added here
+is taken out again. No record is deleted.
+
+**What if a person already has attendance here for the same time?** The
+attendance from the other system is not brought over - a day is never counted
+twice. If it is exactly the same, it is counted as already here. If it is
+different, the attendance recorded here stays as it is, and the transfer's
+summary names the people; the downloaded protocol lists every such case with
+both times, so the people who keep the records can look at them. A later
+transfer checks again, so once the record here is put right, the next run
+brings the other system's attendance across.
+
+**I transferred only the attendance - why does the last check list people and
+events?** The last check compares everything the two systems hold, company by
+company, because the numbers are worth knowing. A difference in something you
+did not tick is a remark, not a problem, and the transfer still ends as
+finished. The same goes for an attendance of a person who is not in this
+system when people were not part of the transfer: it cannot come across, and
+the check says how many there are. A difference in what you did tick is a
+problem, and the transfer says so.
+
+**What language is the summary in?** The language of the person who started
+the transfer.
+
+**Transferred attendance shows 0 hours worked - what do I do?** Run the
+transfer again with only "Import attendance" ticked. The attendance of the
+people it brings into this company then gets its hours worked out, whatever
+its date, including attendance an earlier transfer left at 0. The line "Worked
+Hours" in the protocol says how many were put right.
+
+- Days from before a person was set up here (their first contract version)
+  get their hours worked, and no overtime: there is no working schedule for
+  them yet, so nothing can be extra. This is also where Odoo's own
+  "Regenerate overtimes" stops.
+- Days from after that also get their extra and regular hours. Overtime a
+  manager has already approved or refused on another day keeps that decision.
+  A day, or a week under a weekly rule, that holds both a transferred stay and
+  one recorded here is worked out again as a whole, as Odoo does whenever a
+  stay of that day changes.
+- Records already right are not changed.
+
+If the hours of some people cannot be worked out, the same line names them,
+the first day concerned and what the system answered. Put those days right,
+then run the transfer again the same way.
+
+**What if it is interrupted?** It carries on from where it stopped. A transfer
+that has not moved for half an hour is closed automatically and its stored
+credentials are cleared; start a new one and it will pick up the remainder.
+
+**Why does a step say "Partly"?** Some of the records of that kind did not
+arrive - usually because what they point at was left out of this transfer. The
+line says how many.
+
+**Do the cameras start working straight away?** They keep working throughout,
+but they still hold their old plate lists. Refresh each camera's list once the
+transfer is done.
+
+**Nothing at all came across for one kind of record.** That is shown as a
+fault. Look at the step just above it: what those records point at is probably
+missing.
+
+**Can I rebuild the attendance that came across?** No, and the attempt is
+refused rather than half done. Attendance brought over is a copy of what the
+other system recorded: it cannot be worked out again from door events here -
+those events may not have come along, and the old system may have been
+corrected by hand - and rebuilding it would break the link that lets a later
+transfer recognise it, so the next transfer would bring it over a second time.
+To refresh that data, run the transfer again. Attendance recorded HERE is
+rebuilt as normal; the refusal names the people it concerns, so you can rebuild
+a period, or a set of people, that does not include them.
+
+**Does a big customer finish?** Yes, and that is what the passes are for: every
+long read remembers where it got to, so the next pass carries on instead of
+starting over. Measured on a 27-tenant cloud - 6 176 people, 289 847 access
+events, 280 046 vending entries, 200 004 temperature readings - the whole of it
+comes across, and each line of the protocol counts the WHOLE transfer rather
+than the slice of the last pass.
+
+**A step says the other system keeps no such thing.** Older versions really do
+keep less: Odoo 14 has no daily working-time roll-ups at all, for instance. The
+line says so and the transfer carries on; the attendances themselves still come
+across.
+
+**The final check names things that were already wrong.** It says which of them
+the other system has as well - those are carried over as they stand, not caused
+by the transfer. Anything it does NOT attribute to the other system appeared
+here and is worth looking at.
+
+**Why are there still sixteen time schedules and not thirty-two?** Because this
+system makes its own set for every company, and the transfer adopts the
+schedule sitting in each slot instead of creating a second one beside it. One
+record per slot is the only way a door permission can mean one thing.
 
 Requirements
 ============

@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Import access control data from Polimex Andromeda Database
-last_updated: '2026-08-14'
-source_digest: sha256:9a0e8b6e25c272594255feed587e0df8df2ebd5e5e4c2dfe30478ad01813c719
+last_updated: '2026-11-23'
+source_digest: sha256:ac5bbfb25af5026261791ef3f8217541593c809ab2dc5a25a45738591a0c3a2f
 companion_doc: llms-full.md
 ---
 
@@ -34,8 +34,7 @@ This module extends the RFID Access Control (hr_rfid) module, allowing it to imp
 * Import All Access Control Groups.
 * Import all Access Users Rights.
 
-
-## Running the import again
+### Running the import again
 
 The import can be run as often as you like. Everything it creates is marked
 with the Andromeda record it came from, so a later run finds that work instead

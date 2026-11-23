@@ -2,7 +2,7 @@
 id: hr_rfid_portal
 title: RFID Portal Access
 module: hr_rfid_portal
-module_version: 19.0.0.1.0
+module_version: 19.0.0.1.3
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        RFID System Portal plugin\n    "
-last_updated: '2026-04-29'
-source_digest: sha256:10b37f6363ad6864bd306c406b2e21336489edfd194ba26eb64ac86bd011de7e
+last_updated: '2026-11-23'
+source_digest: sha256:22f2cc509e4a8529a40bb7a52a24f576cb2cd95a0fd23b91b0a970dc4c037274
 depends:
 - hr_rfid
 - portal
@@ -60,7 +60,7 @@ chunking:
 ---
 
 
-# RFID Portal Access — `hr_rfid_portal` v19.0.0.1.0
+# RFID Portal Access - `hr_rfid_portal` v19.0.0.1.3
 
 
         RFID System Portal plugin
@@ -71,10 +71,10 @@ chunking:
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_portal`
-- **Version**: `19.0.0.1.0`
+- **Version**: `19.0.0.1.3`
 - **Category**: Generic Modules/Property Management System
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -350,7 +350,7 @@ Installation requirements and configuration entry points. Use this section to an
 ./venv/bin/python odoo/odoo-bin -d DATABASE -i hr_rfid_portal --stop-after-init
 ```
 
-> **Auto-install**: installed automatically when all dependencies are present.
+> **Auto-install**: Odoo installs it by itself only in an operation that installs one of `hr_rfid`, `portal` while the rest of them are installed or installed in the same operation. A database that already has all of them does not get it by itself - not on an upgrade (`-u`), not on Update Apps List: install it once from Apps or with the command above.
 
 
 ## Models <a id='models'></a>
@@ -361,45 +361,45 @@ Python class `HrRfidCard` in `models/hr_rfid_card.py:34`.  Model.  Inherits: `hr
 
 #### Notable methods
 
-- **`SELF_READABLE_FIELDS(self)`** — decorators: `@property`
-- **`SELF_WRITABLE_FIELDS(self)`** — decorators: `@property`
-- **`fields_get(self, allfields=None, attributes=None)`** — decorators: `@api.model`
+- **`SELF_READABLE_FIELDS(self)`** - decorators: `@property`
+- **`SELF_WRITABLE_FIELDS(self)`** - decorators: `@property`
+- **`fields_get(self, allfields=None, attributes=None)`** - decorators: `@api.model`
   - calls `super() `fields_get``
-- **`read(self, fields=None, load='_classic_read')`** — decorators: —
+- **`read(self, fields=None, load='_classic_read')`** - decorators: -
   - calls `super() `read``
-- **`mapped(self, func)`** — decorators: —
+- **`mapped(self, func)`** - decorators: -
   - calls `super() `mapped``
-- **`_ensure_portal_user_can_write(self, fields)`** — decorators: `@api.model`
+- **`_ensure_portal_user_can_write(self, fields)`** - decorators: `@api.model`
   - effects: `raise:AccessError`
-- **`create(self, vals_list)`** — decorators: `@api.model_create_multi`
-  - super-split (super `create`): pre=`with_context` · post=—
+- **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
+  - super-split (super `create`): pre=`with_context` · post=-
   - effects: `with_context`
-- **`preview_card(self)`** — decorators: —
+- **`preview_card(self)`** - decorators: -
 
 ### `ir.actions.report` <a id='model-ir-actions-report'></a>
 Python class `IrActionsReport` in `models/ir_actions_report.py:13`.  Model.  Inherits: `ir.actions.report`.
 
 #### Notable methods
 
-- **`get_available_barcode_masks(self)`** — decorators: `@api.model`
+- **`get_available_barcode_masks(self)`** - decorators: `@api.model`
   - calls `super() `get_available_barcode_masks``
-- **`apply_qr_code_polimex_logo_mask(self, width, height, barcode_drawing)`** — decorators: `@api.model`
+- **`apply_qr_code_polimex_logo_mask(self, width, height, barcode_drawing)`** - decorators: `@api.model`
 
 
 ## Module Constants <a id='constants'></a>
 
-UPPER_CASE module-level assignments — rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
+UPPER_CASE module-level assignments - rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
 
 
 ### `models/hr_rfid_card.py`
 
-- **`RFID_CARD_READABLE_FIELDS`** *(collection)* = `{'id', 'active', 'name', 'number', 'card_reference', 'card_type', 'employee_id', 'contact_id', 'activate_on', 'deactivate_on', 'cloud_card', 'create_date', 'write_date', 'company_id', 'display_name'}`  — line 12
-- **`RFID_CARD_WRITABLE_FIELDS`** *(collection)* = `{'active'}`  — line 30
+- **`RFID_CARD_READABLE_FIELDS`** *(collection)* = `{'id', 'active', 'name', 'number', 'card_reference', 'card_type', 'employee_id', 'contact_id', 'activate_on', 'deactivate_on', 'cloud_card', 'create_date', 'write_date', 'company_id', 'display_name'}`  - line 12
+- **`RFID_CARD_WRITABLE_FIELDS`** *(collection)* = `{'active'}`  - line 30
 
 ### `models/ir_actions_report.py`
 
-- **`POLIMEX_QR_LOGO_SIZE_RATIO`** *(scalar)* = `0.1522`  — line 8
-- **`POLIMEX_QR_LOGO_FILE`** *(expression)* = `Path('../static/img/polimex_qr_logo.png')`  — line 10
+- **`POLIMEX_QR_LOGO_SIZE_RATIO`** *(scalar)* = `0.1522`  - line 8
+- **`POLIMEX_QR_LOGO_FILE`** *(expression)* = `Path('../static/img/polimex_qr_logo.png')`  - line 10
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
@@ -409,23 +409,23 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 
 ### Public helpers
 
-- **`RFIDCustomerPortal.portal_my_webcards(self, **kw)`** (`@http.route`) — `controllers/portal.py:49`
+- **`RFIDCustomerPortal.portal_my_webcards(self, **kw)`** (`@http.route`) - `controllers/portal.py:49`
   - effects: `sudo`
   - touches: `hr.rfid.card`
-- **`RFIDCustomerPortal.portal_my_webcard(self, card_id, access_token=None, **kw)`** (`@http.route`) — `controllers/portal.py:66`
+- **`RFIDCustomerPortal.portal_my_webcard(self, card_id, access_token=None, **kw)`** (`@http.route`) - `controllers/portal.py:66`
   - effects: `sudo`
   - touches: `ir.actions.report`
-- **`RFIDCustomerPortal.portal_my_events(self, page=1, **kw)`** (`@http.route`) — `controllers/portal.py:89`
+- **`RFIDCustomerPortal.portal_my_events(self, page=1, **kw)`** (`@http.route`) - `controllers/portal.py:89`
   - effects: `sudo`
   - touches: `hr.rfid.event.user`
 
 ### Private helpers
 
-- **`RFIDCustomerPortal._prepare_home_portal_values(self, counters)`** — `controllers/portal.py:15`
-  - super-split (super): pre=— · post=`sudo`
+- **`RFIDCustomerPortal._prepare_home_portal_values(self, counters)`** - `controllers/portal.py:15`
+  - super-split (super): pre=- · post=`sudo`
   - effects: `sudo`
   - touches: `hr.rfid.card`, `hr.rfid.event.user`
-- **`RFIDCustomerPortal._card_get_page_view_values(self, card, access_token, **kwargs)`** — `controllers/portal.py:33`
+- **`RFIDCustomerPortal._card_get_page_view_values(self, card, access_token, **kwargs)`** - `controllers/portal.py:33`
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -434,7 +434,7 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_rfid_card_form_inherit` | `hr.rfid.card` | — | hr_rfid.hr_rfid_card_view_form | `views/hr_rfid_card.xml` |
+| `hr_rfid_card_form_inherit` | `hr.rfid.card` | - | hr_rfid.hr_rfid_card_view_form | `views/hr_rfid_card.xml` |
 
 #### Sample XPath operations
 
@@ -450,22 +450,34 @@ This module does not declare any access rules, record rules or groups of its own
 
 ## Data & Automation <a id='data'></a>
 
-No XML data records or cron jobs are declared by this module.
+XML records seeded at install and scheduled actions.
+
+
+### Data records summary
+
+- `hr.rfid.event.user`: 3 record(s)
+- `hr.rfid.card`: 2 record(s)
+- `hr.rfid.access.group.contact.rel`: 1 record(s)
+- `ir.actions.act_window`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
 
-This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWeb templates).
+JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
+
+
+**QWeb templates in XML data, rendered by the server** (5): `portal_layout`, `portal_my_home_hr_rfid`, `portal_barcode_table`, `portal_my_barcode`, `portal_user_event_table`
+
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -474,56 +486,33 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
-
-### From `gotchas` (2)
-
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
-
-Matched tokens: `_compute, @api.model_create_multi, api.model_create_multi`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
+Entries derived from the module's own code comments and bug-fix commit history.
 
 ### From `git_log` (3)
 
-#### Fix: [IMP] hr_rfid,hr_rfid_portal: Update translations and fix alert roles
-<!-- source: git_log ref: 0a2d81d00b460beeae9cf92591d50a5dfe2accd8 occ: 1 conf: 0.60 -->
+#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u ...
 
-Commit `0a2d81d00b` (2026-03-25): [IMP] hr_rfid,hr_rfid_portal: Update translations and fix alert roles
+Commit `54843cfc81` (2026-07-22): fix(demo): showcase demo files must be noupdate=1 - production -u re-wrote them
+
+#### Fix: [FIX] drop test-framework import from module __init__ (A1)
+
+Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
 
 #### Fix: fix portal views for 18.0
-<!-- source: git_log ref: 0456b88c4090ad8bee6edc0f540498c337080021 occ: 1 conf: 0.60 -->
 
 Commit `0456b88c40` (2024-10-07): fix portal views for 18.0
-
-#### Fix: v2.1 Added portal functionality, barcode generation and RFID services. M
-<!-- source: git_log ref: 3c84986ac48326833d2f41e4de1d121e3c526130 occ: 1 conf: 0.60 -->
-
-Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/hr_rfid_portal`
-- Source digest: `sha256:10b37f6363ad6864bd306c406b2e21336489edfd194ba26eb64ac86bd011de7e`
-- Generated at: `2026-04-29T07:30:41+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `hr_rfid_portal`
+- Source digest: `sha256:22f2cc509e4a8529a40bb7a52a24f576cb2cd95a0fd23b91b0a970dc4c037274`
+- Generated at: `2026-11-23T10:04:54+00:00`
+- Generator: `polimex_module_knowledge`

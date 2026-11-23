@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: RFID PMS system Base structures
-last_updated: '2026-08-14'
-source_digest: sha256:c62b009d4388adfc9875d68038831797fe93f475216234b61e40d5d2f7561e6e
+last_updated: '2026-11-23'
+source_digest: sha256:effb668d17081e4e6b350a685f41145cde41fddf74bbf3c242a0c3b510bc503b
 companion_doc: llms-full.md
 ---
 
@@ -22,17 +22,6 @@ companion_doc: llms-full.md
 RFID PMS system Base structures.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
-
-
-## The setup checklist
-
-Until the rooms are set up, a checklist appears above the rooms
-(**Hotel Rooms**): define an access group for guests, then register the first
-room. Each step opens the screen where it is done, and ticks itself off as soon
-as the thing exists - there is nothing to mark by hand.
-
-Close it with the **X** (you are asked to confirm) and it is gone for good for
-everybody in the company. It has no effect on anything else.
 
 
 ## How to use it
@@ -279,6 +268,16 @@ def create_booking_webhook(self, booking_data):
     })
 ```
 
+#### The setup checklist
+
+Until the rooms are set up, a checklist appears above the rooms
+(**Hotel Rooms**): define an access group for guests, then register the first
+room. Each step opens the screen where it is done, and ticks itself off as soon
+as the thing exists - there is nothing to mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
+
 #### 🐛 Troubleshooting
 
 ##### Common Issues
@@ -355,10 +354,3 @@ Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 ---
 
 For more information, visit [polimex.co](https://polimex.co)
-
-
-### Available actions
-
-- **Close panel pms setup**
-- **Open step pms access group**
-- **Open step pms first room**

@@ -236,6 +236,17 @@ def get_results(self, session_id):
     }
 ```
 
+## The setup checklist
+
+Until voting is set up, a checklist appears above the voting sessions
+(**Vote Session**): configure a display, define the participants list, add the
+voting items, then open the first session. Each step opens the screen where it
+is done, and ticks itself off as soon as the thing exists - there is nothing to
+mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
+
 ## 🐛 Troubleshooting
 
 ### Common Issues

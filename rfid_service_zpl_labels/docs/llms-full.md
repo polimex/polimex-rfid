@@ -2,7 +2,7 @@
 id: rfid_service_zpl_labels
 title: Services ZPL Labels
 module: rfid_service_zpl_labels
-module_version: 19.0.1.0.1
+module_version: 19.0.1.0.4
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        ZPL wristband printing for RFID services with direct network printing\n    "
-last_updated: '2026-04-29'
-source_digest: sha256:e769d22fde73359d4c5eb4bbb91a73ed3eef7e1d33a7599016d766557a1bb571
+last_updated: '2026-11-23'
+source_digest: sha256:bc880f336c2328864d784b109297d948256bb0dc81f68d61200099a7cf0abfc9
 depends:
 - rfid_service_base
 - hr_rfid
@@ -72,7 +72,7 @@ chunking:
 ---
 
 
-# Services ZPL Labels — `rfid_service_zpl_labels` v19.0.1.0.1
+# Services ZPL Labels - `rfid_service_zpl_labels` v19.0.1.0.4
 
 
         ZPL wristband printing for RFID services with direct network printing
@@ -83,10 +83,10 @@ chunking:
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `rfid_service_zpl_labels`
-- **Version**: `19.0.1.0.1`
+- **Version**: `19.0.1.0.4`
 - **Category**: Generic Modules/Property Management System
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -475,7 +475,7 @@ Python class `Company` in `models/res_company.py:8`.  Model.  Inherits: `res.com
 
 #### Notable methods
 
-- **`_logo_as_grf(self, grf_name='COMPLOGO.GRF')`** — decorators: `@api.model`
+- **`_logo_as_grf(self, grf_name='COMPLOGO.GRF')`** - decorators: `@api.model`
   - Return (^XA~DG…^XZ) string ready to prepend to a ZPL job.
 
 ### `res.config.settings` <a id='model-res-config-settings'></a>
@@ -485,8 +485,8 @@ Python class `ResConfigSettings` in `models/res_config_settings.py:4`.  Transien
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `rfid_label_printer_ip` | Char | Label Printer IP |  | — | IP address of the Zebra label printer for wristband printing |
-| `rfid_label_printer_port` | Integer | Label Printer Port |  | — | TCP port for the Zebra label printer connection (default: 9100) |
+| `rfid_label_printer_ip` | Char | Label Printer IP |  | - | IP address of the Zebra label printer for wristband printing |
+| `rfid_label_printer_port` | Integer | Label Printer Port |  | - | TCP port for the Zebra label printer connection (default: 9100) |
 
 ### `rfid.service` <a id='model-rfid-service'></a>
 Python class `BaseRFIDService` in `models/rfid_service.py:12`.  Model.  Inherits: `rfid.service`.
@@ -499,21 +499,21 @@ Python class `BaseRFIDService` in `models/rfid_service.py:12`.  Model.  Inherits
 
 #### Notable methods
 
-- **`test_label_printer_connection(self)`** — decorators: —
-  - Test the connection to the configured label printer.
+- **`test_label_printer_connection(self)`** - decorators: -
+  - Test the connection to the configured label printer. Uses the service's configured label template to generate test ZPL.
   - effects: `log_exception`, `log_info`
-- **`preview_label(self)`** — decorators: —
-  - Preview the label template configured for this service.
+- **`preview_label(self)`** - decorators: -
+  - Preview the label template configured for this service. Opens a new tab with the label preview without any sale data (uses failsafe values).
 
 ### `rfid.service.sale` <a id='model-rfid-service-sale'></a>
 Python class `RfidServiceSale` in `models/rfid_service_sale.py:12`.  Model.  Inherits: `rfid.service.sale`.
 
 #### Notable methods
 
-- **`preview_label(self)`** — decorators: —
-  - Generate and preview the ZPL label for this service sale.
-- **`print_label_direct(self)`** — decorators: —
-  - Print the label directly to the configured ZPL printer.
+- **`preview_label(self)`** - decorators: -
+  - Generate and preview the ZPL label for this service sale. Opens a new tab with the label preview page.
+- **`print_label_direct(self)`** - decorators: -
+  - Print the label directly to the configured ZPL printer. Uses centralized ZPL generation and socket printing.
   - effects: `log_exception`, `raise:UserError`
 
 ### `rfid.service.sale.wiz` <a id='model-rfid-service-sale-wiz'></a>
@@ -521,13 +521,13 @@ Python class `RfidServiceBaseSaleWiz` in `models/rfid_service_sale_wiz.py:11`.  
 
 #### Notable methods
 
-- **`print_label(self)`** — decorators: —
+- **`print_label(self)`** - decorators: -
   - Print label using the configured method (socket or CUPS if overridden)
-- **`print_label_direct(self)`** — decorators: —
-  - Print ZPL wristband label directly to printer.
+- **`print_label_direct(self)`** - decorators: -
+  - Print ZPL wristband label directly to printer. Creates the sale record and uses centralized printing methods.
   - effects: `log_exception`, `log_info`, `raise:UserError`
-- **`test_printer_connection(self)`** — decorators: —
-  - Test the connection to the configured label printer.
+- **`test_printer_connection(self)`** - decorators: -
+  - Test the connection to the configured label printer. Sends a simple ZPL test pattern to verify connectivity.
 
 
 ## Module Constants <a id='constants'></a>
@@ -542,45 +542,12 @@ Top-level functions that sit outside any Odoo model class. Use this section to a
 
 ### Public helpers
 
-- **`RfidLabelPreviewController.preview_label(self, sale_id, **kw)`** (`@http.route`) — `controllers/main.py:9`
+- **`RfidLabelPreviewController.preview_label(self, sale_id, **kw)`** (`@http.route`) - `controllers/main.py:9`
   - Render the label preview page with Labelary integration.
   - touches: `rfid.service.sale`
-- **`RfidLabelPreviewController.preview_service_label(self, service_id, **kw)`** (`@http.route`) — `controllers/main.py:46`
+- **`RfidLabelPreviewController.preview_service_label(self, service_id, **kw)`** (`@http.route`) - `controllers/main.py:46`
   - Render the label preview page for a service without sale data.
   - touches: `rfid.service`
-- **`test_and_save_label(zpl_content, filename_prefix)`** — `tmp/analyze_label_issues.py:61`
-  - Test ZPL with Labelary and save the result
-  - effects: `http_get`
-- **`test_labelary_api()`** — `tmp/test_labelary.py:34`
-  - Test the ZPL template with Labelary API
-  - effects: `http_get`
-- **`test_label_format(zpl_content, label_size, dpmm, description)`** — `tmp/test_labelary_formats.py:9`
-  - Test a specific label format
-  - effects: `http_get`
-- **`create_preview_html(zpl_content)`** — `tmp/test_odoo_preview.py:46`
-  - Create an HTML preview page similar to Odoo's template
-- **`test_odoo_preview()`** — `tmp/test_odoo_preview.py:184`
-  - Test the preview as it would appear in Odoo
-  - effects: `http_get`
-- **`WristbandDesigner.create_template(self, filename='wristband_template.png')`** — `tmp/wristband_designer.py:32`
-  - Create a design template with zones
-- **`WristbandDesigner.generate_optimized_zpl(self)`** — `tmp/wristband_designer.py:93`
-  - Generate an optimized ZPL design
-- **`WristbandDesigner.test_design(self, zpl_content, design_name='test')`** — `tmp/wristband_designer.py:150`
-  - Test a ZPL design and return the image
-  - effects: `http_get`
-- **`WristbandDesigner.create_comparison(self, designs)`** — `tmp/wristband_designer.py:174`
-  - Create a visual comparison of designs
-- **`ZPLDesigner.test_zpl(self, zpl_content, filename_prefix='test')`** — `tmp/zpl_design_tool.py:19`
-  - Test ZPL and save the result
-  - effects: `http_get`
-- **`ZPLDesigner.create_design_grid(self, filename='design_grid.png')`** — `tmp/zpl_design_tool.py:57`
-  - Create a design grid to help with positioning
-
-### Private helpers
-
-- **`WristbandDesigner.__init__(self)`** — `tmp/wristband_designer.py:12`
-- **`ZPLDesigner.__init__(self)`** — `tmp/zpl_design_tool.py:12`
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -589,10 +556,10 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `res_config_settings_view_form_inherit_rfid_labels` | `res.config.settings` | — | base.res_config_settings_view_form | `views/res_config_settings_views.xml` |
-| `view_rfid_service_form_inherit_new_group` | `rfid.service` | — | rfid_service_base.services_form | `views/rfid_service.xml` |
-| `hr_rfid_service_sale_form_inherit_zpl_labels` | `rfid.service.sale` | — | rfid_service_base.hr_rfid_service_sale_form | `views/rfid_service_sale.xml` |
-| `sale_wiz_form_inherit_label_button` | `rfid.service.sale.wiz` | — | rfid_service_base.sale_wiz_form | `views/rfid_service_sale_wiz.xml` |
+| `res_config_settings_view_form_inherit_rfid_labels` | `res.config.settings` | - | base.res_config_settings_view_form | `views/res_config_settings_views.xml` |
+| `view_rfid_service_form_inherit_new_group` | `rfid.service` | - | rfid_service_base.services_form | `views/rfid_service.xml` |
+| `hr_rfid_service_sale_form_inherit_zpl_labels` | `rfid.service.sale` | - | rfid_service_base.hr_rfid_service_sale_form | `views/rfid_service_sale.xml` |
+| `sale_wiz_form_inherit_label_button` | `rfid.service.sale.wiz` | - | rfid_service_base.sale_wiz_form | `views/rfid_service_sale_wiz.xml` |
 
 #### Sample XPath operations
 
@@ -624,22 +591,31 @@ XML records seeded at install and scheduled actions.
 ### Data records summary
 
 - `ir.config_parameter`: 2 record(s)
+- `rfid.service`: 2 record(s)
+- `ir.actions.report`: 2 record(s)
 - `ir.actions.server`: 1 record(s)
+- `res.company`: 1 record(s)
+- `report.paperformat`: 1 record(s)
+- `ir.actions.act_window`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
 
-This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWeb templates).
+JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
+
+
+**QWeb templates in XML data, rendered by the server** (3): `wristband_template_view`, `wristband_template_barcode_view`, `label_preview_template`
+
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -648,65 +624,37 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
+Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `gotchas` (3)
+### From `git_log` (4)
 
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
+#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u ...
 
-From **Модели и полета** in odoo19-gotchas.md:
+Commit `54843cfc81` (2026-07-22): fix(demo): showcase demo files must be noupdate=1 - production -u re-wrote them
 
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
+#### Fix: [FIX] drop test-framework import from module __init__ (A1)
 
-Matched tokens: `company_id`
-
-#### Gotcha: `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчита
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчитай на него за валидация
-
-Matched tokens: `fields.char`
-
-#### Gotcha: SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, н
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, не `ValidationError`
-
-Matched tokens: `validationerror`
-
-### From `git_log` (3)
+Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
 
 #### Fix: [FIX] rfid_service_zpl_labels: invalid target='inline' in v19
-<!-- source: git_log ref: ff2de74a0bb11daf6e28908e230b000f019b296e occ: 1 conf: 0.60 -->
 
 Commit `ff2de74a0b` (2026-04-20): [FIX] rfid_service_zpl_labels: invalid target='inline' in v19
 
-#### Fix: [FIX] hr_rfid,rfid_service_zpl_labels: Add forcecreate=False to ir.confi
-<!-- source: git_log ref: 3a9ba0c116dcc504cb54b63bb913f9f88aec8553 occ: 1 conf: 0.60 -->
-
-Commit `3a9ba0c116` (2026-03-31): [FIX] hr_rfid,rfid_service_zpl_labels: Add forcecreate=False to ir.config_parameter records
-
 #### Fix: Fix variable name in ZPL content rendering
-<!-- source: git_log ref: 74349691f386dfb78b026fc01701b36cad7f08ec occ: 1 conf: 0.60 -->
 
 Commit `74349691f3` (2025-06-13): Fix variable name in ZPL content rendering
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/rfid_service_zpl_labels`
-- Source digest: `sha256:e769d22fde73359d4c5eb4bbb91a73ed3eef7e1d33a7599016d766557a1bb571`
-- Generated at: `2026-04-29T07:30:42+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `rfid_service_zpl_labels`
+- Source digest: `sha256:bc880f336c2328864d784b109297d948256bb0dc81f68d61200099a7cf0abfc9`
+- Generated at: `2026-11-23T10:04:54+00:00`
+- Generator: `polimex_module_knowledge`

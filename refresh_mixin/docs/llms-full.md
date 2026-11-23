@@ -2,7 +2,7 @@
 id: refresh_mixin
 title: Polimex Refresh Mixin
 module: refresh_mixin
-module_version: 19.0.1.3.2
+module_version: 19.0.1.5.0
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Refresh Mixin for Odoo models
-last_updated: '2026-06-16'
-source_digest: sha256:1db12fb4fa2768a9770c8e9cc5a5ccedf565d9b40da9018b73f5d5a04c992e2b
+last_updated: '2026-11-23'
+source_digest: sha256:d12b067ae069abd5c23d8f01e7b378eb508e2bd7f42715fed11e85d9b8aeecf0
 depends:
 - web
 - bus
@@ -60,7 +60,7 @@ chunking:
 ---
 
 
-# Polimex Refresh Mixin — `refresh_mixin` v19.0.1.3.2
+# Polimex Refresh Mixin - `refresh_mixin` v19.0.1.5.0
 
 Refresh Mixin for Odoo models
 
@@ -69,10 +69,10 @@ Refresh Mixin for Odoo models
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `refresh_mixin`
-- **Version**: `19.0.1.3.2`
+- **Version**: `19.0.1.5.0`
 - **Category**: Technical
 - **License**: AGPL-3
 - **Author**: Polimex Team <software@polimex.co>
@@ -491,23 +491,18 @@ Python class `RefreshMixin` in `models/refresh_mixin.py:6`.  AbstractModel.  Des
 
 #### Notable methods
 
-- **`get_company_id(self)`** — decorators: —
+- **`get_company_id(self)`** - decorators: -
   - Get company_id for the record(s). Returns first company if multiple records.
-- **`send_notice(self, operation)`** — decorators: —
+- **`get_company_ids(self)`** - decorators: -
+  - Every company that should receive the realtime refresh for these records. Defaults to the single company from :meth:`get_company_id`; override when a record concerns more than one company (e.g.…
+  - touches: `res.company`
+- **`send_notice(self, operation)`** - decorators: -
   - Send bus notification for dashboard refresh.
-  - effects: `log_debug`, `log_warn`
+  - effects: `log_debug`, `log_warn`, `sudo`
   - touches: `bus.bus`
-- **`_refresh_notice_required(self, vals)`** - decorators: -
-  - Gate for write-triggered notifications. Consumers declare high-frequency
-    telemetry fields (e.g. a per-heartbeat timestamp) in the class attribute
-    `_refresh_ignore_fields` (frozenset, default empty): a write touching ONLY
-    those fields is silent - no `bus.bus` row is persisted - while a write
-    containing any other field notifies as usual. Prevents device-telemetry
-    workloads from flooding the `bus_bus` table (VIP Security production,
-    2026-08-10: ~200K rows/day from heartbeats).
-- **`write(self, vals)`** — decorators: —
-  - calls `super() `write``; notifies only when `_refresh_notice_required(vals)`
-- **`create(self, vals_list)`** — decorators: `@api.model_create_multi`
+- **`write(self, vals)`** - decorators: -
+  - calls `super() `write``
+- **`create(self, vals_list)`** - decorators: `@api.model_create_multi`
   - calls `super() `create``
 
 ### `res.company` <a id='model-res-company'></a>
@@ -527,24 +522,7 @@ No module-level UPPER_CASE constants are declared by this module.
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`TestRefreshMixin.test_send_notice_emits_record_changed_for_write(self)`** — `tests/test_refresh_mixin.py:38`
-- **`TestRefreshMixin.test_send_notice_emits_record_created_for_create(self)`** — `tests/test_refresh_mixin.py:50`
-- **`TestRefreshMixin.test_send_notice_skipped_when_realtime_refresh_disabled(self)`** — `tests/test_refresh_mixin.py:59`
-- **`TestRefreshMixin.test_send_notice_skipped_when_no_company_field(self)`** — `tests/test_refresh_mixin.py:65`
-- **`TestRefreshMixin.test_unresolvable_company_does_not_warn(self)`** — `tests/test_refresh_mixin.py:71`
-- **`TestRefreshMixin.test_extra_payload_is_merged(self)`** — `tests/test_refresh_mixin.py:82`
-
-### Private helpers
-
-- **`TestRefreshMixin._patch_bus(self)`** — `tests/test_refresh_mixin.py:18`
-  - touches: `bus.bus`
-- **`TestRefreshMixin._make_stub(self, *, has_company=True, realtime_refresh=True, ids=(1, 2), extra_payload=None)`** — `tests/test_refresh_mixin.py:22`
-  - touches: `refresh.mixin`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -553,7 +531,7 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `view_company_form_realtime_refresh` | `res.company` | — | base.view_company_form | `views/res_company_views.xml` |
+| `view_company_form_realtime_refresh` | `res.company` | - | base.view_company_form | `views/res_company_views.xml` |
 
 #### Sample XPath operations
 
@@ -580,15 +558,21 @@ JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
 **JS files** (4): `static/src/js/hierarchy_refresh_view.js`, `static/src/js/kanban_refresh_view.js`, `static/src/js/list_refresh_view.js`, `static/src/js/use_bus_refresh.js`
 
 
+**Asset bundles extended in the manifest**: `web.assets_backend`, `web.assets_backend_lazy`, `web.assets_unit_tests` (tests only)
+
+
+**Other static JS/SCSS loaded by these bundles** (1): `static/tests/use_bus_refresh.test.js`
+
+
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -597,92 +581,37 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
+Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `gotchas` (6)
+### From `git_log` (4)
 
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
+#### Fix: [FIX] refresh layer: camera events never refreshed the realtime ...
 
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
-
-Matched tokens: `@api.model_create_multi, api.model_create_multi`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `help=`
-
-#### Gotcha: **`message_post(body=...)` / `_message_log` / `mail.activity` третират
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Mail / Templates** in odoo19-gotchas.md:
-
-> **`message_post(body=...)` / `_message_log` / `mail.activity` третират plain `str` като ТЕКСТ и го HTML-escape-ват — HTML в chatter иска `markupsafe.Markup`.** В Odoo 17+ ако подадеш `self.env._("... <b>%s</b> ...", val)` (връща plain `str`), `<b>` се escape-ва → потребителят вижда буквално `<b>resolve</b>` (в raw body: `&lt;b&gt;`). Динамичните стойности ТРЯБВА да се escape-ват (XSS защита), затова canonical pattern е `Markup(self.env._("... <b>%(x)s</b> ...")) % {"x": val}` — `Markup.__mod__` escape-ва само substituted-ите стойности, литералните тагове остават HTML. За чист plain-text note plain `str` е правилен (и по-безопасен — не пъхай HTML където не трябва). Core: `Markup("<b>%s</b>") % name` навсякъде в `mail/`. **Как се хваща**: rendирай note-а и assert `'<b>' in body and '&lt;b&gt;' not in body`; grep adversarial: `grep -rn 'message_post(' models/ | xargs grep -l '<b>\|<br\|<p>'` после провери за `Markup`.
-
-Matched tokens: `str`
-
-#### Gotcha: **Маркер/HTML-коментар сложен в `mail.mail.body_html` на CREATE-time с
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Mail / Templates** in odoo19-gotchas.md:
-
-> **Маркер/HTML-коментар сложен в `mail.mail.body_html` на CREATE-time се мангълва от `_prepare_outgoing_body`→`_replace_local_links` (lxml re-serialise) на SEND-time.** `html_sanitize` (на store) ГО ЗАПАЗВА, но core `mail.mail._prepare_outgoing_body()` вика `mail.render.mixin._replace_local_links(body_html)`, който парсва+пресериализира HTML-а през lxml и чупи `<!--[...]-->` comment-а (маха отварящия `<!--`, оставя `]--&gt;`). Затова маркерът ТРЯБВА да се embed-ва в override на `_prepare_outgoing_body` **СЛЕД** `super()` (post-`_replace_local_links`), НЕ в `body_html`. За thread-less mail (без model/res_id — за да не цапа клиентския chatter с празно `email_outgoing` "message removed" phantom; `mail.mail` `_inherits` mail.message → model/res_id са на делегата → показва се в chatter) идентифицирай записа през друг канал (напр. `mail.mail.headers` sentinel, парсва се с `ast.literal_eval`) и embed-вай post-super. **Как се хваща**: assert `parse_metadata_xml(mail._prepare_outgoing_body())`, НЕ само `parse_metadata_xml(mail.body_html)` — body_html минава sanitize, но `_prepare_outgoing_body` лови lxml мангъла.
-
-Matched tokens: `super()`
-
-#### Gotcha: **Dotted domain `('a.b', '=', False)` НЕ матчва записи със счупена вер
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **ORM / Domains** in odoo19-gotchas.md:
-
-> **Dotted domain `('a.b', '=', False)` НЕ матчва записи със счупена верига (`a = NULL`).** В v19 всяка dotted кондиция се декомпозира до `any` оператора (`odoo/orm/domains.py:937-941`) = EXISTS subquery — никога не матчва NULL междинен M2O. Доказано емпирично (hr_rfid, юни 2026): `['|', ('controller_id.webstack_id.company_id','=',False), ...]` в ir.rule НЕ направи controller-less събития видими. За всеки ОПЦИОНАЛЕН линк по веригата трябва изричен клон `('a','=',False)`; required линковете не могат да се счупят → без клон. ВИНАГИ тествай broken-chain записа отделно от terminal-NULL записа — вторият тест минава, докато първият още е скрит.
-
-Matched tokens: `any`
-
-### From `git_log` (3)
+Commit `139e5c19da` (2026-06-17): [FIX] refresh layer: camera events never refreshed the realtime dashboard
 
 #### Fix: [FIX] drop test-framework import from module __init__ (A1)
-<!-- source: git_log ref: d3925400454543d7999e8b92bce72f95f1a84e03 occ: 1 conf: 0.60 -->
 
 Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
 
 #### Fix: [REF] refresh_mixin: shared useBusRefresh hook + race-condition fix
-<!-- source: git_log ref: ff393adb84bc302d6af4e3147d9cfc1d48d0c545 occ: 1 conf: 0.60 -->
 
 Commit `ff393adb84` (2026-05-01): [REF] refresh_mixin: shared useBusRefresh hook + race-condition fix
 
 #### Fix: [FIX] refresh_mixin: Add missing res_company model and views
-<!-- source: git_log ref: b44350f7776500c900617b01762f347bda819fd5 occ: 1 conf: 0.60 -->
 
 Commit `b44350f777` (2025-12-19): [FIX] refresh_mixin: Add missing res_company model and views
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/refresh_mixin`
-- Source digest: `sha256:1db12fb4fa2768a9770c8e9cc5a5ccedf565d9b40da9018b73f5d5a04c992e2b`
-- Generated at: `2026-06-16T16:24:42+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `refresh_mixin`
+- Source digest: `sha256:d12b067ae069abd5c23d8f01e7b378eb508e2bd7f42715fed11e85d9b8aeecf0`
+- Generated at: `2026-11-23T09:43:04+00:00`
+- Generator: `polimex_module_knowledge`

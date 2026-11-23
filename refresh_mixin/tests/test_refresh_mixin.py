@@ -144,7 +144,7 @@ class TestRefreshMixin(common.TransactionCase):
 
     def test_telemetry_only_write_is_silent(self):
         """A device reporting 'still alive' every minute must not persist a
-        bus row per report - that is what flooded bus_bus on VIP Security
+        bus row per report - that is what flooded bus_bus on a fleet of devices
         (~200K rows/day). A write touching ONLY ignored fields is silent."""
         self.assertFalse(self._notice_required(
             {"last_heartbeat": "2026-08-10 10:00:00"},

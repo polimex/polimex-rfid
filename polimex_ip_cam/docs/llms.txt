@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Module for managing IP cameras via manufacturers integration integration
-last_updated: '2026-08-14'
-source_digest: sha256:5e04b818dc6208b79c78ff5b149171c2e492a40285ced080a2dc7bc91fc9ee86
+last_updated: '2026-11-23'
+source_digest: sha256:27cb8f32086f994e543beee81ffa8d6a8aac6c6c53f84f8e855d9dea0300534b
 companion_doc: llms-full.md
 ---
 
@@ -26,8 +26,7 @@ This guide is for users who **configure** and **use** the module. If you need to
 
 ## How to use it
 
-Polimex ANPR Module
-===================
+### Polimex ANPR Module
 
 .. image:: https://img.shields.io/badge/maturity-Beta-yellow.png
    :target: https://odoo-community.org/page/development-status
@@ -42,8 +41,7 @@ Polimex ANPR Module
    :target: https://www.odoo.com
    :alt: Odoo 19.0
 
-Overview
---------
+#### Overview
 
 The **Polimex ANPR** module for Odoo 19 provides a robust solution for managing IP cameras with Automatic Number Plate Recognition (ANPR) functionality. This module integrates with Hikvision cameras via the ISAPI protocol and offers seamless synchronization between camera settings and Odoo records.
 
@@ -57,14 +55,12 @@ Key features include:
 - **RFID & ANPR Integration:** Link HR RFID cards (whose number is the license plate) to cameras; creating/removing a relation queues the matching add/remove command automatically.
 - **Asynchronous Command Execution:** A dedicated command model queues and executes operations (retry + state tracking), serialising commands per camera.
 
-Table of Contents
------------------
+#### Table of Contents
 .. contents::
    :local:
    :depth: 2
 
-Configuration
--------------
+#### Configuration
 
 1. **Camera Configuration:**
 
@@ -89,15 +85,50 @@ Configuration
    - Each command includes type, request/response data, execution time, retry count (max 5), and state (new, in_progress, done, error).
    - Commands execute automatically upon creation and can be re-executed manually if needed.
 
-Usage
------
+#### Usage
 
 - **Camera Management:** Manage cameras and view their statuses and snapshots from the standard Odoo views.
 - **Plate List Synchronization:** When you link an RFID card to a camera, the module automatically updates the camera’s plate list.
 - **Command Monitoring:** Use the provided form and tree views for camera commands to monitor, review, and re-execute commands.
 
-API Details
------------
+##### While data is being brought over from another system
+
+A data transfer says nothing to the cameras. No plate is added or removed on a
+camera, no barrier is moved, and no readers or door are made up for a camera
+that is being brought across - it arrives with the ones the other system had,
+so its history keeps pointing at the right door.
+
+The consequence is that each camera still holds the plate list it held before
+the transfer. **Refresh each camera's list once the transfer has finished**
+(Reload whitelist on the camera). The transfer says so on its own page as well.
+
+The cameras keep watching and keep letting people through throughout: only the
+writing of new lists is held back, and that is the point - a transfer of a few
+hundred plates would otherwise fire a few hundred requests at cameras that are
+guarding a live site.
+
+##### Camera self-test
+
+Open a camera and press "Self-Test" (managers only). One run checks
+everything this system uses from the camera and shows every problem first,
+every detail below: who answers at the address (model, serial, firmware),
+the picture, the clock difference, where the camera sends its recognitions,
+how many plates it holds against how many are recorded here, and whether a
+plate can be written to it. The write check uses one test plate (TEST0001)
+that is added and removed again - a working camera is left exactly as it
+was, and the barrier is deliberately never touched. When writing fails, the
+test also tries a record shaped like your real data and names the exact
+part the camera refuses, quoting the camera's own answer - send that report
+to support. The report lives in the dialog - copy it if you need to keep it.
+The clock check compares the camera's wall clock in its own time zone; the
+zone offset the camera claims is ignored, because these firmwares misstate
+it.
+
+If a plate-list reload keeps failing, the queue stops itself after three
+identical refusals from the same camera and marks the remaining commands
+with one explanation, instead of repeating the same error for every plate.
+
+#### API Details
 
 The module talks to Hikvision cameras through the ``HikvisionCamera`` helper
 (``helpers/camera_api.py``) over ISAPI with HTTP Digest auth:
@@ -107,8 +138,7 @@ The module talks to Hikvision cameras through the ``HikvisionCamera`` helper
 - **Plate List Commands:** ``add_plate_to_list(plate_entries)`` / ``delete_plate_from_list(plate_entries)`` — routed by ``_uses_lp_audit_api()`` to the VCL or LP-audit implementation (see below).
 - **Time Sync:** ``set_time_config(...)`` driven from the ANPR webhook on heartbeat drift.
 
-Hikvision ISAPI Compatibility
------------------------------
+#### Hikvision ISAPI Compatibility
 
 Hikvision changed the plate-list API across camera generations, so the module
 detects the supported one per camera (probing ``/ISAPI/ITC/Entrance/VCL/capabilities``)
@@ -131,11 +161,11 @@ firmware that returns *notSupport* for VCL):
   ``LicensePlate``, ``listType`` (``allowList``/``blockList``), ``cardNo`` /
   ``cardID``, a ``createTime`` (validity start) / ``effectiveTime`` (validity
   end) window and ``operationType``/``operation``. Success is HTTP 200 with
-  ``statusCode 1`` — any other status is a failure, so a plate the camera
+  ``statusCode 1`` - any other status is a failure, so a plate the camera
   rejected is not marked done in Odoo. **Proven live on V5.5.0 (build
-  260328, self-test on site, 2026-08-16): this firmware REFUSES a record
+  260328, self-test on site, 2026-08-16):** this firmware REFUSES a record
   write onto a plate it already holds (badParameters / "Invalid XML
-  Content"), while accepting a fresh plate — the write ladder therefore
+  Content"), while accepting a fresh plate - the write ladder therefore
   withdraws the exact plate and writes it again (the replace step) before
   degrading anything else. V5.4.4 merged by plate directly.
 - Delete: ``PUT DelLicensePlateAuditData?format=json`` with
@@ -171,74 +201,33 @@ event description for diagnosis.
 For the full XML/JSON structures refer to the official Hikvision ISAPI guides
 (the TCG ANPR integration guide for the LP-audit endpoints).
 
-Contributing
-------------
+#### Contributing
 
 Contributions are welcome! Please follow the best practices outlined in the Odoo developer guidelines.
 For detailed instructions on contributing, visit the
 `Odoo Community Association contribution page <https://odoo-community.org/page/Contribute>`_.
 
-Bug Tracker
------------
+#### Bug Tracker
 
 Bugs are tracked on the GitHub Issues page:
 `https://github.com/polimex/polimex-rfid/issues <https://github.com/polimex/polimex-rfid/issues>`_
 
-
-### While data is being brought over from another system
-
-A data transfer says nothing to the cameras. No plate is added or removed on a
-camera, no barrier is moved, and no readers or door are made up for a camera
-that is being brought across - it arrives with the ones the other system had,
-so its history keeps pointing at the right door.
-
-The consequence is that each camera still holds the plate list it held before
-the transfer. **Refresh each camera's list once the transfer has finished**
-(Reload whitelist on the camera). The transfer says so on its own page as well.
-
-The cameras keep watching and keep letting people through throughout: only the
-writing of new lists is held back, and that is the point - a transfer of a few
-hundred plates would otherwise fire a few hundred requests at cameras that are
-guarding a live site.
-
 ### Available actions
 
-- **Show reader**
-- **Check connection** — When the camera brand is hikvision, instantiate the HikvisionCamera API class and use it.
-- **Get http host** — Retrieve the camera's HTTP host configuration, store it in server_setup as param=value lines,
-- **Set http host** — Задава HTTP host конфигурация на камерата, като използва стойностите от server_setup.
-- **Get entrance param** — Извлича entrance параметрите от камерата и ги записва във rec.entrance_setup във формат 'param=value'.
-- **Set entrance param** — Задава entrance параметрите на камерата чрез API, като прочита конфигурацията от
-- **Get snapshot** — Get a snapshot from the camera (base64 encoded) and store it in the snapshot field.
-- **Control barrier** — Control the camera's barrier gate by sending an open/close command.
-- **Reload whitelist** — Reload each whitelist plate as a separate add_plate command.
-- **Execute** — Изпълнява командата. Методът променя състоянието на командата на 'in_progress',
-- **Create cameras** — Create a cctv.camera per remaining line, then open the camera list
+- **Readers**
+- **Check Connection** - When the camera brand is hikvision, instantiate the HikvisionCamera API class and use it. Update the record's connection_status and, if available, update the…
+- **Get Push Server Information** - Retrieve the camera's HTTP host configuration, store it in server_setup as param=value lines, and display a user-friendly balloon message with bullet points.
+- **Set Push Server Information** - Задава HTTP host конфигурация на камерата, като използва стойностите от server_setup. server_setup трябва да бъде във формат "param=value" на отделни редове.…
+- **Get Entrance settings** - Извлича entrance параметрите от камерата и ги записва във rec.entrance_setup във формат 'param=value'. При това вложената структура се представя с точкова…
+- **Set Entrance settings** - Задава entrance параметрите на камерата чрез API, като прочита конфигурацията от rec.entrance_setup (форматирана като "param=value" на редове), възстановява…
+- **Take Snapshot** - Get a snapshot from the camera (base64 encoded) and store it in the snapshot field.
+- **Reload Whitelist** - Make the camera's list EQUAL to the list kept here.
+- **Self-Test** - Full self-test: every problem first, every detail below it.
+- **Add Cameras** - Create a cctv.camera per remaining line, then open the camera list filtered to what was just added. Connection details (sub-serial, firmware) are filled later…
 
-
-## Camera self-test
-
-Open a camera and press "Self-Test" (managers only). One run checks
-everything this system uses from the camera and shows every problem first,
-every detail below: who answers at the address (model, serial, firmware),
-the picture, the clock difference, where the camera sends its recognitions,
-how many plates it holds against how many are recorded here, and whether a
-plate can be written to it. The write check uses one test plate (TEST0001)
-that is added and removed again - a working camera is left exactly as it
-was, and the barrier is deliberately never touched. When writing fails, the
-test also tries a record shaped like your real data and names the exact
-part the camera refuses, quoting the camera's own answer - send that report
-to support. The report lives in the dialog - copy it if you need to keep it.
-The clock check compares the camera's wall clock in its own time zone; the
-zone offset the camera claims is ignored, because these firmwares misstate
-it.
-
-If a plate-list reload keeps failing, the queue stops itself after three
-identical refusals from the same camera and marks the remaining commands
-with one explanation, instead of repeating the same error for every plate.
 
 ## Common questions and errors
 
 Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
 
-- **Execute** (on `cctv.camera.command`) — Изпълнява командата. Методът променя състоянието на командата на 'in_progress',
+- **Execute** (on `cctv.camera.command`) - Изпълнява командата. Методът променя състоянието на командата на 'in_progress', записва времето на изпълнение и извиква съответния API метод според…

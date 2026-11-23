@@ -2,7 +2,7 @@
 id: hr_attendace_rfid_hr_hourly_cost
 title: RFID Hourly Cost
 module: hr_attendace_rfid_hr_hourly_cost
-module_version: 19.0.1.1.0
+module_version: 19.0.1.3.4
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        RFID attendance hourly cost plugin\n    "
-last_updated: '2026-06-03'
-source_digest: sha256:898f45364c49574b960aac44247f2e9194dd34c95a7a1a3abd5c5cd59a784864
+last_updated: '2026-11-23'
+source_digest: sha256:da5cfde644f91256cc3267894ae3a9e572e87409b1b7426296b5641cc273aa78
 depends:
 - hr_hourly_cost
 - hr_attendance_late
@@ -59,7 +59,7 @@ chunking:
 ---
 
 
-# RFID Hourly Cost — `hr_attendace_rfid_hr_hourly_cost` v19.0.1.1.0
+# RFID Hourly Cost - `hr_attendace_rfid_hr_hourly_cost` v19.0.1.3.4
 
 
         RFID attendance hourly cost plugin
@@ -70,10 +70,10 @@ chunking:
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_attendace_rfid_hr_hourly_cost`
-- **Version**: `19.0.1.1.0`
+- **Version**: `19.0.1.3.4`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -194,6 +194,14 @@ Costs are calculated automatically when:
    - See allocated employee costs
    - Track budget utilization
 
+###### Which days are paid at the holiday rate
+
+A day is an official holiday when a public holiday covers that day as the
+employee lives it, in their own **Timezone** (employee form, *Settings*
+tab). A holiday begins at midnight in Sofia, which is the evening before
+in UTC: work on the eve of a holiday and on the day after it is paid as an
+ordinary or rest day, and only the holiday itself at the holiday rate.
+
 ##### 📊 Reports
 
 ###### Cost Summary Report
@@ -305,14 +313,6 @@ Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
 For more information, visit [polimex.co](https://polimex.co)
 
 
-## Which days are paid at the holiday rate
-
-A day is an official holiday when a public holiday covers that day as the
-employee lives it, in their own **Timezone** (employee form, *Settings*
-tab). A holiday begins at midnight in Sofia, which is the evening before
-in UTC: work on the eve of a holiday and on the day after it is paid as an
-ordinary or rest day, and only the holiday itself at the holiday rate.
-
 ## Installation & Configuration <a id='install'></a>
 
 Installation requirements and configuration entry points. Use this section to answer 'why won't the module install' questions.
@@ -321,21 +321,21 @@ Installation requirements and configuration entry points. Use this section to an
 ./venv/bin/python odoo/odoo-bin -d DATABASE -i hr_attendace_rfid_hr_hourly_cost --stop-after-init
 ```
 
-> **Auto-install**: installed automatically when all dependencies are present.
+> **Auto-install**: Odoo installs it by itself only in an operation that installs one of `hr_hourly_cost`, `hr_attendance_late` while the rest of them are installed or installed in the same operation. A database that already has all of them does not get it by itself - not on an upgrade (`-u`), not on Update Apps List: install it once from Apps or with the command above.
 
 
 ## Models <a id='models'></a>
 Each model below is an atomic concept: one H3 per model. Inherited models (extending core) are marked explicitly.
 
 ### `hr.attendance.extra` <a id='model-hr-attendance-extra'></a>
-Python class `HrAttendanceExtraCost` in `models/hr_attendance_extra.py:11`.  Model.  Inherits: `hr.attendance.extra`.
+Python class `HrAttendanceExtraCost` in `models/hr_attendance_extra.py:10`.  Model.  Inherits: `hr.attendance.extra`.
 
 #### Fields
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `currency_id` | Many2one → \`res.currency\` | Currency |  | — | Currency for cost calculations (derived from employee).                  • Sourc |
-| `hourly_cost` | Monetary | Hourly Cost |  | — | Employee's hourly cost rate (derived from employee record).                  • S |
+| `currency_id` | Many2one → \`res.currency\` | Currency |  | - | Currency for cost calculations (derived from employee).                  • Sourc |
+| `hourly_cost` | Monetary | Hourly Cost |  | - | Employee's hourly cost rate (derived from employee record).                  • S |
 | `actual_work_time_cost` | Monetary | Actual Work Time Cost |  | ✓ | Total labour cost for the day: regular hours plus overtime and rest-day/holiday  |
 | `cost_regular` | Monetary | Regular Cost |  | ✓ | Cost of hours worked inside the schedule at the base rate (hourly cost × actual  |
 | `cost_overtime` | Monetary | Overtime Cost |  | ✓ | Cost of overtime worked on a working day, at the КТ чл. 262 working-day multipli |
@@ -344,53 +344,26 @@ Python class `HrAttendanceExtraCost` in `models/hr_attendance_extra.py:11`.  Mod
 
 #### Notable methods
 
-- **`_compute_actual_work_time_cost(self)`** — decorators: `@api.depends`
+- **`_compute_actual_work_time_cost(self)`** - decorators: `@api.depends`
   - touches: `hr.legal.rate`
 
 
 ## Module Constants <a id='constants'></a>
 
-UPPER_CASE module-level assignments — rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
+UPPER_CASE module-level assignments - rates, mappings, priority tables, status maps. Answer 'what values does the module hard-code?' here.
 
 
 ### `models/hr_attendance_extra.py`
 
-- **`RATE_OVERTIME_WORKDAY`** *(scalar)* = `'overtime_workday'`  — line 5
-- **`RATE_OVERTIME_WEEKEND`** *(scalar)* = `'overtime_weekend'`  — line 6
-- **`RATE_OVERTIME_HOLIDAY`** *(scalar)* = `'overtime_holiday'`  — line 7
-- **`RATE_NIGHT_SUPPLEMENT`** *(scalar)* = `'night_supplement'`  — line 8
+- **`RATE_OVERTIME_WORKDAY`** *(scalar)* = `'overtime_workday'`  - line 4
+- **`RATE_OVERTIME_WEEKEND`** *(scalar)* = `'overtime_weekend'`  - line 5
+- **`RATE_OVERTIME_HOLIDAY`** *(scalar)* = `'overtime_holiday'`  - line 6
+- **`RATE_NIGHT_SUPPLEMENT`** *(scalar)* = `'night_supplement'`  - line 7
 
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`TestAttendanceCostRates.setUpClass(cls)`** (`@classmethod`) — `tests/test_cost.py:16`
-  - calls `super()`
-  - touches: `hr.employee`, `hr.legal.rate`, `resource.calendar`
-- **`TestAttendanceCostRates.test_workday_overtime(self)`** — `tests/test_cost.py:46`
-- **`TestAttendanceCostRates.test_weekend_extra(self)`** — `tests/test_cost.py:52`
-- **`TestAttendanceCostRates.test_holiday_extra_uses_higher_rate(self)`** — `tests/test_cost.py:58`
-- **`TestAttendanceCostRates.test_night_supplement_additive(self)`** — `tests/test_cost.py:64`
-- **`TestAttendanceCostRates.test_night_supplement_on_overtime_and_extra(self)`** — `tests/test_cost.py:70`
-  - Night supplement covers night hours regardless of class.
-- **`TestAttendanceCostRates.test_no_rates_falls_back_to_flat(self)`** — `tests/test_cost.py:77`
-  - With multipliers missing for a class, premium defaults to base (1.0).
-- **`TestAttendanceCostRates.test_historical_rate_preserved(self)`** — `tests/test_cost.py:85`
-  - A later night-rate row must not change a past day's cost on recompute.
-- **`TestHourlyCostSmoke.test_hr_attendance_extra_fields_exist(self)`** — `tests/test_smoke.py:9`
-  - touches: `hr.attendance.extra`
-- **`TestHourlyCostSmoke.test_currency_field_resolves_to_company_currency(self)`** — `tests/test_smoke.py:15`
-
-### Private helpers
-
-- **`TestAttendanceCostRates._ensure_rate(cls, code, date_from, value)`** (`@classmethod`) — `tests/test_cost.py:35`
-  - touches: `hr.legal.rate`
-- **`TestAttendanceCostRates._mk(self, for_date, **kw)`** — `tests/test_cost.py:42`
-  - touches: `hr.attendance.extra`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -399,9 +372,9 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `view_hr_attendance_extra_form_inherit` | `hr.attendance.extra` | — | hr_attendance_late.hr_attendance_extra_view_form | `views/hr_attendance_extra.xml` |
-| `view_hr_attendance_extra_pivot_inherit` | `hr.attendance.extra` | — | hr_attendance_late.hr_attendance_extra_view_pivot | `views/hr_attendance_extra.xml` |
-| `view_hr_attendance_extra_list_inherit` | `hr.attendance.extra` | — | hr_attendance_late.hr_attendance_extra_view_tree | `views/hr_attendance_extra.xml` |
+| `view_hr_attendance_extra_form_inherit` | `hr.attendance.extra` | - | hr_attendance_late.hr_attendance_extra_view_form | `views/hr_attendance_extra.xml` |
+| `view_hr_attendance_extra_pivot_inherit` | `hr.attendance.extra` | - | hr_attendance_late.hr_attendance_extra_view_pivot | `views/hr_attendance_extra.xml` |
+| `view_hr_attendance_extra_list_inherit` | `hr.attendance.extra` | - | hr_attendance_late.hr_attendance_extra_view_tree | `views/hr_attendance_extra.xml` |
 
 #### Sample XPath operations
 
@@ -423,7 +396,13 @@ This module does not declare any access rules, record rules or groups of its own
 
 ## Data & Automation <a id='data'></a>
 
-No XML data records or cron jobs are declared by this module.
+XML records seeded at install and scheduled actions.
+
+
+### Data records summary
+
+- `hr.attendance.extra`: 5 record(s)
+- `hr.employee`: 2 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
@@ -432,13 +411,13 @@ This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWe
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -447,69 +426,33 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
+Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `gotchas` (4)
+### From `git_log` (3)
 
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
+#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u ...
 
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
-
-Matched tokens: `_compute`
-
-#### Gotcha: **НЕ сменяй** `company.currency_id` в тестове — "journal items already
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Тестове** in odoo19-gotchas.md:
-
-> **НЕ сменяй** `company.currency_id` в тестове — "journal items already exist" грешка. Ползвай `cls.company.currency_id`
-
-Matched tokens: `company.currency_id`
-
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `help=`
-
-### From `git_log` (2)
+Commit `54843cfc81` (2026-07-22): fix(demo): showcase demo files must be noupdate=1 - production -u re-wrote them
 
 #### Fix: [FIX] drop test-framework import from module __init__ (A1)
-<!-- source: git_log ref: d3925400454543d7999e8b92bce72f95f1a84e03 occ: 1 conf: 0.60 -->
 
 Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
 
 #### Fix: fix license
-<!-- source: git_log ref: 6e49a3ef0cee2364b143dcd71a33030362365dd1 occ: 1 conf: 0.60 -->
 
 Commit `6e49a3ef0c` (2024-09-09): fix license
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/hr_attendace_rfid_hr_hourly_cost`
-- Source digest: `sha256:898f45364c49574b960aac44247f2e9194dd34c95a7a1a3abd5c5cd59a784864`
-- Generated at: `2026-06-03T08:31:34+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `hr_attendace_rfid_hr_hourly_cost`
+- Source digest: `sha256:da5cfde644f91256cc3267894ae3a9e572e87409b1b7426296b5641cc273aa78`
+- Generated at: `2026-11-23T09:43:04+00:00`
+- Generator: `polimex_module_knowledge`

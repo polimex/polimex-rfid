@@ -2,7 +2,7 @@
 id: hr_rfid_refresh_views
 title: RFID Refresh Views
 module: hr_rfid_refresh_views
-module_version: 19.0.1.1.2
+module_version: 19.0.1.3.0
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        Refresh RFID views\n    "
-last_updated: '2026-06-16'
-source_digest: sha256:9fc637336d2cda4cb9088fae15f4b40f9d55274921d96cc3246429c9e19b9d92
+last_updated: '2026-11-23'
+source_digest: sha256:d8e74438744f587014fefb20769e61188ed745144698fe2cbed3c01ef5608249
 depends:
 - hr_rfid
 - refresh_mixin
@@ -66,7 +66,7 @@ chunking:
 ---
 
 
-# RFID Refresh Views — `hr_rfid_refresh_views` v19.0.1.1.2
+# RFID Refresh Views - `hr_rfid_refresh_views` v19.0.1.3.0
 
 
         Refresh RFID views
@@ -77,10 +77,10 @@ chunking:
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_refresh_views`
-- **Version**: `19.0.1.1.2`
+- **Version**: `19.0.1.3.0`
 - **Category**: Administration
 - **License**: AGPL-3
 - **Author**: Polimex Team <software@polimex.co>
@@ -381,7 +381,7 @@ Installation requirements and configuration entry points. Use this section to an
 ./venv/bin/python odoo/odoo-bin -d DATABASE -i hr_rfid_refresh_views --stop-after-init
 ```
 
-> **Auto-install**: installed automatically when all dependencies are present.
+> **Auto-install**: Odoo installs it by itself only in an operation that installs one of `hr_rfid`, `refresh_mixin` while the rest of them are installed or installed in the same operation. A database that already has all of them does not get it by itself - not on an upgrade (`-u`), not on Update Apps List: install it once from Apps or with the command above.
 
 
 ## Models <a id='models'></a>
@@ -392,21 +392,24 @@ Python class `HrRfidCommands` in `models/hr_rfid_command.py:5`.  Model.  Inherit
 
 #### Notable methods
 
-- **`get_company_id(self)`** — decorators: —
+- **`get_company_id(self)`** - decorators: -
+- **`get_company_ids(self)`** - decorators: -
 
 ### `hr.rfid.ctrl` <a id='model-hr-rfid-ctrl'></a>
 Python class `HrRfidController` in `models/hr_rfid_ctrl.py:5`.  Model.  Inherits: `hr.rfid.ctrl`, `refresh.mixin`.  Description: *Controller*.
 
 #### Notable methods
 
-- **`get_company_id(self)`** — decorators: —
+- **`get_company_id(self)`** - decorators: -
+- **`get_company_ids(self)`** - decorators: -
 
 ### `hr.rfid.ctrl.alarm` <a id='model-hr-rfid-ctrl-alarm'></a>
 Python class `HrRfidCtrlAlarm` in `models/hr_rfid_ctrl_alarm.py:6`.  Model.  Inherits: `hr.rfid.ctrl.alarm`, `refresh.mixin`.
 
 #### Notable methods
 
-- **`get_company_id(self)`** — decorators: —
+- **`get_company_id(self)`** - decorators: -
+- **`get_company_ids(self)`** - decorators: -
 
 ### `hr.rfid.ctrl.alarm.group` <a id='model-hr-rfid-ctrl-alarm-group'></a>
 Python class `HrRfidCtrlAlarmGroup` in `models/hr_rfid_ctrl_alarm_group.py:5`.  Model.  Inherits: `hr.rfid.ctrl.alarm.group`, `refresh.mixin`.  Description: *Alarm system groups*.
@@ -416,17 +419,24 @@ Python class `HrRfidDoor` in `models/hr_rfid_door.py:6`.  Model.  Inherits: `hr.
 
 #### Notable methods
 
-- **`get_company_id(self)`** — decorators: —
+- **`get_company_id(self)`** - decorators: -
+- **`get_company_ids(self)`** - decorators: -
 
 ### `hr.rfid.event` <a id='model-hr-rfid-event'></a>
 Python class `HRRFIDEvent` in `models/hr_rfid_event.py:5`.  AbstractModel.  Inherits: `hr.rfid.event`, `refresh.mixin`.  Description: *Helper for RFID Events*.
 
 #### Notable methods
 
-- **`get_company_id(self)`** — decorators: —
+- **`get_company_id(self)`** - decorators: -
+- **`get_company_ids(self)`** - decorators: -
+  - touches: `hr.rfid.webstack`, `res.company`
 
 ### `hr.rfid.webstack` <a id='model-hr-rfid-webstack'></a>
 Python class `HrRfidWebstack` in `models/hr_rfid_webstack.py:5`.  Model.  Inherits: `hr.rfid.webstack`, `refresh.mixin`.  Description: *Module*.
+
+#### Notable methods
+
+- **`get_company_ids(self)`** - decorators: -
 
 
 ## Module Constants <a id='constants'></a>
@@ -436,22 +446,7 @@ No module-level UPPER_CASE constants are declared by this module.
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`TestRfidRefreshViewsSmoke.setUpClass(cls)`** (`@classmethod`) — `tests/test_smoke.py:13`
-  - calls `super()`
-- **`TestRfidRefreshViewsSmoke.test_consumer_models_have_refresh_mixin(self)`** — `tests/test_smoke.py:22`
-- **`TestRfidRefreshViewsSmoke.test_webstack_write_emits_bus_notification(self)`** — `tests/test_smoke.py:38`
-  - A webstack lives at the head of the dependency chain — write
-  - touches: `hr.rfid.webstack`
-
-### Private helpers
-
-- **`TestRfidRefreshViewsSmoke._patch_bus(self)`** — `tests/test_smoke.py:18`
-  - touches: `bus.bus`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -460,19 +455,19 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_rfid_command_view_tree_refresh` | `hr.rfid.command` | — | hr_rfid.hr_rfid_command_view_list | `views/hr_rfid_command.xml` |
-| `hr_rfid_controller_view_tree_refresh` | `hr.rfid.ctrl` | — | hr_rfid.hr_rfid_controller_view_list | `views/hr_rfid_ctrl.xml` |
-| `hr_rfid_controller_view_kanban_refresh` | `hr.rfid.ctrl` | — | hr_rfid.hr_rfid_controller_view_kanban | `views/hr_rfid_ctrl.xml` |
-| `hr_rfid_ctrl_alarm_tree_view_refresh` | `hr.rfid.ctrl.alarm` | — | hr_rfid.hr_rfid_ctrl_alarm_list_view | `views/hr_rfid_ctrl_alarm.xml` |
-| `hr_rfid_ctrl_alarm_view_kanban_refresh` | `hr.rfid.ctrl.alarm` | — | hr_rfid.hr_rfid_ctrl_alarm_view_kanban | `views/hr_rfid_ctrl_alarm.xml` |
-| `hr_rfid_ctrl_alarm_group_hierarchy_view_refresh` | `hr.rfid.ctrl.alarm.group` | — | hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view | `views/hr_rfid_ctrl_alarm_group.xml` |
-| `hr_rfid_door_view_kanban_refresh` | `hr.rfid.door` | — | hr_rfid.hr_rfid_door_view_kanban | `views/hr_rfid_door.xml` |
-| `hr_rfid_sys_ev_view_tree_refresh` | `hr.rfid.event.system` | — | hr_rfid.hr_rfid_sys_ev_view_list | `views/hr_rfid_event_system.xml` |
-| `hr_rfid_user_ev_view_tree_refresh` | `hr.rfid.event.user` | — | hr_rfid.hr_rfid_user_ev_view_list | `views/hr_rfid_event_user.xml` |
-| `hr_rfid_webstack_view_tree_refresh` | `hr.rfid.webstack` | — | hr_rfid.hr_rfid_webstack_view_list | `views/hr_rfid_webstack.xml` |
-| `hr_rfid_webstack_view_kanban_refresh` | `hr.rfid.webstack` | — | hr_rfid.hr_rfid_webstack_view_kanban | `views/hr_rfid_webstack.xml` |
-| `view_company_form_hide_realtime_refresh` | `res.company` | — | refresh_mixin.view_company_form_realtime_refresh | `views/res_company.xml` |
-| `rfid_form_inherit_res_company_refresh` | `res.company` | — | hr_rfid.rfid_form_inherit_res_company | `views/res_company.xml` |
+| `hr_rfid_command_view_tree_refresh` | `hr.rfid.command` | - | hr_rfid.hr_rfid_command_view_list | `views/hr_rfid_command.xml` |
+| `hr_rfid_controller_view_tree_refresh` | `hr.rfid.ctrl` | - | hr_rfid.hr_rfid_controller_view_list | `views/hr_rfid_ctrl.xml` |
+| `hr_rfid_controller_view_kanban_refresh` | `hr.rfid.ctrl` | - | hr_rfid.hr_rfid_controller_view_kanban | `views/hr_rfid_ctrl.xml` |
+| `hr_rfid_ctrl_alarm_tree_view_refresh` | `hr.rfid.ctrl.alarm` | - | hr_rfid.hr_rfid_ctrl_alarm_list_view | `views/hr_rfid_ctrl_alarm.xml` |
+| `hr_rfid_ctrl_alarm_view_kanban_refresh` | `hr.rfid.ctrl.alarm` | - | hr_rfid.hr_rfid_ctrl_alarm_view_kanban | `views/hr_rfid_ctrl_alarm.xml` |
+| `hr_rfid_ctrl_alarm_group_hierarchy_view_refresh` | `hr.rfid.ctrl.alarm.group` | - | hr_rfid.hr_rfid_ctrl_alarm_group_hierarchy_view | `views/hr_rfid_ctrl_alarm_group.xml` |
+| `hr_rfid_door_view_kanban_refresh` | `hr.rfid.door` | - | hr_rfid.hr_rfid_door_view_kanban | `views/hr_rfid_door.xml` |
+| `hr_rfid_sys_ev_view_tree_refresh` | `hr.rfid.event.system` | - | hr_rfid.hr_rfid_sys_ev_view_list | `views/hr_rfid_event_system.xml` |
+| `hr_rfid_user_ev_view_tree_refresh` | `hr.rfid.event.user` | - | hr_rfid.hr_rfid_user_ev_view_list | `views/hr_rfid_event_user.xml` |
+| `hr_rfid_webstack_view_tree_refresh` | `hr.rfid.webstack` | - | hr_rfid.hr_rfid_webstack_view_list | `views/hr_rfid_webstack.xml` |
+| `hr_rfid_webstack_view_kanban_refresh` | `hr.rfid.webstack` | - | hr_rfid.hr_rfid_webstack_view_kanban | `views/hr_rfid_webstack.xml` |
+| `view_company_form_hide_realtime_refresh` | `res.company` | - | refresh_mixin.view_company_form_realtime_refresh | `views/res_company.xml` |
+| `rfid_form_inherit_res_company_refresh` | `res.company` | - | hr_rfid.rfid_form_inherit_res_company | `views/res_company.xml` |
 
 #### Sample XPath operations
 
@@ -509,13 +504,13 @@ This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWe
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -524,73 +519,29 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
+Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `gotchas` (5)
+### From `git_log` (2)
 
-#### Gotcha: **Маркер/HTML-коментар сложен в `mail.mail.body_html` на CREATE-time с
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
+#### Fix: [FIX] refresh layer: camera events never refreshed the realtime ...
 
-From **Mail / Templates** in odoo19-gotchas.md:
-
-> **Маркер/HTML-коментар сложен в `mail.mail.body_html` на CREATE-time се мангълва от `_prepare_outgoing_body`→`_replace_local_links` (lxml re-serialise) на SEND-time.** `html_sanitize` (на store) ГО ЗАПАЗВА, но core `mail.mail._prepare_outgoing_body()` вика `mail.render.mixin._replace_local_links(body_html)`, който парсва+пресериализира HTML-а през lxml и чупи `<!--[...]-->` comment-а (маха отварящия `<!--`, оставя `]--&gt;`). Затова маркерът ТРЯБВА да се embed-ва в override на `_prepare_outgoing_body` **СЛЕД** `super()` (post-`_replace_local_links`), НЕ в `body_html`. За thread-less mail (без model/res_id — за да не цапа клиентския chatter с празно `email_outgoing` "message removed" phantom; `mail.mail` `_inherits` mail.message → model/res_id са на делегата → показва се в chatter) идентифицирай записа през друг канал (напр. `mail.mail.headers` sentinel, парсва се с `ast.literal_eval`) и embed-вай post-super. **Как се хваща**: assert `parse_metadata_xml(mail._prepare_outgoing_body())`, НЕ само `parse_metadata_xml(mail.body_html)` — body_html минава sanitize, но `_prepare_outgoing_body` лови lxml мангъла.
-
-Matched tokens: `<!--, super()`
-
-#### Gotcha: **Dotted domain `('a.b', '=', False)` НЕ матчва записи със счупена вер
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **ORM / Domains** in odoo19-gotchas.md:
-
-> **Dotted domain `('a.b', '=', False)` НЕ матчва записи със счупена верига (`a = NULL`).** В v19 всяка dotted кондиция се декомпозира до `any` оператора (`odoo/orm/domains.py:937-941`) = EXISTS subquery — никога не матчва NULL междинен M2O. Доказано емпирично (hr_rfid, юни 2026): `['|', ('controller_id.webstack_id.company_id','=',False), ...]` в ir.rule НЕ направи controller-less събития видими. За всеки ОПЦИОНАЛЕН линк по веригата трябва изричен клон `('a','=',False)`; required линковете не могат да се счупят → без клон. ВИНАГИ тествай broken-chain записа отделно от terminal-NULL записа — вторият тест минава, докато първият още е скрит.
-
-Matched tokens: `any, controller_id.webstack_id.company_id`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: **`message_post(body=...)` / `_message_log` / `mail.activity` третират
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Mail / Templates** in odoo19-gotchas.md:
-
-> **`message_post(body=...)` / `_message_log` / `mail.activity` третират plain `str` като ТЕКСТ и го HTML-escape-ват — HTML в chatter иска `markupsafe.Markup`.** В Odoo 17+ ако подадеш `self.env._("... <b>%s</b> ...", val)` (връща plain `str`), `<b>` се escape-ва → потребителят вижда буквално `<b>resolve</b>` (в raw body: `&lt;b&gt;`). Динамичните стойности ТРЯБВА да се escape-ват (XSS защита), затова canonical pattern е `Markup(self.env._("... <b>%(x)s</b> ...")) % {"x": val}` — `Markup.__mod__` escape-ва само substituted-ите стойности, литералните тагове остават HTML. За чист plain-text note plain `str` е правилен (и по-безопасен — не пъхай HTML където не трябва). Core: `Markup("<b>%s</b>") % name` навсякъде в `mail/`. **Как се хваща**: rendирай note-а и assert `'<b>' in body and '&lt;b&gt;' not in body`; grep adversarial: `grep -rn 'message_post(' models/ | xargs grep -l '<b>\|<br\|<p>'` после провери за `Markup`.
-
-Matched tokens: `str`
-
-#### Gotcha: **Multi-company ir.rule на модел с ОПЦИОНАЛЕН company_id ТРЯБВА да тол
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **ORM / Domains** in odoo19-gotchas.md:
-
-> **Multi-company ir.rule на модел с ОПЦИОНАЛЕН company_id ТРЯБВА да толерира False** — `[('company_id','in',company_ids + [False])]` (v19 core канон, 61 срещания; OCA helpdesk_mgmt upstream също). `[('company_id','in',company_ids)]` скрива всеки глобален запис от всички не-superuser-и; `default=env.company` НЕ прави NULL невъзможен (полето се чисти от UI). За строго company-scoped модели (финансови) правилният fix е `required=True` на полето, не разхлабване. → `odoo-multicompany-checker` skill.
-
-Matched tokens: `env.company`
-
-### From `git_log` (1)
+Commit `139e5c19da` (2026-06-17): [FIX] refresh layer: camera events never refreshed the realtime dashboard
 
 #### Fix: [FIX] drop test-framework import from module __init__ (A1)
-<!-- source: git_log ref: d3925400454543d7999e8b92bce72f95f1a84e03 occ: 1 conf: 0.60 -->
 
 Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/hr_rfid_refresh_views`
-- Source digest: `sha256:9fc637336d2cda4cb9088fae15f4b40f9d55274921d96cc3246429c9e19b9d92`
-- Generated at: `2026-06-16T16:24:42+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `hr_rfid_refresh_views`
+- Source digest: `sha256:d8e74438744f587014fefb20769e61188ed745144698fe2cbed3c01ef5608249`
+- Generated at: `2026-11-23T10:04:54+00:00`
+- Generator: `polimex_module_knowledge`

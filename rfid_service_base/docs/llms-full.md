@@ -2,7 +2,7 @@
 id: rfid_service_base
 title: RFID Service system Base
 module: rfid_service_base
-module_version: 19.0.0.9.0
+module_version: 19.0.0.12.3
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,14 +11,15 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        Base module for visitor management and temporary RFID access control\n    "
-last_updated: '2026-08-14'
-source_digest: sha256:836d6ead9b8933e24830e8a54e25e71f4612c24c0dc237191d7a92ab0114708d
+last_updated: '2026-11-23'
+source_digest: sha256:7f5165561e9c2a3797b5b3c4577d9f704c5ec023618138f3e2251ad08d762b31
 depends:
 - hr_rfid
 - onboarding
 entities:
-  primary: hr.rfid.access.group.contact.rel
+  primary: rfid.service.sale.wiz
   related:
+  - hr.rfid.access.group.contact.rel
   - onboarding.onboarding
   - onboarding.onboarding.step
   - res.company
@@ -26,7 +27,6 @@ entities:
   - rfid.service
   - rfid.service.tags
   - rfid.service.sale
-  - rfid.service.sale.wiz
 keywords:
 - access
 - base
@@ -37,14 +37,15 @@ keywords:
 - management
 - module
 - onboarding
-- partner
 - rel
 - res
 - rfid
+- sale
 - service
 - step
 - temporary
 - visitor
+- wiz
 license: AGPL-3
 author: Polimex Dev Team
 category: Generic Modules/Property Management System
@@ -77,7 +78,7 @@ chunking:
 ---
 
 
-# RFID Service system Base — `rfid_service_base` v19.0.0.9.0
+# RFID Service system Base - `rfid_service_base` v19.0.0.12.3
 
 
         Base module for visitor management and temporary RFID access control
@@ -88,10 +89,10 @@ chunking:
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `rfid_service_base`
-- **Version**: `19.0.0.9.0`
+- **Version**: `19.0.0.12.3`
 - **Category**: Generic Modules/Property Management System
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -309,6 +310,16 @@ class ServiceSaleWizard(models.TransientModel):
             raise ValidationError("Visitor is blacklisted")
 ```
 
+##### The setup checklist
+
+Until visitor services are set up, a checklist appears above the services
+(**Services**): define a visitor service, then issue the first visitor card.
+Each step opens the screen where it is done, and ticks itself off as soon as
+the thing exists - there is nothing to mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
+
 ##### 🐛 Troubleshooting
 
 ###### Common Issues
@@ -444,14 +455,14 @@ Python class `HrRfidAccessGroupContactRel` in `models/hr_rfid_access_group_conta
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `rfid_service_sale_id` | One2many → \`rfid.service.sale\` |  |  | ✓ | Visitor service sales backed by this contact-to-access-group binding. Used to ca |
+| `rfid_service_sale_id` | One2many → \`rfid.service.sale\` | Rfid Service Sale |  | ✓ | Visitor service sales backed by this contact-to-access-group binding. Used to ca |
 
 ### `onboarding.onboarding` <a id='model-onboarding-onboarding'></a>
 Python class `OnboardingOnboarding` in `models/onboarding_onboarding.py:4`.  Model.  Inherits: `onboarding.onboarding`.
 
 #### Notable methods
 
-- **`action_close_panel_service_setup(self)`** — decorators: `@api.model`
+- **`action_close_panel_service_setup(self)`** - decorators: `@api.model`
   - effects: `sudo`
 
 ### `onboarding.onboarding.step` <a id='model-onboarding-onboarding-step'></a>
@@ -459,9 +470,9 @@ Python class `OnboardingOnboardingStep` in `models/onboarding_onboarding_step.py
 
 #### Notable methods
 
-- **`action_open_step_service_define(self)`** — decorators: `@api.model`
+- **`action_open_step_service_define(self)`** - decorators: `@api.model`
   - touches: `ir.actions.act_window`
-- **`action_open_step_service_first_sale(self)`** — decorators: `@api.model`
+- **`action_open_step_service_first_sale(self)`** - decorators: `@api.model`
   - touches: `ir.actions.act_window`
 
 ### `res.company` <a id='model-res-company'></a>
@@ -469,7 +480,7 @@ Python class `ResCompany` in `models/res_company.py:4`.  Model.  Inherits: `res.
 
 #### Notable methods
 
-- **`create(self, values_list)`** — decorators: `@api.model_create_multi`
+- **`create(self, values_list)`** - decorators: `@api.model_create_multi`
   - calls `super() `create``
 
 ### `res.partner` <a id='model-res-partner'></a>
@@ -479,11 +490,11 @@ Python class `ResPartner` in `models/res_partner.py:7`.  Model.  Inherits: `res.
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `partner_rfid_sales_count` | Char |  |  | — | Number of visitor service sales registered against this contact across all servi |
+| `partner_rfid_sales_count` | Char | Partner Rfid Sales Count |  | - | Number of visitor service sales registered against this contact across all servi |
 
 #### Notable methods
 
-- **`action_rfid_sales(self)`** — decorators: —
+- **`action_rfid_sales(self)`** - decorators: -
   - effects: `i18n`
 
 ### `rfid.service` <a id='model-rfid-service'></a>
@@ -516,10 +527,10 @@ Python class `BaseRFIDService` in `models/rfid_service.py:11`.  Model.  Inherits
 
 #### Notable methods
 
-- **`action_new_sale(self)`** — decorators: —
+- **`action_new_sale(self)`** - decorators: -
   - effects: `sudo`
   - touches: `hr.rfid.card`
-- **`action_view_sales(self)`** — decorators: —
+- **`action_view_sales(self)`** - decorators: -
   - effects: `sudo`
 
 ### `rfid.service.tags` <a id='model-rfid-service-tags'></a>
@@ -547,28 +558,29 @@ Python class `BaseRFIDService` in `models/rfid_service_sale.py:11`.  Model.  Inh
 | `start_date` | Datetime | Access Start Date | ✓ | ✓ | Date and time when customer access begins.          • Activation: Customer's car |
 | `end_date` | Datetime | Access End Date | ✓ | ✓ | Date and time when customer access expires.          • Expiration: Customer's ca |
 | `state` | Selection | Status |  | ✓ | Current status of this service sale.          • Registered: Sale created but ser |
-| `company_id` | Many2one → \`res.company\` | Company |  | — | Company that owns this sale — inherited from the underlying service. Used for mu |
+| `company_id` | Many2one → \`res.company\` | Company |  | - | Company that owns this sale — inherited from the underlying service. Used for mu |
 | `partner_id` | Many2one → \`res.partner\` | Customer |  | ✓ | Customer who purchased this service.          • Individual: Must be a person, no |
 | `card_id` | Many2one → \`hr.rfid.card\` | RFID Card |  | ✓ | Physical or digital card assigned to the customer for access.          • Access  |
-| `card_number` | Char | Card Number |  | — | Unique identifier/number of the card assigned to this service sale. |
+| `card_number` | Char | Card Number |  | - | Unique identifier/number of the card assigned to this service sale. |
 | `access_group_contact_rel` | Many2one → \`hr.rfid.access.group.contact.rel\` | Access Permission |  | ✓ | Technical link between customer and access group that grants permissions.        |
-| `visits` | Integer | Remaining Visits |  | — | How many more times the customer can come in on this service: permitted visits minus those used (computed from the access). 0 for a service with no limit on visits. |
+| `visits` | Integer | Remaining Visits |  | - | How many more times the customer can come in on this service. Every entry throug |
 
 #### Notable methods
 
-- **`_compute_state(self)`** — decorators: `@api.depends`
-- **`unlink(self)`** — decorators: —
+- **`_compute_visits(self)`** - decorators: `@api.depends`
+- **`_compute_state(self)`** - decorators: `@api.depends`
+- **`unlink(self)`** - decorators: -
   - calls `super() `unlink``
-- **`extend_service(self)`** — decorators: —
+- **`extend_service(self)`** - decorators: -
   - touches: `ir.actions.act_window`
-- **`partner_sales(self)`** — decorators: —
+- **`partner_sales(self)`** - decorators: -
   - touches: `ir.actions.act_window`
-- **`email_card(self)`** — decorators: —
+- **`email_card(self)`** - decorators: -
   - effects: `raise:UserError`
-- **`print_card(self)`** — decorators: —
-- **`cancel_sale(self)`** — decorators: —
+- **`print_card(self)`** - decorators: -
+- **`cancel_sale(self)`** - decorators: -
   - effects: `message_post`
-- **`fix_partner(self)`** — decorators: —
+- **`fix_partner(self)`** - decorators: -
   - touches: `rfid.service.sale`
 
 ### `rfid.service.sale.wiz` <a id='model-rfid-service-sale-wiz'></a>
@@ -578,29 +590,29 @@ Python class `RfidServiceBaseSaleWiz` in `models/rfid_service_sale_wiz.py:17`.  
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `extend_sale_id` | Many2one → \`rfid.service.sale\` |  |  | ✓ | When set, the wizard runs in Extend mode — it adds time to the linked sale inste |
-| `ext_start_date` | Datetime | Old start |  | — | Original start date of the sale being extended (shown for reference). |
-| `ext_end_date` | Datetime | Old end |  | — | Original end date of the sale being extended (shown for reference). The new end  |
-| `service_id` | Many2one → \`rfid.service\` |  |  | ✓ | Catalog entry from which the card inherits its access group, time window and car |
-| `fixed_time` | Boolean |  |  | — | Mirrors the service's Fixed Time flag — when true, the end date snaps to a fixed |
-| `generate_barcode_card` | Boolean |  |  | — | Mirrors the service flag — when true, the wizard auto-generates a printable barc |
-| `parent_id` | Many2one → \`res.partner\` |  |  | — | Parent partner the new visitor contact will be filed under (inherited from the s |
-| `partner_id` | Many2one → \`res.partner\` |  |  | ✓ | The value will be generated automatic if empty! |
-| `email` | Char |  |  | ✓ | Visitor email address. Pre-filled from the selected partner; editing here also u |
-| `mobile` | Char |  |  | ✓ | Visitor mobile/phone number. Pre-filled from the selected partner; editing here  |
+| `extend_sale_id` | Many2one → \`rfid.service.sale\` | Extend Sale |  | ✓ | When set, the wizard runs in Extend mode — it adds time to the linked sale inste |
+| `ext_start_date` | Datetime | Old start |  | - | Original start date of the sale being extended (shown for reference). |
+| `ext_end_date` | Datetime | Old end |  | - | Original end date of the sale being extended (shown for reference). The new end  |
+| `service_id` | Many2one → \`rfid.service\` | Service |  | ✓ | Catalog entry from which the card inherits its access group, time window and car |
+| `fixed_time` | Boolean | *from service_id.fixed_time* |  | - | Mirrors the service's Fixed Time flag — when true, the end date snaps to a fixed |
+| `generate_barcode_card` | Boolean | *from service_id.generate_barcode_card* |  | - | Mirrors the service flag — when true, the wizard auto-generates a printable barc |
+| `parent_id` | Many2one → \`res.partner\` | *from service_id.parent_id* |  | - | Parent partner the new visitor contact will be filed under (inherited from the s |
+| `partner_id` | Many2one → \`res.partner\` | Partner |  | ✓ | The value will be generated automatic if empty! |
+| `email` | Char | Email |  | ✓ | Visitor email address. Pre-filled from the selected partner; editing here also u |
+| `mobile` | Char | Mobile |  | ✓ | Visitor mobile/phone number. Pre-filled from the selected partner; editing here  |
 | `start_date` | Datetime | Service start |  | ✓ | Moment the card becomes active. Defaults to a calculated start based on the serv |
 | `end_date` | Datetime | Service end |  | ✓ | Moment the card stops working. Calculated from start + the service's time interv |
 | `card_number` | Char | The card number | ✓ | ✓ | The RFID number or generated barcode the visitor will carry. For RFID services,  |
-| `visits` | Integer |  |  | — | Mirrors the visits-per-card limit from the service template — informational only |
+| `visits` | Integer | *from service_id.visits* |  | - | Mirrors the visits-per-card limit from the service template — informational only |
 
 #### Notable methods
 
-- **`_onchange_service_id(self)`** — decorators: `@api.onchange`, `@api.depends`
-- **`_onchange_start_date(self)`** — decorators: `@api.onchange`, `@api.depends`
-- **`email_card(self)`** — decorators: —
+- **`_onchange_service_id(self)`** - decorators: `@api.onchange`, `@api.depends`
+- **`_onchange_start_date(self)`** - decorators: `@api.onchange`, `@api.depends`
+- **`email_card(self)`** - decorators: -
   - effects: `raise:UserError`
-- **`print_card(self)`** — decorators: —
-- **`write_card(self)`** — decorators: —
+- **`print_card(self)`** - decorators: -
+- **`write_card(self)`** - decorators: -
   - touches: `ir.actions.act_window`
 
 
@@ -611,48 +623,7 @@ No module-level UPPER_CASE constants are declared by this module.
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`TestRfidServiceOnboarding.setUpClass(cls)`** (`@classmethod`) — `tests/test_onboarding.py:13`
-  - calls `super()`
-- **`TestRfidServiceOnboarding.test_panel_has_two_steps_in_order(self)`** — `tests/test_onboarding.py:21`
-- **`TestRfidServiceOnboarding.test_step_actions_resolve_to_real_windows(self)`** — `tests/test_onboarding.py:27`
-  - touches: `onboarding.onboarding.step`
-- **`TestRfidServiceOnboarding.test_define_step_completes_when_service_exists(self)`** — `tests/test_onboarding.py:34`
-  - touches: `hr.rfid.access.group`, `rfid.service`
-- **`TestRfidServiceOnboarding.test_sale_step_completes_when_service_sale_exists(self)`** — `tests/test_onboarding.py:54`
-  - touches: `hr.rfid.access.group`, `res.partner`, `rfid.service`, `rfid.service.sale`
-- **`TestRfidServiceLifecycle.setUpClass(cls)`** (`@classmethod`) — `tests/test_service_lifecycle.py:20`
-  - calls `super()`
-  - touches: `hr.rfid.access.group`, `res.partner`, `rfid.service`
-- **`TestRfidServiceLifecycle.test_state_progress_when_inside_window(self)`** — `tests/test_service_lifecycle.py:70`
-- **`TestRfidServiceLifecycle.test_state_finished_when_window_expired(self)`** — `tests/test_service_lifecycle.py:80`
-- **`TestRfidServiceLifecycle.test_state_canceled_when_ag_rel_window_collapsed(self)`** — `tests/test_service_lifecycle.py:92`
-  - The 'canceled' state is detected by a 1-second AG window —
-- **`TestRfidServiceLifecycle.test_cancel_sale_collapses_ag_window(self)`** — `tests/test_service_lifecycle.py:111`
-- **`TestRfidServiceLifecycle.test_cancel_sale_idempotent_for_already_finished(self)`** — `tests/test_service_lifecycle.py:123`
-- **`TestRfidServiceLifecycle.test_extend_service_returns_action_with_correct_context(self)`** — `tests/test_service_lifecycle.py:144`
-- **`TestRfidServiceLifecycle.test_extend_service_requires_single_record(self)`** — `tests/test_service_lifecycle.py:158`
-  - touches: `hr.rfid.access.group.contact.rel`, `res.partner`, `rfid.service.sale`
-- **`TestRfidServiceLifecycle.test_email_card_raises_when_partner_has_no_email(self)`** — `tests/test_service_lifecycle.py:189`
-- **`TestRfidServiceLifecycle.test_print_card_returns_action(self)`** — `tests/test_service_lifecycle.py:201`
-  - print_card() delegates to the foldable_badge report. We just
-- **`TestRfidServiceLifecycle.test_service_default_color_is_assigned(self)`** — `tests/test_service_lifecycle.py:220`
-  - touches: `rfid.service`
-- **`TestRfidServiceLifecycle.test_action_view_sales_is_filtered_by_service(self)`** — `tests/test_service_lifecycle.py:230`
-- **`RFIDServices.test_rfid_services(self)`** — `tests/test_services.py:20`
-  - effects: `with_context`
-  - touches: `hr.rfid.card`, `rfid.service`, `rfid.service.sale`, `rfid.service.sale.wiz`
-
-### Private helpers
-
-- **`TestRfidServiceLifecycle._attach_partner_to_ag(self, *, activate_on=None, expiration=None)`** — `tests/test_service_lifecycle.py:46`
-  - touches: `hr.rfid.access.group.contact.rel`
-- **`TestRfidServiceLifecycle._make_sale(self, *, start, end, ag_rel)`** — `tests/test_service_lifecycle.py:56`
-  - touches: `rfid.service.sale`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -661,18 +632,18 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_view_partner_form_inherit_hr_rfid` | `res.partner` | — | base.view_partner_form | `views/res_partner_views.xml` |
-| `hr_rfid_service_kanban` | `rfid.service` | — |  | `views/rfid_service.xml` |
-| `services_form` | `rfid.service` | — |  | `views/rfid_service.xml` |
-| `services_tree` | `rfid.service` | — |  | `views/rfid_service.xml` |
-| `hr_rfid_service_search` | `rfid.service` | — |  | `views/rfid_service.xml` |
-| `hr_rfid_service_sale_action_search` | `rfid.service.sale` | — |  | `views/rfid_service_sale.xml` |
-| `hr_rfid_service_sale_form` | `rfid.service.sale` | — |  | `views/rfid_service_sale.xml` |
-| `hr_rfid_service_sale_tree` | `rfid.service.sale` | — |  | `views/rfid_service_sale.xml` |
-| `hr_rfid_service_sale_pivot` | `rfid.service.sale` | — |  | `views/rfid_service_sale.xml` |
-| `hr_rfid_service_sale_graph` | `rfid.service.sale` | — |  | `views/rfid_service_sale.xml` |
-| `hr_rfid_service_sale_calendar` | `rfid.service.sale` | — |  | `views/rfid_service_sale.xml` |
-| `sale_wiz_form` | `rfid.service.sale.wiz` | — |  | `views/rfid_service_sale_wiz.xml` |
+| `hr_view_partner_form_inherit_hr_rfid` | `res.partner` | - | base.view_partner_form | `views/res_partner_views.xml` |
+| `hr_rfid_service_kanban` | `rfid.service` | - |  | `views/rfid_service.xml` |
+| `services_form` | `rfid.service` | - |  | `views/rfid_service.xml` |
+| `services_tree` | `rfid.service` | - |  | `views/rfid_service.xml` |
+| `hr_rfid_service_search` | `rfid.service` | - |  | `views/rfid_service.xml` |
+| `hr_rfid_service_sale_action_search` | `rfid.service.sale` | - |  | `views/rfid_service_sale.xml` |
+| `hr_rfid_service_sale_form` | `rfid.service.sale` | - |  | `views/rfid_service_sale.xml` |
+| `hr_rfid_service_sale_tree` | `rfid.service.sale` | - |  | `views/rfid_service_sale.xml` |
+| `hr_rfid_service_sale_pivot` | `rfid.service.sale` | - |  | `views/rfid_service_sale.xml` |
+| `hr_rfid_service_sale_graph` | `rfid.service.sale` | - |  | `views/rfid_service_sale.xml` |
+| `hr_rfid_service_sale_calendar` | `rfid.service.sale` | - |  | `views/rfid_service_sale.xml` |
+| `sale_wiz_form` | `rfid.service.sale.wiz` | - |  | `views/rfid_service_sale_wiz.xml` |
 
 #### Sample XPath operations
 
@@ -689,7 +660,7 @@ Who can do what. Answer access-related questions from this section.
 **Groups defined**: `group_card_user`, `group_card_manager`
 
 
-### Access rights (ir.model.access)
+### Access rights (ir.model.access; v20: ir.access rows with a group)
 
 | CSV id | Model | Group | R | W | C | D |
 |---|---|---|---|---|---|---|
@@ -715,9 +686,9 @@ Who can do what. Answer access-related questions from this section.
 
 ### Record rules (ir.rule)
 
-- **`ir_rule_rfid_service_multi_company`** on `model_rfid_service` — perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
-- **`ir_rule_rfid_service_sale_multi_company`** on `model_rfid_service_sale` — perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
-- **`ir_rule_rfid_service_tag_multi_company`** on `model_rfid_service_tags` — perms=`R`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+- **`ir_rule_rfid_service_multi_company`** on `model_rfid_service` - perms=`RWCD`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+- **`ir_rule_rfid_service_sale_multi_company`** on `model_rfid_service_sale` - perms=`RWCD`, groups=`global`, domain=`[('company_id', 'in', company_ids)]`
+- **`ir_rule_rfid_service_tag_multi_company`** on `model_rfid_service_tags` - perms=`RWCD`, groups=`global`, domain=`[('company_id', 'in', company_ids + [False])]`
 
 
 ## Data & Automation <a id='data'></a>
@@ -727,12 +698,14 @@ XML records seeded at install and scheduled actions.
 
 ### Data records summary
 
-- `rfid.service`: 10 record(s)
-- `rfid.service.tags`: 6 record(s)
+- `rfid.service`: 12 record(s)
+- `rfid.service.tags`: 7 record(s)
+- `hr.rfid.card`: 5 record(s)
+- `rfid.service.sale`: 5 record(s)
 - `ir.attachment`: 5 record(s)
-- `hr.rfid.card`: 3 record(s)
-- `rfid.service.sale`: 3 record(s)
+- `ir.actions.act_window`: 3 record(s)
 - `onboarding.onboarding.step`: 2 record(s)
+- `hr.rfid.access.group.contact.rel`: 2 record(s)
 - `ir.sequence`: 1 record(s)
 - `onboarding.onboarding`: 1 record(s)
 - `res.users`: 1 record(s)
@@ -741,17 +714,24 @@ XML records seeded at install and scheduled actions.
 
 ## UI & Frontend <a id='assets'></a>
 
-This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWeb templates).
+JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
+
+
+**Asset bundles extended in the manifest**: `web.assets_tests` (tests only)
+
+
+**Other static JS/SCSS loaded by these bundles** (1): `static/tests/tours/issue_visitor_card_tour.js`
+
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -760,206 +740,17 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
 
-### From `gotchas` (12)
+### Curated (docs/faq.md)
 
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.90 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
-
-Matched tokens: `@api.onchange, api.onchange, _compute, @api.model_create_multi, api.model_create_multi`
-
-#### Gotcha: **`res.groups.category_id` премахнато** → `privilege_id` (M2O към `res
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Security & Constraints** in odoo19-gotchas.md:
-
-> **`res.groups.category_id` премахнато** → `privilege_id` (M2O към `res.groups.privilege`, който има `category_id`). Pattern: създаваш `res.groups.privilege` с `category_id=ref('module_category_X')`, после групите имат `privilege_id=ref('res_groups_privilege_X')`.
-
-Matched tokens: `res.groups.privilege, privilege_id, category_id`
-
-#### Gotcha: SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, н
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, не `ValidationError`
-
-Matched tokens: `validationerror, models.constraint`
-
-#### Gotcha: **Kanban templates: `<t t-name="card">` НЕ `<t t-name="kanban-box">`**
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Kanban templates: `<t t-name="card">` НЕ `<t t-name="kanban-box">`** — v18→v19 преименуване. Стария път минава XML lint и install, но при отваряне в браузъра гърми с `OwlError: Missing 'card' template`. Структурата на content също е олекотена (без `oe_kanban_card` обвивка — директно полета + footer).
-
-Matched tokens: `<t t-name="card">, oe_kanban_card`
-
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `help=, <p>`
-
-#### Gotcha: **TransientModel + `target='current'` = dead link.** TransientModel за
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Wizards & TransientModel** in odoo19-gotchas.md:
-
-> **TransientModel + `target='current'` = dead link.** TransientModel записи биват изтрити от autovacuum cron след минути до часове. Ако `action_window` връща `target='current'` с `res_id`, browser-ът bookmark-ва URL `/odoo/<model>/<id>` — следващ refresh/back-button → 404 "тотална грешка" / "запис не съществува". **Винаги** използвай `target='new'` (modal dialog) — modal-ите не променят URL-а, така че няма bookmarkable стара ID. Ако имаш Next/Back бутони (`type="object"`), pre-create record-а в `action_open_wizard()` за да съществува за compute_field-а, но дръж dialog-а modal. Производна на това: `_reopen()` helper-и за multistep wizard-и също трябва да са `target='new'`, не `'current'`.
-
-Matched tokens: `res_id, type="object"`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчита
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчитай на него за валидация
-
-Matched tokens: `fields.char`
-
-#### Gotcha: `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpC
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Тестове** in odoo19-gotchas.md:
-
-> `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpCase` тестове с DB writes
-
-Matched tokens: `httpcase`
-
-#### Gotcha: **Search view: `<group>` без атрибути** — `expand="0"` и `string="Grou
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Search view: `<group>` без атрибути** — `expand="0"` и `string="Group By"` са премахнати. Стария път гърми с `RELAXNG_ERR_INVALIDATTR`.
-
-Matched tokens: `<group>`
-
-#### Gotcha: **Form view inline x2many: `default_X: id` НЕ `active_id`** — `active_
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Form view inline x2many: `default_X: id` НЕ `active_id`** — `active_id` е действие-context, не form-context. Често по-чисто е да не подаваш context изобщо — Odoo автоматично попълва inverse FK.
-
-Matched tokens: `active_id`
-
-#### Gotcha: При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted even
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Общи** in odoo19-gotchas.md:
-
-> При `ev64` хардуерни събития: хардуерът изпраща follow-up Granted event след grant — симулирай с `event_code=3`
-
-Matched tokens: `event_code=3`
-
-### From `git_log` (14)
-
-#### Fix: [FIX] noupdate on user-tunable data records (3 modules)
-<!-- source: git_log ref: df70ee69435fdfe180aa7565634eb91a0e62da0a occ: 1 conf: 0.60 -->
-
-Commit `df70ee6943` (2026-05-01): [FIX] noupdate on user-tunable data records (3 modules)
-
-#### Fix: [FIX] rfid_service_base, rfid_service_portal: Update imports for Odoo 19
-<!-- source: git_log ref: 8ebc6e2c318211ee2fb4067bf9c63e1014da13c4 occ: 1 conf: 0.60 -->
-
-Commit `8ebc6e2c31` (2025-12-19): [FIX] rfid_service_base, rfid_service_portal: Update imports for Odoo 19
-
-#### Fix: Fix SQL constraint error message formatting in rfid_service_sale.py
-<!-- source: git_log ref: 3e1885ed8b786b13f08967a1ee838b53b9cb58b8 occ: 1 conf: 0.60 -->
-
-Commit `3e1885ed8b` (2025-04-02): Fix SQL constraint error message formatting in rfid_service_sale.py
-
-#### Fix: Fix translation for unique service constraint message
-<!-- source: git_log ref: 8edeb568321b77e6ae138e228a08a6fbe644cbd4 occ: 1 conf: 0.60 -->
-
-Commit `8edeb56832` (2025-03-31): Fix translation for unique service constraint message
-
-#### Fix: fixes ported from 17.0
-<!-- source: git_log ref: 09608db8432b463a8cd496ebd68466c4e2d85fdd occ: 1 conf: 0.60 -->
-
-Commit `09608db843` (2024-10-15): fixes ported from 17.0
-
-#### Fix: Fix mail composer params to 17.0
-<!-- source: git_log ref: e581c4e6b22f83d84fa5b9940411f221344de81b occ: 1 conf: 0.60 -->
-
-Commit `e581c4e6b2` (2024-09-25): Fix mail composer params to 17.0
-
-#### Fix: fix security and bugs
-<!-- source: git_log ref: 7e2b0572afbec926f266101e2fd2970826651c7b occ: 1 conf: 0.60 -->
-
-Commit `7e2b0572af` (2024-09-18): fix security and bugs
-
-#### Fix: fix security and bugs
-<!-- source: git_log ref: 88d8f7cf6fc51259fe4ea5ec240d594f6ef38627 occ: 1 conf: 0.60 -->
-
-Commit `88d8f7cf6f` (2024-09-13): fix security and bugs
-
-#### Fix: fix re-issue old un-active cards
-<!-- source: git_log ref: 9220189542611d05382fb5bd78e3997f7731883c occ: 1 conf: 0.60 -->
-
-Commit `9220189542` (2024-07-07): fix re-issue old un-active cards
-
-#### Fix: fix re-issue old un-active cards
-<!-- source: git_log ref: 08425a7d0349555d4821c6551beccb1b10dcce67 occ: 1 conf: 0.60 -->
-
-Commit `08425a7d03` (2024-07-07): fix re-issue old un-active cards
-
-#### Fix: fix operator rights
-<!-- source: git_log ref: a3f5bdc3f4ee3b2d0bb84f552da4faab3510d19c occ: 1 conf: 0.60 -->
-
-Commit `a3f5bdc3f4` (2024-06-25): fix operator rights
-
-#### Fix: fix demo data
-<!-- source: git_log ref: 58a6b16e4f7ed7d16b8aeae4c43541ea51f5b263 occ: 1 conf: 0.60 -->
-
-Commit `58a6b16e4f` (2023-09-26): fix demo data
-
-#### Fix: fix demo data
-<!-- source: git_log ref: 9fe5aa23d7d75f6ae0e3c1d3541884c7ec12536d occ: 1 conf: 0.60 -->
-
-Commit `9fe5aa23d7` (2023-09-26): fix demo data
-
-#### Fix: v2.1 Added portal functionality, barcode generation and RFID services. M
-<!-- source: git_log ref: 3c84986ac48326833d2f41e4de1d121e3c526130 occ: 1 conf: 0.60 -->
-
-Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
-
-
-## Source provenance <a id='provenance'></a>
-
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/rfid_service_base`
-- Source digest: `sha256:836d6ead9b8933e24830e8a54e25e71f4612c24c0dc237191d7a92ab0114708d`
-- Generated at: `2026-05-14T11:16:43+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
-
-## The setup checklist (onboarding banner) <a id='onboarding-banner'></a>
+##### The setup checklist (onboarding banner)
 
 The banner is NOT a view class of this module. It is attached by putting the
 onboarding's `route_name` in the CONTEXT of the action:
@@ -989,3 +780,70 @@ This module's own part is `models/onboarding_onboarding.py`:
 `_prepare_rendering_values` auto-completes its two steps (a `rfid.service` exists; a `rfid.service.sale` exists) for the CURRENT company
 before delegating to core, and `action_close_panel_service_setup` is the close action named on the
 onboarding record. Nothing here has to know how the banner is drawn.
+Entries derived from the module's own code comments and bug-fix commit history.
+
+### From `git_log` (14)
+
+#### Fix: fix(demo): showcase demo files must be noupdate=1 - production -u ...
+
+Commit `54843cfc81` (2026-07-22): fix(demo): showcase demo files must be noupdate=1 - production -u re-wrote them
+
+#### Fix: [TOUR] rfid_service_base: issue-visitor-card E2E + v19 view fixes
+
+Commit `ec9fb6b37a` (2026-05-14): [TOUR] rfid_service_base: issue-visitor-card E2E + v19 view fixes
+
+#### Fix: [FIX] noupdate on user-tunable data records (3 modules)
+
+Commit `df70ee6943` (2026-05-01): [FIX] noupdate on user-tunable data records (3 modules)
+
+#### Fix: Fix SQL constraint error message formatting in rfid_service_sale.py
+
+Commit `3e1885ed8b` (2025-04-02): Fix SQL constraint error message formatting in rfid_service_sale.py
+
+#### Fix: Fix translation for unique service constraint message
+
+Commit `8edeb56832` (2025-03-31): Fix translation for unique service constraint message
+
+#### Fix: fixes ported from 17.0
+
+Commit `09608db843` (2024-10-15): fixes ported from 17.0
+
+#### Fix: Fix mail composer params to 17.0
+
+Commit `e581c4e6b2` (2024-09-25): Fix mail composer params to 17.0
+
+#### Fix: fix security and bugs
+
+Commit `7e2b0572af` (2024-09-18): fix security and bugs
+
+#### Fix: fix security and bugs
+
+Commit `88d8f7cf6f` (2024-09-13): fix security and bugs
+
+#### Fix: fix re-issue old un-active cards
+
+Commit `9220189542` (2024-07-07): fix re-issue old un-active cards
+
+#### Fix: fix re-issue old un-active cards
+
+Commit `08425a7d03` (2024-07-07): fix re-issue old un-active cards
+
+#### Fix: fix operator rights
+
+Commit `a3f5bdc3f4` (2024-06-25): fix operator rights
+
+#### Fix: fix demo data
+
+Commit `58a6b16e4f` (2023-09-26): fix demo data
+
+#### Fix: fix demo data
+
+Commit `9fe5aa23d7` (2023-09-26): fix demo data
+
+
+## Source provenance <a id='provenance'></a>
+
+- Module: `rfid_service_base`
+- Source digest: `sha256:7f5165561e9c2a3797b5b3c4577d9f704c5ec023618138f3e2251ad08d762b31`
+- Generated at: `2026-11-23T10:04:19+00:00`
+- Generator: `polimex_module_knowledge`

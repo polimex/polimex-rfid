@@ -5,38 +5,102 @@ module: hr_rfid_odoo_import
 doc_type: user_guide
 audience:
 - user
-summary: Bring RFID access control data across from another Odoo system (v14-v18)
-last_updated: '2026-08-14'
-source_digest: sha256:917a8495e4d3f76aea18007dd5c7c5e09340956d24d5542f5ee1be846b81d7b7
+summary: Import RFID access control data from older Odoo instances (v14-v18)
+last_updated: '2026-11-23'
+source_digest: sha256:6aa5dabbb84ba5a4e299c9020208831bc90ed73dcb8aa67d117389a711b185ff
 companion_doc: llms-full.md
 ---
 
 
 # RFID Odoo Data Import
 
-> Bring RFID access control data across from another Odoo system into this one.
+> Import RFID access control data from older Odoo instances (v14-v18)
 
 
 ## What this module does
 
-It copies an access control installation from another Odoo system into this
-one: the equipment, the people, the cards and access groups, the cameras and
-the sites, and as much of the history as you ask for.
+Import RFID access control data from older Odoo instances (v14-v18).
 
-Two things shape how it behaves, and both are deliberate.
-
-**It never speaks to the hardware.** While a transfer runs, no controller and
-no camera receives a single command. The site stays guarded throughout. The
-consequence is that afterwards each camera still holds the plate list it held
-before - the transfer tells you so and asks you to refresh them.
-
-**It says what it could not do.** A part of the data that cannot be brought
-across is recorded with the reason, rather than leaving a gap you would find
-weeks later. If the other system holds records of some kind and none of them
-arrive, that is reported as a fault, not as a finished step.
+This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
 
 
 ## How to use it
+
+### RFID Odoo Data Import
+
+..
+   :target: https://polimex.co
+   :alt: License: AGPL-3
+
+Import RFID access control data from older Odoo instances (v14-v18) into Odoo 19
+via XML-RPC API.
+
+#### Overview
+
+This module provides a multi-step wizard for migrating RFID access control data
+from older Odoo instances into Odoo 19. It connects to the source Odoo via
+XML-RPC API, reads configuration and historical data, and recreates it in the
+target database.
+
+#### Features
+
+* **XML-RPC connection** - works with any Odoo instance (local or remote, v14-v18)
+* **Version-tolerant reads** - each phase names the fields it wants and checks
+  them against the source with ``fields_get()``, so a field that only exists in
+  some versions is used where present and skipped where absent
+* **Multi-company support** - select which company to import
+* **Runs in the background** - the transfer is handed to a scheduled job and
+  continues after the dialog is closed. A real site carries tens of thousands of
+  events, which is far more than a single web request is allowed to spend. Work
+  is done in committed pieces; an interrupted transfer continues where it
+  stopped instead of starting over.
+* **Phases, each declaring what it needs** - a phase states which feature the
+  source must have and which models this system must provide. A phase that
+  cannot run is recorded with the reason, rather than leaving a silent gap:
+
+  - Core & Hardware (webstacks, controllers, doors, readers, time schedules)
+  - People (employees, partners, departments, categories)
+  - Zones (after People - membership lists are the people)
+  - Sites (the tree of locations, the equipment on it, the contacts in it)
+  - Access Control (access groups, relations, cards -> card-door regeneration)
+  - Site Groups (a site's own access group, restored after the real ones)
+  - Cameras (ANPR cameras, their readers and doors, their plate lists)
+  - Events (user events, system events, temperature/humidity logs)
+  - Vending (rows, events, balance history, auto-refill)
+  - Attendance (hr.attendance, hr.attendance.extra)
+  - Services (rfid.service, rfid.service.sale, tags)
+
+* **Deduplication** via ``ir.model.data`` with ``__import__`` prefix
+* **Nothing is said to the hardware** - no controller and no camera receives a
+  command while a transfer is running. The site stays guarded throughout.
+* **Conflict detection** - a record that would break an existing unique
+  constraint is reported for the operator to decide, never merged silently
+* **Direct SQL batch insert** for large datasets (events, attendance, balance history)
+* **A stay is never recorded twice** - an attendance of the other system that
+  would overlap one already recorded here is not brought over, by the same rule
+  Odoo itself applies to two stays of one person. One that is the same to the
+  second is counted as already here. One that differs is left out, and what is
+  recorded here stays as it is; the protocol names the people, and the
+  downloaded protocol lists every such stay with both times, in the person's
+  own time zone, for the people who keep the records to look at. A later run
+  checks again, so a stay left out today arrives once nothing here collides
+  with it any more.
+* **An account of what happened** - one line per step, including what was left
+  behind and why, written in the language of the person who started the
+  transfer
+* **A final check against the other system** - every kind of data is counted
+  on both sides, company by company. A difference counts as a problem only in
+  what this transfer was asked to bring: in a kind left unticked it is shown as
+  a remark, with both numbers, and the transfer still finishes. A record of a
+  person (or other owner) who is not in this system, of a kind left unticked,
+  is said the same way
+
+#### Configuration
+
+No special configuration is needed. The module adds a menu entry under
+**RFID System -> Hardware Manager -> Import from Odoo**.
+
+#### Usage
 
 1. Go to **RFID System -> Hardware Manager -> Import from Odoo**.
 2. Enter the address of the other system and an account that can read it. That
@@ -44,6 +108,7 @@ arrive, that is reported as a fault, not as a finished step.
    camera passwords, if you have cameras. The address can be typed as in a
    browser: `192.168.1.10:8069` becomes `http://192.168.1.10:8069`. A server
    reached over https needs `https://` typed in front.
+
    - **Source identity** on the same page is normally left empty: the transfer
      then files everything under the name of the database it read, which is
      right for a one-off move. Fill it in when you read the SAME system from
@@ -56,6 +121,7 @@ arrive, that is reported as a fault, not as a finished step.
      box empty and the transfer will not start: put the earlier name in it if
      it is the same system, or type a name of your own to say it is a
      different one.
+
 3. Press **Check Connection**. The wizard then lists the companies it found.
 4. Pick which company to bring across and which company here it becomes.
 5. Choose what to include. Anything the other system does not keep, or this one
@@ -67,8 +133,7 @@ arrive, that is reported as a fault, not as a finished step.
 8. Come back to **RFID System -> Hardware Manager -> Data Transfers** to see how far it got and, line by
    line, what it moved and what it did not.
 
-
-## What it brings across
+#### What it brings across
 
 - Equipment: communication modules, controllers, doors, readers, working times
 - People: employees, contacts, departments, tags
@@ -81,8 +146,7 @@ arrive, that is reported as a fault, not as a finished step.
 - History: card events, system events, recognised plates, temperature logs
 - Vending, attendance and visitor services, when both systems have them
 
-
-## Common questions
+#### Common questions
 
 **Can I run it twice?** Yes, as often as you like - nothing is ever brought
 across a second time. What a repeat transfer does to what is already here is
@@ -183,3 +247,21 @@ here and is worth looking at.
 system makes its own set for every company, and the transfer adopts the
 schedule sitting in each slot instead of creating a second one beside it. One
 record per slot is the only way a door permission can mean one thing.
+
+### Available actions
+
+- **Look again** - Show what the worker has done since the page was opened.
+- **Download the protocol** - The whole protocol as one plain-text file the operator can send.
+- **Test Connection** - Step 1 → Step 2: Test connection and load companies.
+- **Preview** - Step 2 → Step 3: Generate preview with counts and detect conflicts.
+- **Back** - Navigate back one step.
+- **Start Import** - Step 3 → Step 4 → Step 5: Execute the import.
+
+
+## Common questions and errors
+
+Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
+
+- **Test connection** (on `hr.rfid.odoo.import.wiz`) - Step 1 → Step 2: Test connection and load companies.
+- **Preview** (on `hr.rfid.odoo.import.wiz`) - Step 2 → Step 3: Generate preview with counts and detect conflicts.
+- **Import** (on `hr.rfid.odoo.import.wiz`) - Step 3 → Step 4 → Step 5: Execute the import.

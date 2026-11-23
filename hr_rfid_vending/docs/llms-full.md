@@ -2,7 +2,7 @@
 id: hr_rfid_vending
 title: RFID Vending Control
 module: hr_rfid_vending
-module_version: 19.0.1.7.14
+module_version: 19.0.1.8.1
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,14 +11,14 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: Manage EXECUTIVE based vending machines
-last_updated: '2026-11-09'
-source_digest: sha256:ffbc98011d8ee0ab14c766b66ed154ad069b333eac53a14b28627109c1a2420c
+last_updated: '2026-11-23'
+source_digest: sha256:07b4c4f6bdaaa2d8897d5301ceaaf4c48bed59694a6d626893e874e01ad69c89
 depends:
 - hr_rfid
 - product
 - hr_attendance
 entities:
-  primary: hr.rfid.ctrl.vending.row
+  primary: hr.rfid.vending.event
   related:
   - hr.rfid.vending.auto.refill
   - hr.rfid.vending.balance.history
@@ -29,10 +29,10 @@ entities:
   - hr.employee.vending.balance.wiz
   - hr.rfid.ctrl
   - hr.rfid.ctrl.vending.settings
-  - hr.rfid.vending.event
+  - hr.rfid.ctrl.vending.row
+  - hr.rfid.webstack
   - product.template
   - res.company
-  - res.config.settings
   - hr.rfid.vending.event.reverse
 keywords:
 - auto
@@ -40,6 +40,7 @@ keywords:
 - based
 - cash
 - ctrl
+- event
 - executive
 - history
 - log
@@ -47,7 +48,6 @@ keywords:
 - manage
 - refill
 - rfid
-- row
 - vending
 - wiz
 license: AGPL-3
@@ -82,7 +82,7 @@ chunking:
 ---
 
 
-# RFID Vending Control - `hr_rfid_vending` v19.0.1.7.14
+# RFID Vending Control - `hr_rfid_vending` v19.0.1.8.1
 
 Manage EXECUTIVE based vending machines
 
@@ -94,7 +94,7 @@ Manage EXECUTIVE based vending machines
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_vending`
-- **Version**: `19.0.1.7.14`
+- **Version**: `19.0.1.8.1`
 - **Category**: Vending
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -268,6 +268,11 @@ hr_rfid_vending.auto_refill_threshold: 10.00
    - Vending → Machines
    - Check online status
    - View sales in real-time
+   - In Vending Events, type part of a product's name or a person's name in
+     the search box and press Enter: a sale reads "product - buyer", so the
+     list keeps that product's sales or that person's purchases. A machine
+     error or a cash collection is found by the person, the door or the
+     action, as an access event is
 
 3. **Reports**
    - Vending → Reports
@@ -348,6 +353,11 @@ POST /api/vending/balance/add
    - Review vending events
    - Check for error codes
    - Monitor response times
+
+###### Messages you may see
+
+- **"The credit was returned to the card: nothing was chosen in time."** in the machine's system events - not a fault: the card holder put credit on the machine and chose nothing, so it went back. "Item N did not come out" means the chosen item failed and the credit went back; nobody is charged in either case.
+- **The machine's own errors** are named in its system events by firmware: on the Executive machines (16, 20) "does not answer", "did not answer after a status request", "sent a command the controller does not know" and "product error" (16 also reports "the connection is back"); on the MDB machine (21) the MDB bus going silent and back, the link layer not answering (check the wiring), a session closed after 30 seconds (check the machine's software), and the connection to the server lost and back. A code the firmware does not have is shown as it came, with the raw data.
 
 ##### ⚙️ Advanced Features
 
@@ -604,8 +614,6 @@ Python class `HrRfidControllerVending` in `models/hr_rfid_ctrl.py:10`.  Model.  
 
 - **`_compute_vending_flags(self)`** - decorators: `@api.depends`
 - **`_convert_balance_to_ctrl(self, balance)`** - decorators: `@api.model`
-- **`_vending_problem_text(self, event_n, data)`** - decorators: -
-  - The words for a machine's event 48 or 49, written as the system event by the event controller. From the vending part of the FA event (protocol D48): product `data[4:6]`, code of 48 `data[6:8]`. 49 = credit returned (product 0 = nothing chosen); 48 = the firmware's code (16: 0, 1, 2, 4, 5; 20: 0, 2, 4, 5; 21: 0, 1, 2, 3, 4, 6, 7). Unknown codes and data too short to read are shown as they came.
 - **`create_vending_rows(self)`** - decorators: -
   - touches: `hr.rfid.ctrl.vending.row`
 - **`write(self, vals)`** - decorators: -
@@ -648,7 +656,7 @@ Python class `HrRfidVendingRow` in `models/hr_rfid_ctrl_vending_row.py:5`.  Mode
 | `item4` | Many2one → \`product.template\` | Item#4 |  | ✓ | Product mapped to the fourth slot of this row. |
 
 ### `hr.rfid.vending.event` <a id='model-hr-rfid-vending-event'></a>
-Python class `VendingEvents` in `models/hr_rfid_vending_event.py:8`.  Model.  Inherits: `hr.rfid.event.user`.  Description: *RFID Vending Event*.  Default order: `id desc`.
+Python class `VendingEvents` in `models/hr_rfid_vending_event.py:9`.  Model.  Inherits: `hr.rfid.event.user`.  Description: *RFID Vending Event*.  Default order: `id desc`.
 
 #### Fields
 
@@ -670,23 +678,12 @@ Python class `VendingEvents` in `models/hr_rfid_vending_event.py:8`.  Model.  In
   - calls `super() `write``
 - **`search(self, *args, **kwargs)`** - decorators: `@api.model`
   - calls `super() `search``
-- **`_compute_user_ev_name(self)`** - decorators: `@api.depends('item_sold_id.name')`
-  (added to the dependencies of `hr.rfid.event.user`). A sale (`47`) reads
-  "product - buyer" (either part alone when the other is missing, the
-  action's label when both are); every other event is computed by
-  `hr_rfid` as an access event. The sales are taken out of the set before
-  `super()`, so a name never depends on the other events computed with it.
+- **`_compute_user_ev_name(self)`** - decorators: `@api.depends`
+  - A sale reads as the product, then the buyer; every other event as an access event does (hr_rfid). A sale with neither - a cash sale from a slot without a product - reads as its action, so every event…
   - calls `super() `_compute_user_ev_name``
-- **`_search_name_containing(self, operator, value)`** - a sale is matched
-  by `item_sold_id.name` and `employee_id.name` (and, with neither, by the
-  sale's action label through `_search_name_actions`); every other event by
-  `hr_rfid`'s rule. Makes the first option of the vending events' search
-  box find a product's sales.
-  - calls `super() `_search_name_containing``
-- **`_search_name_equal(self, name)`** - the exact name of a sale read back
-  into product and buyer, trying every " - " as the boundary (either name may
-  hold it).
-  - calls `super() `_search_name_equal``
+
+### `hr.rfid.webstack` <a id='model-hr-rfid-webstack'></a>
+Python class `HrRfidWebstack` in `models/hr_rfid_webstack.py:38`.  Model.  Inherits: `hr.rfid.webstack`.
 
 ### `product.template` <a id='model-product-template'></a>
 Python class `ProductTemplate` in `models/product_template.py:4`.  Model.  Inherits: `product.template`.
@@ -708,24 +705,6 @@ Python class `ResCompany` in `models/res_company.py:4`.  Model.  Inherits: `res.
 | `refill_interval_number` | Integer | Refill Interval Number |  | ✓ | Repeat every x. |
 | `refill_interval_type` | Selection | Interval Unit |  | ✓ | Time unit for the auto-refill repeat interval. Combined with Repeat every (above |
 | `refill_nextcall` | Datetime | Next Execution Date |  | ✓ | Next planned execution date for this refill. |
-
-### `res.config.settings` <a id='model-res-config-settings'></a>
-Python class `ResConfigSettings` in `models/res_config_settings.py:4`.  TransientModel (wizard).  Inherits: `res.config.settings`.
-
-#### Fields
-
-| Name | Type | Label | Required | Store | Help |
-|---|---|---|---|---|---|
-| `refill_interval_number` | Integer | *from company_id.refill_interval_number* |  | - | Repeat every x. |
-| `refill_interval_type` | Selection | Interval Unit |  | - | Time unit for the auto-refill repeat interval. Combined with Repeat every (above |
-| `refill_nextcall` | Datetime | Next Execution Date |  | - | Next planned execution date for this refill. |
-
-#### Notable methods
-
-- **`get_values(self)`** - decorators: `@api.model`
-  - calls `super() `get_values``
-- **`set_values(self)`** - decorators: -
-  - calls `super() `set_values``
 
 ### `hr.rfid.vending.event.reverse` <a id='model-hr-rfid-vending-event-reverse'></a>
 Python class `VendingEventReverse` in `wizards/vending_event_reverse.py:7`.  TransientModel (wizard).  Description: *Reverse Vending Purchase*.
@@ -752,27 +731,22 @@ UPPER_CASE module-level assignments - rates, mappings, priority tables, status m
 
 - **`PRICE_TABLE_HW_VERSIONS`** *(collection)* = `('16', '20')`  - line 7
 
+### `models/hr_rfid_webstack.py`
+
+- **`CREDIT_REQUEST`** *(scalar)* = `64`  - line 22
+- **`SALE`** *(scalar)* = `47`  - line 23
+- **`MACHINE_PROBLEMS`** *(collection)* = `(48, 49)`  - line 24
+- **`CASH_ON_CARD`** *(scalar)* = `50`  - line 25
+- **`CASH_ON_CARD_ITEM`** *(scalar)* = `99`  - line 27
+- **`CREDIT_REQUEST_ANSWERED_WITHIN`** *(expression)* = `datetime.timedelta(minutes=5)`  - line 31
+- **`NO_CARD`** *(scalar)* = `'0000000000'`  - line 32
+- **`ITEMS_PER_ROW`** *(scalar)* = `4`  - line 34
+- **`PRICE_TABLE_ROWS`** *(scalar)* = `18`  - line 35
+
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`hr.rfid.webstack._hw_parse_event(self, post_data)`** - `models/hr_rfid_webstack.py`.
-  The add-on answers the reports of a vending controller where every report of
-  a module is read, before the core does, so the answer is the same over the
-  classic route (`/hr/rfid/event`), the real-time connection and the demo.
-  There is no route of the add-on's own any more: the module's key, the
-  savepoint around the work and the record of a failed report are the core
-  route's.
-  - `_hw_vending_event(controller, post_data)` - the reply, or `None` for a
-    report that is not vending's (the core reads it)
-  - `_hw_vending_credit_request` (event 64: `DB2` with the balance,
-    `single_attempt`), `_hw_vending_sale` (47), `_hw_vending_cash_on_card`
-    (50); events 48 and 49 become system events
-  - touches: `hr.rfid.card`, `hr.rfid.command`, `hr.rfid.ctrl.vending.row`, `hr.rfid.event.system`, `hr.rfid.vending.event`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -916,7 +890,7 @@ JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
 **Asset bundles extended in the manifest**: `web.assets_tests` (tests only)
 
 
-**Other static JS/SCSS loaded by these bundles** (1): `static/tests/tours/vending_firmware_form_tour.js`
+**Other static JS/SCSS loaded by these bundles** (2): `static/tests/tours/vending_event_search_tour.js`, `static/tests/tours/vending_firmware_form_tour.js`
 
 
 
@@ -943,21 +917,51 @@ Visual assets shipped with the module.
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
+
+### Curated (docs/faq.md)
+
+##### The words for a machine's problem
+
+- **`_vending_problem_text(self, event_n, data)`** - decorators: -
+  - The words for a machine's event 48 or 49, written as the system event by the event controller. From the vending part of the FA event (protocol D48): product `data[4:6]`, code of 48 `data[6:8]`. 49 = credit returned (product 0 = nothing chosen); 48 = the firmware's code (16: 0, 1, 2, 4, 5; 20: 0, 2, 4, 5; 21: 0, 1, 2, 3, 4, 6, 7). Unknown codes and data too short to read are shown as they came.
+
+##### How a sale is named and found (`hr.rfid.vending.event`)
+
+- **`_compute_user_ev_name(self)`** - decorators: `@api.depends('item_sold_id.name')`
+  (added to the dependencies of `hr.rfid.event.user`). A sale (`47`) reads
+  "product - buyer" (either part alone when the other is missing, the
+  action's label when both are); every other event is computed by
+  `hr_rfid` as an access event. The sales are taken out of the set before
+  `super()`, so a name never depends on the other events computed with it.
+  - calls `super() `_compute_user_ev_name``
+- **`_search_name_containing(self, operator, value)`** - a sale is matched
+  by `item_sold_id.name` and `employee_id.name` (and, with neither, by the
+  sale's action label through `_search_name_actions`); every other event by
+  `hr_rfid`'s rule. Makes the first option of the vending events' search
+  box find a product's sales.
+  - calls `super() `_search_name_containing``
+- **`_search_name_equal(self, name)`** - the exact name of a sale read back
+  into product and buyer, trying every " - " as the boundary (either name may
+  hold it).
+  - calls `super() `_search_name_equal``
+
+##### Where the add-on answers a vending controller
+
+- **`hr.rfid.webstack._hw_parse_event(self, post_data)`** - `models/hr_rfid_webstack.py`.
+  The add-on answers the reports of a vending controller where every report of
+  a module is read, before the core does, so the answer is the same over the
+  classic route (`/hr/rfid/event`), the real-time connection and the demo.
+  There is no route of the add-on's own any more: the module's key, the
+  savepoint around the work and the record of a failed report are the core
+  route's.
+  - `_hw_vending_event(controller, post_data)` - the reply, or `None` for a
+    report that is not vending's (the core reads it)
+  - `_hw_vending_credit_request` (event 64: `DB2` with the balance,
+    `single_attempt`), `_hw_vending_sale` (47), `_hw_vending_cash_on_card`
+    (50); events 48 and 49 become system events
 Entries derived from the module's own code comments and bug-fix commit history.
 
 ### From `code_comments` (6)
-
-#### TODO: Reduce item quantity
-
-**TODO** in `models/hr_rfid_webstack.py` (`_hw_vending_sale`)
-
-> Reduce item quantity
-
-#### TODO: What type of error?
-
-**TODO** in `models/hr_rfid_vending_event.py:17`
-
-> What type of error?
 
 #### TODO: What type of error?
 
@@ -971,11 +975,23 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > What type of error?
 
+#### TODO: What type of error?
+
+**TODO** in `models/hr_rfid_vending_event.py:20`
+
+> What type of error?
+
 #### TODO: Replace this search() override with a proper ir.rule for ...
 
-**TODO** in `models/hr_rfid_vending_event.py:298`
+**TODO** in `models/hr_rfid_vending_event.py:299`
 
 > Replace this search() override with a proper ir.rule for group_customer.
+
+#### TODO: Reduce item quantity
+
+**TODO** in `models/hr_rfid_webstack.py:373`
+
+> Reduce item quantity
 
 #### TODO: Add this event if happend
 
@@ -1089,6 +1105,6 @@ Commit `f96d2b4fc1` (2022-11-15): Fixes for Toni
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid_vending`
-- Source digest: `sha256:ffbc98011d8ee0ab14c766b66ed154ad069b333eac53a14b28627109c1a2420c`
-- Generated at: `2026-11-09T07:58:39+00:00`
+- Source digest: `sha256:07b4c4f6bdaaa2d8897d5301ceaaf4c48bed59694a6d626893e874e01ad69c89`
+- Generated at: `2026-11-23T10:13:20+00:00`
 - Generator: `polimex_module_knowledge`

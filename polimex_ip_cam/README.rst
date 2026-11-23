@@ -84,6 +84,45 @@ Usage
 - **Plate List Synchronization:** When you link an RFID card to a camera, the module automatically updates the camera’s plate list.
 - **Command Monitoring:** Use the provided form and tree views for camera commands to monitor, review, and re-execute commands.
 
+While data is being brought over from another system
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A data transfer says nothing to the cameras. No plate is added or removed on a
+camera, no barrier is moved, and no readers or door are made up for a camera
+that is being brought across - it arrives with the ones the other system had,
+so its history keeps pointing at the right door.
+
+The consequence is that each camera still holds the plate list it held before
+the transfer. **Refresh each camera's list once the transfer has finished**
+(Reload whitelist on the camera). The transfer says so on its own page as well.
+
+The cameras keep watching and keep letting people through throughout: only the
+writing of new lists is held back, and that is the point - a transfer of a few
+hundred plates would otherwise fire a few hundred requests at cameras that are
+guarding a live site.
+
+Camera self-test
+~~~~~~~~~~~~~~~~
+
+Open a camera and press "Self-Test" (managers only). One run checks
+everything this system uses from the camera and shows every problem first,
+every detail below: who answers at the address (model, serial, firmware),
+the picture, the clock difference, where the camera sends its recognitions,
+how many plates it holds against how many are recorded here, and whether a
+plate can be written to it. The write check uses one test plate (TEST0001)
+that is added and removed again - a working camera is left exactly as it
+was, and the barrier is deliberately never touched. When writing fails, the
+test also tries a record shaped like your real data and names the exact
+part the camera refuses, quoting the camera's own answer - send that report
+to support. The report lives in the dialog - copy it if you need to keep it.
+The clock check compares the camera's wall clock in its own time zone; the
+zone offset the camera claims is ignored, because these firmwares misstate
+it.
+
+If a plate-list reload keeps failing, the queue stops itself after three
+identical refusals from the same camera and marks the remaining commands
+with one explanation, instead of repeating the same error for every plate.
+
 API Details
 -----------
 
@@ -118,9 +157,14 @@ firmware that returns *notSupport* for VCL):
   body ``{"LicensePlateInfoList": [{...}]}``. Each record carries
   ``LicensePlate``, ``listType`` (``allowList``/``blockList``), ``cardNo`` /
   ``cardID``, a ``createTime`` (validity start) / ``effectiveTime`` (validity
-  end) window and ``operationType``/``operation``. The upsert merges by plate;
-  success is HTTP 200 with ``statusCode 1`` — any other status is a failure, so
-  a plate the camera rejected is not marked done in Odoo.
+  end) window and ``operationType``/``operation``. Success is HTTP 200 with
+  ``statusCode 1`` - any other status is a failure, so a plate the camera
+  rejected is not marked done in Odoo. **Proven live on V5.5.0 (build
+  260328, self-test on site, 2026-08-16):** this firmware REFUSES a record
+  write onto a plate it already holds (badParameters / "Invalid XML
+  Content"), while accepting a fresh plate - the write ladder therefore
+  withdraws the exact plate and writes it again (the replace step) before
+  degrading anything else. V5.4.4 merged by plate directly.
 - Delete: ``PUT DelLicensePlateAuditData?format=json`` with
   ``{"deleteAllEnabled": false, "CompoundCond": {"plateColor": "", "licensePlate": "<plate>"}}``.
 

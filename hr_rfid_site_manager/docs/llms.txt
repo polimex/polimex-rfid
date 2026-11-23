@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: "\n        Add classification of the access control equipment\n    "
-last_updated: '2026-04-30'
-source_digest: sha256:be9259493d6b47430ff73013550e036d187a57683c316283ad8f1926ba842b68
+last_updated: '2026-11-23'
+source_digest: sha256:843bc9ff56f0c741e27657e03921f322409e1936a8c80d4cfd3428f25d71168b
 companion_doc: llms-full.md
 ---
 
@@ -22,8 +22,7 @@ companion_doc: llms-full.md
 ## What this module does
 
 
-        Add classification of the access control equipment
-    .
+        Add classification of the access control equipment.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
 
@@ -34,26 +33,32 @@ This guide is for users who **configure** and **use** the module. If you need to
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-======================
-HR RFID Site Manager
-======================
+### HR RFID Site Manager
 
-    TODO
-Configuration
--------------
-    No
+Groups access-control equipment into a tree of sites, so a building, a floor
+and a room are records an operator can open, instead of a flat list of
+webstacks, controllers and doors.
 
-Usage
------
+#### Configuration
 
+No configuration is required. The module adds a Site Manager menu; create the
+first site and attach webstacks, controllers or doors to it.
 
+A site can create its own access group (the *Make access group* option), so
+granting somebody the whole building is one assignment rather than one per
+door.
 
-Wish list
----------
-Title change on web client
+#### Usage
 
-Maintainer
-----------
+Open RFID System > Hardware Manager > Site Manager. Each site shows what
+is attached to it - webstacks, controllers, doors, access groups and alarm
+line groups - with the counts of everything below it in the tree, and its
+own state.
+
+Sites nest: a child site's doors are counted on its parent as well, so the
+top of the tree answers "how much equipment does this building hold".
+
+#### Maintainer
 
 .. image:: https://raw.githubusercontent.com/polimex/logos/5c5af675ad5d6ef12bb29664c250196c51ac2bc8/company_logo.png
    :alt: Polimex Logo

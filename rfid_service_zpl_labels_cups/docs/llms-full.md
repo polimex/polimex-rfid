@@ -11,8 +11,8 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: "\n        Replace direct ZPL printing with CUPS queue management\n    "
-last_updated: '2026-04-30'
-source_digest: sha256:f63fc069458ef87af158f0d919366c3fe6a6fbfad2ab007d110857cf1fdc793f
+last_updated: '2026-11-23'
+source_digest: sha256:cf4b2315f2343cf27376b22065df82a57743f015326afa62a8f8f2a5638f8065
 depends:
 - rfid_service_zpl_labels
 - base_report_to_label_printer
@@ -70,7 +70,7 @@ chunking:
 ---
 
 
-# Services ZPL Labels - CUPS Integration — `rfid_service_zpl_labels_cups` v19.0.0.1.4
+# Services ZPL Labels - CUPS Integration - `rfid_service_zpl_labels_cups` v19.0.0.1.4
 
 
         Replace direct ZPL printing with CUPS queue management
@@ -81,7 +81,7 @@ chunking:
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `rfid_service_zpl_labels_cups`
 - **Version**: `19.0.0.1.4`
@@ -233,7 +233,7 @@ Installation requirements and configuration entry points. Use this section to an
 ./venv/bin/python odoo/odoo-bin -d DATABASE -i rfid_service_zpl_labels_cups --stop-after-init
 ```
 
-> **Auto-install**: installed automatically when all dependencies are present.
+> **Auto-install**: Odoo installs it by itself only in an operation that installs one of `rfid_service_zpl_labels`, `base_report_to_label_printer` while the rest of them are installed or installed in the same operation. A database that already has all of them does not get it by itself - not on an upgrade (`-u`), not on Update Apps List: install it once from Apps or with the command above.
 
 
 ## Models <a id='models'></a>
@@ -247,13 +247,13 @@ Python class `RfidServiceCups` in `models/rfid_service.py:8`.  Model.  Inherits:
 
 #### Notable methods
 
-- **`test_label_printer_connection(self)`** — decorators: —
-  - Override the direct socket test to use CUPS instead.
-- **`test_label_printer_connection_socket(self)`** — decorators: —
-  - Fallback method for direct socket testing.
+- **`test_label_printer_connection(self)`** - decorators: -
+  - Override the direct socket test to use CUPS instead. This replaces the socket-based test with CUPS-based test.
+- **`test_label_printer_connection_socket(self)`** - decorators: -
+  - Fallback method for direct socket testing. Uses the original implementation from parent module.
   - calls `super() `test_label_printer_connection``
-- **`test_label_printer_cups(self)`** — decorators: —
-  - Test CUPS label printer by printing a test label with failsafe values.
+- **`test_label_printer_cups(self)`** - decorators: -
+  - Test CUPS label printer by printing a test label with failsafe values. Uses the report template directly without creating test records.
   - effects: `log_exception`, `log_info`, `raise:UserError`
 
 ### `rfid.service.sale` <a id='model-rfid-service-sale'></a>
@@ -261,11 +261,11 @@ Python class `RfidServiceSaleCups` in `models/rfid_service_sale.py:8`.  Model.  
 
 #### Notable methods
 
-- **`print_label_direct(self)`** — decorators: —
-  - Override direct socket printing to use CUPS print queue.
+- **`print_label_direct(self)`** - decorators: -
+  - Override direct socket printing to use CUPS print queue. This method is called when clicking "Print Label" button on service sale form.
   - effects: `log_exception`, `log_info`, `raise:UserError`
-- **`print_label_direct_socket(self)`** — decorators: —
-  - Fallback method for direct socket printing.
+- **`print_label_direct_socket(self)`** - decorators: -
+  - Fallback method for direct socket printing. Uses the original implementation from parent module. Can be called if CUPS printing fails or for troubleshooting.
   - calls `super() `print_label_direct``
 
 ### `rfid.service.sale.wiz` <a id='model-rfid-service-sale-wiz'></a>
@@ -273,11 +273,11 @@ Python class `RfidServiceSaleWizCups` in `models/rfid_service_sale_wiz.py:8`.  T
 
 #### Notable methods
 
-- **`print_label(self)`** — decorators: —
-  - Override to force CUPS printing directly.
+- **`print_label(self)`** - decorators: -
+  - Override to force CUPS printing directly. This ensures consistent behavior with the test button.
   - effects: `log_error`, `log_info`, `raise:UserError`
-- **`print_label_direct_fallback(self)`** — decorators: —
-  - Fallback method that uses the original direct socket printing.
+- **`print_label_direct_fallback(self)`** - decorators: -
+  - Fallback method that uses the original direct socket printing. Can be called if CUPS printing fails or is not available.
   - calls `super() `print_label_direct``
 
 
@@ -297,7 +297,7 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_rfid_service_sale_form_inherit_cups` | `rfid.service.sale` | — | rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels | `views/rfid_service_sale.xml` |
+| `hr_rfid_service_sale_form_inherit_cups` | `rfid.service.sale` | - | rfid_service_zpl_labels.hr_rfid_service_sale_form_inherit_zpl_labels | `views/rfid_service_sale.xml` |
 
 #### Sample XPath operations
 
@@ -328,13 +328,13 @@ This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWe
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -343,31 +343,33 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
+Entries derived from the module's own code comments and bug-fix commit history.
 
-### From `git_log` (2)
+### From `git_log` (3)
+
+#### Fix: [FIX] noupdate on user-tunable data records (3 modules)
+
+Commit `df70ee6943` (2026-05-01): [FIX] noupdate on user-tunable data records (3 modules)
 
 #### Fix: [FIX] manifest validator issues flagged by Odoo Apps
-<!-- source: git_log ref: 9a3d488b201a3d36dd71ae01c4b394d2ee8b8caf occ: 1 conf: 0.60 -->
 
 Commit `9a3d488b20` (2026-04-21): [FIX] manifest validator issues flagged by Odoo Apps
 
 #### Fix: Fix label printer selection to respect user preferences
-<!-- source: git_log ref: d04571ed69fcdfa467d915ae5c7bd8925a2aaad2 occ: 1 conf: 0.60 -->
 
 Commit `d04571ed69` (2025-10-07): Fix label printer selection to respect user preferences
 
 
 ## Source provenance <a id='provenance'></a>
 
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/rfid_service_zpl_labels_cups`
-- Source digest: `sha256:f63fc069458ef87af158f0d919366c3fe6a6fbfad2ab007d110857cf1fdc793f`
-- Generated at: `2026-04-30T10:42:53+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
+- Module: `rfid_service_zpl_labels_cups`
+- Source digest: `sha256:cf4b2315f2343cf27376b22065df82a57743f015326afa62a8f8f2a5638f8065`
+- Generated at: `2026-11-23T10:04:54+00:00`
+- Generator: `polimex_module_knowledge`

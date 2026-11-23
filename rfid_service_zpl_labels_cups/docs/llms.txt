@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: "\n        Replace direct ZPL printing with CUPS queue management\n    "
-last_updated: '2026-04-30'
-source_digest: sha256:f63fc069458ef87af158f0d919366c3fe6a6fbfad2ab007d110857cf1fdc793f
+last_updated: '2026-11-23'
+source_digest: sha256:cf4b2315f2343cf27376b22065df82a57743f015326afa62a8f8f2a5638f8065
 companion_doc: llms-full.md
 ---
 
@@ -22,8 +22,7 @@ companion_doc: llms-full.md
 ## What this module does
 
 
-        Replace direct ZPL printing with CUPS queue management
-    .
+        Replace direct ZPL printing with CUPS queue management.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
 
@@ -81,42 +80,6 @@ When both `rfid_service_zpl_labels` and `base_report_to_label_printer` are insta
    - Update printers from server
    - Each user sets their default label printer in preferences
 
-#### Technical Details
-
-##### Method Override
-
-The module overrides the `print_label()` method in the wizard to use report action instead of direct socket printing:
-
-```python
-def print_label(self):
-    # Create sale record
-    sale_id = self._write_card()[0]
-    
-    # Use report action (will use label printer)
-    return self.env.ref('rfid_service_zpl_labels.action_report_rfid_wristband').report_action(sale_id)
-```
-
-##### Report Configuration
-
-The ZPL report is automatically marked as a "label" report:
-```xml
-<field name="label">True</field>
-```
-
-This ensures the report uses the user's configured label printer instead of their default printer.
-
-##### CUPS Test Functionality
-
-The module adds a "Test CUPS Printer" button to the RFID Service form:
-- Creates a temporary test sale record
-- Prints it through CUPS
-- Deletes the test record
-- Shows success/failure notification
-
-##### Fallback Method
-
-If CUPS printing fails, you can call the fallback method:
-```python
 ### From wizard instance
 self.print_label_direct_fallback()
 ```

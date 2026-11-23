@@ -205,6 +205,16 @@ class ServiceSaleWizard(models.TransientModel):
             raise ValidationError("Visitor is blacklisted")
 ```
 
+## The setup checklist
+
+Until visitor services are set up, a checklist appears above the services
+(**Services**): define a visitor service, then issue the first visitor card.
+Each step opens the screen where it is done, and ticks itself off as soon as
+the thing exists - there is nothing to mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
+
 ## 🐛 Troubleshooting
 
 ### Common Issues

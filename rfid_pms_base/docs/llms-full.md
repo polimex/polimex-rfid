@@ -2,7 +2,7 @@
 id: rfid_pms_base
 title: RFID PMS Base
 module: rfid_pms_base
-module_version: 19.0.0.11.0
+module_version: 19.0.0.12.2
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -11,17 +11,17 @@ audience:
 - developer
 companion_doc: llms.txt
 summary: RFID PMS system Base structures
-last_updated: '2026-08-14'
-source_digest: sha256:c62b009d4388adfc9875d68038831797fe93f475216234b61e40d5d2f7561e6e
+last_updated: '2026-11-23'
+source_digest: sha256:effb668d17081e4e6b350a685f41145cde41fddf74bbf3c242a0c3b510bc503b
 depends:
 - hr_rfid
 - onboarding
 entities:
-  primary: rfid_pms_base.card_encode_wiz
+  primary: rfid_pms_base.room
   related:
+  - rfid_pms_base.card_encode_wiz
   - onboarding.onboarding
   - onboarding.onboarding.step
-  - rfid_pms_base.room
   - rfid_pms_base.room_move_wiz
 keywords:
 - base
@@ -67,7 +67,7 @@ chunking:
 ---
 
 
-# RFID PMS Base — `rfid_pms_base` v19.0.0.11.0
+# RFID PMS Base - `rfid_pms_base` v19.0.0.12.2
 
 RFID PMS system Base structures
 
@@ -76,10 +76,10 @@ RFID PMS system Base structures
 
 ## Overview <a id='overview'></a>
 
-Technical overview — module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
+Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `rfid_pms_base`
-- **Version**: `19.0.0.11.0`
+- **Version**: `19.0.0.12.2`
 - **Category**: Generic Modules/Property Management System
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -337,6 +337,16 @@ def create_booking_webhook(self, booking_data):
     })
 ```
 
+##### The setup checklist
+
+Until the rooms are set up, a checklist appears above the rooms
+(**Hotel Rooms**): define an access group for guests, then register the first
+room. Each step opens the screen where it is done, and ticks itself off as soon
+as the thing exists - there is nothing to mark by hand.
+
+Close it with the **X** (you are asked to confirm) and it is gone for good for
+everybody in the company. It has no effect on anything else.
+
 ##### 🐛 Troubleshooting
 
 ###### Common Issues
@@ -439,16 +449,16 @@ Python class `RfidPmsBaseCardEncodeWiz` in `models/card_encode_wiz.py:7`.  Trans
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `room_id` | Many2one → \`rfid_pms_base.room\` |  |  | ✓ | The hotel room this card opens. Set automatically from the kanban card you click |
-| `reservation` | Char |  |  | ✓ | Reservation reference used as the parent partner name (e.g. R002615). Only meani |
+| `room_id` | Many2one → \`rfid_pms_base.room\` | Room |  | ✓ | The hotel room this card opens. Set automatically from the kanban card you click |
+| `reservation` | Char | Reservation |  | ✓ | Reservation reference used as the parent partner name (e.g. R002615). Only meani |
 | `checkin_date` | Datetime | Check In |  | ✓ | Moment the card starts working. In New mode defaults to now; in Current mode inh |
 | `checkout_date` | Datetime | Check Out |  | ✓ | Moment the card stops working. In New mode defaults to tomorrow at 09:00; in Cur |
-| `mode` | Selection |  |  | ✓ | New = open a fresh reservation and revoke any leftover cards; Current = add anot |
+| `mode` | Selection | Mode |  | ✓ | New = open a fresh reservation and revoke any leftover cards; Current = add anot |
 | `card_number` | Char | The card number | ✓ | ✓ | Number printed on the RFID card or barcode. The wizard zero-pads to 10 digits be |
 
 #### Notable methods
 
-- **`write_card(self)`** — decorators: —
+- **`write_card(self)`** - decorators: -
   - effects: `i18n`, `raise:UserError`, `with_context`
   - touches: `hr.rfid.card`, `res.partner`
 
@@ -457,7 +467,7 @@ Python class `OnboardingOnboarding` in `models/onboarding_onboarding.py:4`.  Mod
 
 #### Notable methods
 
-- **`action_close_panel_pms_setup(self)`** — decorators: `@api.model`
+- **`action_close_panel_pms_setup(self)`** - decorators: `@api.model`
   - effects: `sudo`
 
 ### `onboarding.onboarding.step` <a id='model-onboarding-onboarding-step'></a>
@@ -465,9 +475,9 @@ Python class `OnboardingOnboardingStep` in `models/onboarding_onboarding_step.py
 
 #### Notable methods
 
-- **`action_open_step_pms_access_group(self)`** — decorators: `@api.model`
+- **`action_open_step_pms_access_group(self)`** - decorators: `@api.model`
   - touches: `ir.actions.act_window`
-- **`action_open_step_pms_first_room(self)`** — decorators: `@api.model`
+- **`action_open_step_pms_first_room(self)`** - decorators: `@api.model`
   - touches: `ir.actions.act_window`
 
 ### `rfid_pms_base.room` <a id='model-rfid-pms-base-room'></a>
@@ -477,32 +487,32 @@ Python class `SchEncoderRoom` in `models/room.py:5`.  Model.  Description: *Room
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `name` | Char |  | ✓ | ✓ | Friendly label for the room shown to the receptionist (e.g. 'Suite 101' or 'Twin |
-| `group` | Char |  |  | ✓ | Optional grouping label used to split the kanban into columns (e.g. floor or win |
+| `name` | Char | Name | ✓ | ✓ | Friendly label for the room shown to the receptionist (e.g. 'Suite 101' or 'Twin |
+| `group` | Char | Group |  | ✓ | Optional grouping label used to split the kanban into columns (e.g. floor or win |
 | `number` | Integer | Internal number | ✓ | ✓ | Numeric identifier the controller uses to address this room's door. Must be uniq |
 | `company_id` | Many2one → \`res.company\` | Company |  | ✓ | Company that owns the room. Hotel data is isolated per company; users only see r |
 | `door_id` | Many2one → \`hr.rfid.door\` | Room door | ✓ | ✓ | The controller door wired to this room's lock. The DND, Clean and Card-present f |
 | `access_group_id` | Many2one → \`hr.rfid.access.group\` | Guest Group | ✓ | ✓ | Access group the issued guest cards are added to. Defines which doors a card can |
-| `all_employee_ids` | Many2many → \`hr.rfid.access.group.employee.rel\` | All employees |  | — | All employees that use this access group, including the ones from the inheritors |
-| `all_contact_ids` | Many2many → \`hr.rfid.access.group.contact.rel\` | All contacts |  | — | All contacts that use this access group, including the ones from the inheritors |
-| `reservation` | Many2one → \`res.partner\` | Reservation |  | — | Parent partner that groups every guest card currently issued for this room. Empt |
-| `hb_dnd` | Boolean | DND button pressed |  | — | True when the guest pressed Do Not Disturb on the in-room console. Staff cards s |
-| `hb_clean` | Boolean | Clean button pressed |  | — | True when the guest requested cleaning from the in-room console. Visible to hous |
-| `hb_card_present` | Boolean | Present card in reader |  | — | True while a card is inserted in the room's energy-saver reader. Used by the kan |
-| `last_temperature` | Float | Temperature |  | — | Room temperature reported by the BMS sensor. Currently a stub value until a BMS  |
-| `last_humidity` | Float | Humidity |  | — | Room humidity reported by the BMS sensor. Currently a stub value until a BMS sen |
-| `last_occupancy` | Char | Occupancy |  | — | Occupancy state reported by the BMS sensor. Currently a stub value until a BMS s |
-| `last_insert_name` | Char | Last Insert Card |  | — | Name of the employee or guest whose card was last inserted at the room's energy- |
+| `all_employee_ids` | Many2many → \`hr.rfid.access.group.employee.rel\` | All employees |  | - | All employees that use this access group, including the ones from the inheritors |
+| `all_contact_ids` | Many2many → \`hr.rfid.access.group.contact.rel\` | All contacts |  | - | All contacts that use this access group, including the ones from the inheritors |
+| `reservation` | Many2one → \`res.partner\` | Reservation |  | - | Parent partner that groups every guest card currently issued for this room. Empt |
+| `hb_dnd` | Boolean | DND button pressed |  | - | True when the guest pressed Do Not Disturb on the in-room console. Staff cards s |
+| `hb_clean` | Boolean | Clean button pressed |  | - | True when the guest requested cleaning from the in-room console. Visible to hous |
+| `hb_card_present` | Boolean | Present card in reader |  | - | True while a card is inserted in the room's energy-saver reader. Used by the kan |
+| `last_temperature` | Float | Temperature |  | - | Room temperature reported by the BMS sensor. Currently a stub value until a BMS  |
+| `last_humidity` | Float | Humidity |  | - | Room humidity reported by the BMS sensor. Currently a stub value until a BMS sen |
+| `last_occupancy` | Char | Occupancy |  | - | Occupancy state reported by the BMS sensor. Currently a stub value until a BMS s |
+| `last_insert_name` | Char | Last Insert Card |  | - | Name of the employee or guest whose card was last inserted at the room's energy- |
 
 #### Notable methods
 
-- **`_compute_last_insert_name(self)`** — decorators: `@api.depends`
+- **`_compute_last_insert_name(self)`** - decorators: `@api.depends`
   - touches: `hr.rfid.event.user`
-- **`_compute_reservation(self)`** — decorators: `@api.depends`
-- **`user_events_act(self)`** — decorators: —
+- **`_compute_reservation(self)`** - decorators: `@api.depends`
+- **`user_events_act(self)`** - decorators: -
   - effects: `with_context`
-- **`toggle_hotel(self)`** — decorators: —
-- **`_check_number(self)`** — decorators: `@api.constrains`
+- **`toggle_hotel(self)`** - decorators: -
+- **`_check_number(self)`** - decorators: `@api.constrains`
   - effects: `raise:ValidationError`
 
 ### `rfid_pms_base.room_move_wiz` <a id='model-rfid-pms-base-room-move-wiz'></a>
@@ -512,12 +522,12 @@ Python class `RoomMoveWiz` in `models/room_move_wiz.py:4`.  TransientModel (wiza
 
 | Name | Type | Label | Required | Store | Help |
 |---|---|---|---|---|---|
-| `room_from_id` | Many2one → \`rfid_pms_base.room\` |  |  | ✓ | Source room the reservation is currently registered against. Read-only — set aut |
-| `room_to_id` | Many2one → \`rfid_pms_base.room\` |  | ✓ | ✓ | Destination room. Only rooms with no active reservation are offered. After confi |
+| `room_from_id` | Many2one → \`rfid_pms_base.room\` | Room From |  | ✓ | Source room the reservation is currently registered against. Read-only — set aut |
+| `room_to_id` | Many2one → \`rfid_pms_base.room\` | Room To | ✓ | ✓ | Destination room. Only rooms with no active reservation are offered. After confi |
 
 #### Notable methods
 
-- **`move_customers(self)`** — decorators: —
+- **`move_customers(self)`** - decorators: -
 
 
 ## Module Constants <a id='constants'></a>
@@ -527,62 +537,7 @@ No module-level UPPER_CASE constants are declared by this module.
 
 ## Module Helpers & Hooks <a id='helpers'></a>
 
-Top-level functions that sit outside any Odoo model class. Use this section to answer 'how do I call this programmatically' and 'what happens at install/uninstall'.
-
-
-### Public helpers
-
-- **`TestRfidPmsOnboarding.setUpClass(cls)`** (`@classmethod`) — `tests/test_onboarding.py:10`
-  - calls `super()`
-- **`TestRfidPmsOnboarding.test_panel_has_two_steps_in_order(self)`** — `tests/test_onboarding.py:18`
-- **`TestRfidPmsOnboarding.test_step_actions_resolve_to_real_windows(self)`** — `tests/test_onboarding.py:24`
-  - touches: `onboarding.onboarding.step`
-- **`TestRfidPmsOnboarding.test_ag_step_completes_when_ag_with_door_exists(self)`** — `tests/test_onboarding.py:31`
-  - touches: `hr.rfid.access.group`, `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.webstack`
-- **`TestRfidPmsOnboarding.test_room_step_completes_when_room_exists(self)`** — `tests/test_onboarding.py:55`
-  - touches: `hr.rfid.access.group`, `hr.rfid.ctrl`, `hr.rfid.door`, `hr.rfid.webstack`, `rfid_pms_base.room`
-- **`TestRfidPmsRoom.setUpClass(cls)`** (`@classmethod`) — `tests/test_room.py:10`
-  - calls `super()`
-  - touches: `hr.rfid.access.group`, `hr.rfid.ctrl`, `hr.rfid.webstack`
-- **`TestRfidPmsRoom.test_create_room(self)`** — `tests/test_room.py:53`
-- **`TestRfidPmsRoom.test_room_default_group_value(self)`** — `tests/test_room.py:59`
-  - touches: `rfid_pms_base.room`
-- **`TestRfidPmsRoom.test_room_number_must_be_globally_unique(self)`** — `tests/test_room.py:70`
-- **`TestRfidPmsRoom.test_room_number_must_be_within_range(self)`** — `tests/test_room.py:77`
-- **`TestRfidPmsRoom.test_reservation_is_empty_when_no_contacts(self)`** — `tests/test_room.py:82`
-- **`TestRfidPmsRoom.test_room_move_wiz_lists_only_free_rooms(self)`** — `tests/test_room.py:87`
-  - effects: `with_context`
-  - touches: `rfid_pms_base.room_move_wiz`
-- **`TestRfidPmsRoom.test_room_move_wiz_default_room_from(self)`** — `tests/test_room.py:107`
-  - effects: `with_context`
-  - touches: `rfid_pms_base.room_move_wiz`
-- **`TestRfidPmsRoom.test_compute_temperature_returns_stub_values(self)`** — `tests/test_room.py:116`
-- **`TestRfidPmsRoom.test_compute_last_insert_name_unknown_when_no_event(self)`** — `tests/test_room.py:123`
-- **`TestRfidPmsRoom.test_toggle_hotel_dnd_flips_door_flag(self)`** — `tests/test_room.py:127`
-  - effects: `with_context`
-- **`TestRfidPmsRoom.test_toggle_hotel_clean_flips_door_flag(self)`** — `tests/test_room.py:135`
-  - effects: `with_context`
-- **`TestRfidPmsRoom.test_toggle_hotel_unknown_btn_is_noop(self)`** — `tests/test_room.py:143`
-  - effects: `with_context`
-- **`TestRfidPmsRoom.test_user_events_act_returns_action_for_door(self)`** — `tests/test_room.py:150`
-- **`TestRfidPmsRoomTours.setUpClass(cls)`** (`@classmethod`) — `tests/test_tours.py:13`
-  - calls `super()`
-  - touches: `hr.rfid.access.group`, `hr.rfid.ctrl`, `hr.rfid.webstack`
-- **`TestRfidPmsRoomTours.test_room_kanban_actions_tour(self)`** — `tests/test_tours.py:49`
-  - User flow: toggle DND, toggle Clean, navigate to user events.
-  - touches: `rfid_pms_base.room`
-- **`TestRfidPmsRoomTours.test_room_move_tour(self)`** — `tests/test_tours.py:64`
-  - User flow: move the occupant from one room to another.
-  - touches: `hr.rfid.access.group.contact.rel`, `res.partner`, `rfid_pms_base.room`
-
-### Private helpers
-
-- **`TestRfidPmsRoom._next_door(cls, label)`** (`@classmethod`) — `tests/test_room.py:33`
-  - touches: `hr.rfid.door`
-- **`TestRfidPmsRoom._make_room(self, name, number, group='Ungrouped')`** — `tests/test_room.py:42`
-  - touches: `rfid_pms_base.room`
-- **`TestRfidPmsRoomTours._make_door(cls, label)`** (`@classmethod`) — `tests/test_tours.py:40`
-  - touches: `hr.rfid.door`
+No module-level helper functions or install hooks are declared.
 
 
 ## Views & Inheritance <a id='views'></a>
@@ -591,13 +546,13 @@ List of `ir.ui.view` records created or extended by this module.
 
 | XML id | Model | Type | Inherit | File |
 |---|---|---|---|---|
-| `hr_rfid_card_view_list_base_pms_inherit` | `hr.rfid.card` | — | hr_rfid.hr_rfid_card_view_list | `views/hr_rfid_card.xml` |
-| `rfid_pms_base_room_form` | `rfid_pms_base.room` | — |  | `views/room.xml` |
-| `rfid_pms_base_room_list` | `rfid_pms_base.room` | — |  | `views/room.xml` |
-| `rfid_pms_base_room_kanban` | `rfid_pms_base.room` | — |  | `views/room.xml` |
-| `rfid_pms_base_room_search` | `rfid_pms_base.room` | — |  | `views/room.xml` |
-| `cards_encode_wiz_view_form` | `rfid_pms_base.card_encode_wiz` | — |  | `views/wiz_card_from_room.xml` |
-| `room_move_wiz_view_form` | `rfid_pms_base.room_move_wiz` | — |  | `views/wiz_room_move.xml` |
+| `hr_rfid_card_view_list_base_pms_inherit` | `hr.rfid.card` | - | hr_rfid.hr_rfid_card_view_list | `views/hr_rfid_card.xml` |
+| `rfid_pms_base_room_form` | `rfid_pms_base.room` | - |  | `views/room.xml` |
+| `rfid_pms_base_room_list` | `rfid_pms_base.room` | - |  | `views/room.xml` |
+| `rfid_pms_base_room_kanban` | `rfid_pms_base.room` | - |  | `views/room.xml` |
+| `rfid_pms_base_room_search` | `rfid_pms_base.room` | - |  | `views/room.xml` |
+| `cards_encode_wiz_view_form` | `rfid_pms_base.card_encode_wiz` | - |  | `views/wiz_card_from_room.xml` |
+| `room_move_wiz_view_form` | `rfid_pms_base.room_move_wiz` | - |  | `views/wiz_room_move.xml` |
 
 #### Sample XPath operations
 
@@ -614,7 +569,7 @@ Who can do what. Answer access-related questions from this section.
 **Groups defined**: `group_card_user`, `group_card_manager`
 
 
-### Access rights (ir.model.access)
+### Access rights (ir.model.access; v20: ir.access rows with a group)
 
 | CSV id | Model | Group | R | W | C | D |
 |---|---|---|---|---|---|---|
@@ -639,24 +594,35 @@ XML records seeded at install and scheduled actions.
 
 ### Data records summary
 
+- `ir.actions.act_window`: 6 record(s)
+- `hr.rfid.access.group`: 4 record(s)
+- `rfid_pms_base.room`: 4 record(s)
 - `onboarding.onboarding.step`: 2 record(s)
+- `res.partner`: 2 record(s)
 - `ir.sequence`: 1 record(s)
 - `onboarding.onboarding`: 1 record(s)
 
 
 ## UI & Frontend <a id='assets'></a>
 
-This module ships no frontend assets (no JavaScript, SCSS, OWL components or QWeb templates).
+JavaScript, SCSS, OWL components and QWeb templates shipped by this module.
+
+
+**Asset bundles extended in the manifest**: `web.assets_tests` (tests only)
+
+
+**Other static JS/SCSS loaded by these bundles** (3): `static/tests/tours/onboarding_panel_tour.js`, `static/tests/tours/room_kanban_actions_tour.js`, `static/tests/tours/room_move_tour.js`
+
 
 
 ## Diagrams & Screenshots <a id='images'></a>
-Visual assets shipped with the module. Captions generated by VLM; review before production.
+Visual assets shipped with the module.
 
 <figure id='fig-static-description-icon-png'>
 
 ![Icon](static/description/icon.png)
 
-<figcaption>[Placeholder caption] Image at `icon.png`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
@@ -665,201 +631,17 @@ Visual assets shipped with the module. Captions generated by VLM; review before 
 
 ![Icon](static/description/icon.svg)
 
-<figcaption>[Placeholder caption] Image at `icon.svg`. A vision-language model has not been configured yet. Replace this caption with a real description (VLM-generated or manual) to improve retrieval quality.</figcaption>
+<figcaption>Icon</figcaption>
 </figure>
 
 > Tags: `icon`
 
 
 ## FAQ & Troubleshooting <a id='faq'></a>
-Notes collected from code comments and the development history.
 
-### From `gotchas` (12)
+### Curated (docs/faq.md)
 
-#### Gotcha: `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpC
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Тестове** in odoo19-gotchas.md:
-
-> `_registry_readonly_enabled = False` (НЕ `readonly_enabled`) за `HttpCase` тестове с DB writes
-
-Matched tokens: `_registry_readonly_enabled = false, readonly_enabled, httpcase`
-
-#### Gotcha: **TransientModel + `target='current'` = dead link.** TransientModel за
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Wizards & TransientModel** in odoo19-gotchas.md:
-
-> **TransientModel + `target='current'` = dead link.** TransientModel записи биват изтрити от autovacuum cron след минути до часове. Ако `action_window` връща `target='current'` с `res_id`, browser-ът bookmark-ва URL `/odoo/<model>/<id>` — следващ refresh/back-button → 404 "тотална грешка" / "запис не съществува". **Винаги** използвай `target='new'` (modal dialog) — modal-ите не променят URL-а, така че няма bookmarkable стара ID. Ако имаш Next/Back бутони (`type="object"`), pre-create record-а в `action_open_wizard()` за да съществува за compute_field-а, но дръж dialog-а modal. Производна на това: `_reopen()` helper-и за multistep wizard-и също трябва да са `target='new'`, не `'current'`.
-
-Matched tokens: `'current', action_window, type="object"`
-
-#### Gotcha: **`res.groups.category_id` премахнато** → `privilege_id` (M2O към `res
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.70 -->
-
-From **Security & Constraints** in odoo19-gotchas.md:
-
-> **`res.groups.category_id` премахнато** → `privilege_id` (M2O към `res.groups.privilege`, който има `category_id`). Pattern: създаваш `res.groups.privilege` с `category_id=ref('module_category_X')`, после групите имат `privilege_id=ref('res_groups_privilege_X')`.
-
-Matched tokens: `privilege_id, res.groups.privilege, category_id`
-
-#### Gotcha: SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, н
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> SQL constraints (`models.Constraint`) предизвикват `IntegrityError`, не `ValidationError`
-
-Matched tokens: `models.constraint, validationerror`
-
-#### Gotcha: **Statusbar `clickable="1"` заобикаля Python gating** — ако имаш `@api
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Statusbar `clickable="1"` заобикаля Python gating** — ако имаш `@api.constrains` или action-based gating, премахни clickable за да форсираш потребителя през action бутон.
-
-Matched tokens: `@api.constrains, api.constrains`
-
-#### Gotcha: **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` ат
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.60 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **`%(name)s` буквално в XML view** (вкл. в `<code>`, `<p>`, `help=` атрибут) се интерпретира от Odoo XML parser-а като `ir.model.data` external-ID lookup → `ValueError: External ID not found in the system: <module>.<name>`. Не може да бъде escape-нато с `%%`. Решение: преформулирай текста без `%(...)s` синтаксис (напр. `the placeholder <code>response_time</code>` вместо `<code>%(response_time)s</code>`).
-
-Matched tokens: `<p>, help=`
-
-#### Gotcha: `account.account` **НЯМА** `company_id` — ползвай уникални кодове (нап
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `account.account` **НЯМА** `company_id` — ползвай уникални кодове (напр. `411.NRA`)
-
-Matched tokens: `company_id`
-
-#### Gotcha: `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчита
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `size=N` на `fields.Char` е **UI hint**, не DB constraint — не разчитай на него за валидация
-
-Matched tokens: `fields.char`
-
-#### Gotcha: `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. З
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Модели и полета** in odoo19-gotchas.md:
-
-> `@api.onchange` **НЕ** се вика при `create()` — само при UI промяна. За логика при create ползвай `@api.model_create_multi` или `_compute`
-
-Matched tokens: `_compute`
-
-#### Gotcha: **Kanban templates: `<t t-name="card">` НЕ `<t t-name="kanban-box">`**
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Kanban templates: `<t t-name="card">` НЕ `<t t-name="kanban-box">`** — v18→v19 преименуване. Стария път минава XML lint и install, но при отваряне в браузъра гърми с `OwlError: Missing 'card' template`. Структурата на content също е олекотена (без `oe_kanban_card` обвивка — директно полета + footer).
-
-Matched tokens: `<t t-name="card">`
-
-#### Gotcha: **Search view: `<group>` без атрибути** — `expand="0"` и `string="Grou
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Search view: `<group>` без атрибути** — `expand="0"` и `string="Group By"` са премахнати. Стария път гърми с `RELAXNG_ERR_INVALIDATTR`.
-
-Matched tokens: `<group>`
-
-#### Gotcha: **Form view inline x2many: `default_X: id` НЕ `active_id`** — `active_
-<!-- source: gotchas ref: /home/lubo/.claude/rules/odoo19-gotchas.md occ: 1 conf: 0.50 -->
-
-From **Views (XML / kanban / search)** in odoo19-gotchas.md:
-
-> **Form view inline x2many: `default_X: id` НЕ `active_id`** — `active_id` е действие-context, не form-context. Често по-чисто е да не подаваш context изобщо — Odoo автоматично попълва inverse FK.
-
-Matched tokens: `active_id`
-
-### From `git_log` (13)
-
-#### Fix: [TEST] rfid_pms_base: add 2 kanban tours + fix v18 data-context residue
-<!-- source: git_log ref: e4884525993361af357b5d49d8c0c97303d0a9c5 occ: 1 conf: 0.60 -->
-
-Commit `e488452599` (2026-05-13): [TEST] rfid_pms_base: add 2 kanban tours + fix v18 data-context residue
-
-#### Fix: [FIX] rfid_pms_base: v18 -> v19 migration (attrs, view-id, range check, 
-<!-- source: git_log ref: 572b1708c1e5ca59812b838115b03aac07604849 occ: 1 conf: 0.60 -->
-
-Commit `572b1708c1` (2026-05-03): [FIX] rfid_pms_base: v18 -> v19 migration (attrs, view-id, range check, tests)
-
-#### Fix: [FIX] noupdate on user-tunable data records (3 modules)
-<!-- source: git_log ref: df70ee69435fdfe180aa7565634eb91a0e62da0a occ: 1 conf: 0.60 -->
-
-Commit `df70ee6943` (2026-05-01): [FIX] noupdate on user-tunable data records (3 modules)
-
-#### Fix: [FIX] all: Replace deprecated self._context with self.env.context
-<!-- source: git_log ref: c2b001ba20353637d0a0b6541fa6df7d479636e6 occ: 1 conf: 0.60 -->
-
-Commit `c2b001ba20` (2026-02-16): [FIX] all: Replace deprecated self._context with self.env.context
-
-#### Fix: v2.1 Added portal functionality, barcode generation and RFID services. M
-<!-- source: git_log ref: 3c84986ac48326833d2f41e4de1d121e3c526130 occ: 1 conf: 0.60 -->
-
-Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
-
-#### Fix: Port functionality and fixes from 14.0
-<!-- source: git_log ref: 10637e0f69f57f10e235d43b29605161dfb78c97 occ: 1 conf: 0.60 -->
-
-Commit `10637e0f69` (2022-03-22): Port functionality and fixes from 14.0
-
-#### Fix: Port fixes from 14.0
-<!-- source: git_log ref: 4428bc253e3f087a8debfba3c2df905fa44d05dc occ: 1 conf: 0.60 -->
-
-Commit `4428bc253e` (2022-02-13): Port fixes from 14.0
-
-#### Fix: [FIX] New reservation counter
-<!-- source: git_log ref: f936e189f1c569b5531b04eb1aee0a73b00776bd occ: 1 conf: 0.60 -->
-
-Commit `f936e189f1` (2021-09-19): [FIX] New reservation counter
-
-#### Fix: [FIX] License
-<!-- source: git_log ref: 5e78739c1295b262921d6d9e338d4c7f3ee01d8c occ: 1 conf: 0.60 -->
-
-Commit `5e78739c12` (2021-09-11): [FIX] License
-
-#### Fix: [FIX] Fix expiration encoding
-<!-- source: git_log ref: 6236d5f1c67ec8347eba4fbaed59f323aede218c occ: 1 conf: 0.60 -->
-
-Commit `6236d5f1c6` (2021-09-08): [FIX] Fix expiration encoding
-
-#### Fix: [FIX] Fix expiration encoding
-<!-- source: git_log ref: fa2c4b7f2fa5c8ecb95080ba7ed1b5620faf22aa occ: 1 conf: 0.60 -->
-
-Commit `fa2c4b7f2f` (2021-09-07): [FIX] Fix expiration encoding
-
-#### Fix: [FIX] Reservation Time, User rights, User event menu
-<!-- source: git_log ref: d63c60bfd5ab30c582e56dbfaacacf2d2a0de21e occ: 1 conf: 0.60 -->
-
-Commit `d63c60bfd5` (2021-09-03): [FIX] Reservation Time, User rights, User event menu
-
-#### Fix: [FIX] Reservation Time, User rights, User event menu
-<!-- source: git_log ref: f387026209dd50dc27369b696392a7d83d3b2fc5 occ: 1 conf: 0.60 -->
-
-Commit `f387026209` (2021-09-03): [FIX] Reservation Time, User rights, User event menu
-
-
-## Source provenance <a id='provenance'></a>
-
-- Module path: `/home/lubo/PycharmProjects/odoo19/custom-addons/polimex/rfid_pms_base`
-- Source digest: `sha256:c62b009d4388adfc9875d68038831797fe93f475216234b61e40d5d2f7561e6e`
-- Generated at: `2026-05-14T11:16:43+00:00`
-- Generator: `polimex_module_knowledge` (see `~/.claude/lib/polimex_module_knowledge/`)
-
-## The setup checklist (onboarding banner) <a id='onboarding-banner'></a>
+##### The setup checklist (onboarding banner)
 
 The banner is NOT a view class of this module. It is attached by putting the
 onboarding's `route_name` in the CONTEXT of the action:
@@ -889,3 +671,70 @@ This module's own part is `models/onboarding_onboarding.py`:
 `_prepare_rendering_values` auto-completes its two steps (an `hr.rfid.access.group` with doors exists; a `rfid_pms_base.room` exists) for the CURRENT company
 before delegating to core, and `action_close_panel_pms_setup` is the close action named on the
 onboarding record. Nothing here has to know how the banner is drawn.
+Entries derived from the module's own code comments and bug-fix commit history.
+
+### From `git_log` (14)
+
+#### Fix: [FIX] drop test-framework import from module __init__ (A1)
+
+Commit `d392540045` (2026-06-01): [FIX] drop test-framework import from module __init__ (A1)
+
+#### Fix: [TEST] rfid_pms_base: add 2 kanban tours + fix v18 data-context residue
+
+Commit `e488452599` (2026-05-13): [TEST] rfid_pms_base: add 2 kanban tours + fix v18 data-context residue
+
+#### Fix: [FIX] rfid_pms_base: v18 -> v19 migration (attrs, view-id, range ...
+
+Commit `572b1708c1` (2026-05-03): [FIX] rfid_pms_base: v18 -> v19 migration (attrs, view-id, range check, tests)
+
+#### Fix: [FIX] noupdate on user-tunable data records (3 modules)
+
+Commit `df70ee6943` (2026-05-01): [FIX] noupdate on user-tunable data records (3 modules)
+
+#### Fix: [FIX] all: Replace deprecated self._context with self.env.context
+
+Commit `c2b001ba20` (2026-02-16): [FIX] all: Replace deprecated self._context with self.env.context
+
+#### Fix: v2.1 Added portal functionality, barcode generation and RFID ...
+
+Commit `3c84986ac4` (2023-07-24): v2.1 Added portal functionality, barcode generation and RFID services. Many bugfixes
+
+#### Fix: Port functionality and fixes from 14.0
+
+Commit `10637e0f69` (2022-03-22): Port functionality and fixes from 14.0
+
+#### Fix: Port fixes from 14.0
+
+Commit `4428bc253e` (2022-02-13): Port fixes from 14.0
+
+#### Fix: [FIX] New reservation counter
+
+Commit `f936e189f1` (2021-09-19): [FIX] New reservation counter
+
+#### Fix: [FIX] License
+
+Commit `5e78739c12` (2021-09-11): [FIX] License
+
+#### Fix: [FIX] Fix expiration encoding
+
+Commit `6236d5f1c6` (2021-09-08): [FIX] Fix expiration encoding
+
+#### Fix: [FIX] Fix expiration encoding
+
+Commit `fa2c4b7f2f` (2021-09-07): [FIX] Fix expiration encoding
+
+#### Fix: [FIX] Reservation Time, User rights, User event menu
+
+Commit `d63c60bfd5` (2021-09-03): [FIX] Reservation Time, User rights, User event menu
+
+#### Fix: [FIX] Reservation Time, User rights, User event menu
+
+Commit `f387026209` (2021-09-03): [FIX] Reservation Time, User rights, User event menu
+
+
+## Source provenance <a id='provenance'></a>
+
+- Module: `rfid_pms_base`
+- Source digest: `sha256:effb668d17081e4e6b350a685f41145cde41fddf74bbf3c242a0c3b510bc503b`
+- Generated at: `2026-11-23T10:04:19+00:00`
+- Generator: `polimex_module_knowledge`

@@ -163,7 +163,9 @@ hr_rfid_vending.auto_refill_threshold: 10.00
    - View sales in real-time
    - In Vending Events, type part of a product's name or a person's name in
      the search box and press Enter: a sale reads "product - buyer", so the
-     list keeps that product's sales or that person's purchases
+     list keeps that product's sales or that person's purchases. A machine
+     error or a cash collection is found by the person, the door or the
+     action, as an access event is
 
 3. **Reports**
    - Vending → Reports
@@ -244,6 +246,11 @@ POST /api/vending/balance/add
    - Review vending events
    - Check for error codes
    - Monitor response times
+
+### Messages you may see
+
+- **"The credit was returned to the card: nothing was chosen in time."** in the machine's system events - not a fault: the card holder put credit on the machine and chose nothing, so it went back. "Item N did not come out" means the chosen item failed and the credit went back; nobody is charged in either case.
+- **The machine's own errors** are named in its system events by firmware: on the Executive machines (16, 20) "does not answer", "did not answer after a status request", "sent a command the controller does not know" and "product error" (16 also reports "the connection is back"); on the MDB machine (21) the MDB bus going silent and back, the link layer not answering (check the wiring), a session closed after 30 seconds (check the machine's software), and the connection to the server lost and back. A code the firmware does not have is shown as it came, with the raw data.
 
 ## ⚙️ Advanced Features
 

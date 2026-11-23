@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: "\n        RFID attendance hourly cost plugin\n    "
-last_updated: '2026-06-03'
-source_digest: sha256:898f45364c49574b960aac44247f2e9194dd34c95a7a1a3abd5c5cd59a784864
+last_updated: '2026-11-23'
+source_digest: sha256:da5cfde644f91256cc3267894ae3a9e572e87409b1b7426296b5641cc273aa78
 companion_doc: llms-full.md
 ---
 
@@ -22,19 +22,10 @@ companion_doc: llms-full.md
 ## What this module does
 
 
-        RFID attendance hourly cost plugin
-    .
+        RFID attendance hourly cost plugin.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
 
-
-## Which days are paid at the holiday rate
-
-A day is an official holiday when a public holiday covers that day as the
-employee lives it, in their own **Timezone** (employee form, *Settings*
-tab). A holiday begins at midnight in Sofia, which is the evening before
-in UTC: work on the eve of a holiday and on the day after it is paid as an
-ordinary or rest day, and only the holiday itself at the holiday rate.
 
 ## How to use it
 
@@ -138,6 +129,14 @@ Costs are calculated automatically when:
    - Project → Labor Costs tab
    - See allocated employee costs
    - Track budget utilization
+
+##### Which days are paid at the holiday rate
+
+A day is an official holiday when a public holiday covers that day as the
+employee lives it, in their own **Timezone** (employee form, *Settings*
+tab). A holiday begins at midnight in Sofia, which is the evening before
+in UTC: work on the eve of a holiday and on the day after it is paid as an
+ordinary or rest day, and only the holiday itself at the holiday rate.
 
 #### 📊 Reports
 

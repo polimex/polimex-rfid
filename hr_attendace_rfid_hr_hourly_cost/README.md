@@ -108,6 +108,14 @@ Costs are calculated automatically when:
    - See allocated employee costs
    - Track budget utilization
 
+### Which days are paid at the holiday rate
+
+A day is an official holiday when a public holiday covers that day as the
+employee lives it, in their own **Timezone** (employee form, *Settings*
+tab). A holiday begins at midnight in Sofia, which is the evening before
+in UTC: work on the eve of a holiday and on the day after it is paid as an
+ordinary or rest day, and only the holiday itself at the holiday rate.
+
 ## 📊 Reports
 
 ### Cost Summary Report

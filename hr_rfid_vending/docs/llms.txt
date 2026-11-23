@@ -6,8 +6,8 @@ doc_type: user_guide
 audience:
 - user
 summary: Manage EXECUTIVE based vending machines
-last_updated: '2026-11-09'
-source_digest: sha256:ffbc98011d8ee0ab14c766b66ed154ad069b333eac53a14b28627109c1a2420c
+last_updated: '2026-11-23'
+source_digest: sha256:07b4c4f6bdaaa2d8897d5301ceaaf4c48bed59694a6d626893e874e01ad69c89
 companion_doc: llms-full.md
 ---
 
@@ -22,15 +22,6 @@ companion_doc: llms-full.md
 Manage EXECUTIVE based vending machines.
 
 This guide is for users who **configure** and **use** the module. If you need to install, upgrade, integrate or extend it, see the technical reference in [`llms-full.md`](llms-full.md).
-
-
-## How to configure
-
-Open **Settings**. Available options:
-
-- **refill_interval_number** - Repeat every x.
-- **Interval Unit** - Time unit for the auto-refill repeat interval. Combined with Repeat every (above) to drive the cron schedule.
-- **Next Execution Date** - Next planned execution date for this refill.
 
 
 ## How to use it
@@ -279,6 +270,11 @@ POST /api/vending/balance/add
    - Check for error codes
    - Monitor response times
 
+##### Messages you may see
+
+- **"The credit was returned to the card: nothing was chosen in time."** in the machine's system events - not a fault: the card holder put credit on the machine and chose nothing, so it went back. "Item N did not come out" means the chosen item failed and the credit went back; nobody is charged in either case.
+- **The machine's own errors** are named in its system events by firmware: on the Executive machines (16, 20) "does not answer", "did not answer after a status request", "sent a command the controller does not know" and "product error" (16 also reports "the connection is back"); on the MDB machine (21) the MDB bus going silent and back, the link layer not answering (check the wiring), a session closed after 30 seconds (check the machine's software), and the connection to the server lost and back. A code the firmware does not have is shown as it came, with the raw data.
+
 #### ⚙️ Advanced Features
 
 ##### Auto-refill Rules
@@ -365,8 +361,5 @@ For more information, visit [polimex.co](https://polimex.co)
 ## Common questions and errors
 
 Actions in this list display a message dialog when something is wrong (missing data, invalid configuration, server unreachable, etc.). If an action fails, read the dialog message and check the configuration described above.
-
-- **"The credit was returned to the card: nothing was chosen in time."** in the machine's system events - not a fault: the card holder put credit on the machine and chose nothing, so it went back. "Item N did not come out" means the chosen item failed and the credit went back; nobody is charged in either case.
-- **The machine's own errors** are named in its system events by firmware: on the Executive machines (16, 20) "does not answer", "did not answer after a status request", "sent a command the controller does not know" and "product error" (16 also reports "the connection is back"); on the MDB machine (21) the MDB bus going silent and back, the link layer not answering (check the wiring), a session closed after 30 seconds (check the machine's software), and the connection to the server lost and back. A code the firmware does not have is shown as it came, with the raw data.
 
 - **Reverse** (on `hr.rfid.vending.event.reverse`)
