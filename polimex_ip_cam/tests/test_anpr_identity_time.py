@@ -3,6 +3,14 @@ from odoo.tests.common import TransactionCase, tagged
 from odoo.addons.polimex_ip_cam.controllers.anpr_controller import _hikvision_timezone
 
 
+# Identities no camera in a database carries. The resolver looks at every
+# camera there is, so a value shared with one of them (the demo camera has a
+# real-looking sub-serial) changes the answer.
+SUB_SERIAL = "TESTSUB0001"
+FULL_SERIAL = "TEST-CAM 20260101AA" + SUB_SERIAL
+LEARNED_UUID = "TESTSUB0002"
+
+
 @tagged("post_install", "-at_install", "polimex_ip_cam", "ipcam_anpr")
 class TestHikvisionTimezone(TransactionCase):
     """Hikvision uses the POSIX/inverted sign for the timeZone string."""
@@ -43,8 +51,8 @@ class TestResolveAnprCamera(TransactionCase):
         })
 
     def test_match_by_sub_serial(self):
-        cam = self._make_camera("Cam-A", "10.0.0.1", serial="DS-TCG406-E 20260120AIGN9163457", sub="GN9163457")
-        found = self.env["cctv.camera"]._resolve_anpr_camera("GN9163457", "9.9.9.9", True)
+        cam = self._make_camera("Cam-A", "10.0.0.1", serial=FULL_SERIAL, sub=SUB_SERIAL)
+        found = self.env["cctv.camera"]._resolve_anpr_camera(SUB_SERIAL, "9.9.9.9", True)
         self.assertEqual(found, cam)
 
     def test_legacy_match_by_full_serial(self):
@@ -56,9 +64,9 @@ class TestResolveAnprCamera(TransactionCase):
     def test_match_by_trusted_ip_learns_uuid(self):
         cam = self._make_camera("Cam-C", "192.168.74.57")  # no serial/sub yet
         self.assertFalse(cam.sub_serial_number)
-        found = self.env["cctv.camera"]._resolve_anpr_camera("GN9163457", "192.168.74.57", True)
+        found = self.env["cctv.camera"]._resolve_anpr_camera(LEARNED_UUID, "192.168.74.57", True)
         self.assertEqual(found, cam)
-        self.assertEqual(cam.sub_serial_number, "GN9163457",
+        self.assertEqual(cam.sub_serial_number, LEARNED_UUID,
                          "the deviceUUID must be learned and stored on first trusted-IP event")
 
     def test_no_ip_fallback_when_source_verify_off(self):

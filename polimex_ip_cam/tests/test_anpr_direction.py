@@ -81,7 +81,7 @@ class TestHttpHostUrlToken(TransactionCase):
         self.cam = self.env["cctv.camera"].create({
             "name": "Tok Cam", "company_id": self.env.company.id,
             "ip_address": "10.0.0.41", "port": 80, "username": "admin",
-            "password": "x", "sub_serial_number": "GN9163457",
+            "password": "x", "sub_serial_number": "TESTSUB0003",
         })
 
     def test_url_embeds_sub_serial(self):
@@ -94,4 +94,4 @@ class TestHttpHostUrlToken(TransactionCase):
         with patch("odoo.addons.polimex_ip_cam.helpers.camera_api.HikvisionCamera.set_http_host",
                    _set):
             self.cam.action_set_http_host()
-        self.assertEqual(captured.get("url"), "/ipcam/anpr/event/GN9163457")
+        self.assertEqual(captured.get("url"), "/ipcam/anpr/event/TESTSUB0003")
