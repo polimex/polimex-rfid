@@ -12,7 +12,7 @@ audience:
 companion_doc: llms.txt
 summary: Manage employee access control
 last_updated: '2026-11-23'
-source_digest: sha256:dc964b6f31647940550f32c4eca95284ae0521242e536fcad26663e8e08d8e95
+source_digest: sha256:7993d852199f6f5a3913bfe1fb0366caee033fa5543cea5d84fe69f38a2cdb95
 depends:
 - hr
 - contacts
@@ -2830,7 +2830,7 @@ Entries derived from the module's own code comments and bug-fix commit history.
 
 > remove buttons and move actions
 
-### From `git_log` (55)
+### From `git_log` (54)
 
 #### Fix: fix(hr_rfid): green the vending + tour tests broken by three prior ...
 
@@ -2936,6 +2936,6 @@ Commit `57aba8363e` (2026-03-19): [MIG] all: Migrate hardware routes to Odoo 19 
 ## Source provenance <a id='provenance'></a>
 
 - Module: `hr_rfid`
-- Source digest: `sha256:dc964b6f31647940550f32c4eca95284ae0521242e536fcad26663e8e08d8e95`
-- Generated at: `2026-11-23T10:03:18+00:00`
+- Source digest: `sha256:7993d852199f6f5a3913bfe1fb0366caee033fa5543cea5d84fe69f38a2cdb95`
+- Generated at: `2026-11-23T10:52:32+00:00`
 - Generator: `polimex_module_knowledge`
