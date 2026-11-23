@@ -137,6 +137,84 @@ jobs:
           echo "Installing: $INSTALL_LIST"
           echo "list=$INSTALL_LIST" >> $GITHUB_OUTPUT
 
+      - name: Select the tests
+        id: tests
+        run: |
+          # Prints the --test-tags value. "/module" is every test of the
+          # module that carries the standard tag, which is every test class
+          # unless it says otherwise.
+          TAGS=$(python - "${{ steps.modules.outputs.list }}" <<'PY'
+          import ast, pathlib, sys
+
+          root = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else "addons/polimex")
+          modules = [name for name in sys.argv[1].split(",") if name]
+
+          # "module:Class", or "module/file.py" for a file nothing imports -> why
+          # it does not run here. Nothing else may stay out of the run.
+          NOT_RUN = {
+              "hr_rfid:RFIDTests": "tests/test_functional_old.py, the archived one-piece "
+                                   "test that the separate test files replaced",
+          }
+
+
+          def out_of_standard(node):
+              return any(
+                  isinstance(deco, ast.Call)
+                  and getattr(deco.func, "id", "") == "tagged"
+                  and any(isinstance(a, ast.Constant) and a.value == "-standard" for a in deco.args)
+                  for deco in node.decorator_list
+              )
+
+
+          problems, seen, excluded = [], set(), []
+          sources = {p: p.read_text(encoding="utf-8") for p in root.glob("*/tests/*.py")}
+          for module in modules:
+              tests = root / module / "tests"
+              init = sources.get(tests / "__init__.py", "")
+              imported_here = {
+                  alias.name
+                  for node in ast.walk(ast.parse(init))
+                  if isinstance(node, ast.ImportFrom)
+                  for alias in node.names
+              }
+              for path in sorted(tests.glob("test_*.py")):
+                  if path.stem not in imported_here:
+                      key = f"{module}/{path.name}"
+                      base_of_others = any(
+                          f"{module}.tests.{path.stem}" in text
+                          for other, text in sources.items() if other != path
+                      )
+                      if base_of_others:
+                          continue  # its classes run in the modules that build on them
+                      seen.add(key)
+                      if key not in NOT_RUN:
+                          problems.append(f"{key}: no tests/__init__.py imports it, its tests never run")
+                      continue
+                  for node in ast.parse(sources[path]).body:
+                      if not isinstance(node, ast.ClassDef):
+                          continue
+                      if not any(isinstance(i, ast.FunctionDef) and i.name.startswith("test") for i in node.body):
+                          continue
+                      key = f"{module}:{node.name}"
+                      if out_of_standard(node):
+                          seen.add(key)
+                          if key not in NOT_RUN:
+                              problems.append(f"{key} ({path.name}) is tagged -standard and NOT_RUN gives no reason")
+                      elif key in NOT_RUN:
+                          seen.add(key)
+                          excluded.append(f"-/{key}")
+
+          problems += [f"{key} is in NOT_RUN and no such test exists any more" for key in sorted(set(NOT_RUN) - seen)]
+          if problems:
+              print("Tests that would be left out without a reason:", file=sys.stderr)
+              print("\n".join("  " + line for line in problems), file=sys.stderr)
+              sys.exit(1)
+          print(",".join([f"/{module}" for module in modules] + sorted(excluded)))
+          PY
+          )
+          echo "Test tags: $TAGS"
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
       - name: Install polimex modules
         env:
           PGHOST: localhost
@@ -160,22 +238,11 @@ jobs:
           PGUSER: odoo
           PGPASSWORD: odoo
         run: |
-          # Tag set covers every test class added by this audit. Listed
-          # explicitly (instead of /<module>) to keep failures pinpointable.
-          # Note: 'rfid_service' is NOT included — that tag is shared
-          # between the new lifecycle suite (which we want) and the
-          # legacy RFIDServices.test_rfid_services HttpCase that needs a
-          # full hardware-controller fixture set up via the iCon factory
-          # in hr_rfid.tests.controller. The legacy test runs locally
-          # but not on a clean CI DB; we cover the same flow at the
-          # model layer through 'rfid_service_lifecycle'.
-          # 'rfid' covers the full hr_rfid suite (rfid_card / rfid_apb /
-          # rfid_events / rfid_security / rfid_webstack / rfid_commands /
-          # rfid_constraints / rfid_access_group / rfid_schedules /
-          # rfid_wizards / rfid_hardware) — ~163 tests in one tag.
-          # 'rfid_vending' covers the full vending suite incl. auto-refill
-          # and ev64. Sister modules each carry their own dedicated tag.
-          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          # Every standard test of every installed module: the step
+          # "Select the tests" builds the list and refuses a test left out
+          # without a written reason. A hand-kept list of tags let 72 test
+          # classes of the repository stay out of the run unnoticed.
+          TAGS="${{ steps.tests.outputs.tags }}"
           python odoo/odoo-bin \
             -d polimex_test \
             --test-enable --test-tags="$TAGS" \
@@ -233,8 +300,8 @@ jobs:
           # already-tested polimex_test state.
           psql -c "DROP DATABASE IF EXISTS polimex_cov;" postgres
           psql -c "CREATE DATABASE polimex_cov OWNER odoo;" postgres
-          # Same tag list as the regular run.
-          TAGS="rfid,rfid_vending,sot_denied,hr_attendance_late,rfid_site_manager,rfid_site_manager_tour,rfid_voting,refresh_mixin,rfid_service_lifecycle,rfid_service_portal,rfid_service_portal_security,rfid_pms,rfid_odoo_import,rfid_old_cloud_import,polimex_ip_cam,rfid_portal,rfid_refresh_views,rfid_hourly_cost,rfid_zpl_labels,rfid_attendance_zone"
+          # The same tests as the regular run.
+          TAGS="${{ steps.tests.outputs.tags }}"
           coverage run --source=addons/polimex --omit='*/tests/*,*/__pycache__/*' \
             odoo/odoo-bin \
               -d polimex_cov \
