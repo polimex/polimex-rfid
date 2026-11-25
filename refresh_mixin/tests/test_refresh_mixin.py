@@ -2,6 +2,8 @@ import logging
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from odoo.exceptions import AccessError
+from odoo.service.model import get_public_method
 from odoo.tests import common, tagged
 
 
@@ -178,11 +180,8 @@ class TestRefreshMixin(common.TransactionCase):
         self.assertTrue(self._notice_required(
             {}, ignore=frozenset({"last_heartbeat"})))
 
-    def test_write_consults_the_gate_on_a_real_consumer(self):
-        """Wire-level proof in THIS repo: write() must ask
-        _refresh_notice_required and honor its verdict. A merge that
-        reverts write() to the unconditional `if self._refresh_on_write`
-        form keeps every stub test green - only this test catches it."""
+    def _a_consumer(self):
+        """The name of an installed model that inherits the mixin."""
         MixinCls = type(self.env["refresh.mixin"])
         consumer = next(
             (name for name in self.env.registry
@@ -192,6 +191,27 @@ class TestRefreshMixin(common.TransactionCase):
             None)
         if consumer is None:
             self.skipTest("no refresh.mixin consumer model installed")
+        return consumer
+
+    def test_a_client_cannot_send_the_notice(self):
+        """The notice makes every open dashboard of the model reload, so
+        only the server sends it, on create and write. A remote caller
+        (RPC, a button, the web client) is refused. The judge is the
+        framework's own gate for remote calls, on the mixin and on a
+        model that inherits it; the model's ordinary methods stay open."""
+        with self.assertRaises(AccessError):
+            get_public_method(self.env["refresh.mixin"], "send_notice")
+        consumer = self._a_consumer()
+        with self.assertRaises(AccessError):
+            get_public_method(self.env[consumer], "send_notice")
+        self.assertTrue(get_public_method(self.env[consumer], "write"))
+
+    def test_write_consults_the_gate_on_a_real_consumer(self):
+        """Wire-level proof in THIS repo: write() must ask
+        _refresh_notice_required and honor its verdict. A merge that
+        reverts write() to the unconditional `if self._refresh_on_write`
+        form keeps every stub test green - only this test catches it."""
+        consumer = self._a_consumer()
         cls = type(self.env[consumer])
         with patch.object(cls, "_refresh_notice_required",
                           return_value=False) as gate, \

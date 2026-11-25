@@ -2,7 +2,7 @@
 id: refresh_mixin
 title: Polimex Refresh Mixin
 module: refresh_mixin
-module_version: 19.0.1.5.0
+module_version: 19.0.1.5.1
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -60,7 +60,7 @@ chunking:
 ---
 
 
-# Polimex Refresh Mixin - `refresh_mixin` v19.0.1.5.0
+# Polimex Refresh Mixin - `refresh_mixin` v19.0.1.5.1
 
 Refresh Mixin for Odoo models
 
@@ -72,7 +72,7 @@ Refresh Mixin for Odoo models
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `refresh_mixin`
-- **Version**: `19.0.1.5.0`
+- **Version**: `19.0.1.5.1`
 - **Category**: Technical
 - **License**: AGPL-3
 - **Author**: Polimex Team <software@polimex.co>
@@ -496,8 +496,8 @@ Python class `RefreshMixin` in `models/refresh_mixin.py:6`.  AbstractModel.  Des
 - **`get_company_ids(self)`** - decorators: -
   - Every company that should receive the realtime refresh for these records. Defaults to the single company from :meth:`get_company_id`; override when a record concerns more than one company (e.g.…
   - touches: `res.company`
-- **`send_notice(self, operation)`** - decorators: -
-  - Send bus notification for dashboard refresh.
+- **`send_notice(self, operation)`** - decorators: `@api.private`
+  - Send bus notification for dashboard refresh. Server-side only: create() and write() call it; it is closed to remote calls, so a client cannot make every open dashboard reload.
   - effects: `log_debug`, `log_warn`, `sudo`
   - touches: `bus.bus`
 - **`write(self, vals)`** - decorators: -

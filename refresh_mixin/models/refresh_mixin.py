@@ -69,9 +69,13 @@ class RefreshMixin(models.AbstractModel):
         """
         return {}
 
+    @api.private
     def send_notice(self, operation):
         """
         Send bus notification for dashboard refresh.
+
+        Server-side only: create() and write() call it. It is closed to
+        remote calls, so a client cannot make every open dashboard reload.
 
         Args:
             operation (str): 'create' or 'write'
