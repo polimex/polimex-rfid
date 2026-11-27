@@ -26,7 +26,8 @@ polimex_iot both depend on ``polimex_ws`` but never on each other.
 """
 import logging
 
-from odoo import fields, models, tools
+from odoo import exceptions, fields, models, tools
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 from odoo.addons.bus.websocket import CloseCode, _websocket_instances
 
 from odoo.addons.hr_rfid.models.hr_rfid_webstack import BadTimeException
@@ -248,6 +249,10 @@ class HrRfidWebstackWs(models.Model):
         try:
             with self.env.cr.savepoint():
                 rec._ws_publish_command(command)
+        except (*PG_CONCURRENCY_EXCEPTIONS_TO_RETRY, exceptions.ConcurrencyError):
+            # Another transaction wrote the same row; Odoo replays the whole
+            # message when this reaches it (polimex.ws.mixin._ws_dispatch).
+            raise
         except Exception:
             _logger.warning(
                 'WS: could not publish next command %s (%s) to module %s; '
@@ -305,6 +310,10 @@ class HrRfidWebstackWs(models.Model):
             try:
                 with self.env.cr.savepoint():
                     self._ws_publish_command(command)
+            except (*PG_CONCURRENCY_EXCEPTIONS_TO_RETRY, exceptions.ConcurrencyError):
+                # Another transaction wrote the same row; Odoo replays the whole
+                # message when this reaches it (polimex.ws.mixin._ws_dispatch).
+                raise
             except Exception:
                 _logger.warning(
                     'WS: could not publish command %s (%s) to module %s on '
@@ -366,8 +375,7 @@ class HrRfidWebstackWs(models.Model):
                 continue
             try:
                 with self.env.cr.savepoint():
-                    ev_ts = '%s %s' % (event.get('date') or '', event.get('time') or '')
-                    bos = int(event.get('bos') or 0)
+                    bos, ev_ts = Dedup._event_key(event)
                     if Dedup._seen(rec, ctrl_num, bos, ev_ts):
                         entry.update(ok=True, dup=True)
                         results.append(entry)
@@ -415,6 +423,10 @@ class HrRfidWebstackWs(models.Model):
                     'Controller sent an invalid date or time',
                     {'bid': bid, 'event': event})
                 entry['ok'] = True   # consume like HTTP status 200
+            except (*PG_CONCURRENCY_EXCEPTIONS_TO_RETRY, exceptions.ConcurrencyError):
+                # Another transaction wrote the same row; Odoo replays the whole
+                # message when this reaches it (polimex.ws.mixin._ws_dispatch).
+                raise
             except Exception as error:
                 # ok:false -> the device keeps the event and re-sends it
                 # later; the failure is visible in the log and as a system

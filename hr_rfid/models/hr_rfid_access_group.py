@@ -4,6 +4,7 @@ from collections import Counter
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, exceptions, _
+from ..controllers import polimex
 import logging
 import queue
 
@@ -527,22 +528,125 @@ class HrRfidAccessGroupDoorRel(models.Model):
         card write above that, so every card of the group would silently stay
         off the controller. The person choosing the schedule is told which
         numbers the door takes.
+
+        A firmware build known to take a schedule and then read it wrongly
+        (hr.rfid.ctrl._misreads_card_schedule) is given only what it reads
+        right: a low number, and the same one for the controller's two doors.
         """
         for rel in self:
             controller = rel.door_id.controller_id
-            highest = controller._card_schedule_max() if controller else None
-            if highest is not None and rel.time_schedule_id.number > highest:
+            if not controller:
+                continue
+            holds = controller._card_schedule_max()
+            number = rel.time_schedule_id.number
+            if holds is not None and number > holds:
                 raise exceptions.ValidationError(self.env._(
                     'The door "%(door)s" is on a %(model)s controller, which takes '
                     'time schedules numbered 0 to %(highest)d for a card. '
                     '"%(schedule)s" is number %(number)d: choose a schedule with a '
                     'lower number for this door.',
                     door=rel.door_id.name,
-                    model=dict(controller._fields['hw_version']._description_selection(self.env)).get(
-                        controller.hw_version, controller.hw_version),
-                    highest=highest,
+                    model=controller._model_name(),
+                    highest=holds,
                     schedule=rel.time_schedule_id.name,
-                    number=rel.time_schedule_id.number))
+                    number=number))
+            if self._brought_across():
+                # What a transfer brings is what the site already has. It is
+                # held to what the controller can hold at all (above); the
+                # rules about a firmware build are for a new choice.
+                continue
+            if (controller._misreads_card_schedule()
+                    and number > polimex.CARD_SCHEDULE_MISREAD_MAX):
+                # The controller takes the card and then lets it in out of
+                # hours, so the reason given is the firmware, not the model.
+                raise exceptions.ValidationError(self.env._(
+                    'The door "%(door)s" is on a %(model)s controller with '
+                    'firmware %(version)s, which reads a card\'s time '
+                    'schedule right only for numbers 0 to %(highest)d. '
+                    '"%(schedule)s" is number %(number)d: choose a schedule '
+                    'with a lower number for this door.',
+                    door=rel.door_id.name,
+                    model=controller._model_name(),
+                    version=controller._firmware_version_name(),
+                    highest=polimex.CARD_SCHEDULE_MISREAD_MAX,
+                    schedule=rel.time_schedule_id.name,
+                    number=number))
+            if controller._misreads_card_schedule():
+                for other in rel._on_the_same_cards():
+                    self._refuse_two_schedules_on_one_reader(rel, other)
+
+    def _brought_across(self):
+        """Data being transferred from another system or read from the hardware.
+
+        The same mark that keeps commands from going out during a transfer
+        (hr.rfid.door.write). Such data describe a site as it is: refusing
+        them would stop the transfer on a setting nobody is choosing now.
+        """
+        return bool(self.env.context.get('no_hardware_commands'))
+
+    def _on_the_same_cards(self):
+        """The other door permissions that end up on the same cards as this one.
+
+        Those of its own access group, and those of every group held by a
+        person who holds this group: a card carries one schedule per reader,
+        whichever group it came from.
+        """
+        self.ensure_one()
+        group = self.access_group_id
+        held_with = (
+            group.all_employee_ids.employee_id.hr_rfid_access_group_ids.access_group_id
+            | group.all_contact_ids.contact_id.hr_rfid_access_group_ids.access_group_id
+        )
+        return ((group | held_with).all_door_ids | group.door_ids) - self
+
+    @api.model
+    def _refuse_two_schedules_on_one_reader(self, rel, other):
+        """Two doors of a controller that checks both against one schedule.
+
+        A firmware build that checks the card at reader 2 against the schedule
+        of reader 1 (hr.rfid.ctrl._misreads_card_schedule) lets the card
+        through the second door by the hours of the first. The two doors are
+        given the same schedule, or the choice is refused with the reason.
+
+        Asked in one place only: where somebody sets up the door of an
+        access group (_check_schedule_fits_the_controller). Never where a
+        group is given to a person - a card issued at a reception, a service
+        sold, an employee hired must not be stopped by what a firmware build
+        does - and never where a membership is merely written (a visit is
+        counted at every passage). A setting that is already there is left
+        as it is.
+        """
+        controller = rel.door_id.controller_id
+        if (
+            not controller
+            or not controller._misreads_card_schedule()
+            or rel.door_id == other.door_id
+            or other.door_id.controller_id != controller
+            or rel.time_schedule_id == other.time_schedule_id
+            or self._brought_across()
+        ):
+            return
+        values = {
+            'door': rel.door_id.name,
+            'other_door': other.door_id.name,
+            'model': controller._model_name(),
+            'version': controller._firmware_version_name(),
+            'group': rel.access_group_id.name,
+        }
+        if rel.access_group_id == other.access_group_id:
+            raise exceptions.ValidationError(self.env._(
+                'The doors "%(door)s" and "%(other_door)s" are on one %(model)s '
+                'controller with firmware %(version)s, which checks a card at '
+                'both doors against the time schedule of the first one. Give '
+                'the two doors the same time schedule in the access group '
+                '"%(group)s".', **values))
+        raise exceptions.ValidationError(self.env._(
+            'The doors "%(door)s" and "%(other_door)s" are on one %(model)s '
+            'controller with firmware %(version)s, which checks a card at both '
+            'doors against the time schedule of the first one. Give the two '
+            'doors the same time schedule in the access groups "%(group)s" and '
+            '"%(other_group)s".',
+            other_group=other.access_group_id.name, **values))
 
     @api.model
     def check_for_ts_inconsistencies(self, rels1, rels2):

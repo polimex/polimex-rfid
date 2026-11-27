@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-24 00:52\n"
+"PO-Revision-Date: 2026-11-27 16:11\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -12,6 +12,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"\"%(command)s\" was not sent: the module did not take it within %(seconds)d "
+"seconds. It is not sent later, because it was meant for that moment, so "
+"nothing was changed. Check that the module is in touch; if other commands "
+"are waiting for it, try again once they have gone out."
+msgstr ""
+"„%(command)s“ wurde nicht gesendet: Das Modul hat den Befehl nicht innerhalb"
+" von %(seconds)d Sekunden abgeholt. Er wird später nicht mehr gesendet, da "
+"er für genau diesen Zeitpunkt gedacht war. Es wurde daher nichts geändert. "
+"Prüfen Sie, ob das Modul erreichbar ist. Wenn noch andere Befehle auf das "
+"Modul warten, versuchen Sie es erneut, sobald diese gesendet wurden."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
@@ -1940,6 +1955,11 @@ msgstr ""
 "Karte genannt."
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__asked_at
+msgid "Asked At"
+msgstr "Angefordert am"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Assign the group to departments (for automatic assignment) or individual "
@@ -2081,17 +2101,6 @@ msgstr "Ballonnachrichten-Mixin"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__barcode_number
 msgid "Barcode Number"
 msgstr "Barcode Nummer"
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_door.py:0
-msgid ""
-"Because the webstack is behind NAT, we have to wait for the webstack to call"
-" us, so we created a command. The door will open/close as soon as possible."
-msgstr ""
-"Da sich der Webstack hinter NAT befindet, müssen wir warten, bis der "
-"Webstack uns kontaktiert, daher haben wir einen Befehl erstellt. Die Tür "
-"wird so bald wie möglich geöffnet/geschlossen."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -7934,6 +7943,11 @@ msgid "Normal"
 msgstr "Normal"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__32
+msgid "Not Sent to the Module in Time"
+msgstr "Nicht rechtzeitig an das Modul gesendet"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__8
 msgid "Not Use"
@@ -11575,6 +11589,20 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid ""
+"The door \"%(door)s\" is on a %(model)s controller with firmware "
+"%(version)s, which reads a card's time schedule right only for numbers 0 to "
+"%(highest)d. \"%(schedule)s\" is number %(number)d: choose a schedule with a"
+" lower number for this door."
+msgstr ""
+"Die Tür „%(door)s“ befindet sich an einem Steuergerät vom Typ %(model)s mit "
+"der Firmware %(version)s, das den Zeitplan einer Karte nur für die Nummern 0"
+" bis %(highest)d richtig liest. „%(schedule)s“ hat die Nummer %(number)d: "
+"Wählen Sie für diese Tür einen Zeitplan mit einer niedrigeren Nummer."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
 "The door \"%(door)s\" is on a %(model)s controller, which takes time "
 "schedules numbered 0 to %(highest)d for a card. \"%(schedule)s\" is number "
 "%(number)d: choose a schedule with a lower number for this door."
@@ -11625,6 +11653,35 @@ msgid ""
 msgstr ""
 "Die Tür, auf die diese Karte Zugang hat. Wenn die Karte den Lesern dieser "
 "Tür vorgelegt wird, wird der Zugang gemäß dem Zeitplan gewährt."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access group \"%(group)s\"."
+msgstr ""
+"Die Türen „%(door)s“ und „%(other_door)s“ befinden sich an demselben "
+"Steuergerät vom Typ %(model)s mit der Firmware %(version)s, das eine Karte "
+"an beiden Türen anhand des Zeitplans der ersten Tür prüft. Weisen Sie den "
+"zwei Türen in der Zutrittsgruppe „%(group)s“ denselben Zeitplan zu."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access groups \"%(group)s\" and \"%(other_group)s\"."
+msgstr ""
+"Die Türen „%(door)s“ und „%(other_door)s“ befinden sich an demselben "
+"Steuergerät vom Typ %(model)s mit der Firmware %(version)s, das eine Karte "
+"an beiden Türen anhand des Zeitplans der ersten Tür prüft. Weisen Sie den "
+"zwei Türen in den Zugangsgruppen „%(group)s“ und „%(other_group)s“ denselben"
+" Zeitplan zu."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__doors
@@ -11759,6 +11816,19 @@ msgstr "Die Intervalle für Tag %d überlappen sich"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "The module does not be behind NAT!"
 msgstr "Das Modul darf sich nicht hinter einem NAT befinden!"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"The module is behind NAT, so the command waits for the module to get in "
+"touch, which it normally does within seconds. If it has not gone out in "
+"%(seconds)d seconds it is closed and the door is left as it is."
+msgstr ""
+"Das Modul befindet sich hinter NAT, daher wartet der Befehl darauf, dass "
+"sich das Modul meldet, was normalerweise innerhalb weniger Sekunden "
+"geschieht. Wurde er innerhalb von %(seconds)d Sekunden nicht abgesendet, "
+"wird er geschlossen und die Tür bleibt unverändert."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -13255,6 +13325,21 @@ msgstr ""
 "Managern erteilt, die das Alarmsystem steuern müssen."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__asked_at
+msgid ""
+"When the command was last asked for: when it was created, when the same "
+"button was pressed again while it was still waiting, or when it was marked "
+"to be sent again. A door opened or closed from the screen that has not gone "
+"out within a minute of this is closed and is not sent later."
+msgstr ""
+"Zeitpunkt, zu dem der Befehl zuletzt angefordert wurde: bei der Erstellung, "
+"wenn dieselbe Schaltfläche erneut gedrückt wurde, während der Befehl noch "
+"wartete, oder wenn er zum erneuten Senden markiert wurde. Eine über den "
+"Bildschirm geöffnete oder geschlossene Tür, deren Befehl innerhalb einer "
+"Minute nach diesem Zeitpunkt nicht gesendet wurde, wird geschlossen und "
+"später nicht mehr gesendet."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_at
 msgid ""
 "When the command was last handed to the module. A command that gets no "
@@ -13794,3 +13879,13 @@ msgstr "{hw_type} SN:{serial} ID:{id}"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "{} in zones"
 msgstr "{} in Zonen"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid
+msgid "RFID Access Control"
+msgstr "RFID-Zugangskontrolle"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid
+msgid "Manage employee access control"
+msgstr "Zugangskontrolle für Mitarbeiter verwalten"

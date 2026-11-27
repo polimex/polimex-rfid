@@ -33,13 +33,19 @@ import json
 from datetime import timedelta
 from unittest.mock import patch
 
+from psycopg2 import errors as pg_errors
+
 from lxml import etree
 
 from odoo import fields
 from odoo.tests.common import HttpCase, new_test_user, tagged
 from odoo.tools.safe_eval import safe_eval
 
-from ..controllers.polimex import CMD_ANSWER_TIMEOUT_S, CMD_MAX_RETRIES
+from ..controllers.polimex import (
+    CMD_ANSWER_TIMEOUT_S,
+    CMD_MAX_RETRIES,
+    MOMENT_COMMAND_WAIT_S,
+)
 from .hardware import one_door
 
 NO_CARD = "0000000000"
@@ -1467,6 +1473,189 @@ class TestADoorOpenedFromTheScreen(ConversationCase):
 
         self.assertEqual(command.status, "Wait")
         self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+
+    # ------------------------------------------------------------------
+    # The module is out of touch when the door is opened from the screen.
+    # The owner, 27.11.2026 (open item 206): the open waited for the module's
+    # next report without a limit, so a module that was out of touch for an
+    # hour opened the door an hour late. An open or a close from the screen
+    # that has not gone out in a minute is closed, and the log says so.
+    # ------------------------------------------------------------------
+
+    def _waits(self, command, seconds):
+        """Time passes while the command sits in the queue, not handed over."""
+        command.flush_recordset()
+        self.env.cr.execute(
+            "UPDATE hr_rfid_command "
+            "SET asked_at = asked_at - %s * interval '1 second' WHERE id = %s",
+            [seconds, command.id],
+        )
+        command.invalidate_recordset(["asked_at"])
+
+    def test_a_door_opened_for_a_module_out_of_touch_does_not_open_an_hour_later(self):
+        self.new_door.open_door()
+        command = self._the_door_command(self.new)
+        self.assertEqual(command.status, "Wait")
+        self._waits(command, 3600)
+
+        late = self.heartbeat(self.new)
+
+        self.assertEqual(late.told, {"status": 200}, "the door opened an hour late")
+        self.assertEqual((command.status, command.error), ("Failure", "32"))
+        said = self.log_of(self.new_ctrl).mapped("error_description")
+        self.assertTrue(
+            [line for line in said if "was not sent" in line and "60 seconds" in line],
+            "nothing in the controller's log: %s" % said,
+        )
+
+    def test_a_door_closed_for_a_module_out_of_touch_is_not_closed_later(self):
+        self.new_door.close_door()
+        command = self._the_door_command(self.new)
+        self._waits(command, MOMENT_COMMAND_WAIT_S + 1)
+
+        self.assertEqual(self.heartbeat(self.new).told, {"status": 200})
+        self.assertEqual(command.status, "Failure")
+
+    def test_a_module_that_reports_within_the_minute_opens_the_door(self):
+        """NEGATIVE: a module behind NAT reports every few seconds - nothing is lost."""
+        self.new_door.open_door()
+        command = self._the_door_command(self.new)
+        self._waits(command, MOMENT_COMMAND_WAIT_S - 10)
+
+        self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+        self.assertEqual(command.status, "Process")
+
+    def test_the_operator_is_told_while_the_module_is_still_silent(self):
+        """The scheduler's minute gives the open up: nobody has to wait for
+        the module to come back to learn the door did not open."""
+        self.new_door.open_door()
+        command = self._the_door_command(self.new)
+        self._waits(command, MOMENT_COMMAND_WAIT_S + 1)
+
+        self.Command._ws_republish_cron()
+
+        self.assertEqual((command.status, command.error), ("Failure", "32"))
+        said = self.log_of(self.new_ctrl).mapped("error_description")
+        self.assertTrue([line for line in said if "was not sent" in line], said)
+
+    def test_a_second_click_after_the_minute_is_a_new_open(self):
+        """The operator clicks Open, the module stays silent past the minute,
+        the operator clicks again: the door opens on the second click, and the
+        first one is closed - it is not the one taken up again."""
+        self.new_door.open_door()
+        first = self._the_door_command(self.new)
+        self._waits(first, MOMENT_COMMAND_WAIT_S + 30)
+
+        self.new_door.open_door()
+        second = self._the_door_command(self.new)
+
+        self.assertNotEqual(
+            second, first, "the open that had expired was taken up again"
+        )
+        self.assertEqual((first.status, first.error), ("Failure", "32"))
+        self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+        self.assertEqual(second.status, "Process")
+
+    def test_a_second_click_within_the_minute_is_the_same_open(self):
+        """NEGATIVE: two clicks in one moment do not open the door twice -
+        and the minute the screen promises runs from the last click."""
+        self.new_door.open_door()
+        first = self._the_door_command(self.new)
+        self._waits(first, 50)
+
+        self.new_door.open_door()
+        self.assertEqual(self._the_door_command(self.new), first)
+        self._waits(first, 30)
+
+        self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+
+    def test_an_open_sent_again_by_hand_gets_its_minute_again(self):
+        """Somebody marks the closed open to be sent again: that is asking
+        for it now, and it goes out with the module's next report."""
+        self.new_door.open_door()
+        command = self._the_door_command(self.new)
+        self._waits(command, 3600)
+        self.Command._ws_republish_cron()
+        self.assertEqual(command.status, "Failure")
+
+        command.resend_action()
+
+        self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+        self.assertEqual(command.status, "Process")
+
+    def test_an_open_that_never_went_out_says_nothing_about_the_controller(self):
+        """The module was out of touch; whether the controller answers is not
+        known from that. So when the controller then stops answering its
+        upkeep, the operator is still told - once, as always."""
+        self.new_door.open_door()
+        door_command = self._the_door_command(self.new)
+        self._waits(door_command, MOMENT_COMMAND_WAIT_S + 1)
+        self.Command._ws_republish_cron()
+        reading = self.new_ctrl.read_status()
+
+        self.assertTrue(reading._controller_was_answering())
+
+    def test_a_late_open_does_not_go_out_even_before_it_is_closed(self):
+        """Another transaction is closing the same late command right now, so
+        this one leaves the closing to it - and still does not hand the
+        command to the module."""
+        self.new_door.open_door()
+        command = self._the_door_command(self.new)
+        self._waits(command, MOMENT_COMMAND_WAIT_S + 1)
+
+        clash = pg_errors.SerializationFailure(
+            "could not serialize access due to concurrent update"
+        )
+        with patch.object(type(self.Command), "_close_not_sent", side_effect=clash):
+            self.Command._ws_republish_cron()
+            late = self.heartbeat(self.new)
+
+        self.assertEqual(late.told, {"status": 200}, "the late open went out")
+        self.assertEqual(command.status, "Wait")
+
+    def test_an_open_is_closed_even_when_its_line_cannot_be_written(self):
+        """The queue must not stay stuck on a note that could not be written."""
+        self.new_door.open_door()
+        command = self._the_door_command(self.new)
+        self._waits(command, MOMENT_COMMAND_WAIT_S + 1)
+
+        with (
+            patch.object(
+                type(self.new_ctrl), "report_sys_ev", side_effect=ValueError("no line")
+            ),
+            self.assertLogs("odoo.addons.hr_rfid.models.hr_rfid_command", "WARNING"),
+        ):
+            self.Command._close_past_their_moment(self.new)
+
+        self.assertEqual(command.status, "Failure")
+
+    def test_a_door_kept_unlocked_still_goes_out_after_an_hour(self):
+        """NEGATIVE: a state the door is to keep is not a moment; it waits as long as it takes."""
+        self.new_door.lock_state = True
+        command = self._the_door_command(self.new)
+        self.assertFalse(command.single_attempt)
+        self._waits(command, 3600)
+
+        self.Command._ws_republish_cron()
+
+        self.assertEqual(command.status, "Wait")
+        self.assertEqual(self.heartbeat(self.new).command["c"], "DB")
+
+    def test_upkeep_that_waited_an_hour_still_goes_out(self):
+        """NEGATIVE: the status reading is sent once too, but late harms nobody."""
+        command = self.new_ctrl.read_status()
+        self.assertEqual(command.status, "Wait")
+        self._waits(command, 3600)
+
+        self.Command._ws_republish_cron()
+
+        self.assertEqual(command.status, "Wait")
+        self.assertEqual(self.heartbeat(self.new).command["c"], "B3")
+
+    def test_the_screen_says_how_long_the_open_waits(self):
+        told = self.new_door.open_door()
+
+        self.assertIn("60 seconds", told["params"]["message"])
 
 
 @tagged("post_install", "-at_install", "rfid", "rfid_conversation")

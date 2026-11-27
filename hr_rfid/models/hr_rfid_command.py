@@ -4,6 +4,8 @@ from datetime import timedelta
 from odoo.addons.hr_rfid.models.hr_rfid_door import HrRfidDoor
 from odoo.addons.hr_rfid.controllers.polimex import bytes_to_num
 from odoo import fields, models, api, exceptions, _, SUPERUSER_ID
+from odoo.fields import Domain
+from odoo.service.model import PG_CONCURRENCY_EXCEPTIONS_TO_RETRY
 from enum import Enum
 
 import logging
@@ -103,6 +105,7 @@ class HrRfidCommands(models.Model):
         ('24', 'Internal Error, Try Again (WebSDK)'),
         ('30', 'No response from the Module'),
         ('31', 'Incorrect Data Response'),
+        ('32', 'Not Sent to the Module in Time'),
     ]
 
     error_codes = list(map(lambda a: a[0], errors))
@@ -207,6 +210,18 @@ class HrRfidCommands(models.Model):
         help='Number of times the system has attempted to resend this command after failures. '
              'Commands are automatically retried when communication issues occur.',
         default=0,
+    )
+
+    asked_at = fields.Datetime(
+        help='When the command was last asked for: when it was created, when the same button '
+             'was pressed again while it was still waiting, or when it was marked to be sent '
+             'again. A door opened or closed from the screen that has not gone out within a '
+             'minute of this is closed and is not sent later.',
+        # No default: it would be written into every command already there
+        # when the column is added. create() sets it; an older command has
+        # none and is read by its creation date (_close_past_their_moment).
+        readonly=True,
+        copy=False,
     )
 
     sent_at = fields.Datetime(
@@ -416,6 +431,8 @@ class HrRfidCommands(models.Model):
                 'retries': 0,
                 'response': None,
                 'error': '0',
+                # Sending it again is asking for it now: its moment starts over.
+                'asked_at': fields.Datetime.now(),
             })
         return self.balloon_success(
             title=_("Command resend"),
@@ -720,10 +737,101 @@ class HrRfidCommands(models.Model):
         deliveries: the answer to a module's report and the real-time channel
         ask it here.
         """
-        return self.search([
+        self._close_past_their_moment(webstack)
+        return self.search(Domain([
             ('webstack_id', '=', webstack.id),
             ('status', '=', 'Wait'),
-        ], order='id asc', limit=1)
+        ]) & self._still_in_time_domain(), order='id asc', limit=1)
+
+    @api.model
+    def _moment_started_before(self):
+        return fields.Datetime.now() - timedelta(
+            seconds=polimex.MOMENT_COMMAND_WAIT_S)
+
+    @api.model
+    def _still_in_time_domain(self):
+        """Commands that may still go out: all but those past their moment.
+
+        Whoever picks a waiting command (_next_waiting, find_last_wait) asks
+        with this, so a command past its moment is never handed over or taken
+        up again - also in the instant before it has been closed.
+        """
+        since = self._moment_started_before()
+        return (
+            Domain('single_attempt', '=', False)
+            | Domain('cmd', 'in', polimex.ROUTINE_COMMANDS)
+            | Domain('asked_at', '>=', since)
+            # A command from before asked_at was kept has none: its creation
+            # is when it was asked for.
+            | (Domain('asked_at', '=', False) & Domain('create_date', '>=', since))
+        )
+
+    @api.model
+    def _close_past_their_moment(self, webstack=None):
+        """Close what was meant for a moment and has waited past it unsent.
+
+        A door opened from the screen for a module that only calls in (behind
+        NAT, or with its real-time connection down) waits for the module's
+        next report. A module out of touch for an hour used to open the door
+        an hour late. Now the command is closed once it has waited
+        polimex.MOMENT_COMMAND_WAIT_S, with a line in the controller's log.
+
+        Asked wherever a waiting command is picked and every minute by the
+        scheduler, so the operator is told while the module is still silent.
+        The closing is bookkeeping: what keeps a late command from going out
+        is _still_in_time_domain. So when another transaction is closing the
+        same command at the same moment, this one leaves it to the other -
+        a scheduler's run is not replayed, and must not be undone for every
+        module because of one command.
+
+        :param webstack: only this module's commands; all modules without it
+        """
+        since = self._moment_started_before()
+        domain = Domain([
+            ('status', '=', 'Wait'),
+            ('single_attempt', '=', True),
+            ('cmd', 'not in', polimex.ROUTINE_COMMANDS),
+        ]) & (
+            Domain('asked_at', '<', since)
+            | (Domain('asked_at', '=', False) & Domain('create_date', '<', since))
+        )
+        if webstack is not None:
+            domain &= Domain('webstack_id', '=', webstack.id)
+        late = self.sudo().search(domain)
+        if not late:
+            return
+        try:
+            with self.env.cr.savepoint():
+                late._close_not_sent()
+        except (*PG_CONCURRENCY_EXCEPTIONS_TO_RETRY, exceptions.ConcurrencyError):
+            _logger.info(
+                'Commands %s are past their moment and are being closed by '
+                'another transaction; left to it.', late.ids)
+
+    def _close_not_sent(self):
+        """Give up commands that never went out, and say so in the log.
+
+        Unlike _close_unanswered nothing reached the module, so the door is
+        known to be as it was; the line says that. Why it did not go out is
+        not known here - the module was out of touch, or it was busy with
+        the commands queued before this one - so the line names both.
+        """
+        cmd_names = dict(self._fields['cmd']._description_selection(self.env))
+        for command in self.filtered(lambda c: c.status == 'Wait'):
+            command.write({
+                'status': 'Failure',
+                'error': polimex.ERROR_NOT_SENT,
+                'ex_timestamp': fields.Datetime.now(),
+            })
+            description = self.env._(
+                '"%(command)s" was not sent: the module did not take it '
+                'within %(seconds)d seconds. It is not sent later, because it '
+                'was meant for that moment, so nothing was changed. Check that '
+                'the module is in touch; if other commands are waiting for '
+                'it, try again once they have gone out.',
+                command=cmd_names.get(command.cmd, command.cmd),
+                seconds=polimex.MOMENT_COMMAND_WAIT_S)
+            command._note_in_the_controllers_log(description)
 
     def _is_still_awaited(self):
         """Handed over so recently that the module may still be carrying it out.
@@ -824,15 +932,30 @@ class HrRfidCommands(models.Model):
                     'so it may not have been carried out. Check that the module '
                     'is in touch and that the controller answers it.',
                     command=what, attempts=attempts)
-            try:
-                with self.env.cr.savepoint():
-                    command.controller_id.report_sys_ev(description)
-            except Exception:
-                _logger.warning(
-                    'Command %s (%s) was closed without an answer, but the line '
-                    'for the log of controller %s could not be written.',
-                    command.id, command.cmd, command.controller_id.id,
-                    exc_info=True)
+            command._note_in_the_controllers_log(description)
+
+    def _note_in_the_controllers_log(self, description):
+        """Write why this command was closed where an operator looks.
+
+        The command stays closed whatever happens to the line: a queue must
+        not stay stuck because a note about it could not be written.
+        """
+        self.ensure_one()
+        # What is already written - the closing of this command first of all -
+        # goes to the database before the line is tried. A savepoint sends
+        # the pending writes as it begins; inside the "try" a failure of
+        # THOSE would be taken for a failure of the line, and the
+        # transaction would go on aborted.
+        self.env.cr.flush()
+        try:
+            with self.env.cr.savepoint():
+                self.controller_id.report_sys_ev(description)
+        except Exception:
+            _logger.warning(
+                'Command %s (%s) was closed, but the line for the log of '
+                'controller %s could not be written.',
+                self.id, self.cmd, self.controller_id.id,
+                exc_info=True)
 
     def _controller_was_answering(self):
         """Did the controller answer the last command before this one?
@@ -874,6 +997,10 @@ class HrRfidCommands(models.Model):
         cmd:str - command code
         command:dict - command record dict
         '''
+        # A command that waited past its moment is not one to reuse: the
+        # second click on "Open" a minute later is a new moment.
+        self._close_past_their_moment(
+            self.env['hr.rfid.webstack'].browse(vals['webstack_id']))
         domain = [
             ('webstack_id', '=', vals['webstack_id']),
             ('controller_id', '=', vals['controller_id']),
@@ -888,7 +1015,7 @@ class HrRfidCommands(models.Model):
             # unlocked" are; a relay output ignores state and time): merged,
             # one would take the other's retries or lose its own.
             domain.append(('single_attempt', '=', bool(vals['single_attempt'])))
-        ret = self.search(domain)
+        ret = self.search(Domain(domain) & self._still_in_time_domain())
         if len(ret) > 0:
             return ret[-1]
         return ret
@@ -905,6 +1032,7 @@ class HrRfidCommands(models.Model):
 
             cmd = vals['cmd']
             vals.setdefault('single_attempt', cmd in polimex.ROUTINE_COMMANDS)
+            vals.setdefault('asked_at', fields.Datetime.now())
 
             if cmd not in ['DB', 'D9', 'D5', 'DE', 'D7', 'F0', 'FC', 'D6', 'B3']:
                 records += super(HrRfidCommands, self).create([vals])
@@ -920,7 +1048,8 @@ class HrRfidCommands(models.Model):
 
             if cmd == 'DB':
                 if res.cmd_data[0] == cmd_data[0] and res.cmd_data[1] == cmd_data[1]:
-                    res.cmd_data = cmd_data
+                    # Asked again while it waits: this is its moment now.
+                    res.write({'cmd_data': cmd_data, 'asked_at': fields.Datetime.now()})
                     continue
             elif cmd in ['D9', 'D5', 'DE', 'D6']:
                 res.cmd_data = cmd_data

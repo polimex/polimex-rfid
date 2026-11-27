@@ -764,6 +764,27 @@ class HrRfidController(models.Model):
         self.ensure_one()
         return polimex.CARD_SCHEDULE_MAX.get(self.hw_version)
 
+    def _misreads_card_schedule(self):
+        """Whether this firmware build is known to read a card's schedule wrongly.
+
+        It takes the card and then lets it in at hours the schedule does not
+        allow (polimex.CARD_SCHEDULE_MISREAD_BY).
+        """
+        self.ensure_one()
+        return (self.hw_version, self.sw_version) in polimex.CARD_SCHEDULE_MISREAD_BY
+
+    def _model_name(self):
+        """The controller's model as its form shows it, for a message."""
+        self.ensure_one()
+        models_by_code = dict(self._fields['hw_version']._description_selection(self.env))
+        return models_by_code.get(self.hw_version, self.hw_version)
+
+    def _firmware_version_name(self):
+        """The firmware version as it is printed: "7.44" for a stored "744"."""
+        self.ensure_one()
+        version = self.sw_version or ''
+        return '%s.%s' % (version[0], version[1:]) if len(version) == 3 else version
+
     def is_vending_ctrl(self, hw_version=None):
         if hw_version:
             return hw_version in polimex.VENDING_HW_VERSIONS
@@ -1038,7 +1059,12 @@ class HrRfidController(models.Model):
                 or new_cmd.get('cmd') in polimex.ROUTINE_COMMANDS
             # Only a waiting command of the same kind is reused: the second
             # click on "Open" is the same moment, a state to keep is not.
-            commands += self.env['hr.rfid.command'].find_last_wait(new_cmd) or self.env[
+            waiting = self.env['hr.rfid.command'].find_last_wait(new_cmd)
+            if waiting:
+                # The same button pressed again while the command still
+                # waits: its moment is now, not the first press.
+                waiting.sudo().asked_at = fields.Datetime.now()
+            commands += waiting or self.env[
                 'hr.rfid.command'].with_user(SUPERUSER_ID).create([new_cmd])
         # Execute commands
         for c in commands:

@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-24 00:54\n"
+"PO-Revision-Date: 2026-11-27 16:22\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ro\n"
@@ -12,6 +12,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"\"%(command)s\" was not sent: the module did not take it within %(seconds)d "
+"seconds. It is not sent later, because it was meant for that moment, so "
+"nothing was changed. Check that the module is in touch; if other commands "
+"are waiting for it, try again once they have gone out."
+msgstr ""
+"„%(command)s” nu a fost trimisă: modulul nu a preluat-o în %(seconds)d "
+"secunde. Nu va fi trimisă ulterior, deoarece era destinată acelui moment, "
+"așadar nu s-a modificat nimic. Verificați dacă modulul comunică; dacă alte "
+"comenzi îl așteaptă, încercați din nou după ce acestea au fost trimise."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
@@ -1933,6 +1947,11 @@ msgstr ""
 "Armarea sau dezarmarea a fost refuzată, iar raportul nu indică niciun card"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__asked_at
+msgid "Asked At"
+msgstr "Solicitat la"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Assign the group to departments (for automatic assignment) or individual "
@@ -2073,17 +2092,6 @@ msgstr "Mixin mesaje balon"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__barcode_number
 msgid "Barcode Number"
 msgstr "Număr cod de bare"
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_door.py:0
-msgid ""
-"Because the webstack is behind NAT, we have to wait for the webstack to call"
-" us, so we created a command. The door will open/close as soon as possible."
-msgstr ""
-"Deoarece webstack-ul este în spatele NAT, trebuie să așteptăm ca webstack-ul"
-" să ne contacteze, așa că am creat o comandă. Ușa se va deschide/închide cât"
-" mai curând posibil."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -7903,6 +7911,11 @@ msgid "Normal"
 msgstr "Normal"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__32
+msgid "Not Sent to the Module in Time"
+msgstr "Netrimisă la timp către modul"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__8
 msgid "Not Use"
@@ -11524,6 +11537,20 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid ""
+"The door \"%(door)s\" is on a %(model)s controller with firmware "
+"%(version)s, which reads a card's time schedule right only for numbers 0 to "
+"%(highest)d. \"%(schedule)s\" is number %(number)d: choose a schedule with a"
+" lower number for this door."
+msgstr ""
+"Ușa „%(door)s” se află pe un controler %(model)s cu firmware %(version)s, "
+"care citește corect programul de timp al unui card doar pentru numerele de "
+"la 0 la %(highest)d. „%(schedule)s” are numărul %(number)d: alegeți pentru "
+"această ușă un program cu un număr mai mic."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
 "The door \"%(door)s\" is on a %(model)s controller, which takes time "
 "schedules numbered 0 to %(highest)d for a card. \"%(schedule)s\" is number "
 "%(number)d: choose a schedule with a lower number for this door."
@@ -11574,6 +11601,34 @@ msgid ""
 msgstr ""
 "Ușa la care poate accesa acest card. Când cardul este prezentat la cititorii"
 " acestei uși, accesul va fi acordat conform programului de timp."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access group \"%(group)s\"."
+msgstr ""
+"Ușile „%(door)s” și „%(other_door)s” se află pe același controler %(model)s "
+"cu firmware %(version)s, care verifică un card la ambele uși conform "
+"programului de timp al primeia. Setați pentru cele două uși același program "
+"de timp în grupul de acces „%(group)s”."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access groups \"%(group)s\" and \"%(other_group)s\"."
+msgstr ""
+"Ușile „%(door)s” și „%(other_door)s” se află pe același controler %(model)s "
+"cu firmware %(version)s, care verifică un card la ambele uși conform "
+"programului de timp al primeia. Setați pentru cele două uși același program "
+"de timp în grupurile de acces „%(group)s” și „%(other_group)s”."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__doors
@@ -11706,6 +11761,19 @@ msgstr "Intervalele pentru ziua %d se suprapun"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "The module does not be behind NAT!"
 msgstr "Modulul nu se află în spatele NAT!"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"The module is behind NAT, so the command waits for the module to get in "
+"touch, which it normally does within seconds. If it has not gone out in "
+"%(seconds)d seconds it is closed and the door is left as it is."
+msgstr ""
+"Modulul se află în spatele NAT, așadar comanda așteaptă ca modulul să "
+"comunice, lucru pe care îl face în mod normal în câteva secunde. Dacă nu a "
+"fost trimisă în %(seconds)d secunde, este închisă, iar ușa rămâne în starea "
+"actuală."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -13185,6 +13253,20 @@ msgstr ""
 "managerilor care trebuie să controleze sistemul de alarmă."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__asked_at
+msgid ""
+"When the command was last asked for: when it was created, when the same "
+"button was pressed again while it was still waiting, or when it was marked "
+"to be sent again. A door opened or closed from the screen that has not gone "
+"out within a minute of this is closed and is not sent later."
+msgstr ""
+"Momentul în care comanda a fost solicitată ultima dată: când a fost creată, "
+"când același buton a fost apăsat din nou cât timp comanda era încă în "
+"așteptare sau când a fost marcată pentru a fi retrimisă. O ușă deschisă sau "
+"închisă de pe ecran, care nu a fost trimisă în decurs de un minut de la "
+"acest moment, este închisă și nu mai este trimisă ulterior."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_at
 msgid ""
 "When the command was last handed to the module. A command that gets no "
@@ -13724,3 +13806,13 @@ msgstr "{hw_type} SN:{serial} ID:{id}"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "{} in zones"
 msgstr "{} în zone"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid
+msgid "RFID Access Control"
+msgstr "Control acces RFID"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid
+msgid "Manage employee access control"
+msgstr "Gestionați controlul accesului angajaților"

@@ -6,6 +6,8 @@ docs/odoo-bus/ODOO_BUS_ODOO_PLAN.md; wire contract ODOO_BUS_PROTOCOL_SPEC.md).""
 from datetime import timedelta
 from unittest.mock import patch
 
+from psycopg2 import errors as pg_errors
+
 from odoo import fields
 from odoo.tests.common import tagged
 
@@ -388,6 +390,75 @@ class TestWsDispatch(RFIDAppCase):
             self._dispatch(self._msg('rsp', cid=0, r={'id': 5, 'e': 0}))
         self.assertEqual(Sys.search_count([('webstack_id', '=', ws.id)]),
                          before + 1, 'malformed message -> one system event')
+
+    def _clash(self):
+        return pg_errors.SerializationFailure(
+            'could not serialize access due to concurrent update')
+
+    def test_a_clash_on_the_modules_row_is_left_to_odoo_to_replay(self):
+        """The module's HTTP heartbeat and its real-time message stamp the same
+        row. When they meet, PostgreSQL refuses the second writer as the
+        message's changes are sent to it, which is where the handler's
+        savepoint begins. Odoo replays a message that ends this way
+        (odoo/service/model.py, retrying), so the clash has to come out of the
+        dispatch: it is not a message the device got wrong."""
+        ws = self._enable()
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', ctrl=[5]))
+        Sys = self.env['hr.rfid.event.system']
+        before = Sys.search_count([('webstack_id', '=', ws.id)])
+        # Not assertRaises: Odoo's opens a savepoint of its own, which would
+        # meet the refusal before the dispatch does and undo what is counted
+        # below.
+        came_out = False
+        with patch.object(type(self.env.cr), 'flush', side_effect=self._clash()):
+            try:
+                self._dispatch(self._msg('hb'))
+            except pg_errors.SerializationFailure:
+                came_out = True
+        self.assertTrue(came_out, 'the clash stayed inside the dispatch')
+        self.assertEqual(
+            Sys.search_count([('webstack_id', '=', ws.id)]), before,
+            'a clash is not noted as a message that could not be processed')
+
+    def test_a_clash_inside_a_handler_is_left_to_odoo_to_replay(self):
+        """The same clash met later, while the handler itself writes."""
+        ws = self._enable()
+        with patch.object(type(self.env['bus.bus']), '_sendone'):
+            self._dispatch(self._msg('hello', ctrl=[5]))
+
+        def clashing(_self, _data):
+            raise self._clash()
+
+        with (
+            patch.object(type(ws), '_ws_on_hb', clashing, create=False),
+            self.assertRaises(pg_errors.SerializationFailure),
+        ):
+            self._dispatch(self._msg('hb'))
+
+    def test_a_clash_while_an_event_is_read_is_left_to_odoo_to_replay(self):
+        """NEGATIVE: a clash is not "an event that could not be read". The
+        batch is replayed whole; nothing is told to the device about it."""
+        ws = self._enable()
+        self._known_controller(ws)
+
+        def clashing(_self, _post_data):
+            raise self._clash()
+
+        came_out = False
+        with (
+            patch.object(type(ws), '_hw_parse_event', clashing),
+            patch.object(type(self.env['bus.bus']), '_sendone') as sendone,
+        ):
+            try:
+                self._dispatch(self._msg('ev', bid=1, ev=[self._event_dict()]))
+            except pg_errors.SerializationFailure:
+                came_out = True
+        self.assertTrue(came_out, 'the clash stayed inside the batch')
+        self.assertFalse(
+            [call for call in sendone.call_args_list
+             if call.args[1] == 'hr_rfid.ev_ack'],
+            'the device was answered about a batch that will be replayed')
 
     def test_auth_fail_writes_are_bounded(self):
         """Bad-token frames increment the counter only up to the threshold

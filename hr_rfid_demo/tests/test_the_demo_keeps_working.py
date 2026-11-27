@@ -95,6 +95,39 @@ class TestTheDemoKeepsWorking(TransactionCase):
             )
         )
 
+    def _open_a_demo_door(self):
+        door = self.env.ref("hr_rfid.demo_ctrl_icon110").door_ids[:1]
+        door.open_door()
+        return self.env["hr.rfid.command"].search(
+            [("webstack_id", "=", self.webstack.id), ("cmd", "=", "DB")],
+            order="id desc",
+            limit=1,
+        )
+
+    def test_a_door_opened_from_the_screen_of_the_demo_opens(self):
+        """A visitor tries the Open button: the demo shows a door that opened,
+        not one given up because no module took the command within a minute."""
+        command = self._open_a_demo_door()
+
+        self.assertEqual(command.status, "Success")
+        self.env["hr.rfid.command"]._ws_republish_cron()
+        self.assertEqual(command.status, "Success")
+
+    def test_a_door_of_a_real_site_is_not_answered_by_the_demo(self):
+        """NEGATIVE: with a real module attached the demo answers nothing -
+        the open waits for the hardware like any other."""
+        self.env["hr.rfid.webstack"].create(
+            {
+                "name": "A real module",
+                "serial": "777778",
+                "company_id": self.env.company.id,
+            }
+        )
+
+        command = self._open_a_demo_door()
+
+        self.assertEqual(command.status, "Wait")
+
     def test_a_real_module_stops_the_demo(self):
         """NEGATIVE: once a real module is attached, the demo writes nothing."""
         since = fields.Datetime.now() - timedelta(hours=26)

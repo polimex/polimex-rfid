@@ -73,6 +73,9 @@ class HrRfidCommandWs(models.Model):
         back to HTTP is skipped here (its next poll retries via
         ``check_for_unsent_cmd`` as always).
         """
+        # The scheduler's minute is also when a door opened from the screen
+        # that never went out is given up, whichever way its module talks.
+        self._close_past_their_moment()
         cutoff = fields.Datetime.now() - timedelta(seconds=WS_CMD_REPUBLISH_TIMEOUT_S)
         commands = self.sudo().search([
             ('status', '=', 'Process'),

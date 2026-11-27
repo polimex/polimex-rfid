@@ -66,6 +66,11 @@ A machine is served the same whichever way its module talks to Odoo: over the
 classic connection or in real time. On a real-time module the credit reaches
 the machine with the acknowledgement of the card that asked for it.
 
+A sale, or money put on a card at the machine, is recorded once however often
+the module reports it. A module that did not get the answer to its report
+sends the report again, over either connection; the repeat is accepted and
+nothing is charged or added a second time.
+
 ### Dependencies
 ```python
 'depends': ['hr_rfid', 'product', 'hr']

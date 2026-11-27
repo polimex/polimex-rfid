@@ -80,6 +80,9 @@ DOOR_FORCED = 26
 POWER_ON = 30
 CREDIT_REQUEST = 64
 SALE = 47
+# How many places the simulated controller numbers its events over before it
+# starts again, as a controller's memory does.
+EVENT_MEMORY_PLACES = 3000
 CREDIT_RETURNED = 49
 #: What a report carries when it has nothing of its own to say.
 NO_DATA = "00000000000000"
@@ -174,7 +177,16 @@ class HrRfidDemo(models.AbstractModel):
             ):
                 # No service running at that moment, no visit.
                 continue
-            self._demo_report(webstack, ctrl, reader, card, moment, event_n, *data)
+            self._demo_report(
+                webstack,
+                ctrl,
+                reader,
+                card,
+                moment,
+                event_n,
+                *data,
+                place=reported % EVENT_MEMORY_PLACES + 1,
+            )
             reported += 1
         readings = self._demo_environment_readings(since, until)
         self._demo_hourly_costs()
@@ -264,7 +276,9 @@ class HrRfidDemo(models.AbstractModel):
         )._compute_actual_work_time_cost()
 
     @api.model
-    def _demo_report(self, webstack, ctrl, reader, card, moment, event_n, data=NO_DATA):
+    def _demo_report(
+        self, webstack, ctrl, reader, card, moment, event_n, data=NO_DATA, place=1
+    ):
         """One report of the demo module, as the device sends it.
 
         The device speaks its own local time; the webstack turns it back into
@@ -272,6 +286,10 @@ class HrRfidDemo(models.AbstractModel):
 
         :param data: what the report says besides who and when - a vending
                      machine names the item and the price there
+        :param place: where the event sits in the controller's memory. A
+                      device gives every event its own place, and a sale is
+                      told from its repeat by the place and the time: two
+                      sales of one second must not look like one sale
         """
         local = moment + webstack._get_tz_offset()
         date_format, time_format = webstack.time_format.split(" ")
@@ -279,8 +297,8 @@ class HrRfidDemo(models.AbstractModel):
             {
                 "convertor": webstack.serial,
                 "event": {
-                    "bos": 1,
-                    "tos": 1,
+                    "bos": place,
+                    "tos": place,
                     "card": card.number if card else NO_CARD,
                     "cmd": "FA",
                     "date": local.strftime(date_format),
@@ -963,3 +981,29 @@ class HrEmployee(models.Model):
             domain=[("time_type", "=", "leave"), ("resource_id", "=", False)],
         )
         return bool(holidays)
+
+
+class HrRfidCommand(models.Model):
+    _inherit = "hr.rfid.command"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """A door opened from the screen of the demo is answered at once.
+
+        The demo module has nobody behind it. What the system asks of it is
+        answered when the demo next runs (_demo_answer_commands), which is
+        soon enough for the clock and the cards. A door opened from the
+        screen is given up after a minute without a module to take it, so a
+        visitor trying the button would be shown a door that does not open.
+        A module in touch takes it within seconds; the demo one does too.
+        """
+        commands = super().create(vals_list)
+        of_the_moment = commands.filtered(
+            lambda command: command.status == "Wait" and command._meant_for_the_moment()
+        )
+        if of_the_moment:
+            demo_module = self.env["hr.rfid.demo"]._demo_hardware()
+            of_the_moment.filtered(
+                lambda command: command.webstack_id == demo_module
+            ).write({"status": "Success", "ex_timestamp": fields.Datetime.now()})
+        return commands

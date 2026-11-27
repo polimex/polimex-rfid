@@ -16,6 +16,16 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"\"%(command)s\" was not sent: the module did not take it within %(seconds)d "
+"seconds. It is not sent later, because it was meant for that moment, so "
+"nothing was changed. Check that the module is in touch; if other commands "
+"are waiting for it, try again once they have gone out."
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
 msgid ""
 "\"After Hours Protection\" - Motion detectors that should be armed at night"
@@ -1679,6 +1689,11 @@ msgid "Arming or disarming was refused, and the report names no card"
 msgstr ""
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__asked_at
+msgid "Asked At"
+msgstr ""
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Assign the group to departments (for automatic assignment) or individual "
@@ -1798,14 +1813,6 @@ msgstr ""
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__barcode_number
 msgid "Barcode Number"
-msgstr ""
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_door.py:0
-msgid ""
-"Because the webstack is behind NAT, we have to wait for the webstack to call"
-" us, so we created a command. The door will open/close as soon as possible."
 msgstr ""
 
 #. module: hr_rfid
@@ -6419,6 +6426,11 @@ msgstr ""
 msgid "Manage RFID cards assigned to this employee"
 msgstr ""
 
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid
+msgid "Manage employee access control"
+msgstr ""
+
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_zone_doors_action
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_zone_doors_wiz_action
@@ -6969,6 +6981,11 @@ msgstr ""
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_ctrl_emergency_group__state__normal
 #: model_terms:ir.ui.view,arch_db:hr_rfid.emergency_group_view_kanban
 msgid "Normal"
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__32
+msgid "Not Sent to the Module in Time"
 msgstr ""
 
 #. module: hr_rfid
@@ -7987,6 +8004,11 @@ msgstr ""
 #: model:ir.module.category,name:hr_rfid.hr_rfid_management
 #: model:res.groups.privilege,name:hr_rfid.res_groups_privilege_rfid_access
 msgid "RFID Access"
+msgstr ""
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid
+msgid "RFID Access Control"
 msgstr ""
 
 #. module: hr_rfid
@@ -10106,6 +10128,16 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid ""
+"The door \"%(door)s\" is on a %(model)s controller with firmware "
+"%(version)s, which reads a card's time schedule right only for numbers 0 to "
+"%(highest)d. \"%(schedule)s\" is number %(number)d: choose a schedule with a"
+" lower number for this door."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
 "The door \"%(door)s\" is on a %(model)s controller, which takes time "
 "schedules numbered 0 to %(highest)d for a card. \"%(schedule)s\" is number "
 "%(number)d: choose a schedule with a lower number for this door."
@@ -10147,6 +10179,26 @@ msgstr ""
 msgid ""
 "The door that this card can access. When the card is presented to this "
 "door's readers, access will be granted according to the time schedule."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access group \"%(group)s\"."
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access groups \"%(group)s\" and \"%(other_group)s\"."
 msgstr ""
 
 #. module: hr_rfid
@@ -10251,6 +10303,15 @@ msgstr ""
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "The module does not be behind NAT!"
+msgstr ""
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"The module is behind NAT, so the command waits for the module to get in "
+"touch, which it normally does within seconds. If it has not gone out in "
+"%(seconds)d seconds it is closed and the door is left as it is."
 msgstr ""
 
 #. module: hr_rfid
@@ -11499,6 +11560,15 @@ msgid ""
 "When enabled, this card can arm/disarm the alarm system for this door. "
 "Typically given to security personnel or managers who need to control the "
 "alarm system."
+msgstr ""
+
+#. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__asked_at
+msgid ""
+"When the command was last asked for: when it was created, when the same "
+"button was pressed again while it was still waiting, or when it was marked "
+"to be sent again. A door opened or closed from the screen that has not gone "
+"out within a minute of this is closed and is not sent later."
 msgstr ""
 
 #. module: hr_rfid

@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-24 00:52\n"
+"PO-Revision-Date: 2026-11-27 16:14\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el_GR\n"
@@ -12,6 +12,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"\"%(command)s\" was not sent: the module did not take it within %(seconds)d "
+"seconds. It is not sent later, because it was meant for that moment, so "
+"nothing was changed. Check that the module is in touch; if other commands "
+"are waiting for it, try again once they have gone out."
+msgstr ""
+"Η εντολή «%(command)s» δεν στάλθηκε: η μονάδα δεν την παρέλαβε εντός "
+"%(seconds)d δευτερολέπτων. Δεν θα σταλεί αργότερα, επειδή προοριζόταν για "
+"εκείνη τη στιγμή, οπότε δεν άλλαξε τίποτα. Ελέγξτε ότι υπάρχει επικοινωνία "
+"με τη μονάδα· αν άλλες εντολές περιμένουν να σταλούν σε αυτήν, δοκιμάστε "
+"ξανά αφού σταλούν."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
@@ -1943,6 +1958,11 @@ msgstr ""
 "Ο οπλισμός ή ο αφοπλισμός απορρίφθηκε και η αναφορά δεν αναφέρει κάρτα"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__asked_at
+msgid "Asked At"
+msgstr "Ώρα αιτήματος"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Assign the group to departments (for automatic assignment) or individual "
@@ -2083,17 +2103,6 @@ msgstr "Mixin Μηνυμάτων Balloon"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__barcode_number
 msgid "Barcode Number"
 msgstr "Αριθμός γραμμωτού κώδικα"
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_door.py:0
-msgid ""
-"Because the webstack is behind NAT, we have to wait for the webstack to call"
-" us, so we created a command. The door will open/close as soon as possible."
-msgstr ""
-"Επειδή το WebStack βρίσκεται πίσω από NAT, πρέπει να περιμένουμε το WebStack"
-" να μας καλέσει, γι' αυτό δημιουργήσαμε μια εντολή. Η πόρτα θα "
-"ανοίξει/κλείσει το συντομότερο δυνατό."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -7945,6 +7954,11 @@ msgid "Normal"
 msgstr "Κανονική"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__32
+msgid "Not Sent to the Module in Time"
+msgstr "Δεν στάλθηκε εγκαίρως στη μονάδα"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__8
 msgid "Not Use"
@@ -11578,6 +11592,21 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid ""
+"The door \"%(door)s\" is on a %(model)s controller with firmware "
+"%(version)s, which reads a card's time schedule right only for numbers 0 to "
+"%(highest)d. \"%(schedule)s\" is number %(number)d: choose a schedule with a"
+" lower number for this door."
+msgstr ""
+"Η πόρτα \"%(door)s\" βρίσκεται σε ελεγκτή %(model)s με υλικολογισμικό "
+"(firmware) %(version)s, ο οποίος διαβάζει σωστά το χρονοδιάγραμμα μιας "
+"κάρτας μόνο για τους αριθμούς από 0 έως %(highest)d. Το \"%(schedule)s\" "
+"έχει τον αριθμό %(number)d: επιλέξτε για αυτή την πόρτα ένα χρονοδιάγραμμα "
+"με χαμηλότερο αριθμό."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
 "The door \"%(door)s\" is on a %(model)s controller, which takes time "
 "schedules numbered 0 to %(highest)d for a card. \"%(schedule)s\" is number "
 "%(number)d: choose a schedule with a lower number for this door."
@@ -11629,6 +11658,36 @@ msgstr ""
 "Η πόρτα στην οποία έχει πρόσβαση αυτή η κάρτα. Όταν η κάρτα παρουσιαστεί "
 "στους αναγνώστες αυτής της πόρτας, η πρόσβαση θα χορηγηθεί σύμφωνα με το "
 "χρονοδιάγραμμα."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access group \"%(group)s\"."
+msgstr ""
+"Οι πόρτες \"%(door)s\" και \"%(other_door)s\" βρίσκονται στον ίδιο ελεγκτή "
+"%(model)s με υλικολογισμικό (firmware) %(version)s, ο οποίος ελέγχει μια "
+"κάρτα και στις δύο πόρτες με βάση το χρονοδιάγραμμα της πρώτης. Ορίστε το "
+"ίδιο χρονοδιάγραμμα και για τις δύο πόρτες στην ομάδα πρόσβασης "
+"\"%(group)s\"."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access groups \"%(group)s\" and \"%(other_group)s\"."
+msgstr ""
+"Οι πόρτες \"%(door)s\" και \"%(other_door)s\" βρίσκονται στον ίδιο ελεγκτή "
+"%(model)s με υλικολογισμικό (firmware) %(version)s, ο οποίος ελέγχει μια "
+"κάρτα και στις δύο πόρτες με βάση το χρονοδιάγραμμα της πρώτης. Ορίστε το "
+"ίδιο χρονοδιάγραμμα και για τις δύο πόρτες στις ομάδες πρόσβασης "
+"\"%(group)s\" και \"%(other_group)s\"."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__doors
@@ -11764,6 +11823,19 @@ msgstr "Τα χρονικά διαστήματα για την ημέρα %d α�
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "The module does not be behind NAT!"
 msgstr "Η μονάδα δεν πρέπει να βρίσκεται πίσω από NAT!"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"The module is behind NAT, so the command waits for the module to get in "
+"touch, which it normally does within seconds. If it has not gone out in "
+"%(seconds)d seconds it is closed and the door is left as it is."
+msgstr ""
+"Η μονάδα βρίσκεται πίσω από NAT, οπότε η εντολή περιμένει να επικοινωνήσει η"
+" μονάδα, κάτι που συνήθως γίνεται μέσα σε λίγα δευτερόλεπτα. Αν δεν έχει "
+"σταλεί εντός %(seconds)d δευτερολέπτων, κλείνει και η πόρτα παραμένει όπως "
+"είναι."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -13252,6 +13324,20 @@ msgstr ""
 "ασφάλειας ή διαχειριστές που χρειάζεται να ελέγχουν το σύστημα συναγερμού."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__asked_at
+msgid ""
+"When the command was last asked for: when it was created, when the same "
+"button was pressed again while it was still waiting, or when it was marked "
+"to be sent again. A door opened or closed from the screen that has not gone "
+"out within a minute of this is closed and is not sent later."
+msgstr ""
+"Η χρονική στιγμή του τελευταίου αιτήματος για την εντολή: όταν "
+"δημιουργήθηκε, όταν πατήθηκε ξανά το ίδιο κουμπί ενώ η εντολή ήταν ακόμη σε "
+"αναμονή ή όταν σημειώθηκε για επαναποστολή. Μια πόρτα που ανοίχτηκε ή "
+"έκλεισε από την οθόνη και δεν έχει σταλεί εντός ενός λεπτού από αυτή τη "
+"στιγμή ακυρώνεται και δεν σταλεί αργότερα."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_at
 msgid ""
 "When the command was last handed to the module. A command that gets no "
@@ -13789,3 +13875,13 @@ msgstr "{hw_type} SN:{serial} ID:{id}"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "{} in zones"
 msgstr "{} σε ζώνες"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid
+msgid "RFID Access Control"
+msgstr "Έλεγχος πρόσβασης RFID"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid
+msgid "Manage employee access control"
+msgstr "Διαχείριση ελέγχου πρόσβασης εργαζομένων"

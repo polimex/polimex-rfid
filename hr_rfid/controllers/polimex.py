@@ -11,6 +11,11 @@ MAX_DIRECT_EXECUTE_TIME = 5  # last X seconds for counting executed cmds
 CMD_ANSWER_TIMEOUT_S = 15
 #: How many times a lost command is handed over again before it is given up.
 CMD_MAX_RETRIES = 5
+# How long a command meant for a moment (a door opened from the screen) may
+# wait for its module to get in touch. A module behind NAT reports every few
+# seconds, so one that has not done so in a minute is out of touch, and a door
+# must not open whenever it comes back (the owner's decision, 27.11.2026).
+MOMENT_COMMAND_WAIT_S = 60
 #: Routine upkeep: the clock and the status reading. Their own schedule repeats
 #: them, so each is handed over once and never sent again - a controller that
 #: does not answer them holds the queue for one turn, not for six.
@@ -18,6 +23,9 @@ ROUTINE_COMMANDS = ('D7', 'B3')
 #: Reasons a command is closed for, from hr.rfid.command.errors: the module
 #: never came back with an answer / it said the controller stayed silent.
 ERROR_NO_ANSWER = '30'
+# Never handed to the module at all - not the same as "no answer": nothing
+# reached the controller, and it says nothing about whether it answers.
+ERROR_NOT_SENT = '32'
 ERROR_CONTROLLER_SILENT = '20'
 
 """Polimex Hardware version list"""
@@ -50,9 +58,21 @@ DUAL_PERSON_HW_VERSIONS = ('17',)
 # model. Read by the protocol team from command_d1 of each firmware (protocol
 # change D47, 12.11.2026): iCON130 and iCON180 (hotel too) keep 2 bits per
 # reader and refuse the WHOLE card write above 3; iCON110, iCON115 and the
-# turnstile take 0-15. A model not listed here has no known limit, and iCON50
-# simply ignores the schedule.
-CARD_SCHEDULE_MAX = {'17': 3, '10': 3, '14': 3, '6': 15, '11': 15, '9': 15}
+# turnstile take 0-15, the hotel iCON115 like the iCON115. A model not listed
+# here has no known limit, and iCON50 simply ignores the schedule.
+CARD_SCHEDULE_MAX = {'17': 3, '10': 3, '14': 3, '6': 15, '11': 15, '13': 15, '9': 15}
+# Firmware builds that take a card's time schedule and then read it wrongly,
+# as (hardware code, version as the controller reports it). Read by the
+# protocol team in the delivered HEX files (23.11.2026): iCON115 7.44 and 7.46
+# keep only the two low bits of the number - 4, 8 and 12 let the card in at
+# any hour, 5 is checked as 1 - and check reader 2 against the schedule of
+# reader 1. The controller does not refuse such a card, so nothing shows the
+# mistake but a door that opens out of hours. Until a build that reads it
+# right is out, a door of such a controller is offered schedules up to
+# CARD_SCHEDULE_MISREAD_MAX only, and the same one as the controller's other
+# door.
+CARD_SCHEDULE_MISREAD_BY = frozenset({('11', '744'), ('11', '746')})
+CARD_SCHEDULE_MISREAD_MAX = 3
 DEFAULT_IO_TABLES = [
     # [hw_version, mode, data]
     # iCON110

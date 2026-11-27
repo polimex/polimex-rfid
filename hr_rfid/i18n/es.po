@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-16 13:31+0000\n"
-"PO-Revision-Date: 2026-11-24 00:53\n"
+"PO-Revision-Date: 2026-11-27 16:17\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -12,6 +12,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_command.py:0
+msgid ""
+"\"%(command)s\" was not sent: the module did not take it within %(seconds)d "
+"seconds. It is not sent later, because it was meant for that moment, so "
+"nothing was changed. Check that the module is in touch; if other commands "
+"are waiting for it, try again once they have gone out."
+msgstr ""
+"\"%(command)s\" no se envió: el módulo no lo tomó en %(seconds)d segundos. "
+"No se enviará más tarde, porque estaba destinado a ese momento, por lo que "
+"no se modificó nada. Compruebe que el módulo esté en contacto; si hay otros "
+"comandos esperando por él, inténtelo de nuevo una vez que hayan salido."
 
 #. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_ctrl_alarm_group_action
@@ -1938,6 +1952,11 @@ msgstr ""
 "Se rechazó el armado o desarmado, y el informe no indica ninguna tarjeta"
 
 #. module: hr_rfid
+#: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_command__asked_at
+msgid "Asked At"
+msgstr "Solicitado el"
+
+#. module: hr_rfid
 #: model_terms:ir.actions.act_window,help:hr_rfid.hr_rfid_access_group_action
 msgid ""
 "Assign the group to departments (for automatic assignment) or individual "
@@ -2078,17 +2097,6 @@ msgstr "Mixin de Mensajes Emergentes"
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_card__barcode_number
 msgid "Barcode Number"
 msgstr "Número de Código de Barras"
-
-#. module: hr_rfid
-#. odoo-python
-#: code:addons/hr_rfid/models/hr_rfid_door.py:0
-msgid ""
-"Because the webstack is behind NAT, we have to wait for the webstack to call"
-" us, so we created a command. The door will open/close as soon as possible."
-msgstr ""
-"Dado que el WebStack está detrás de NAT, debemos esperar a que el WebStack "
-"nos contacte, por lo que se ha creado un comando. La puerta se "
-"abrirá/cerrará lo antes posible."
 
 #. module: hr_rfid
 #: model:ir.model.fields,field_description:hr_rfid.field_hr_rfid_ctrl_ts_line__begin
@@ -7925,6 +7933,11 @@ msgid "Normal"
 msgstr "Normal"
 
 #. module: hr_rfid
+#: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__32
+msgid "Not Sent to the Module in Time"
+msgstr "No enviado al módulo a tiempo"
+
+#. module: hr_rfid
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__11
 #: model:ir.model.fields.selection,name:hr_rfid.selection__hr_rfid_command__error__8
 msgid "Not Use"
@@ -11552,6 +11565,20 @@ msgstr ""
 #. odoo-python
 #: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
 msgid ""
+"The door \"%(door)s\" is on a %(model)s controller with firmware "
+"%(version)s, which reads a card's time schedule right only for numbers 0 to "
+"%(highest)d. \"%(schedule)s\" is number %(number)d: choose a schedule with a"
+" lower number for this door."
+msgstr ""
+"La puerta \"%(door)s\" está en un controlador %(model)s con firmware "
+"%(version)s, que lee correctamente el horario de acceso de una tarjeta solo "
+"para los números del 0 al %(highest)d. \"%(schedule)s\" es el número "
+"%(number)d: elija un horario con un número menor para esta puerta."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
 "The door \"%(door)s\" is on a %(model)s controller, which takes time "
 "schedules numbered 0 to %(highest)d for a card. \"%(schedule)s\" is number "
 "%(number)d: choose a schedule with a lower number for this door."
@@ -11604,6 +11631,35 @@ msgstr ""
 "La puerta a la que esta tarjeta puede acceder. Cuando la tarjeta se presenta"
 " a los lectores de esta puerta, el acceso se concede según el horario de "
 "acceso."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access group \"%(group)s\"."
+msgstr ""
+"Las puertas \"%(door)s\" y \"%(other_door)s\" están en un mismo controlador "
+"%(model)s con firmware %(version)s, que comprueba una tarjeta en ambas "
+"puertas con el horario de acceso de la primera. Asigne a las dos puertas el "
+"mismo horario de acceso en el grupo de acceso \"%(group)s\"."
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_access_group.py:0
+msgid ""
+"The doors \"%(door)s\" and \"%(other_door)s\" are on one %(model)s "
+"controller with firmware %(version)s, which checks a card at both doors "
+"against the time schedule of the first one. Give the two doors the same time"
+" schedule in the access groups \"%(group)s\" and \"%(other_group)s\"."
+msgstr ""
+"Las puertas \"%(door)s\" y \"%(other_door)s\" están en un mismo controlador "
+"%(model)s con firmware %(version)s, que comprueba una tarjeta en ambas "
+"puertas con el horario de acceso de la primera. Asigne a las dos puertas el "
+"mismo horario de acceso en los grupos de Acceso \"%(group)s\" y "
+"\"%(other_group)s\"."
 
 #. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_door_open_close_wiz__doors
@@ -11737,6 +11793,18 @@ msgstr "Los intervalos del día %d se superponen"
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
 msgid "The module does not be behind NAT!"
 msgstr "¡El módulo no debe estar detrás de NAT!"
+
+#. module: hr_rfid
+#. odoo-python
+#: code:addons/hr_rfid/models/hr_rfid_door.py:0
+msgid ""
+"The module is behind NAT, so the command waits for the module to get in "
+"touch, which it normally does within seconds. If it has not gone out in "
+"%(seconds)d seconds it is closed and the door is left as it is."
+msgstr ""
+"El módulo está detrás de NAT, por lo que el comando espera a que el módulo "
+"se comunique, lo que normalmente ocurre en pocos segundos. Si no ha salido "
+"en %(seconds)d segundos, se cierra y la puerta se deja como está."
 
 #. module: hr_rfid
 #: model_terms:ir.ui.view,arch_db:hr_rfid.hr_rfid_webstack_view_form
@@ -13214,6 +13282,20 @@ msgstr ""
 "los responsables que necesitan controlar el sistema de alarma."
 
 #. module: hr_rfid
+#: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__asked_at
+msgid ""
+"When the command was last asked for: when it was created, when the same "
+"button was pressed again while it was still waiting, or when it was marked "
+"to be sent again. A door opened or closed from the screen that has not gone "
+"out within a minute of this is closed and is not sent later."
+msgstr ""
+"Cuándo se solicitó el comando por última vez: al crearse, al pulsar de nuevo"
+" el mismo botón mientras aún estaba en espera, o al marcarse para enviarse "
+"de nuevo. Una puerta abierta o cerrada desde la pantalla que no haya salido "
+"en el plazo de un minuto desde este momento se cierra y no se envía más "
+"tarde."
+
+#. module: hr_rfid
 #: model:ir.model.fields,help:hr_rfid.field_hr_rfid_command__sent_at
 msgid ""
 "When the command was last handed to the module. A command that gets no "
@@ -13754,3 +13836,13 @@ msgstr "{hw_type} SN:{serial} ID:{id}"
 #: code:addons/hr_rfid/models/hr_rfid_door.py:0
 msgid "{} in zones"
 msgstr "{} en zonas"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_hr_rfid
+msgid "RFID Access Control"
+msgstr "Control de acceso RFID"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_hr_rfid
+msgid "Manage employee access control"
+msgstr "Gestionar el control de Acceso de los empleados"

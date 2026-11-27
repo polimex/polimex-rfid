@@ -2,7 +2,7 @@
 id: hr_rfid_demo
 title: RFID Demo Data
 module: hr_rfid_demo
-module_version: 19.0.1.2.1
+module_version: 19.0.1.2.2
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -58,7 +58,7 @@ chunking:
 ---
 
 
-# RFID Demo Data - `hr_rfid_demo` v19.0.1.2.1
+# RFID Demo Data - `hr_rfid_demo` v19.0.1.2.2
 
 A demo company that keeps working: passages, attendance, lateness and overtime for the RFID set, day after day
 
@@ -70,7 +70,7 @@ A demo company that keeps working: passages, attendance, lateness and overtime f
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_demo`
-- **Version**: `19.0.1.2.1`
+- **Version**: `19.0.1.2.2`
 - **Category**: Human Resources
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team

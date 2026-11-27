@@ -7,6 +7,7 @@ from odoo import fields, models, api, _, exceptions, SUPERUSER_ID
 import http.client
 import json
 
+from ..controllers import polimex
 from odoo.addons.hr_rfid.models.hr_rfid_card import HrRfidCard
 from odoo.addons.hr_rfid.models.hr_rfid_event_system import HrRfidSystemEvent
 from odoo.addons.hr_rfid.models.hr_rfid_event_user import HrRfidUserEvent
@@ -407,6 +408,15 @@ class HrRfidDoor(models.Model):
             return result
         return None
 
+    def _waits_for_the_module_message(self):
+        """What the operator is told when the command waits for the module."""
+        return self.env._(
+            'The module is behind NAT, so the command waits for the module to '
+            'get in touch, which it normally does within seconds. If it has '
+            'not gone out in %(seconds)d seconds it is closed and the door is '
+            'left as it is.',
+            seconds=polimex.MOMENT_COMMAND_WAIT_S)
+
     def open_door(self):
         self.ensure_one()
         if not self.controller_id:
@@ -430,8 +440,7 @@ class HrRfidDoor(models.Model):
         if webstack.behind_nat:
             return self.balloon_warning_sticky(
                 title=_('Open door command success'),
-                message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
-                          'so we created a command. The door will open/close as soon as possible.'),
+                message=self._waits_for_the_module_message(),
                 links=cmd_id and [{
                     'label': cmd_id.name,
                     'model': 'hr.rfid.command',
@@ -465,8 +474,7 @@ class HrRfidDoor(models.Model):
         if webstack.behind_nat:
             return self.balloon_warning_sticky(
                 title=_('Close door command success'),
-                message=_('Because the webstack is behind NAT, we have to wait for the webstack to call us, '
-                          'so we created a command. The door will open/close as soon as possible.'),
+                message=self._waits_for_the_module_message(),
                 links=cmd_id and [{
                     'label': cmd_id.name,
                     'model': 'hr.rfid.command',

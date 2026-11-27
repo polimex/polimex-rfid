@@ -14,6 +14,7 @@ from datetime import timedelta
 import psycopg2
 
 from odoo import api, fields, models
+from odoo.tools import mute_logger
 
 # Keep claims long enough to cover any realistic re-send window; the
 # controller re-sends within seconds, days only accumulate on a dead link.
@@ -38,6 +39,19 @@ class HrRfidWsDedup(models.Model):
         'UNIQUE(webstack_id, ctrl_id_num, bos, ev_ts)',
         'Duplicate real-time event claim.'
     )
+
+    @api.model
+    def _event_key(self, event):
+        """What tells one hardware report from its repeat: ``(bos, ev_ts)``.
+
+        The place of the event in the controller's memory and the
+        controller's own date and time of it. A report sent again carries
+        both unchanged; the place alone is reused once the memory wraps.
+        """
+        return (
+            int(event.get('bos') or 0),
+            '%s %s' % (event.get('date') or '', event.get('time') or ''),
+        )
 
     @api.model
     def _seen(self, webstack, ctrl_id_num, bos, ev_ts):
@@ -67,7 +81,9 @@ class HrRfidWsDedup(models.Model):
         the exactly-once guarantee (F7).
         """
         try:
-            with self.env.cr.savepoint():
+            # The refused INSERT is the expected end of a race, handled here;
+            # the database logger would still print it as a failed query.
+            with mute_logger('odoo.sql_db'), self.env.cr.savepoint():
                 self.sudo().create({
                     'webstack_id': webstack.id,
                     'ctrl_id_num': ctrl_id_num,
@@ -77,6 +93,21 @@ class HrRfidWsDedup(models.Model):
             return True
         except psycopg2.IntegrityError:
             return False
+
+    @api.model
+    def _release(self, webstack, ctrl_id_num, bos, ev_ts):
+        """Give up a claim taken BEFORE the event was processed.
+
+        For a caller that claims first, so that two reports of the same event
+        arriving together cannot both be processed, and then finds the event
+        was not accepted after all: its repeat must be processed.
+        """
+        self.sudo().search([
+            ('webstack_id', '=', webstack.id),
+            ('ctrl_id_num', '=', ctrl_id_num),
+            ('bos', '=', bos),
+            ('ev_ts', '=', ev_ts or ''),
+        ]).unlink()
 
     @api.autovacuum
     def _gc_ws_dedup(self):

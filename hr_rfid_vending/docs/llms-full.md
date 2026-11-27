@@ -2,7 +2,7 @@
 id: hr_rfid_vending
 title: RFID Vending Control
 module: hr_rfid_vending
-module_version: 19.0.1.8.1
+module_version: 19.0.1.8.2
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -82,7 +82,7 @@ chunking:
 ---
 
 
-# RFID Vending Control - `hr_rfid_vending` v19.0.1.8.1
+# RFID Vending Control - `hr_rfid_vending` v19.0.1.8.2
 
 Manage EXECUTIVE based vending machines
 
@@ -94,7 +94,7 @@ Manage EXECUTIVE based vending machines
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `hr_rfid_vending`
-- **Version**: `19.0.1.8.1`
+- **Version**: `19.0.1.8.2`
 - **Category**: Vending
 - **License**: AGPL-3
 - **Author**: Polimex Dev Team
@@ -172,6 +172,11 @@ on the controller with the card number and the reason.
 A machine is served the same whichever way its module talks to Odoo: over the
 classic connection or in real time. On a real-time module the credit reaches
 the machine with the acknowledgement of the card that asked for it.
+
+A sale, or money put on a card at the machine, is recorded once however often
+the module reports it. A module that did not get the answer to its report
+sends the report again, over either connection; the repeat is accepted and
+nothing is charged or added a second time.
 
 ###### Dependencies
 ```python

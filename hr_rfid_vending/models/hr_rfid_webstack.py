@@ -109,7 +109,9 @@ class HrRfidWebstack(models.Model):
         if event_n == CREDIT_REQUEST:
             return self._hw_vending_credit_request(controller, post_data)
         if event_n == SALE:
-            return self._hw_vending_sale(controller, post_data)
+            return self._hw_vending_money_once(
+                controller, post_data, self._hw_vending_sale
+            )
         if event_n in MACHINE_PROBLEMS:
             _logger.info(
                 "Vending ev%d from %s: %s", event_n, controller.name, event["dt"]
@@ -121,8 +123,46 @@ class HrRfidWebstack(models.Model):
             )
             return self.check_for_unsent_cmd(200)
         if event_n == CASH_ON_CARD:
-            return self._hw_vending_cash_on_card(controller, post_data)
+            return self._hw_vending_money_once(
+                controller, post_data, self._hw_vending_cash_on_card
+            )
         return None
+
+    def _hw_vending_money_once(self, controller, post_data, book):
+        """Book a report that moves money once, however often it is reported.
+
+        A module that does not get the answer to its report sends the report
+        again. Over the real-time connection the batch keeps account of what
+        it has processed (hr.rfid.ws.dedup, _ws_on_event_batch). The classic
+        connection kept none, so a sale reported twice was charged twice. The
+        same account is kept here, in the same table and by the same key, so
+        a sale that came one way and is repeated the other is known too.
+
+        The claim is taken BEFORE the booking: two reports of one sale that
+        arrive together must not both pass the check and both be booked. A
+        report that is not accepted gives its claim back, and its repeat is
+        booked.
+
+        :param book: the method that books this kind of report
+        """
+        if self.env.context.get("ws_no_publish"):
+            # Inside the real-time batch, which keeps this account itself.
+            return book(controller, post_data)
+        Dedup = self.env["hr.rfid.ws.dedup"]
+        key = (self.sudo(), controller.ctrl_id, *Dedup._event_key(post_data["event"]))
+        # Seen first: the usual repeat is answered without a refused INSERT,
+        # which the database log would show as an error each time.
+        if Dedup._seen(*key) or not Dedup._claim(*key):
+            _logger.info(
+                "Vending ev%d on %s was reported again; it is recorded already",
+                post_data["event"]["event_n"],
+                controller.name,
+            )
+            return self.check_for_unsent_cmd(200)
+        answer = book(controller, post_data)
+        if not (isinstance(answer, dict) and answer.get("status") == 200):
+            Dedup._release(*key)
+        return answer
 
     # ------------------------------------------------------------------
     # What the reports have in common

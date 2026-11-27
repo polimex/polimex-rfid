@@ -134,13 +134,23 @@ class VendingFlowMixin:
         dt="00000000000000",
         card_number=None,
         ctrl_id=None,
-        bos=1,
-        tos=1,
+        bos=None,
+        tos=None,
         key=None,
         system_event=False,
     ):
-        """Send one machine event (FA) the way the controller posts it."""
+        """Send one machine event (FA) the way the controller posts it.
+
+        A controller gives every event its own place in its memory (``bos``),
+        and a report is told from its repeat by the place and the time. So
+        each event sent here takes the next place, unless the test names one.
+        """
         ctrl_id = ctrl_id or self.c_vending
+        if bos is None:
+            self._place_in_memory = getattr(self, "_place_in_memory", 0) + 1
+            bos = self._place_in_memory
+        if tos is None:
+            tos = bos
         return self._send_cmd(
             {
                 "convertor": ctrl_id.webstack_id.serial,
