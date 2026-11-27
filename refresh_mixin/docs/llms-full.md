@@ -2,7 +2,7 @@
 id: refresh_mixin
 title: Polimex Refresh Mixin
 module: refresh_mixin
-module_version: 19.0.1.5.1
+module_version: 19.0.1.5.2
 odoo_version: '19.0'
 odoo_edition: custom
 doc_type: technical_reference
@@ -28,7 +28,7 @@ keywords:
 - odoo
 - refresh
 - res
-license: AGPL-3
+license: LGPL-3
 author: Polimex Team <software@polimex.co>
 category: Technical
 installable: true
@@ -60,7 +60,7 @@ chunking:
 ---
 
 
-# Polimex Refresh Mixin - `refresh_mixin` v19.0.1.5.1
+# Polimex Refresh Mixin - `refresh_mixin` v19.0.1.5.2
 
 Refresh Mixin for Odoo models
 
@@ -72,9 +72,9 @@ Refresh Mixin for Odoo models
 Technical overview - module identity, license, dependencies and entry points. The matching end-user guide lives in `llms.txt`; anything below this section is sysadmin / developer territory.
 
 - **Technical name**: `refresh_mixin`
-- **Version**: `19.0.1.5.1`
+- **Version**: `19.0.1.5.2`
 - **Category**: Technical
-- **License**: AGPL-3
+- **License**: LGPL-3
 - **Author**: Polimex Team <software@polimex.co>
 - **Application**: no
 - **Auto-install**: no
@@ -85,7 +85,7 @@ Technical overview - module identity, license, dependencies and entry points. Th
 
 #### Refresh Mixin
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Version](https://img.shields.io/badge/Version-18.0.1.0.0-green.svg)](https://apps.odoo.com)
 
 Reusable mixin for adding auto-refresh functionality to Odoo views.
@@ -451,7 +451,7 @@ We welcome contributions:
 
 ##### 📄 License
 
-Licensed under AGPL-3.0. See [LICENSE](../LICENSE) for details.
+Licensed under LGPL-3.0 ([GNU Lesser General Public License v3](https://www.gnu.org/licenses/lgpl-3.0)).
 
 ##### 👥 Credits
 

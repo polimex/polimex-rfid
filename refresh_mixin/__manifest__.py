@@ -8,8 +8,8 @@
     'website': "https://polimex.co",
 
     'category': 'Technical',
-    'version': '19.0.1.5.1',
-    'license': 'AGPL-3',
+    'version': '19.0.1.5.2',
+    'license': 'LGPL-3',
 
     'depends': ['web', 'bus', 'web_hierarchy'],
 
